@@ -29,7 +29,14 @@
        <div style="clear:both" />
        </object:none>
 </webshop:current-search-string>
-      
+
+	<category:related-products >
+	<h2>Supplies for this machine</h2>
+		<list:repeat>
+	    	<template:include template="templates/product"></template:include>
+	    </list:repeat>
+	</category:related-products>
+
 	    <webshop:current-products>
 	    <template:include template="templates/product"></template:include>
 	    </webshop:current-products>

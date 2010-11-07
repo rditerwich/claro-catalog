@@ -19,20 +19,10 @@
   </div>
   <hr/>
   <img src="/images/tetterode_building.jpg" title="Tetterode producten"/>
-  <webshop:filters>
   <hr/> 
   <div class="side_bar_panel"> 
-  <h1>Filter</h1>
-  <list:repeat>
-    <select>
-	  <option>-- <filter:title/> --</option>
-	  <filter:values>
-	  <option><value:value/></option>
-	  </filter:values>
-	</select>
-</list:repeat>
+  	<template:include template="templates/filters"/>
   </div>
-  </webshop:filters>
   <cms:locales><list:plural>
   <hr/> 
   <div class="side_bar_panel loginpanel"> 

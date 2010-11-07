@@ -730,7 +730,7 @@ font-weight: bold;
   margin-bottom:4px;
   padding:14px;
 	position: relative;
-	width: 144px;
+	width: 158px;
 	height: 161px;
 	float:left;
 	line-height: 1.2em;
@@ -817,4 +817,21 @@ padding-bottom: 0px;
 }	
 a.button:hover {
 	text-decoration: none;
+}
+
+/** FILTERS */
+ul.list3 {
+	margin:0px;
+	padding:0px;
+}
+
+ul.list3 li {
+	background: url(images/filter.gif) no-repeat left 2px;
+	padding-left:18px;
+	height: 20px;
+}
+
+ul.links {
+	margin-left: 0;
+	padding: 0;
 }

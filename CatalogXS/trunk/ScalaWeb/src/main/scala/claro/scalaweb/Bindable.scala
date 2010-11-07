@@ -1,16 +1,20 @@
 package claro.scalaweb
 
-trait Bindable[A] {
-	val prefix : String
+abstract class Bindable[A](objectType : Class[A]) {
+	val defaultPrefix : String
 	val bindings : Set[Binding]
 	val documentation : String
 	
 	def bind(label : String, doc : String) = new BindingCtor[A](label)
 	implicit def ctor(label : String) = new BindingCtor[A](label)
 	implicit def toSet(binding : Binding) = Set(binding)
+	implicit def toSet(binding : TextBinding[A]) = Set(binding)
 	def @@?(label : String, default : Boolean, documentation : String = "") = this
 }
 
+class BindableMap {
+	def apply[A](bindableType : Class[A]) : Bindable[A] = null
+}
 
 class BindingCtor[A](label : String) {
 	def apply(f : => Binding) = f
@@ -18,12 +22,12 @@ class BindingCtor[A](label : String) {
 }
 
 case class Person(firstName: String, lastName : String)
-
-class PersonBindable extends Bindable[Person] {
-	val prefix = "person"
-	val documentation = ""
-
-			
-//	"first-name" text(_.firstName) @@("Outputs the first name of the person")
-		
-}
+//
+//object PersonBindable extends Bindable(classOf[Person]) {
+//	val prefix = "person"
+//	val documentation = ""
+//
+//			
+////	"first-name" text(_.firstName) @@("Outputs the first name of the person")
+//		
+//}
