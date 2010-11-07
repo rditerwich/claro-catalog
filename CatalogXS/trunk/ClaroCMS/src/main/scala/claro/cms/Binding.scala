@@ -140,7 +140,7 @@ trait Bindable extends Binding {
 	def bind(node : Node, context : BindingContext) : NodeSeq = Binding.bind(node.child, childContext(context))
 }
 
-class XmlBinding(f : NodeSeq => NodeSeq) extends Binding {
+class XmlBinding(f : => NodeSeq => NodeSeq) extends Binding {
   def bind(node : Node, context : BindingContext) : NodeSeq = {
     Binding.bind(f(node.child), context)
   }

@@ -24,7 +24,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "top-level-categories" -> grouped(WebshopModel.shop.topLevelCategories) -> "category",
       "trail" -> Trail -> "trail",
       "first-on-trail" -> Trail.firstOnTrail -> "category",
-      "filtering" -> Filtering.get, 
+      "filtering" -> Filtering, 
       "promotions" -> WebshopModel.shop.get.promotions -> "promotion",
       "shopping-cart" -> ShoppingCart.is,
       "search-all-link" -> searchAllLink,

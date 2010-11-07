@@ -58,9 +58,9 @@ object BindingCtor {
 		def -> (f : => Collection[Date]) = new DateCollection(label, new AnyCollectionBinding(f, toText)) 
 		def -> (f : => Boolean) = new BooleanSingle(label, new BooleanBinding(f))
 		def -> (f : => NodeSeq) = new StaticXml(label, new XmlBinding(_ => f)) {}
-		def -> (f : NodeSeq => NodeSeq) = new DynamicXml(label, new XmlBinding(f))
-		def -> (f : => RequestVar[Binding]) = new RequestVarSingle(label, f.is)
-		def -> (f : => SessionVar[Binding]) = new SessionVarSingle(label, f.is)
+		def -> (f : => NodeSeq => NodeSeq) = new DynamicXml(label, new XmlBinding(f))
+		def -> (f : RequestVar[Binding]) = new RequestVarSingle(label, new BindingBinding(f.is))
+		def -> (f : SessionVar[Binding]) = new SessionVarSingle(label, new BindingBinding(f.is))
 		def -> (f : => Grouped) = new ComplexGrouped {
 			def -> (defaultPrefix : String) = (label, new ComplexGroupBinding(f.collection, defaultPrefix))
 		}
