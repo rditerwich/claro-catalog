@@ -8,9 +8,11 @@
         <p>No search results found</p>
 	      <webshop:current-category> <webshop:search-all class="link">search for '<webshop:current-search-string/>' in entire catalog</webshop:search-all></webshop:current-category>		  
       </list:none>
-      <div><webshop:current-category> <webshop:search-all class="link">search for '<webshop:current-search-string/>' in entire catalog</webshop:search-all></webshop:current-category></div>		  
+      <div><webshop:current-category> <webshop:search-all class="link">search for '<webshop:current-search-string/>' in entire catalog</webshop:search-all></webshop:current-category></div>
+      <div class="product-container">		  
         <list:repeat>
 	    <template:include template="templates/product"></template:include>
         </list:repeat>
+        </div>
   </webshop:current-search-products>
 </template:include>

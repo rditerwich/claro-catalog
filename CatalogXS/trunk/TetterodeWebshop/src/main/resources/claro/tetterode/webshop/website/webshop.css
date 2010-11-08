@@ -722,6 +722,9 @@ font-weight: bold;
 	width: 558px;
 	height: 130px;
 }
+.product-container {
+	width: 558px;
+}
 .product {
   position:relative;
   background-image:url("images/product_panel.png");

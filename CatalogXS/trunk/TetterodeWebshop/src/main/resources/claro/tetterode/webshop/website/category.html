@@ -32,13 +32,17 @@
 
 	<category:related-products >
 	<h2>Supplies for this machine</h2>
+      <div class="product-container">		  
 		<list:repeat>
 	    	<template:include template="templates/product"></template:include>
 	    </list:repeat>
+	    </div>
 	</category:related-products>
 
+      <div class="product-container">		  
 	    <webshop:current-products>
 	    <template:include template="templates/product"></template:include>
 	    </webshop:current-products>
+	    </div>
   </webshop:current-category>
 </template:include>

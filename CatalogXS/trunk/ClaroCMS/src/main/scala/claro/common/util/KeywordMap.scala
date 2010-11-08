@@ -31,11 +31,17 @@ class KeywordMap[A] extends mutable.HashMap[String, mutable.Set[A]] with mutable
     val result = new mutable.HashSet[A]
     for (s <- seach.toLowerCase.split("\\W")) {
       for ((keyword, products) <- this) {
-        val maxDist = Math.min(s.length, keyword.length) * 2 / 3
-        val dist = distance(s, keyword)
-        if (dist < maxDist) {
-          result ++= products
-        }
+      	if (mostlyDigits(s)) {
+      		if (keyword.contains(s)) {
+      			result ++= products
+      		}
+      	} else {
+	        val maxDist = Math.min(s.length, keyword.length) * 2 / 3
+	        val dist = distance(s, keyword)
+	        if (dist < maxDist) {
+	          result ++= products
+	        }
+      	}
       }
     }
     result
@@ -43,6 +49,16 @@ class KeywordMap[A] extends mutable.HashMap[String, mutable.Set[A]] with mutable
   
   private val memo = scala.collection.mutable.Map[(List[Char],List[Char]),Int]()
 
+  def mostlyDigits(s : String) : Boolean = {
+  	var digits = 0
+  	var other = 0
+  	for (c : Char <- s) {
+  		if (Character.isDigit(c)) digits += 1  
+  		else if (!Character.isWhitespace(c)) other += 1  
+  	}
+  	return digits > other;
+  }
+  
   def distance(s1 : String, s2 : String) : Int = {
     def min(a:Int, b:Int, c:Int) = Math.min( Math.min( a, b ), c)
     def sd(s1: List[Char], s2: List[Char]): Int = {

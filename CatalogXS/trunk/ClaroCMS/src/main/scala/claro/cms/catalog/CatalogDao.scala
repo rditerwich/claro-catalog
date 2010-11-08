@@ -82,15 +82,23 @@ object CatalogDao extends Dao {
     }
   }
   
-  def createProduct(name : String, variant : String, articleNumber : String, description : String, price : Double, imageClass : Class[_], imageName : String, categories : Category*) = {
-  	val product = getOrCreateProduct(name)
+  def createProduct(name : String, variant : String, articleNumber : String, description : String, price : Double, imageClass : Class[_], imageName : String, categories : List[Category], supplier : String = null, supplierArticleNumber : String = null) = transaction { em =>
+  	val product = new Product
+  	product.setCatalog(catalog)
   	set(product, Properties.name, name)
   	set(product, Properties.variant, variant)
   	set(product, Properties.articleNumber, articleNumber)
   	set(product, Properties.description, description)
   	set(product, Properties.price, price)
+  	if (supplier != null) {
+  		set(product, Properties.supplier, supplier)
+  	}
+  	if (supplierArticleNumber != null) {
+  		set(product, Properties.supplierArticleNumber, supplierArticleNumber)
+  	}
   	setImage(product, Properties.image, imageClass, imageName)
   	categories foreach (_.getChildren.add(product))
+  	em.persist(product)
   	product
   }
 
@@ -137,6 +145,8 @@ object CatalogDao extends Dao {
     def imageLarge = getOrCreateProperty(catalog.getRoot, "ImageLarge", PropertyType.Media)
     def price = getOrCreateProperty(catalog.getRoot, "Price", PropertyType.Money)
     def synopsis = getOrCreateProperty(catalog.getRoot, "Synopsis", PropertyType.String)
+    def supplier = getOrCreateProperty(catalog.getRoot, "Supplier", PropertyType.String)
+    def supplierArticleNumber = getOrCreateProperty(catalog.getRoot, "SupplierArticleNumber", PropertyType.String)
     def product(catalog : Catalog) = {}
   }
   
