@@ -110,7 +110,7 @@ object StandardCatalogData extends Dao {
       promotion.setVolumeDiscount(1)
       promotion.setPrice(14990.00)
       promotion.setStartDate(new java.util.Date())
-      promotion.setEndDate(new java.util.Date())
+      promotion.setEndDate(new java.util.Date(System.currentTimeMillis + 40 * 24 * 60 * 60 * 1000))
       promotion.setShop(shop)
       shop.getPromotions.add(promotion)
     }
@@ -176,15 +176,6 @@ object StandardCatalogData extends Dao {
 	  CatalogDao.createProduct("Saphira Ink Bio-speed Yellow", "SU18364578", "", "Yellow bio process ink for best results at a high speed", 8.55, getClass, "saphiraBioYellow.jpg", List(saphiraInks, colorInk))
 	  CatalogDao.createProduct("Saphira Ink Bio-speed Blue", "SU18364579", "", "Blue bio process ink for best results at a high speed", 8.55, getClass, "saphiraBioBlue.jpg", List(saphiraInks, colorInk))
 	
-	  new VolumeDiscountPromotion useIn { promotion =>
-	  promotion.setProduct(saphiraBioMag)
-	  promotion.setVolumeDiscount(3)
-	  promotion.setPrice(7.55)
-	  promotion.setStartDate(new java.util.Date())
-	  promotion.setEndDate(new java.util.Date())
-	  promotion.setShop(shop)
-	  shop.getPromotions.add(promotion)
-    }
   }
   
   def epsonproducts = {
@@ -258,6 +249,16 @@ object StandardCatalogData extends Dao {
 		CatalogDao.createProduct("EpsonStylus GS6000", "LightMagentaT624 950m", "3071710", "", 132.00, getClass, "epsonInk.jpg", List(epsonInks, colorInk), supplier = "Epson NL - Amsterdam", supplierArticleNumber = "C13T624600")
 		
 		CatalogDao.setRelated("supplies", epsonStylusPro4880, p1, p2, p3, p4, p5, p6)
+
+			  new VolumeDiscountPromotion useIn { promotion =>
+	  promotion.setProduct(p6)
+	  promotion.setVolumeDiscount(3)
+	  promotion.setPrice(7.55)
+	  promotion.setStartDate(new java.util.Date())
+      promotion.setEndDate(new java.util.Date(System.currentTimeMillis + 40 * 24 * 60 * 60 * 1000))
+	  promotion.setShop(shop)
+	  shop.getPromotions.add(promotion)
+    }
 
   }
   

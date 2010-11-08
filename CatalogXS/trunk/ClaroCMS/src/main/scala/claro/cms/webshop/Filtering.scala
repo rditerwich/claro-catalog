@@ -71,7 +71,7 @@ trait Filter extends Bindable with Ordered[Filter] with BindingHelpers {
 
 case class CategoryFilter(category : Category) extends Filter {
   val title : String = "Category " + category.name
-  override def products = category.productExtent 
+  override def products = category.productExtent ++ category.relatedProducts 
 }
 
 case class SearchFilter(searchString : String) extends Filter {
