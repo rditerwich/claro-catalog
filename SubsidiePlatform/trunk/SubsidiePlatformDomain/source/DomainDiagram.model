@@ -1,8 +1,0 @@
-root /domainDiagrams
-
-import Metaphor.Eclipse.DomainDiagrams.DomainDiagram
-
-DomainDiagram {
-    name = newProduct.provider
-    package = /packages:Considium/packages:Domain
-}
