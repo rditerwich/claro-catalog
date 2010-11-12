@@ -12,6 +12,7 @@ import Metaphor.PIM.Domain.Parameter
 path primitive=/packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog=/packages:AgileXS/packages:Domain/packages:Catalog/types
 path shop=/packages:AgileXS/packages:Domain/packages:Shop/types
+path output=/packages:AgileXS/packages:Domain/packages:Output/types
 
 Package {
     name = Catalog
@@ -37,11 +38,11 @@ Package {
                     type = catalog:Category
                 }
                 Attribute {
-                    name = shops
-                    type = shop:Shop
+                    name = outputChannels
+                    type = output:OutputChannel
                     lower = 0
                     upper = {}
-                    opposite = shop:Shop/attributes:catalog
+                    opposite = output:OutputChannel/attributes:catalog
                 }
                 Attribute {
                     name = templates
@@ -253,9 +254,6 @@ Package {
             }
         }
         Class {
-            name = OutputChannel
-        }
-        Class {
             name = Supplier
         }
         Class {
@@ -347,7 +345,7 @@ Package {
                 
                 Attribute {
                     name = outputChannel
-                    type = catalog:OutputChannel
+                    type = output:OutputChannel
                     lower = 0
                 }
                 

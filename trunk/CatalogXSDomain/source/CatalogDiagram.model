@@ -51,7 +51,7 @@ DomainDiagram {
                     x = 84
                     y = 423
                     width = 189
-                    height = 157
+                    height = 140
                 }
             }
             domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Property
@@ -137,8 +137,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 636
-                    y = 185
+                    x = 635
+                    y = 167
                     width = -1
                     height = -1
                 }
@@ -159,19 +159,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 681
-                    y = 554
-                    width = -1
-                    height = -1
-                }
-            }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
-                    x = 685
-                    y = 617
+                    x = 701
+                    y = 569
                     width = -1
                     height = -1
                 }
@@ -183,8 +172,8 @@ DomainDiagram {
         DiagramEnum {
             bounds = {
                 Rectangle {
-                    x = 838
-                    y = -32
+                    x = 794
+                    y = -51
                     width = -1
                     height = -1
                 }
@@ -260,9 +249,6 @@ DomainDiagram {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:EnumValue/attributes:labels
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:shops
-        }
-        Reference {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:languages
         }
         Reference {
@@ -327,6 +313,12 @@ DomainDiagram {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild/attributes:child
         }
         Reference {
+            bendPoints = {
+                Point {
+                    x = 588
+                    y = 184
+                }
+            }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:children
         }
         Reference {
@@ -335,14 +327,29 @@ DomainDiagram {
         Reference {
             bendPoints = {
                 Point {
-                    x = 607
-                    y = 569
+                    x = 831
+                    y = 575
                 }
             }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:outputChannel
         }
         Reference {
+            bendPoints = {
+                Point {
+                    x = 613
+                    y = 586
+                }
+            }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:supplier
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Output/types:OutputChannel/attributes:catalog
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Output/types:OutputChannel/attributes:excludedProperties
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Output/types:OutputChannel/attributes:excludedItems
         }
     }
     superClassReferences = {

@@ -14,8 +14,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 8
-                    y = 75
+                    x = 108
+                    y = 63
                     width = 104
                     height = 69
                 }
@@ -25,8 +25,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 16
-                    y = 204
+                    x = 59
+                    y = 352
                     width = 114
                     height = 90
                 }

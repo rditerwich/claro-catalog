@@ -13,12 +13,14 @@ path primitive = /packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog = /packages:AgileXS/packages:Domain/packages:Catalog/types
 path shop = /packages:AgileXS/packages:Domain/packages:Shop/types
 path party = /packages:AgileXS/packages:Domain/packages:Party/types
+path output = /packages:AgileXS/packages:Domain/packages:Output/types
 
 Package {
     name = Shop
     types = {
         Class {
-            name = Shop            
+            name = Shop    
+            superClass = output:OutputChannel        
             attributes = {
                 Attribute {
                     name = name
@@ -32,7 +34,6 @@ Package {
                 Attribute {
                     name = catalog
                     type = catalog:Catalog
-                    opposite = catalog:Catalog/attributes:shops
                 }
                 /**
                  * IETF language tag. See http://en.wikipedia.org/wiki/IETF_language_tag.
@@ -158,155 +159,6 @@ Package {
                 Attribute {
                     name = volumeDiscount
                     type = primitive:Integer
-                }
-            }
-        }
-        Class {
-            name = Order
-            attributes = {
-                Attribute {
-                    name = orderDate
-                    type = primitive:Date
-                }
-                Attribute {
-                    name = productOrders
-                    type = shop:ProductOrder
-                    lower = 1
-                    upper = {}
-                    isComposite = true
-                    opposite = shop:ProductOrder/attributes:order
-                }
-                Attribute {
-                    name = deliveryAddress
-                    type = party:Address
-                    lower = 0
-                }
-                Attribute {
-                    name = transport
-                    type = shop:Transport
-                    isComposite = true
-                }
-                Attribute {
-                    name = user
-                    type = party:User
-                }
-                Attribute {
-                    name = status
-                    type = shop:OrderStatus
-                }
-                Attribute {
-                    name = amountPaid
-                    type = primitive:Money
-                }
-                Attribute {
-                    name = history
-                    type = shop:OrderHistory
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                }
-            }
-            
-        }
-        Class {
-            name = ProductOrder
-            attributes = {
-                Attribute {
-                    name = product
-                    type = catalog:Product
-                }
-                Attribute {
-                    name = promotion
-                    type = shop:Promotion
-                    lower = 0
-                }
-                Attribute {
-                    name = volume
-                    type = primitive:Integer
-                }
-                Attribute {
-                    name = price
-                    type = primitive:Money 
-                }
-                Attribute {
-                    name = priceCurrency
-                    type = primitive:String
-                }
-                Attribute {
-                    name = order
-                    type = shop:Order
-                    opposite = shop:Order/attributes:productOrders
-                }
-            }
-        }
-        Class {
-            name = Transport
-            attributes = {
-                Attribute {
-                    name = desciption
-                    type = primitive:String
-                }
-                Attribute {
-                    name = transportCompany
-                    type = primitive:String
-                }
-                @comment "Delivery time in days"
-                Attribute {
-                    name = deliveryTime
-                    type = primitive:Integer
-                }
-            }
-        }
-        Class {
-            name = OrderHistory
-            attributes = {
-                Attribute {
-                    name = user
-                    type = party:User
-                }
-                Attribute {
-                    name = newStatus
-                    type = shop:OrderStatus
-                }
-                Attribute {
-                    name = comment
-                    type = primitive:String
-                }
-                Attribute {
-                    name = date
-                    type = primitive:Date 
-                }
-            }
-        }
-        Enumeration {
-            name = OrderStatus
-            literals = {
-                Literal {
-                    name = InShoppingCart
-                }
-                Literal {
-                    name = PendingPayment 
-                }
-                Literal {
-                    name = ReceivedPayment 
-                }
-                Literal {
-                    name = Processing 
-                }
-                Literal {
-                    name = Shipped 
-                }
-                Literal {
-                    name = OnHold 
-                }
-                Literal {
-                    name = Complete 
-                }
-                Literal {
-                    name = Closed 
-                }
-                Literal {
-                    name = Canceled 
                 }
             }
         }
