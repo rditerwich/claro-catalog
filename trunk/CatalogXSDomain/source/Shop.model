@@ -31,10 +31,6 @@ Package {
                     type = primitive:String
                     lower = 0
                 }
-                Attribute {
-                    name = catalog
-                    type = catalog:Catalog
-                }
                 /**
                  * IETF language tag. See http://en.wikipedia.org/wiki/IETF_language_tag.
                  * When not specified (null), denotes a default value applicable for all languages.

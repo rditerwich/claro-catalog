@@ -14,8 +14,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 72
-                    y = 65
+                    x = 131
+                    y = 74
                     width = -1
                     height = -1
                 }
@@ -58,8 +58,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 489
-                    y = 318
+                    x = 345
+                    y = 329
                     width = 116
                     height = 89
                 }
@@ -69,8 +69,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 487
-                    y = 445
+                    x = 377
+                    y = 485
                     width = -1
                     height = -1
                 }
@@ -80,8 +80,8 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 598
-                    y = 243
+                    x = 592
+                    y = 193
                     width = -1
                     height = -1
                 }
@@ -92,9 +92,6 @@ DomainDiagram {
     references = {
         Reference {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:promotions
-        }
-        Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:catalog
         }
         Reference {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:root
@@ -108,12 +105,12 @@ DomainDiagram {
         Reference {
             bendPoints = {
                 Point {
-                    x = 370
-                    y = 254
+                    x = 614
+                    y = 303
                 }
                 Point {
-                    x = 354
-                    y = 280
+                    x = 649
+                    y = 303
                 }
             }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation/attributes:subNavigation
