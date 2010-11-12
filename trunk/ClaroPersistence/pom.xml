@@ -17,6 +17,11 @@
 	     <id>EclipseLink Repo</id>
 	     <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
 	  </repository>    
+		<repository>
+		  <id>scala-tools.org</id>
+		  <name>Scala-Tools Maven2 Repository</name>
+		  <url>http://scala-tools.org/repo-releases</url>
+		</repository>
 	</repositories>
 	 
 	<dependencies>
@@ -39,7 +44,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.14-SNAPSHOT</version>
+				<version>2.15.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -92,7 +97,7 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<version>2.14-SNAPSHOT</version>
+				<version>2.15-0</version>
 				<configuration>
 					<scalaVersion>${scala.version}</scalaVersion>
 				</configuration>

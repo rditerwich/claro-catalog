@@ -115,28 +115,6 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 631
-                    y = 114
-                    width = 81
-                    height = 53
-                }
-            }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Relation
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
-                    x = 622
-                    y = 20
-                    width = -1
-                    height = -1
-                }
-            }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:RelationType
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
                     x = 106
                     y = -38
                     width = -1
@@ -155,6 +133,50 @@ DomainDiagram {
                 }
             }
             domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyGroup
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 636
+                    y = 185
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 683
+                    y = 493
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:ImportSource
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 681
+                    y = 554
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 685
+                    y = 617
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Supplier
         }
     }
     enumerations = {
@@ -202,18 +224,6 @@ DomainDiagram {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Product/attributes:templates
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Relation/attributes:relatedTo
-        }
-        Reference {
-            bendPoints = {
-                Point {
-                    x = 592
-                    y = 103
-                }
-            }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:relations
-        }
-        Reference {
             bendPoints = {
                 Point {
                     x = 224
@@ -236,9 +246,6 @@ DomainDiagram {
         }
         Reference {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:items
-        }
-        Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Relation/attributes:relationType
         }
         Reference {
             bendPoints = {
@@ -288,28 +295,54 @@ DomainDiagram {
         Reference {
             bendPoints = {
                 Point {
-                    x = 602
-                    y = 169
-                }
-                Point {
-                    x = 651
-                    y = 169
-                }
-                Point {
-                    x = 652
-                    y = 197
-                }
-            }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:children
-        }
-        Reference {
-            bendPoints = {
-                Point {
                     x = 298
                     y = 15
                 }
             }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:root
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 725
+                    y = 470
+                }
+                Point {
+                    x = 725
+                    y = 122
+                }
+            }
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:itemValue
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild/attributes:parent
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 671
+                    y = 152
+                }
+            }
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild/attributes:child
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:children
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:importSource
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 607
+                    y = 569
+                }
+            }
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:outputChannel
+        }
+        Reference {
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:supplier
         }
     }
     superClassReferences = {

@@ -58,6 +58,7 @@ Package {
                 }
             }
         }
+        @comment "An item without properties is not an item"
         Class {
             name = Item
             attributes = {
@@ -68,17 +69,17 @@ Package {
                 }
                 Attribute {
                     name = parents
-                    type = catalog:Item
+                    type = catalog:ParentChild
                     lower = 0
                     upper = {}
-                    opposite = catalog:Item/attributes:children
+                    opposite = catalog:ParentChild/attributes:child
                 }
                 Attribute {
                     name = children
-                    type = catalog:Item
+                    type = catalog:ParentChild
                     lower = 0
                     upper = {}
-                    opposite = catalog:Item/attributes:parents
+                    opposite = catalog:ParentChild/attributes:parent
                 }
                 Attribute {
                     name = propertyGroups
@@ -109,20 +110,31 @@ Package {
                     opposite = catalog:PropertyValue/attributes:item
                 }
                 Attribute {
-                    name = relations
-                    type = catalog:Relation
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                    opposite = catalog:Relation/attributes:item
-                }
-                Attribute {
                     name = templates
                     type = catalog:Template
                     lower = 0
                     upper = {}
                     isComposite = true
                     opposite = catalog:Template/attributes:item
+                }
+            }
+        }
+        Class {
+            name = ParentChild
+            attributes = {
+                Attribute {
+                    name = parent
+                    type = catalog:Item
+                    opposite = catalog:Item/attributes:children
+                }
+                Attribute {
+                    name = child
+                    type = catalog:Item
+                    opposite = catalog:Item/attributes:parents
+                }
+                Attribute {
+                    name = index
+                    type = primitive:Integer
                 }
             }
         }
@@ -175,36 +187,6 @@ Package {
                 }
             }
         }
-        /** 
-         * Used to qualify a relation between two related products, e.g. Supply, SparePart
-         */
-        Class {
-            name = Relation
-            attributes = {
-                Attribute {
-                    name = item
-                    type = catalog:Item
-                    opposite = catalog:Item/attributes:relations
-                }
-                Attribute {
-                    name = relatedTo
-                    type = catalog:Item
-                }
-                Attribute {
-                    name = relationType
-                    type = catalog:RelationType
-                }
-            }
-        }
-        Class {
-            name = RelationType
-            attributes = {
-                Attribute {
-                    name = name
-                    type = primitive:String
-                }
-            }
-        }
 
         Class {
             name = Property
@@ -241,6 +223,10 @@ Package {
                     type = catalog:PropertyType
                 }
                 Attribute {
+                    name = isMany
+                    type = primitive:Boolean
+                }
+                Attribute {
                     name = enumValues
                     type = catalog:EnumValue
                     isComposite = true
@@ -256,6 +242,21 @@ Package {
 //                    opposite = catalog:PropertyValue/attributes:property
 //                }
             }
+        }
+        Class {
+            name = ImportSource
+            attributes = {
+                Attribute {
+                    name = priority
+                    type = primitive:Integer
+                }
+            }
+        }
+        Class {
+            name = OutputChannel
+        }
+        Class {
+            name = Supplier
         }
         Class {
             name = EnumValue
@@ -337,6 +338,25 @@ Package {
                     lower = 0
                     type = primitive:String
                 }
+                
+                Attribute {
+                    name = supplier
+                    type = catalog:Supplier
+                    lower = 0
+                }
+                
+                Attribute {
+                    name = outputChannel
+                    type = catalog:OutputChannel
+                    lower = 0
+                }
+                
+                Attribute {
+                    name = importSource
+                    type = catalog:ImportSource
+                    lower = 0
+                }
+                
                 /**
                  * Used when property.type == String or property.type == FormattedText  
                  */
@@ -404,6 +424,14 @@ Package {
                     type = primitive:Blob
                     lower = 0
                 }
+                
+                Attribute {
+                    name = itemValue
+                    type = catalog:Item
+                    lower = 0
+                }
+                
+                
                 /**
                  * Used when property.type == Media.
                  * Stored as ISO 4217 currency code.
@@ -646,10 +674,27 @@ Package {
                 Literal {
                     name = Acceleration
                 }
+                /**
+                 * Property denotes another item
+                 */
+                Literal {
+                    name = Item
+                }
             }
         }
     }
     operations = {
+        @comment "Returns the catalog with name <b>name</b>.  If this catalog does not exist, a new one is created with default content" 
+        Operation {
+            name = getOrCreateCatalog
+            type = catalog:Catalog
+            parameters = {
+                Parameter {
+                    name = name
+                    type = primitive:String
+                }
+            }
+        }
         @comment "Returns all PropertyValues for Property 'Name' for all
                   Category entries." 
         Operation {
