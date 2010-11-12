@@ -1,0 +1,135 @@
+ALTER TABLE catalogxs.promotion_templates DROP CONSTRAINT FK_promotion_templates_promotion_id
+ALTER TABLE catalogxs.promotion_templates DROP CONSTRAINT FK_promotion_templates_templates_id
+ALTER TABLE catalogxs.relationtype DROP CONSTRAINT UNQ_relationtype_0
+ALTER TABLE catalogxs.berth DROP CONSTRAINT FK_berth_description2_id
+ALTER TABLE catalogxs.berth DROP CONSTRAINT FK_berth_profile_id
+ALTER TABLE catalogxs.berth DROP CONSTRAINT UNQ_berth_0
+ALTER TABLE catalogxs.shop DROP CONSTRAINT FK_shop_catalog_id
+ALTER TABLE catalogxs.shop DROP CONSTRAINT UNQ_shop_0
+ALTER TABLE catalogxs.query DROP CONSTRAINT FK_query_productgroup_id
+ALTER TABLE catalogxs.query DROP CONSTRAINT FK_query_shop_id
+ALTER TABLE catalogxs.query DROP CONSTRAINT FK_query_shop_id2
+ALTER TABLE catalogxs.query DROP CONSTRAINT UNQ_query_0
+ALTER TABLE catalogxs.promotion DROP CONSTRAINT FK_promotion_product_id
+ALTER TABLE catalogxs.promotion DROP CONSTRAINT FK_promotion_shop_id
+ALTER TABLE catalogxs.promotion DROP CONSTRAINT UNQ_promotion_0
+ALTER TABLE catalogxs.party DROP CONSTRAINT FK_party_shippingaddress_id
+ALTER TABLE catalogxs.party DROP CONSTRAINT FK_party_billingaddress_id
+ALTER TABLE catalogxs.party DROP CONSTRAINT FK_party_address_id
+ALTER TABLE catalogxs.party DROP CONSTRAINT FK_party_deliveryaddress_id
+ALTER TABLE catalogxs.party DROP CONSTRAINT UNQ_party_0
+ALTER TABLE catalogxs.shop_excludeditems DROP CONSTRAINT FK_shop_excludeditems_excludeditems_id
+ALTER TABLE catalogxs.shop_excludeditems DROP CONSTRAINT FK_shop_excludeditems_shop_id
+ALTER TABLE catalogxs.item_parents DROP CONSTRAINT FK_item_parents_parents_id
+ALTER TABLE catalogxs.item_parents DROP CONSTRAINT FK_item_parents_children_id
+ALTER TABLE catalogxs.propertygroup DROP CONSTRAINT FK_propertygroup_item_id
+ALTER TABLE catalogxs.propertygroup DROP CONSTRAINT UNQ_propertygroup_0
+ALTER TABLE catalogxs.order DROP CONSTRAINT FK_order_transport_id
+ALTER TABLE catalogxs.order DROP CONSTRAINT FK_order_user_id
+ALTER TABLE catalogxs.order DROP CONSTRAINT FK_order_deliveryaddress_id
+ALTER TABLE catalogxs.order DROP CONSTRAINT UNQ_order_0
+ALTER TABLE catalogxs.transport DROP CONSTRAINT UNQ_transport_0
+ALTER TABLE catalogxs.catalog_templates DROP CONSTRAINT FK_catalog_templates_templates_id
+ALTER TABLE catalogxs.catalog_templates DROP CONSTRAINT FK_catalog_templates_catalog_id
+ALTER TABLE catalogxs.shop_toplevelproductgroups DROP CONSTRAINT FK_shop_toplevelproductgroups_shop_id
+ALTER TABLE catalogxs.shop_toplevelproductgroups DROP CONSTRAINT FK_shop_toplevelproductgroups_toplevelproductgroups_id
+ALTER TABLE catalogxs.catalog_languages DROP CONSTRAINT FK_catalog_languages_catalog_id
+ALTER TABLE catalogxs.catalog_languages DROP CONSTRAINT FK_catalog_languages_languages_id
+ALTER TABLE catalogxs.orderhistory DROP CONSTRAINT FK_orderhistory_user_id
+ALTER TABLE catalogxs.orderhistory DROP CONSTRAINT UNQ_orderhistory_0
+ALTER TABLE catalogxs.template DROP CONSTRAINT FK_template_item_id
+ALTER TABLE catalogxs.template DROP CONSTRAINT UNQ_template_0
+ALTER TABLE catalogxs.productorder DROP CONSTRAINT FK_productorder_product_id
+ALTER TABLE catalogxs.productorder DROP CONSTRAINT FK_productorder_order_id
+ALTER TABLE catalogxs.productorder DROP CONSTRAINT FK_productorder_promotion_id
+ALTER TABLE catalogxs.productorder DROP CONSTRAINT UNQ_productorder_0
+ALTER TABLE catalogxs.label2 DROP CONSTRAINT UNQ_label2_0
+ALTER TABLE catalogxs.enumvalue DROP CONSTRAINT FK_enumvalue_property_id
+ALTER TABLE catalogxs.enumvalue DROP CONSTRAINT UNQ_enumvalue_0
+ALTER TABLE order_orderhistory DROP CONSTRAINT FK_order_orderhistory_Order_id
+ALTER TABLE order_orderhistory DROP CONSTRAINT FK_order_orderhistory_history_id
+ALTER TABLE catalogxs.catalog DROP CONSTRAINT UNQ_catalog_0
+ALTER TABLE catalogxs.relation DROP CONSTRAINT FK_relation_relationtype_id
+ALTER TABLE catalogxs.relation DROP CONSTRAINT FK_relation_item_id
+ALTER TABLE catalogxs.relation DROP CONSTRAINT FK_relation_relatedto_id
+ALTER TABLE catalogxs.relation DROP CONSTRAINT UNQ_relation_0
+ALTER TABLE catalogxs.label DROP CONSTRAINT FK_label_enumvalue_id
+ALTER TABLE catalogxs.label DROP CONSTRAINT FK_label_propertygroup_id
+ALTER TABLE catalogxs.label DROP CONSTRAINT FK_label_property_id
+ALTER TABLE catalogxs.label DROP CONSTRAINT UNQ_label_0
+ALTER TABLE catalogxs.propertyvalue DROP CONSTRAINT FK_propertyvalue_item_id
+ALTER TABLE catalogxs.propertyvalue DROP CONSTRAINT FK_propertyvalue_property_id
+ALTER TABLE catalogxs.propertyvalue DROP CONSTRAINT UNQ_propertyvalue_0
+ALTER TABLE catalogxs.property DROP CONSTRAINT FK_property_item_id
+ALTER TABLE catalogxs.property DROP CONSTRAINT UNQ_property_0
+ALTER TABLE catalogxs.property_propertygroups DROP CONSTRAINT FK_property_propertygroups_properties_id
+ALTER TABLE catalogxs.property_propertygroups DROP CONSTRAINT FK_property_propertygroups_propertygroups_id
+ALTER TABLE catalogxs.emailconfirmation DROP CONSTRAINT UNQ_emailconfirmation_0
+ALTER TABLE shop_template DROP CONSTRAINT FK_shop_template_templates_id
+ALTER TABLE shop_template DROP CONSTRAINT FK_shop_template_Shop_id
+ALTER TABLE catalogxs.address DROP CONSTRAINT UNQ_address_0
+ALTER TABLE catalogxs.shop_excludedproperties DROP CONSTRAINT FK_shop_excludedproperties_shop_id
+ALTER TABLE catalogxs.shop_excludedproperties DROP CONSTRAINT FK_shop_excludedproperties_excludedproperties_id
+ALTER TABLE catalogxs.item DROP CONSTRAINT FK_item_catalog_id
+ALTER TABLE catalogxs.item DROP CONSTRAINT UNQ_item_0
+ALTER TABLE catalogxs.language DROP CONSTRAINT UNQ_language_0
+ALTER TABLE catalogxs.user DROP CONSTRAINT FK_user_party_id
+ALTER TABLE catalogxs.user DROP CONSTRAINT UNQ_user_0
+DROP TABLE catalogxs.promotion_templates
+DROP TABLE catalogxs.relationtype
+DROP TABLE catalogxs.berth
+DROP TABLE catalogxs.shop
+DROP TABLE catalogxs.query
+DROP TABLE catalogxs.promotion
+DROP TABLE catalogxs.party
+DROP TABLE catalogxs.shop_excludeditems
+DROP TABLE catalogxs.item_parents
+DROP TABLE catalogxs.propertygroup
+DROP TABLE catalogxs.order
+DROP TABLE catalogxs.transport
+DROP TABLE catalogxs.catalog_templates
+DROP TABLE catalogxs.shop_toplevelproductgroups
+DROP TABLE catalogxs.catalog_languages
+DROP TABLE catalogxs.orderhistory
+DROP TABLE catalogxs.template
+DROP TABLE catalogxs.productorder
+DROP TABLE catalogxs.label2
+DROP TABLE catalogxs.enumvalue
+DROP TABLE order_orderhistory
+DROP TABLE catalogxs.catalog
+DROP TABLE catalogxs.relation
+DROP TABLE catalogxs.label
+DROP TABLE catalogxs.propertyvalue
+DROP TABLE catalogxs.property
+DROP TABLE catalogxs.property_propertygroups
+DROP TABLE catalogxs.emailconfirmation
+DROP TABLE shop_template
+DROP TABLE catalogxs.address
+DROP TABLE catalogxs.shop_excludedproperties
+DROP TABLE catalogxs.item
+DROP TABLE catalogxs.language
+DROP TABLE catalogxs.user
+DROP SEQUENCE catalogxs.promotion_id_seq
+DROP SEQUENCE catalogxs.order_id_seq
+DROP SEQUENCE catalogxs.property_id_seq
+DROP SEQUENCE catalogxs.orderhistory_id_seq
+DROP SEQUENCE catalogxs.emailconfirmation_id_seq
+DROP SEQUENCE catalogxs.relationtype_id_seq
+DROP SEQUENCE catalogxs.template_id_seq
+DROP SEQUENCE catalogxs.propertygroup_id_seq
+DROP SEQUENCE catalogxs.productorder_id_seq
+DROP SEQUENCE catalogxs.user_id_seq
+DROP SEQUENCE catalogxs.label2_id_seq
+DROP SEQUENCE catalogxs.language_id_seq
+DROP SEQUENCE catalogxs.label_id_seq
+DROP SEQUENCE catalogxs.transport_id_seq
+DROP SEQUENCE catalogxs.query_id_seq
+DROP SEQUENCE catalogxs.berth_id_seq
+DROP SEQUENCE catalogxs.shop_id_seq
+DROP SEQUENCE catalogxs.address_id_seq
+DROP SEQUENCE catalogxs.enumvalue_id_seq
+DROP SEQUENCE catalogxs.party_id_seq
+DROP SEQUENCE catalogxs.item_id_seq
+DROP SEQUENCE catalogxs.relation_id_seq
+DROP SEQUENCE catalogxs.propertyvalue_id_seq
+DROP SEQUENCE catalogxs.catalog_id_seq

@@ -1,0 +1,232 @@
+CREATE TABLE catalogxs.promotion_templates (promotion_id BIGINT NOT NULL UNIQUE, templates_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (promotion_id, templates_id))
+
+
+CREATE TABLE catalogxs.relationtype (id BIGINT NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_relationtype_UNQ_relationtype_0 ON catalogxs.relationtype (id)
+
+CREATE TABLE catalogxs.berth (id BIGINT NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, description2_id BIGINT NOT NULL UNIQUE, profile_id BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_berth_UNQ_berth_0 ON catalogxs.berth (id)
+
+
+
+CREATE TABLE catalogxs.shop (id BIGINT NOT NULL UNIQUE, urlprefix VARCHAR(255), name VARCHAR(255) NOT NULL, defaultlanguage VARCHAR(255), catalog_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_shop_UNQ_shop_0 ON catalogxs.shop (id)
+
+
+CREATE TABLE catalogxs.query (id BIGINT NOT NULL UNIQUE, type VARCHAR(31), stringvalue VARCHAR(255), shop_id BIGINT UNIQUE, stringvalue2 VARCHAR(255), productgroup_id BIGINT UNIQUE, shop_id2 BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_query_UNQ_query_0 ON catalogxs.query (id)
+
+
+
+
+CREATE TABLE catalogxs.promotion (id BIGINT NOT NULL UNIQUE, type VARCHAR(31), startdate DATE NOT NULL, enddate DATE NOT NULL, shop_id BIGINT NOT NULL UNIQUE, price FLOAT, pricecurrency VARCHAR(255), volumediscount INTEGER, product_id BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_promotion_UNQ_promotion_0 ON catalogxs.promotion (id)
+
+
+
+CREATE TABLE catalogxs.party (id BIGINT NOT NULL UNIQUE, phonenumber VARCHAR(255) NOT NULL, website VARCHAR(255), name VARCHAR(255) NOT NULL, billingname VARCHAR(255), deliveryaddress_id BIGINT UNIQUE, billingaddress_id BIGINT UNIQUE, shippingaddress_id BIGINT UNIQUE, address_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_party_UNQ_party_0 ON catalogxs.party (id)
+
+
+
+
+
+CREATE TABLE catalogxs.shop_excludeditems (shop_id BIGINT NOT NULL UNIQUE, excludeditems_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (shop_id, excludeditems_id))
+
+
+CREATE TABLE catalogxs.item_parents (children_id BIGINT NOT NULL UNIQUE, parents_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (children_id, parents_id))
+
+
+CREATE TABLE catalogxs.propertygroup (id BIGINT NOT NULL UNIQUE, item_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_propertygroup_UNQ_propertygroup_0 ON catalogxs.propertygroup (id)
+
+
+CREATE TABLE catalogxs.order (id BIGINT NOT NULL UNIQUE, status_id VARCHAR(255) NOT NULL, orderdate DATE NOT NULL, amountpaid FLOAT NOT NULL, deliveryaddress_id BIGINT UNIQUE, user_id BIGINT NOT NULL UNIQUE, transport_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_order_UNQ_order_0 ON catalogxs.order (id)
+
+
+
+
+CREATE TABLE catalogxs.transport (id BIGINT NOT NULL UNIQUE, desciption VARCHAR(255) NOT NULL, deliverytime INTEGER NOT NULL, transportcompany VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_transport_UNQ_transport_0 ON catalogxs.transport (id)
+
+CREATE TABLE catalogxs.catalog_templates (catalog_id BIGINT NOT NULL UNIQUE, templates_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (catalog_id, templates_id))
+
+
+CREATE TABLE catalogxs.shop_toplevelproductgroups (shop_id BIGINT NOT NULL UNIQUE, toplevelproductgroups_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (shop_id, toplevelproductgroups_id))
+
+
+CREATE TABLE catalogxs.catalog_languages (catalog_id BIGINT NOT NULL UNIQUE, languages_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (catalog_id, languages_id))
+
+
+CREATE TABLE catalogxs.orderhistory (id BIGINT NOT NULL UNIQUE, newstatus_id VARCHAR(255) NOT NULL, date DATE NOT NULL, comment VARCHAR(255) NOT NULL, user_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_orderhistory_UNQ_orderhistory_0 ON catalogxs.orderhistory (id)
+
+
+CREATE TABLE catalogxs.template (id BIGINT NOT NULL UNIQUE, templatexml VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, language VARCHAR(255), item_id BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_template_UNQ_template_0 ON catalogxs.template (id)
+
+
+CREATE TABLE catalogxs.productorder (id BIGINT NOT NULL UNIQUE, price FLOAT NOT NULL, volume INTEGER NOT NULL, pricecurrency VARCHAR(255) NOT NULL, promotion_id BIGINT UNIQUE, order_id BIGINT NOT NULL UNIQUE, product_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_productorder_UNQ_productorder_0 ON catalogxs.productorder (id)
+
+
+
+
+CREATE TABLE catalogxs.label2 (id BIGINT NOT NULL UNIQUE, label VARCHAR(255) NOT NULL, language VARCHAR(255), PRIMARY KEY (id))
+CREATE INDEX IX_label2_UNQ_label2_0 ON catalogxs.label2 (id)
+
+CREATE TABLE catalogxs.enumvalue (id BIGINT NOT NULL UNIQUE, value INTEGER NOT NULL, property_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_enumvalue_UNQ_enumvalue_0 ON catalogxs.enumvalue (id)
+
+
+CREATE TABLE order_orderhistory (Order_id BIGINT NOT NULL, history_id BIGINT NOT NULL, PRIMARY KEY (Order_id, history_id))
+CREATE TABLE catalogxs.catalog (id BIGINT NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_catalog_UNQ_catalog_0 ON catalogxs.catalog (id)
+
+CREATE TABLE catalogxs.relation (id BIGINT NOT NULL UNIQUE, relatedto_id BIGINT NOT NULL UNIQUE, relationtype_id BIGINT NOT NULL UNIQUE, item_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_relation_UNQ_relation_0 ON catalogxs.relation (id)
+
+
+
+
+CREATE TABLE catalogxs.label (id BIGINT NOT NULL UNIQUE, label VARCHAR(255) NOT NULL, language VARCHAR(255), propertygroup_id BIGINT UNIQUE, property_id BIGINT UNIQUE, enumvalue_id BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_label_UNQ_label_0 ON catalogxs.label (id)
+
+
+
+
+CREATE TABLE catalogxs.propertyvalue (id BIGINT NOT NULL UNIQUE, stringvalue VARCHAR(255), moneyvalue FLOAT, booleanvalue BOOLEAN, integervalue INTEGER, language VARCHAR(255), enumvalue INTEGER, mediavalue BYTEA, moneycurrency VARCHAR(255), mimetype VARCHAR(255), realvalue FLOAT, property_id BIGINT NOT NULL UNIQUE, item_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_propertyvalue_UNQ_propertyvalue_0 ON catalogxs.propertyvalue (id)
+
+
+
+CREATE TABLE catalogxs.property (id BIGINT NOT NULL UNIQUE, type_id VARCHAR(255) NOT NULL, productgroupproperty BOOLEAN NOT NULL, item_id BIGINT UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_property_UNQ_property_0 ON catalogxs.property (id)
+
+
+CREATE TABLE catalogxs.property_propertygroups (properties_id BIGINT NOT NULL UNIQUE, propertygroups_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (properties_id, propertygroups_id))
+
+
+CREATE TABLE catalogxs.emailconfirmation (id BIGINT NOT NULL UNIQUE, confirmationkey VARCHAR(255) NOT NULL, expirationtime BIGINT NOT NULL, email VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_emailconfirmation_UNQ_emailconfirmation_0 ON catalogxs.emailconfirmation (id)
+
+CREATE TABLE shop_template (Shop_id BIGINT NOT NULL, templates_id BIGINT NOT NULL, PRIMARY KEY (Shop_id, templates_id))
+CREATE TABLE catalogxs.address (id BIGINT NOT NULL UNIQUE, postalcode VARCHAR(255) NOT NULL, address1 VARCHAR(255) NOT NULL, address2 VARCHAR(255), town VARCHAR(255) NOT NULL, country VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_address_UNQ_address_0 ON catalogxs.address (id)
+
+CREATE TABLE catalogxs.shop_excludedproperties (shop_id BIGINT NOT NULL UNIQUE, excludedproperties_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (shop_id, excludedproperties_id))
+
+
+CREATE TABLE catalogxs.item (id BIGINT NOT NULL UNIQUE, type VARCHAR(31), catalog_id BIGINT NOT NULL UNIQUE, containsproducts BOOLEAN, PRIMARY KEY (id))
+CREATE INDEX IX_item_UNQ_item_0 ON catalogxs.item (id)
+
+
+CREATE TABLE catalogxs.language (id BIGINT NOT NULL UNIQUE, name VARCHAR(255) NOT NULL, displayname VARCHAR(255) NOT NULL, PRIMARY KEY (id))
+CREATE INDEX IX_language_UNQ_language_0 ON catalogxs.language (id)
+
+CREATE TABLE catalogxs.user (id BIGINT NOT NULL UNIQUE, email VARCHAR(255) NOT NULL, iscataloguser BOOLEAN NOT NULL, password VARCHAR(255) NOT NULL, party_id BIGINT NOT NULL UNIQUE, PRIMARY KEY (id))
+CREATE INDEX IX_user_UNQ_user_0 ON catalogxs.user (id)
+
+
+ALTER TABLE catalogxs.relationtype ADD CONSTRAINT UNQ_relationtype_0 UNIQUE (id)
+ALTER TABLE catalogxs.berth ADD CONSTRAINT UNQ_berth_0 UNIQUE (id)
+ALTER TABLE catalogxs.shop ADD CONSTRAINT UNQ_shop_0 UNIQUE (id)
+ALTER TABLE catalogxs.query ADD CONSTRAINT UNQ_query_0 UNIQUE (id)
+ALTER TABLE catalogxs.promotion ADD CONSTRAINT UNQ_promotion_0 UNIQUE (id)
+ALTER TABLE catalogxs.party ADD CONSTRAINT UNQ_party_0 UNIQUE (id)
+ALTER TABLE catalogxs.propertygroup ADD CONSTRAINT UNQ_propertygroup_0 UNIQUE (id)
+ALTER TABLE catalogxs.order ADD CONSTRAINT UNQ_order_0 UNIQUE (id)
+ALTER TABLE catalogxs.transport ADD CONSTRAINT UNQ_transport_0 UNIQUE (id)
+ALTER TABLE catalogxs.orderhistory ADD CONSTRAINT UNQ_orderhistory_0 UNIQUE (id)
+ALTER TABLE catalogxs.template ADD CONSTRAINT UNQ_template_0 UNIQUE (id)
+ALTER TABLE catalogxs.productorder ADD CONSTRAINT UNQ_productorder_0 UNIQUE (id)
+ALTER TABLE catalogxs.label2 ADD CONSTRAINT UNQ_label2_0 UNIQUE (id)
+ALTER TABLE catalogxs.enumvalue ADD CONSTRAINT UNQ_enumvalue_0 UNIQUE (id)
+ALTER TABLE catalogxs.catalog ADD CONSTRAINT UNQ_catalog_0 UNIQUE (id)
+ALTER TABLE catalogxs.relation ADD CONSTRAINT UNQ_relation_0 UNIQUE (id)
+ALTER TABLE catalogxs.label ADD CONSTRAINT UNQ_label_0 UNIQUE (id)
+ALTER TABLE catalogxs.propertyvalue ADD CONSTRAINT UNQ_propertyvalue_0 UNIQUE (id)
+ALTER TABLE catalogxs.property ADD CONSTRAINT UNQ_property_0 UNIQUE (id)
+ALTER TABLE catalogxs.emailconfirmation ADD CONSTRAINT UNQ_emailconfirmation_0 UNIQUE (id)
+ALTER TABLE catalogxs.address ADD CONSTRAINT UNQ_address_0 UNIQUE (id)
+ALTER TABLE catalogxs.item ADD CONSTRAINT UNQ_item_0 UNIQUE (id)
+ALTER TABLE catalogxs.language ADD CONSTRAINT UNQ_language_0 UNIQUE (id)
+ALTER TABLE catalogxs.user ADD CONSTRAINT UNQ_user_0 UNIQUE (id)
+ALTER TABLE catalogxs.promotion_templates ADD CONSTRAINT FK_promotion_templates_promotion_id FOREIGN KEY (promotion_id) REFERENCES catalogxs.promotion (id)
+ALTER TABLE catalogxs.promotion_templates ADD CONSTRAINT FK_promotion_templates_templates_id FOREIGN KEY (templates_id) REFERENCES catalogxs.template (id)
+ALTER TABLE catalogxs.berth ADD CONSTRAINT FK_berth_description2_id FOREIGN KEY (description2_id) REFERENCES catalogxs.label2 (id)
+ALTER TABLE catalogxs.berth ADD CONSTRAINT FK_berth_profile_id FOREIGN KEY (profile_id) REFERENCES catalogxs.label2 (id)
+ALTER TABLE catalogxs.shop ADD CONSTRAINT FK_shop_catalog_id FOREIGN KEY (catalog_id) REFERENCES catalogxs.catalog (id)
+ALTER TABLE catalogxs.query ADD CONSTRAINT FK_query_productgroup_id FOREIGN KEY (productgroup_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.query ADD CONSTRAINT FK_query_shop_id FOREIGN KEY (shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.query ADD CONSTRAINT FK_query_shop_id2 FOREIGN KEY (shop_id2) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.promotion ADD CONSTRAINT FK_promotion_product_id FOREIGN KEY (product_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.promotion ADD CONSTRAINT FK_promotion_shop_id FOREIGN KEY (shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.party ADD CONSTRAINT FK_party_shippingaddress_id FOREIGN KEY (shippingaddress_id) REFERENCES catalogxs.address (id)
+ALTER TABLE catalogxs.party ADD CONSTRAINT FK_party_billingaddress_id FOREIGN KEY (billingaddress_id) REFERENCES catalogxs.address (id)
+ALTER TABLE catalogxs.party ADD CONSTRAINT FK_party_address_id FOREIGN KEY (address_id) REFERENCES catalogxs.address (id)
+ALTER TABLE catalogxs.party ADD CONSTRAINT FK_party_deliveryaddress_id FOREIGN KEY (deliveryaddress_id) REFERENCES catalogxs.address (id)
+ALTER TABLE catalogxs.shop_excludeditems ADD CONSTRAINT FK_shop_excludeditems_excludeditems_id FOREIGN KEY (excludeditems_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.shop_excludeditems ADD CONSTRAINT FK_shop_excludeditems_shop_id FOREIGN KEY (shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.item_parents ADD CONSTRAINT FK_item_parents_parents_id FOREIGN KEY (parents_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.item_parents ADD CONSTRAINT FK_item_parents_children_id FOREIGN KEY (children_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.propertygroup ADD CONSTRAINT FK_propertygroup_item_id FOREIGN KEY (item_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.order ADD CONSTRAINT FK_order_transport_id FOREIGN KEY (transport_id) REFERENCES catalogxs.transport (id)
+ALTER TABLE catalogxs.order ADD CONSTRAINT FK_order_user_id FOREIGN KEY (user_id) REFERENCES catalogxs.user (id)
+ALTER TABLE catalogxs.order ADD CONSTRAINT FK_order_deliveryaddress_id FOREIGN KEY (deliveryaddress_id) REFERENCES catalogxs.address (id)
+ALTER TABLE catalogxs.catalog_templates ADD CONSTRAINT FK_catalog_templates_templates_id FOREIGN KEY (templates_id) REFERENCES catalogxs.template (id)
+ALTER TABLE catalogxs.catalog_templates ADD CONSTRAINT FK_catalog_templates_catalog_id FOREIGN KEY (catalog_id) REFERENCES catalogxs.catalog (id)
+ALTER TABLE catalogxs.shop_toplevelproductgroups ADD CONSTRAINT FK_shop_toplevelproductgroups_shop_id FOREIGN KEY (shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.shop_toplevelproductgroups ADD CONSTRAINT FK_shop_toplevelproductgroups_toplevelproductgroups_id FOREIGN KEY (toplevelproductgroups_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.catalog_languages ADD CONSTRAINT FK_catalog_languages_catalog_id FOREIGN KEY (catalog_id) REFERENCES catalogxs.catalog (id)
+ALTER TABLE catalogxs.catalog_languages ADD CONSTRAINT FK_catalog_languages_languages_id FOREIGN KEY (languages_id) REFERENCES catalogxs.language (id)
+ALTER TABLE catalogxs.orderhistory ADD CONSTRAINT FK_orderhistory_user_id FOREIGN KEY (user_id) REFERENCES catalogxs.user (id)
+ALTER TABLE catalogxs.template ADD CONSTRAINT FK_template_item_id FOREIGN KEY (item_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.productorder ADD CONSTRAINT FK_productorder_product_id FOREIGN KEY (product_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.productorder ADD CONSTRAINT FK_productorder_order_id FOREIGN KEY (order_id) REFERENCES catalogxs.order (id)
+ALTER TABLE catalogxs.productorder ADD CONSTRAINT FK_productorder_promotion_id FOREIGN KEY (promotion_id) REFERENCES catalogxs.promotion (id)
+ALTER TABLE catalogxs.enumvalue ADD CONSTRAINT FK_enumvalue_property_id FOREIGN KEY (property_id) REFERENCES catalogxs.property (id)
+ALTER TABLE order_orderhistory ADD CONSTRAINT FK_order_orderhistory_Order_id FOREIGN KEY (Order_id) REFERENCES catalogxs.order (id)
+ALTER TABLE order_orderhistory ADD CONSTRAINT FK_order_orderhistory_history_id FOREIGN KEY (history_id) REFERENCES catalogxs.orderhistory (id)
+ALTER TABLE catalogxs.relation ADD CONSTRAINT FK_relation_relationtype_id FOREIGN KEY (relationtype_id) REFERENCES catalogxs.relationtype (id)
+ALTER TABLE catalogxs.relation ADD CONSTRAINT FK_relation_item_id FOREIGN KEY (item_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.relation ADD CONSTRAINT FK_relation_relatedto_id FOREIGN KEY (relatedto_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.label ADD CONSTRAINT FK_label_enumvalue_id FOREIGN KEY (enumvalue_id) REFERENCES catalogxs.enumvalue (id)
+ALTER TABLE catalogxs.label ADD CONSTRAINT FK_label_propertygroup_id FOREIGN KEY (propertygroup_id) REFERENCES catalogxs.propertygroup (id)
+ALTER TABLE catalogxs.label ADD CONSTRAINT FK_label_property_id FOREIGN KEY (property_id) REFERENCES catalogxs.property (id)
+ALTER TABLE catalogxs.propertyvalue ADD CONSTRAINT FK_propertyvalue_item_id FOREIGN KEY (item_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.propertyvalue ADD CONSTRAINT FK_propertyvalue_property_id FOREIGN KEY (property_id) REFERENCES catalogxs.property (id)
+ALTER TABLE catalogxs.property ADD CONSTRAINT FK_property_item_id FOREIGN KEY (item_id) REFERENCES catalogxs.item (id)
+ALTER TABLE catalogxs.property_propertygroups ADD CONSTRAINT FK_property_propertygroups_properties_id FOREIGN KEY (properties_id) REFERENCES catalogxs.property (id)
+ALTER TABLE catalogxs.property_propertygroups ADD CONSTRAINT FK_property_propertygroups_propertygroups_id FOREIGN KEY (propertygroups_id) REFERENCES catalogxs.propertygroup (id)
+ALTER TABLE shop_template ADD CONSTRAINT FK_shop_template_templates_id FOREIGN KEY (templates_id) REFERENCES catalogxs.template (id)
+ALTER TABLE shop_template ADD CONSTRAINT FK_shop_template_Shop_id FOREIGN KEY (Shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.shop_excludedproperties ADD CONSTRAINT FK_shop_excludedproperties_shop_id FOREIGN KEY (shop_id) REFERENCES catalogxs.shop (id)
+ALTER TABLE catalogxs.shop_excludedproperties ADD CONSTRAINT FK_shop_excludedproperties_excludedproperties_id FOREIGN KEY (excludedproperties_id) REFERENCES catalogxs.property (id)
+ALTER TABLE catalogxs.item ADD CONSTRAINT FK_item_catalog_id FOREIGN KEY (catalog_id) REFERENCES catalogxs.catalog (id)
+ALTER TABLE catalogxs.user ADD CONSTRAINT FK_user_party_id FOREIGN KEY (party_id) REFERENCES catalogxs.party (id)
+CREATE SEQUENCE catalogxs.promotion_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.order_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.property_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.orderhistory_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.emailconfirmation_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.relationtype_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.template_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.propertygroup_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.productorder_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.user_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.label2_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.language_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.label_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.transport_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.query_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.berth_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.shop_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.address_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.enumvalue_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.party_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.item_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.relation_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.propertyvalue_id_seq START WITH 1
+CREATE SEQUENCE catalogxs.catalog_id_seq START WITH 1
