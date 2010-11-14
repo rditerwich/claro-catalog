@@ -6,11 +6,15 @@
   <version>1.0-SNAPSHOT</version>
   <name>ClaroCMS</name>
   <inceptionYear>2010</inceptionYear>
+  
   <properties>
-  	<scala.version>2.8.1.RC1</scala.version>
+  	<scala.version>2.8.1</scala.version>
   	<lift.version>2.1</lift.version>
+    <maven.compiler.source>1.5</maven.compiler.source>
+    <maven.compiler.target>1.5</maven.compiler.target>
+    <encoding>UTF-8</encoding>
   </properties>
-
+  
   <repositories>
     <repository>
       <id>scala-tools.org</id>
@@ -63,7 +67,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.5</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

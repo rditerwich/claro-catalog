@@ -18,41 +18,6 @@ path output = /packages:AgileXS/packages:Domain/packages:Output/types
 Package {
     name = Output
     types = {
-        Class {
-            name = OutputChannel
-            attributes = {
-                Attribute {
-                    name = name
-                    type = primitive:String
-                }
-                Attribute {
-                    name = catalog
-                    type = catalog:Catalog
-                    opposite = catalog:Catalog/attributes:outputChannels
-                }
-                /**
-                 * IETF language tag. See http://en.wikipedia.org/wiki/IETF_language_tag.
-                 * When not specified (null), denotes a default value applicable for all languages.
-                 */
-                Attribute {
-                    name = defaultLanguage
-                    type = primitive:String
-                    lower = 0
-                } 
-                Attribute {
-                    name = excludedProperties
-                    type = catalog:Property
-                    lower = 0
-                    upper = {}
-                }
-                Attribute {
-                    name = excludedItems
-                    type = catalog:Item
-                    lower = 0
-                    upper = {}
-                }
-            }
-        }
     }
 }
  

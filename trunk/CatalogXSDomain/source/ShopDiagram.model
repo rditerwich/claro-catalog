@@ -14,19 +14,19 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 131
-                    y = 74
+                    x = 50
+                    y = 10
                     width = -1
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Property
+            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel
         }
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 187
-                    y = 168
+                    x = 29
+                    y = 96
                     width = -1
                     height = -1
                 }
@@ -36,32 +36,21 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 385
-                    y = 72
-                    width = -1
-                    height = -1
+                    x = 20
+                    y = 273
+                    width = 152
+                    height = 57
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog
+            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation
         }
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 604
-                    y = 68
+                    x = 352
+                    y = 138
                     width = -1
                     height = -1
-                }
-            }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Category
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
-                    x = 345
-                    y = 329
-                    width = 116
-                    height = 89
                 }
             }
             domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Promotion
@@ -69,60 +58,52 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 377
-                    y = 485
+                    x = 421
+                    y = 374
                     width = -1
                     height = -1
                 }
             }
             domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:VolumeDiscountPromotion
         }
-        DiagramClass {
-            bounds = {
-                Rectangle {
-                    x = 592
-                    y = 193
-                    width = -1
-                    height = -1
-                }
-            }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation
-        }
     }
     references = {
-        Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:promotions
-        }
-        Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:root
-        }
         Reference {
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:navigation
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation/attributes:category
+            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:promotions
         }
         Reference {
             bendPoints = {
                 Point {
-                    x = 614
-                    y = 303
+                    x = 186
+                    y = 319
                 }
                 Point {
-                    x = 649
-                    y = 303
+                    x = 271
+                    y = 324
+                }
+                Point {
+                    x = 272
+                    y = 399
+                }
+                Point {
+                    x = 151
+                    y = 398
                 }
             }
             sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation/attributes:subNavigation
-        }
-        Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:excludedProperties
         }
     }
     superClassReferences = {
         SuperClassReference {
             source = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:VolumeDiscountPromotion
             target = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:Promotion
+        }
+        SuperClassReference {
+            source = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:Shop
+            target = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:OutputChannel
         }
     }
 }

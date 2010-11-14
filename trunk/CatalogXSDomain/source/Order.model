@@ -23,6 +23,10 @@ Package {
             name = Order
             attributes = {
                 Attribute {
+                    name = shop
+                    type = shop:Shop
+                }
+                Attribute {
                     name = orderDate
                     type = primitive:Date
                 }

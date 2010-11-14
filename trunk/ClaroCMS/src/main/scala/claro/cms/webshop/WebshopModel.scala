@@ -23,7 +23,7 @@ object WebshopModel {
   object currentCategoryVar extends RequestVar[Option[String]](None)
   object currentSearchStringVar extends RequestVar[Option[String]](None)
   object currentUserVar extends SessionVar[Option[jpa.party.User]](None)
-  object currentOrder extends SessionVar[Order](new Order(new jpa.shop.Order, shop.mapping))
+  object currentOrder extends SessionVar[Order](new Order(new jpa.order.Order, shop.mapping))
 
   def currentProduct: Option[Product] = currentProductVar.is match {
     case Some(id) => Some(shop.productsById(id.toLong))
@@ -76,7 +76,7 @@ object WebshopModel {
   }
 }
 
-class Mapping(product: Option[Product], cacheData: WebshopCacheData) {
+class Mapping(product: Option[Product], cacheData: WebshopData) {
   lazy val categories = ProjectionMap((c: jpa.catalog.Category) => new Category(c, c, product, cacheData, this))
   lazy val products = ProjectionMap((p: jpa.catalog.Product) => new Product(p, p, cacheData, this))
   lazy val properties = ProjectionMap((p: jpa.catalog.Property) => new Property(p, noPropertyValue, product, cacheData, this))
@@ -86,7 +86,7 @@ class Mapping(product: Option[Product], cacheData: WebshopCacheData) {
   })
 }
 
-class Shop(val cacheData: WebshopCacheData) extends Delegate(cacheData.catalog) {
+class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
 
   val mapping = new Mapping(None, cacheData)
 
@@ -133,7 +133,7 @@ class Shop(val cacheData: WebshopCacheData) extends Delegate(cacheData.catalog) 
 
 trait Item {
 	val item : jpa.catalog.Item
-	val cacheData: WebshopCacheData
+	val cacheData: WebshopData
 	val mapping: Mapping
   
 	// terminate recursion
@@ -207,7 +207,7 @@ trait Item {
   override def toString = name
 }
 
-class Category(category: jpa.catalog.Category, val item : jpa.catalog.Item, val productqwer: Option[Product], val cacheData: WebshopCacheData, val mapping: Mapping) extends Delegate(category) with Item {
+class Category(category: jpa.catalog.Category, val item : jpa.catalog.Item, val productqwer: Option[Product], val cacheData: WebshopData, val mapping: Mapping) extends Delegate(category) with Item {
 	
   val products = childProducts.toSet
   val productExtent = childProductExtent.toSet
@@ -241,7 +241,7 @@ class Category(category: jpa.catalog.Category, val item : jpa.catalog.Item, val 
   }
 }
 
-class Product(product: jpa.catalog.Product, val item : jpa.catalog.Item, val cacheData: WebshopCacheData, val mapping: Mapping) extends Delegate(product) with Item {
+class Product(product: jpa.catalog.Product, val item : jpa.catalog.Item, val cacheData: WebshopData, val mapping: Mapping) extends Delegate(product) with Item {
 
   val categories = parentCategories.toSet
   val categoryExtent = parentCategoryExtent.toSet
@@ -249,7 +249,7 @@ class Product(product: jpa.catalog.Product, val item : jpa.catalog.Item, val cac
   val priceProperty: Option[Property] = property(Locales.empty, "Price")
 }
 
-class Property(property: jpa.catalog.Property, val value: jpa.catalog.PropertyValue, val item: Option[Item], cacheData: WebshopCacheData, mapping: Mapping) extends Delegate(property) {
+class Property(property: jpa.catalog.Property, val value: jpa.catalog.PropertyValue, val item: Option[Item], cacheData: WebshopData, mapping: Mapping) extends Delegate(property) {
   // terminate recursion
   mapping.properties(property) = this
 
@@ -307,14 +307,14 @@ object noPropertyValue extends jpa.catalog.PropertyValue {
 
 case class Money(amount: Double, currency: String) {}
 
-class Promotion(promotion: jpa.shop.Promotion, cacheData: WebshopCacheData, mapping: Mapping) extends Delegate(promotion) {
+class Promotion(promotion: jpa.shop.Promotion, cacheData: WebshopData, mapping: Mapping) extends Delegate(promotion) {
   // terminate recursion
   mapping.promotions(promotion) = this
   val id = promotion.getId.longValue
   def products: Set[Product] = Set.empty
 }
 
-class VolumeDiscountPromotion(promotion: jpa.shop.VolumeDiscountPromotion, cacheData: WebshopCacheData, mapping: Mapping) extends Promotion(promotion, cacheData, mapping) {
+class VolumeDiscountPromotion(promotion: jpa.shop.VolumeDiscountPromotion, cacheData: WebshopData, mapping: Mapping) extends Promotion(promotion, cacheData, mapping) {
   val startDate = promotion.getStartDate
   val endDate = promotion.getEndDate
   val price = promotion.getPrice.getOrElse(0)

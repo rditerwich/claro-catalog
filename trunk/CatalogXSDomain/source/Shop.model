@@ -20,7 +20,7 @@ Package {
     types = {
         Class {
             name = Shop    
-            superClass = output:OutputChannel        
+            superClass = catalog:OutputChannel        
             attributes = {
                 Attribute {
                     name = name

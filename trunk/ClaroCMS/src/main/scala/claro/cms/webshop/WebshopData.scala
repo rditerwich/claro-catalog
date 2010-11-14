@@ -6,12 +6,13 @@ import scala.xml.NodeSeq
 import java.util.Locale
 
 import claro.jpa
+import claro.catalog.CatalogUtil._
 import claro.cms.Cms
 import claro.common.util.Conversions._
 
 class WebshopCache {
 
-  val shops = findAllShops map (shop => new Shop(new WebshopCacheData(shop.getCatalog, shop)))
+  val shops = findAllShops map (shop => new Shop(new WebshopData(shop.getCatalog, shop)))
   val shopsById = shops mapBy (_.id.toString)
   val shopsByName = shops mapBy (_.shop.getName)
   val shopsByServerName : collection.Map[String, Seq[Shop]] = shops groupBy (_.serverName)
@@ -20,16 +21,45 @@ class WebshopCache {
     Cms.entityManager.createQuery("select shop from Shop shop").getResultList.asInstanceOf[java.util.List[jpa.shop.Shop]]
 }
 
-class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.Shop) {
+class WebshopData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.Shop) {
 
   val templateObjectCache = new mutable.HashMap[Tuple2[Object, String], NodeSeq]
   val templateClassCache = new mutable.HashMap[Tuple2[Class[_], String], NodeSeq]
 
   val excludedItems : Set[jpa.catalog.Item] = 
-    shop.getExcludedItems toSet
+    shop.getExcludedItems.toSet
                                             	   
   val excludedProperties : Set[jpa.catalog.Property] = 
-    shop.getExcludedProperties toSet
+    shop.getExcludedProperties.toSet
+
+  val items : Set[jpa.catalog.Item] = 
+  	catalog.getItems.filterNot(excludedItems).toSet
+
+  val itemChildren : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
+  	Map(items.toSeq.map(item => (item, getChildren(item).filterNot(excludedItems))):_*).
+  		withDefault(_ => Seq.empty)
+      	
+	val itemParents : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
+		Map(items.toSeq.map(item => (item, getParents(item).filterNot(excludedItems))):_*).
+			withDefault(_ => Seq.empty)
+  			
+	val itemChildExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
+		Map(items.toSeq.map(item => (item, getChildExtent(item, false).filterNot(excludedItems))):_*).
+			withDefault(_ => Seq.empty)
+		
+	val itemParentExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
+		Map(items.toSeq.map(item => (item, getParentExtent(item, false).filterNot(excludedItems))):_*).
+			withDefault(_ => Seq.empty)
+
+  val itemProperties : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] =
+    Map(items.toSeq.map(item => (item, item.getProperties.toSeq)):_*).
+      withDefault(_ => Seq.empty)
+
+  val itemPropertyExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] = 
+  	Map(items.toSeq.map(item =>
+      (item, (itemParentExtent(item) ++ Seq(item)).
+          flatMap(itemProperties(_)))):_*).
+          	withDefault(_ => Seq.empty)
 
   val promotions : Set[jpa.shop.Promotion] = 
     shop.getPromotions toSet
@@ -72,11 +102,11 @@ class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.S
       withDefault(_ => Seq.empty)
     
   val itemChildren : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-  	Map(items.toSeq.map(item => (item, item.getChildren.toSeq.filterNot(excludedItems))):_*).
+  	Map(items.toSeq.map(item => (item, item.getChildren.map(_.getChild).toSeq.filterNot(excludedItems))):_*).
   		withDefault(_ => Seq.empty)
       	
 	val itemParents : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-		Map(items.toSeq.map(item => (item, item.getParents.toSeq.filterNot(excludedItems))):_*).
+		Map(items.toSeq.map(item => (item, item.getParents.map(_.getParent).toSeq.filterNot(excludedItems))):_*).
 			withDefault(_ => Seq.empty)
   			
   val itemPropertyExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] = Map(
@@ -112,14 +142,14 @@ class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.S
     Map(mediaPropertyValues map (v => (v.getId.longValue, (v.getMimeType, v.getMediaValue))):_*)
     	
   val categoryProducts : Map[jpa.catalog.Category, Set[jpa.catalog.Product]] =
-    categories makeMapWithValues (_.getChildren.toSet classFilter(classOf[jpa.catalog.Product]) toSet)   
+    categories makeMapWithValues (_.getChildren.map(_.getChild).toSet classFilter(classOf[jpa.catalog.Product]) toSet)   
 	  
   private def itemChildExtent(items : Iterable[jpa.catalog.Item], visited : mutable.Set[jpa.catalog.Item], result : mutable.HashMap[jpa.catalog.Item, Set[jpa.catalog.Item]]) : Unit = {
     for (item <- items) if (!visited.contains(item)) {
       visited += item
-      itemChildExtent(item.getChildren, visited, result)
-      val direct = item.getChildren filterNot (excludedItems)
-      val indirect = item.getChildren filterNot (excludedItems) flatMap (result.getOrElse(_, Set.empty))
+      itemChildExtent(item.getChildren.map(_.getChild), visited, result)
+      val direct = item.getChildren.map(_.getChild) filterNot (excludedItems)
+      val indirect = item.getChildren.map(_.getChild) filterNot (excludedItems) flatMap (result.getOrElse(_, Set.empty))
       result(item) = direct ++ indirect toSet
     }
   }
@@ -127,9 +157,9 @@ class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.S
   private def itemParentExtent(items : Iterable[jpa.catalog.Item], visited : mutable.Set[jpa.catalog.Item], result : mutable.HashMap[jpa.catalog.Item, Set[jpa.catalog.Item]]) : Unit = {
     for (item <- items) if (!visited.contains(item)) {
       visited += item
-      itemParentExtent(item.getParents, visited, result)
-      val direct = item.getParents filterNot (excludedItems)
-      val indirect = item.getParents filterNot (excludedItems) flatMap (result.getOrElse(_, Set.empty))
+      itemParentExtent(item.getParents.map(_.getParent), visited, result)
+      val direct = item.getParents.map(_.getParent) filterNot (excludedItems)
+      val indirect = item.getParents.map(_.getParent) filterNot (excludedItems) flatMap (result.getOrElse(_, Set.empty))
       result(item) = direct ++ indirect toSet
     }
   }
@@ -137,10 +167,10 @@ class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.S
   private def itemPropertyValueExtent(items : Iterable[jpa.catalog.Item], visited : mutable.Set[jpa.catalog.Item], result : mutable.HashMap[jpa.catalog.Item, Seq[jpa.catalog.PropertyValue]]) : Unit = {
     for (item <- items) if (!visited.contains(item)) {
       visited += item
-      itemPropertyValueExtent(item.getParents, visited, result)
+      itemPropertyValueExtent(item.getParents.map(_.getParent), visited, result)
       val itemValues = itemPropertyValues(item)
       val itemProperties = itemValues.map(_.getProperty).toSet
-      val parentValues = item.getParents.flatMap(result(_)).filter(v => !itemProperties.contains(v.getProperty)) 
+      val parentValues = item.getParents.map(_.getParent).flatMap(result(_)).filter(v => !itemProperties.contains(v.getProperty)) 
       result(item) = itemValues ++ parentValues
     }
   }
@@ -148,8 +178,8 @@ class WebshopCacheData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.S
   private def products(groups : Iterable[jpa.catalog.Category], visited : mutable.Set[jpa.catalog.Category], result : mutable.HashSet[jpa.catalog.Product]) : Unit = {
     for (group <- groups) if (!visited.contains(group)) {
       visited += group
-      products(group.getChildren.toSet classFilter(classOf[jpa.catalog.Category]), visited, result)
-      result ++= group.getChildren.toSet classFilter(classOf[jpa.catalog.Product]) 
+      products(group.getChildren.map(_.getChild).toSet classFilter(classOf[jpa.catalog.Category]), visited, result)
+      result ++= group.getChildren.map(_.getChild).toSet classFilter(classOf[jpa.catalog.Product]) 
     }
   }
 
