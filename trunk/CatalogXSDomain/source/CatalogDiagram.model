@@ -191,17 +191,6 @@ DomainDiagram {
             }
             domainEnum = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyType
         }
-        DiagramEnum {
-            bounds = {
-                Rectangle {
-                    x = 969
-                    y = 440
-                    width = -1
-                    height = -1
-                }
-            }
-            domainEnum = /packages:AgileXS/packages:Domain/packages:Catalog/types:Status
-        }
     }
     references = {
         Reference {

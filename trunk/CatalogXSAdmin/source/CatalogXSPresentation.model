@@ -89,6 +89,12 @@ GwtPackage {
                                     referringProperties = catalog:Item/properties:parents
                                 }
                                 JavaBeanPropertyView {
+                                    name = ParentChildView
+                                    kind = none
+                                    included = catalog:Item/properties:children
+                                    referringProperties = catalog:ParentChild/properties:parent
+                                }
+                                JavaBeanPropertyView {
                                     name = PropertyValuesView
                                     kind = all
                                     excluded = catalog:PropertyValue/properties:mediaValue
@@ -156,6 +162,12 @@ GwtPackage {
                                     name = ParentsView
                                     kind = all
                                     referringProperties = catalog:Item/properties:parents
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentChildView
+                                    kind = none
+                                    included = catalog:Item/properties:children
+                                    referringProperties = catalog:ParentChild/properties:parent
                                 }
                                 JavaBeanPropertyView {
                                     name = PropertyValuesView

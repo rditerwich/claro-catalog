@@ -241,7 +241,6 @@ public class DefaultContent {
 			propertyValue.setItem(item);
 			propertyValue.setProperty(property);
 			propertyValue.setLanguage(language);
-			propertyValue.setStatus(Status.new_);
 			entityManager.persist(propertyValue);
 		}
 

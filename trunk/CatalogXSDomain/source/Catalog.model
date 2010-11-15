@@ -353,10 +353,6 @@ Package {
                     type = catalog:ImportSource
                     lower = 0
                 }
-                Attribute {
-                    name = status
-                    type = catalog:Status
-                }
                 /**
                  * Used when property.type == String or property.type == FormattedText  
                  */
@@ -714,21 +710,6 @@ Package {
                  */
                 Literal {
                     name = Item
-                }
-            }
-        }
-        Enumeration {
-            name = Status
-            literals = {
-                @comment "_ as a workaround for java identifier restrictions"
-                Literal {
-                    name = new_
-                }
-                Literal {
-                    name = approved
-                }
-                Literal {
-                    name = published
                 }
             }
         }

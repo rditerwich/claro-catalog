@@ -72,8 +72,6 @@ public class ItemPropertiesPresenter implements Presenter<ItemPropertiesView> {
 				final PGPRowView rowView = view.addRow();
 				final PropertyValue dpv = new PropertyValue();
 				final PropertyValue pv = new PropertyValue();
-				dpv.setStatus(Status.new_);
-				pv.setStatus(Status.new_);
 
 				currentItem.getPropertyValues().add(dpv);
 				currentItem.getPropertyValues().add(pv);
