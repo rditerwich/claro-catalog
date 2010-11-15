@@ -66,7 +66,7 @@ import mof.ISequence
 import package metaphor.psm.domaintordbms as d2r
 import package metaphor.psm.rdbms as rdbms
 
-method void PatchAttributeToProperty(IAttributeToProperty attrToColToProp, IAbstractClass jpaClass) extends AttributeToProperty
+method void PatchAttributeToProperty(IAttributeToProperty attrToColToProp, IAbstractClass jpaClass)// DISABLED extends AttributeToProperty
     attrToColToProp.name = attrToColToProp.source.name + "ToProperty"
     var IAttributeToColumns attrToCols is attrToColToProp.source
     var IAttribute attr is attrToCols.source

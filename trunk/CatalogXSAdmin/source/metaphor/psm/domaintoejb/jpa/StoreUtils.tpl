@@ -18,7 +18,7 @@ import metaphor.tpl.lib.Ucf
 import metaphor.transformation.ModelError
 import metaphor.util.ArrayUtil
 
-[template PatchRemoveValue(IJpaProperty property, String objectExpression, String existingValueExpression) extends RemoveValue]
+[template PatchRemoveValue(IJpaProperty property, String objectExpression, String existingValueExpression)/* DISABLED: extends RemoveValue */]
     [let IJavaWrapperType wrapper is property.wrapperType]
         if ([objectExpression] != null && [objectExpression].[Get(property)]() != null) {
             [let IJavaMap map is wrapper]

@@ -43,242 +43,267 @@ import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
 public class PromotionView extends Composite implements View {
 
-  @UiTemplate("PromoView.ui.xml")
-  interface PromoViewUiBinder extends UiBinder<Widget, PromoView> {}
-  private static PromoViewUiBinder uiBinder = GWT.create(PromoViewUiBinder.class);
+	@UiTemplate("PromoView.ui.xml")
+	interface PromoViewUiBinder extends UiBinder<Widget, PromoView> {
+	}
 
-  @UiTemplate("PromoEditView.ui.xml")
-  interface PromoEditViewUiBinder extends UiBinder<Widget, PromoEditView> {}
-  private static PromoEditViewUiBinder uiEditBinder = GWT.create(PromoEditViewUiBinder.class);
+	private static PromoViewUiBinder uiBinder = GWT
+			.create(PromoViewUiBinder.class);
 
-  public static class PromoView extends Composite {
+	@UiTemplate("PromoEditView.ui.xml")
+	interface PromoEditViewUiBinder extends UiBinder<Widget, PromoEditView> {
+	}
 
-    @UiField Image deleteButton;
-    @UiField Image editButton;
-    @UiField InlineHTML name;
-    @UiField InlineHTML startDate;
-    @UiField InlineHTML endDate;
-    @UiField InlineHTML price;
-    //@UiField InlineHTML productPrice;
-    @UiField InlineHTML volume;
-    @UiField SimplePanel editPanel;
+	private static PromoEditViewUiBinder uiEditBinder = GWT
+			.create(PromoEditViewUiBinder.class);
 
-    private final PromotionView parent;
-    private Long id;
+	public static class PromoView extends Composite {
 
-    public PromoView(PromotionView parent) {
-      this.parent = parent;
-      initWidget(uiBinder.createAndBindUi(this));
-    }
+		@UiField
+		Image deleteButton;
+		@UiField
+		Image editButton;
+		@UiField
+		InlineHTML name;
+		@UiField
+		InlineHTML startDate;
+		@UiField
+		InlineHTML endDate;
+		@UiField
+		InlineHTML price;
+		// @UiField InlineHTML productPrice;
+		@UiField
+		InlineHTML volume;
+		@UiField
+		SimplePanel editPanel;
 
-    @UiHandler("editButton")
-    void editClickHandler(ClickEvent event) {
-      editPanel.setWidget(parent.editView);
-      parent.editView.setVisible(true);
-      parent.editView.setPromoView(this);
-    }
+		private final PromotionView parent;
+		private Long id;
 
-    @UiHandler("deleteButton")
-    void deleteClickHandler(ClickEvent event) {
-      if (Window.confirm(i18n.deletePromotionQuestion())) {
-        parent.deleteHandler.onDelete(this);
-      }
-    }
-    
-    public HasClickHandlers deleteClickHandlers() {
-      return deleteButton;
-    }
+		public PromoView(PromotionView parent) {
+			this.parent = parent;
+			initWidget(uiBinder.createAndBindUi(this));
+		}
 
-    public HasClickHandlers editClickHandlers() {
-      return editButton;
-    }
+		@UiHandler("editButton")
+		void editClickHandler(ClickEvent event) {
+			editPanel.setWidget(parent.editView);
+			parent.editView.setVisible(true);
+			parent.editView.setPromoView(this);
+		}
 
-    public Long getId() {
-      return id;
-    }
+		@UiHandler("deleteButton")
+		void deleteClickHandler(ClickEvent event) {
+			if (Window.confirm(i18n.deletePromotionQuestion())) {
+				parent.deleteHandler.onDelete(this);
+			}
+		}
 
-    public void setId(Long id) {
-      this.id = id;
-    }
+		public HasClickHandlers deleteClickHandlers() {
+			return deleteButton;
+		}
 
-    public void setName(String name) {
-      this.name.setHTML(name);
-    }
+		public HasClickHandlers editClickHandlers() {
+			return editButton;
+		}
 
-    public void setStartDate(String startDate) {
-      this.startDate.setText(startDate);
-    }
+		public Long getId() {
+			return id;
+		}
 
-    public void setEndDate(String endDate) {
-      this.endDate.setText(endDate);
-    }
+		public void setId(Long id) {
+			this.id = id;
+		}
 
-    public void setPrice(String price) {
-      this.price.setText(price);
-    }
+		public void setName(String name) {
+			this.name.setHTML(name);
+		}
 
-//    public void setProductPrice(String productPrice) {
-//      this.productPrice.setText(productPrice);
-//    }
+		public void setStartDate(String startDate) {
+			this.startDate.setText(startDate);
+		}
 
-    public void setVolume(String volume) {
-      this.volume.setText(volume);
-    }
-  }
+		public void setEndDate(String endDate) {
+			this.endDate.setText(endDate);
+		}
 
-  /**
-   * Class to display the edit box
-   */
-  public static class PromoEditView extends Composite {
+		public void setPrice(String price) {
+			this.price.setText(price);
+		}
 
-    @UiField Button saveButton;
-    @UiField Anchor cancelButton;
-    @UiField SimplePanel productFilterWrapper;
-    @UiField DateBox startDate;
-    @UiField InlineHTML endDate;
-    @UiField TextBox price;
-    @UiField TextBox volume;
+		// public void setProductPrice(String productPrice) {
+		// this.productPrice.setText(productPrice);
+		// }
 
-    private final SuggestBox productFilter;
+		public void setVolume(String volume) {
+			this.volume.setText(volume);
+		}
+	}
 
-    private PromoView promoView;  
+	/**
+	 * Class to display the edit box
+	 */
+	public static class PromoEditView extends Composite {
 
-    public PromoEditView(SuggestOracle oracle) {
-      initWidget(uiEditBinder.createAndBindUi(this));
-      startDate.setFormat(new DefaultFormat(DateTimeFormat.getMediumDateFormat()));
-      productFilter = new SuggestBox(oracle);
-      productFilterWrapper.setWidget(productFilter);
-    }
+		@UiField
+		Button saveButton;
+		@UiField
+		Anchor cancelButton;
+		@UiField
+		SimplePanel productFilterWrapper;
+		@UiField
+		DateBox startDate;
+		@UiField
+		InlineHTML endDate;
+		@UiField
+		TextBox price;
+		@UiField
+		TextBox volume;
 
-    @UiHandler("cancelButton")
-    void cancelButtonClick(ClickEvent e) {
-      setVisible(false);
-    }
+		private final SuggestBox productFilter;
 
-    public HasClickHandlers saveClickHandlers() {
-      return saveButton;
-    }
+		private PromoView promoView;
 
-    public HasClickHandlers cancelClickHandlers() {
-      return cancelButton;
-    }
+		public PromoEditView(SuggestOracle oracle) {
+			initWidget(uiEditBinder.createAndBindUi(this));
+			Util.add(saveButton, Styles.button3);
+			startDate.setFormat(new DefaultFormat(DateTimeFormat
+					.getMediumDateFormat()));
+			productFilter = new SuggestBox(oracle);
+			productFilterWrapper.setWidget(productFilter);
+		}
 
-    public HasSelectionHandlers<Suggestion> productFilterSelectionHandlers() {
-      return productFilter;
-    }
+		@UiHandler("cancelButton")
+		void cancelButtonClick(ClickEvent e) {
+			setVisible(false);
+		}
 
-//    public void setSuggestions(List<String> suggestions) {
-//      oracle.clear();
-//      oracle.addAll(suggestions);
-////      this.name.setText(name);
-//    }
+		public HasClickHandlers saveClickHandlers() {
+			return saveButton;
+		}
 
-    public HasValue<Date> getStartDate() {
-      return startDate;
-    }
+		public HasClickHandlers cancelClickHandlers() {
+			return cancelButton;
+		}
 
-    public HasText getEndDate() {
-      return endDate;
-    }
+		public HasSelectionHandlers<Suggestion> productFilterSelectionHandlers() {
+			return productFilter;
+		}
 
-    public TextBoxBase getPrice() {
-      return price;
-    }
+		// public void setSuggestions(List<String> suggestions) {
+		// oracle.clear();
+		// oracle.addAll(suggestions);
+		// // this.name.setText(name);
+		// }
 
-    public TextBoxBase getVolumeDiscount() {
-      return volume;
-    }
+		public HasValue<Date> getStartDate() {
+			return startDate;
+		}
 
-    public PromoView getPromoView() {
-      return promoView;
-    }
+		public HasText getEndDate() {
+			return endDate;
+		}
 
-    public void setPromoView(PromoView promoView) {
-      this.promoView = promoView;
-    }
-    
-    public void setName(String name) {
-      productFilter.setValue(name);
-    }
-  }
+		public TextBoxBase getPrice() {
+			return price;
+		}
 
-  private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
+		public TextBoxBase getVolumeDiscount() {
+			return volume;
+		}
 
-  private final DeckPanel mainPanel = new DeckPanel();
-  private final DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
-  private final FlowPanel top = new FlowPanel();
-  private final FlowPanel promotions = new FlowPanel();
-  private final Button addButton = new Button(i18n.add());
-  private final Label nrOfActivePromotions = new Label();
-  private final SimplePanel newPromotion = new SimplePanel();
-  private final PromoEditView editView;
+		public PromoView getPromoView() {
+			return promoView;
+		}
 
-  private DeleteHandler<PromoView> deleteHandler;
+		public void setPromoView(PromoView promoView) {
+			this.promoView = promoView;
+		}
 
-  public PromotionView(SuggestOracle oracle) {
-    editView = new PromoEditView(oracle);
-    initWidget(mainPanel);
-    mainPanel.add(new Label(i18n.loading()));
-    mainPanel.add(panel);
-    mainPanel.getElement().getStyle().setPaddingLeft(20, Unit.PX);
-    mainPanel.getElement().getStyle().setPaddingRight(20, Unit.PX);
-    top.add(nrOfActivePromotions);
-    top.add(addButton);
-    panel.addNorth(top, 40);
-    final ScrollPanel slp = new ScrollPanel();
+		public void setName(String name) {
+			productFilter.setValue(name);
+		}
+	}
 
-    panel.add(slp);
-    final VerticalPanel fp = new VerticalPanel();
+	private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
 
-    slp.add(fp);
-    fp.add(newPromotion);
-    fp.add(promotions);
-  }
+	private final DeckPanel mainPanel = new DeckPanel();
+	private final DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
+	private final FlowPanel top = new FlowPanel();
+	private final FlowPanel promotions = new FlowPanel();
+	private final Button addButton = new Button(i18n.add());
+	private final Label nrOfActivePromotions = new Label();
+	private final SimplePanel newPromotion = new SimplePanel();
+	private final PromoEditView editView;
 
-  @Override
-  public Widget asWidget() {
-//  return this;
-    return new HTML(i18n.todo());
-  }
+	private DeleteHandler<PromoView> deleteHandler;
 
-  public HasClickHandlers addClickHandlers() {
-    return addButton;
-  }
+	public PromotionView(SuggestOracle oracle) {
+		editView = new PromoEditView(oracle);
+		initWidget(mainPanel);
+		mainPanel.add(new Label(i18n.loading()));
+		mainPanel.add(panel);
+		mainPanel.getElement().getStyle().setPaddingLeft(20, Unit.PX);
+		mainPanel.getElement().getStyle().setPaddingRight(20, Unit.PX);
 
-  public void add(PromoView promoView) {
-    promotions.add(promoView);
-  }
+			Util.add(addButton, Styles.button1);
+		top.add(nrOfActivePromotions);
+		top.add(addButton);
+		panel.addNorth(top, 40);
+		final ScrollPanel slp = new ScrollPanel();
 
-  public void clear() {
-    promotions.clear();
-  }
+		panel.add(slp);
+		final VerticalPanel fp = new VerticalPanel();
 
-  public PromoEditView getEditView() {
-    return editView;
-  }
+		slp.add(fp);
+		fp.add(newPromotion);
+		fp.add(promotions);
+	}
 
-  public PromoView createPromoView() {
-    return new PromoView(this);
-  }
+	@Override
+	public Widget asWidget() {
+		// return this;
+		return new HTML(i18n.todo());
+	}
 
-  public void remove(PromoView promoView) {
-    promotions.remove(promoView);
-  }
+	public HasClickHandlers addClickHandlers() {
+		return addButton;
+	}
 
-  public void setEditNewPromo() {
-    newPromotion.setWidget(editView);
-    editView.setVisible(true);
-  }
+	public void add(PromoView promoView) {
+		promotions.add(promoView);
+	}
 
-  public void setActivePromotions(int number) {
-    nrOfActivePromotions.setText(i18n.h3(i18n.nrOfPromotions(number)));
-  }
-  
-  public void setDeleteHandler(DeleteHandler<PromoView> deleteHandler) {
-    this.deleteHandler = deleteHandler;
-  }
+	public void clear() {
+		promotions.clear();
+	}
 
-  public void showLoading(boolean showLoading) {
-    mainPanel.showWidget(showLoading ? 0 : 1);
-  }
+	public PromoEditView getEditView() {
+		return editView;
+	}
+
+	public PromoView createPromoView() {
+		return new PromoView(this);
+	}
+
+	public void remove(PromoView promoView) {
+		promotions.remove(promoView);
+	}
+
+	public void setEditNewPromo() {
+		newPromotion.setWidget(editView);
+		editView.setVisible(true);
+	}
+
+	public void setActivePromotions(int number) {
+		nrOfActivePromotions.setText(i18n.h3(i18n.nrOfPromotions(number)));
+	}
+
+	public void setDeleteHandler(DeleteHandler<PromoView> deleteHandler) {
+		this.deleteHandler = deleteHandler;
+	}
+
+	public void showLoading(boolean showLoading) {
+		mainPanel.showWidget(showLoading ? 0 : 1);
+	}
 }

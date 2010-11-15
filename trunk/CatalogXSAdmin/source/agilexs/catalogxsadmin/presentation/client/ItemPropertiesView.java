@@ -108,7 +108,7 @@ class ItemPropertiesView extends Composite implements View {
       }
     });
     resetTable();
-    addNew.setText("Add new property");
+    addNew.setText(i18n.add());
     addHeader();
   }
 
@@ -121,7 +121,7 @@ class ItemPropertiesView extends Composite implements View {
     grid.setWidget(0, 0, new InlineLabel(i18n.name()));
     grid.setWidget(0, 1, new InlineLabel(i18n.type()));
     grid.setWidget(0, 2, new InlineLabel(i18n.value()));
-    grid.setWidget(0, 3, new InlineLabel(i18n.groupOnly()));
+    grid.setWidget(0, 3, new InlineLabel(i18n.categoryOnly()));
     grid.setWidget(0, 4, new InlineLabel(i18n.languageSpecificName()));
     grid.getCellFormatter().addStyleName(0, 4, "languageField");
     grid.setWidget(0, 5, new InlineLabel(i18n.languageSpecificValue()));

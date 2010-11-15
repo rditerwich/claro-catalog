@@ -19,7 +19,7 @@ import metaphor.tpl.lib.Lcf
 import metaphor.tpl.lib.Type
 import metaphor.tpl.lib.Ucf
 
-[template PatchRemoveProperty(ISessionBean bean, IAbstractClass entityClass, String expression) extends RemoveProperty]
+[template PatchRemoveProperty(ISessionBean bean, IAbstractClass entityClass, String expression) /* extends RemoveProperty DISABLED */ ]
     [var String oldExpression is "old" + Ucf(entityClass.name)]
     [EntityManagerField].remove([expression]);
     [for IJpaProperty referringProp in entityClass.referringObjects(IJavaTypedElement.Attributes.type) where referringProp.mappedBy == null && !Exists({IJpaProperty prop in JavaBeanUtil.attributeExtent(entityClass) where JpaUtil.getReferencedProperty(prop) == referringProp})]

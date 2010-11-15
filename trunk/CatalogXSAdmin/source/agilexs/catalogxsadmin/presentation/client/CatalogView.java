@@ -38,12 +38,14 @@ public class CatalogView extends Composite implements View {
     initWidget(panel);
     panel.addWest(tree, 300);
     panel.add(detailPanel);
-    detailPanel.addNorth(topPanel, 75);
+    detailPanel.addNorth(topPanel, 85);
     publishButton.setTitle(i18n.explainPublish());
     publishButton.getElement().getStyle().setFloat(Style.Float.RIGHT);
+    publishButton.addStyleName(agilexs.catalogxsadmin.presentation.client.Styles.button3.toString());
     languageList.getElement().getStyle().setMarginLeft(40, Unit.PX);
     languageList.addStyleName("languageField");
     topPanel.getElement().getStyle().setMargin(10, Unit.PX);
+    Util.add(topPanel, Styles.itemoverallactions);
   }
 
   @Override

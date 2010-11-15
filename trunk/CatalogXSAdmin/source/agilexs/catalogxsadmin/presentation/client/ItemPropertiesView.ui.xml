@@ -9,7 +9,7 @@
   <g:FlowPanel>
     <g:Label ui:field="emptyTable" visible="false" />
     <g:Grid ui:field="grid"/>
-    <g:Button styleName="{style.addNewButton}" ui:field="addNew" />
+    <g:Button styleName="{style.addNewButton} button2" ui:field="addNew" />
     <g:HTML><br/></g:HTML>
   </g:FlowPanel>
 </ui:UiBinder>

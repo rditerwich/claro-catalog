@@ -12,35 +12,31 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class ProductsView extends CatalogView {
 
-  private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
-  private LayoutPanel products = new LayoutPanel();
-  private TextBox filter = new TextBox();
+	private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
+	private LayoutPanel products = new LayoutPanel();
+	private TextBox filter = new TextBox();
 
-  public ProductsView() {
-    super();
-  }
+	public ProductsView() {
+		super();
+	}
 
-  public void init(ProductView pv) {
-    topPanel.add(pv.getNewProductButton());
-    topPanel.add(languageList);
-    topPanel.add(publishButton);
-    final FlowPanel fp = new FlowPanel();
+	public void init(ProductView pv) {
+//		topPanel.getElement().getStyle().setMarginTop(10, Unit.PX);
+		topPanel.add(new InlineLabel(i18n.filter()));
+		topPanel.add(filter);
+		topPanel.add(pv.getNewProductButton());
+		topPanel.add(languageList);
+		topPanel.add(publishButton);
+		detailPanel.add(products);
+		products.add(pv.asWidget());
+		pv.asWidget().getElement().getStyle().setPadding(10, Unit.PX);
+	}
 
-    fp.getElement().getStyle().setMarginTop(10, Unit.PX);
-    fp.add(new InlineLabel(i18n.filter()));
-    fp.add(filter);
-    topPanel.add(fp);
-    detailPanel.add(products);
-    products.add(pv.asWidget());
-    pv.asWidget().getElement().getStyle().setPadding(10, Unit.PX);
-  }
+	public HasKeyUpHandlers productFilterHandlers() {
+		return filter;
+	}
 
-
-  public HasKeyUpHandlers productFilterHandlers() {
-    return filter;
-  }
-
-  public String getFilterText() {
-    return filter.getText();
-  }
+	public String getFilterText() {
+		return filter.getText();
+	}
 }

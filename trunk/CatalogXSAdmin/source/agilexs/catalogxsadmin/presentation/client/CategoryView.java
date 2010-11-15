@@ -20,98 +20,118 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CategoryView extends Composite implements View {
 
-  private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
+	private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
 
-  private final DockLayoutPanel detailPanel = new DockLayoutPanel(Unit.PX);
-  private final Button saveButton = new Button(i18n.saveChanges()); 
-  private final CheckBox containsProducts = new CheckBox();
-  private final FlowPanel deck = new FlowPanel();
-  private final FlowPanel propertyValuesPanel = new FlowPanel();
-  private final HTML pvHeader = new HTML(i18n.h3(i18n.propertyValues()));
+	private final FlowPanel detailPanel = new FlowPanel();
+	private final Button saveButton = new Button(i18n.saveChanges());
+	private final CheckBox containsProducts = new CheckBox();
+	private final FlowPanel deck = new FlowPanel();
+	private final FlowPanel propertyValuesPanel = new FlowPanel();
+	private final HTML pvHeader = new HTML(i18n.h3(i18n.propertyValues()));
 
-  public CategoryView() {
-    initWidget(detailPanel);
-    final FlowPanel fp = new FlowPanel();
-    fp.getElement().getStyle().setPadding(8, Unit.PX);
-    final HorizontalPanel hpname = new HorizontalPanel();
+	private HTML categoryName;
 
-    saveButton.getElement().getStyle().setMarginLeft(200, Unit.PX);
-    hpname.add(saveButton);
-    fp.add(hpname);
-    final HorizontalPanel hp = new HorizontalPanel();
-    hp.add(new Label(i18n.containsProducts()));
-    hp.add(containsProducts);
-    fp.add(hp);
-    //top
-    detailPanel.addNorth(fp, 60);
-    //top
-    final HorizontalPanel properties = new HorizontalPanel();
-    final ScrollPanel sp = new ScrollPanel(properties);
+	private Label description;
 
-    detailPanel.add(sp);
-    properties.add(deck);
-    sp.getElement().getStyle().setPadding(8, Unit.PX);
-  }
+	public CategoryView() {
+			DockLayoutPanel panel = new DockLayoutPanel(Unit.PX);
+			final ScrollPanel sp = new ScrollPanel(detailPanel);
+			panel.add(sp);
+		initWidget(panel);
+			final FlowPanel fp = new FlowPanel();
+			fp.getElement().getStyle().setPadding(8, Unit.PX);
+			final HorizontalPanel titleAndSave = new HorizontalPanel();
+	
+				saveButton.getElement().getStyle().setMarginLeft(200, Unit.PX);
+				Util.add(saveButton, Styles.button5);
+				categoryName = new HTML();
+			titleAndSave.add(categoryName);
+			titleAndSave.add(saveButton);
+			titleAndSave.setCellVerticalAlignment(saveButton, HorizontalPanel.ALIGN_MIDDLE);
+			fp.add(titleAndSave);
+				description = new Label();
+			fp.add(description);
+			final HorizontalPanel hp = new HorizontalPanel();
+			hp.add(new Label(i18n.containsProducts()));
+			hp.add(containsProducts);
+			fp.add(hp);
+		// top
+		detailPanel.add(fp);
+		// top
+		final HorizontalPanel properties = new HorizontalPanel();
 
-  @Override
-  public Widget asWidget() {
-    return this;
-  }
+		detailPanel.add(properties);
+		properties.add(deck);
+		sp.getElement().getStyle().setPadding(8, Unit.PX);
+	}
 
-  public HasValue<Boolean> containsProducts() {
-    return containsProducts;
-  }
+	@Override
+	public Widget asWidget() {
+		return this;
+	}
+	
+	public void setCategoryName(String name) {
+		categoryName.setHTML(i18n.h2(i18n.categoryName(name)));
+	}
+	
+	public void setDescription(String description) {
+		this.description.setText(description);
+	}
 
-  public HasClickHandlers containsProductsClickHandlers() {
-    return containsProducts;
-  }
+	public HasValue<Boolean> containsProducts() {
+		return containsProducts;
+	}
 
-  public void clear() {
-//    labels.clear();
-    deck.clear();
-    propertyValuesPanel.clear();
-    propertyValuesPanel.removeFromParent();
-  }
+	public HasClickHandlers containsProductsClickHandlers() {
+		return containsProducts;
+	}
 
-  public void addPropertyValues(String name, Widget widget) {
-    if (!propertyValuesPanel.isAttached()) {
-      deck.add(propertyValuesPanel);
-      propertyValuesPanel.add(pvHeader);
-    }
-    add(propertyValuesPanel, name, widget);
-  }
+	public void clear() {
+		// labels.clear();
+		deck.clear();
+		propertyValuesPanel.clear();
+		propertyValuesPanel.removeFromParent();
+	}
 
-  public void add(String name, Widget widget) {
-    final FlowPanel fp = new FlowPanel();
+	public void addPropertyValues(String name, Widget widget) {
+		if (!propertyValuesPanel.isAttached()) {
+			deck.add(propertyValuesPanel);
+			propertyValuesPanel.add(pvHeader);
+		}
+		add(propertyValuesPanel, name, widget);
+	}
 
-    add(fp, name, widget);
-    deck.add(fp);
-  }
+	public void add(String name, Widget widget) {
+		final FlowPanel fp = new FlowPanel();
 
-  private void add(FlowPanel parent, String name, Widget widget) {
-    final HTML lbl = new HTML(i18n.h3(name)); 
+		add(fp, name, widget);
+		deck.add(fp);
+	}
 
-    parent.getElement().getStyle().setPadding(8, Unit.PX);
-    parent.getElement().getStyle().setMarginBottom(8, Unit.PX);
-    parent.setStyleName("properties");
-    parent.add(lbl);
-    parent.add(widget);
-  }
+	private void add(FlowPanel parent, String name, Widget widget) {
+		final HTML lbl = new HTML(i18n.h3(name));
 
-  /**
-   * Diplays button for status when saving in progress. 
-   */
-  public void setSaving(boolean saving) {
-    if (saving) {
-      saveButton.setText(i18n.saving());
-      saveButton.setEnabled(false);
-    } else {
-      saveButton.setText(i18n.saveChanges());
-      saveButton.setEnabled(true);
-    }
-  }
+		parent.getElement().getStyle().setPadding(8, Unit.PX);
+		parent.getElement().getStyle().setMarginBottom(8, Unit.PX);
+		Util.add(parent, Styles.properties);
+		parent.add(lbl);
+		parent.add(widget);
+	}
 
-  public HasClickHandlers saveButtonClickHandlers() {
-    return saveButton;
-  }
+	/**
+	 * Diplays button for status when saving in progress.
+	 */
+	public void setSaving(boolean saving) {
+		if (saving) {
+			saveButton.setText(i18n.saving());
+			saveButton.setEnabled(false);
+		} else {
+			saveButton.setText(i18n.saveChanges());
+			saveButton.setEnabled(true);
+		}
+	}
+
+	public HasClickHandlers saveButtonClickHandlers() {
+		return saveButton;
+	}
 }

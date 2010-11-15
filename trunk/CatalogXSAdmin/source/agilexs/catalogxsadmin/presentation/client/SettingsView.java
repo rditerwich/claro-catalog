@@ -24,6 +24,7 @@ public class SettingsView extends Composite implements View {
     initWidget(mainPanel);
     mainPanel.add(new Label(i18n.loading()));
     mainPanel.add(panel);
+    Util.add(save, Styles.button3);
     panel.add(new Label(i18n.explainLanguages()));
     panel.add(languagesPanel);
     panel.add(save);

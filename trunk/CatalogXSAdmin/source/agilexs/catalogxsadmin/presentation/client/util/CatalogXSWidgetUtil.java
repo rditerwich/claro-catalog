@@ -35,7 +35,7 @@ public class CatalogXSWidgetUtil {
       value = new MediaWidget();
       break;
     case String:
-      value = new TextArea();
+      value = new TextBox();
       break;
     case Boolean:
       value = new CheckBox();

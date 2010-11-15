@@ -153,7 +153,7 @@ class EnumValuesEditPopupPanel extends PopupPanel implements HasValueChangeHandl
   public void show(Property property) {
     orgProperty = property;
     currentProperty = property.clone(new HashMap());
-    for (Language lang : CatalogCache.get().getActiveCatalog().getLanguages()) {
+    for (Language lang : CatalogCache.get().getCurrentCatalog().getLanguages()) {
       languageList.addItem(lang.getDisplayName(), lang.getName());
       if (lang.getName().equals(language)) {
         languageList.setItemSelected(languageList.getItemCount()-1, true);

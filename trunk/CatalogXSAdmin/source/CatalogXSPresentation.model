@@ -1,43 +1,36 @@
 root /packages:AgileXS/packages:CatalogXSAdmin/packages
 
-import Metaphor.PSM.GWT.EntryPoint
-import Metaphor.PSM.GWT.ExtendProperty
-import Metaphor.PSM.GWT.FlexTable
 import Metaphor.PSM.GWT.GwtFileDownloadServlet
 import Metaphor.PSM.GWT.GwtFileUploadServlet
 import Metaphor.PSM.GWT.GwtMethod
 import Metaphor.PSM.GWT.GwtModule
 import Metaphor.PSM.GWT.GwtPackage
 import Metaphor.PSM.GWT.GwtService
-import Metaphor.PSM.GWT.TextBox
-import Metaphor.PSM.GWT.VerticalPanel
-import Metaphor.PSM.Java.Expression.VariableAccess
 import Metaphor.PSM.Java.JavaBeanPropertyView
 import Metaphor.PSM.Java.JavaBeanView
-import Metaphor.PSM.UIToGwt.Page
 
 path catalog = /packages:AgileXS/packages:CatalogXSAdmin/packages:Presentation/packages:Catalog/types
+path shop = /packages:AgileXS/packages:CatalogXSAdmin/packages:Presentation/packages:Shop/types
 
 GwtPackage {
     name = Presentation
     modules = {
         GwtModule {
             name = CatalogXSAdmin
-            inherits = "com.google.gwt.user.datepicker.DatePicker"
+            url = /
+            inherits = com.google.gwt.user.datepicker.DatePicker
         }
     }
-/*
     specialPurposeServlets = {
         GwtFileDownloadServlet {
             name = DownloadMedia
         }
-        GwtFileUploadServlet {
+/*        GwtFileUploadServlet {
             name = UploadMedia
-        }
+        }*/
     }
-*/
     servlets = {
-       GwtService {
+        GwtService {
             name = CatalogService
             methods = {
                 GwtMethod {
@@ -49,7 +42,6 @@ GwtPackage {
                             views = {
                                 JavaBeanPropertyView {
                                     name = ProductCategoryView
-                                    kind = none
                                     included = catalog:Item/properties:id
                                     referringProperties = catalog:PropertyValue/properties:item
                                 }
@@ -77,14 +69,12 @@ GwtPackage {
                     view = {
                         JavaBeanView {
                             name = CategoryView
-                            kind = none
                             included = {
                                 catalog:Item/properties:id
                                 catalog:Item/properties:catalog
                                 catalog:Item/properties:parents
                                 catalog:Item/properties:propertyValues
                                 catalog:Item/properties:properties
-                                catalog:Item/properties:relations
                                 catalog:Category/properties:containsProducts
                             }
                             views = {
@@ -138,26 +128,6 @@ GwtPackage {
                                     name = EnumValuesLabelsView
                                     kind = all
                                     referringProperties = catalog:EnumValue/properties:labels
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationsView
-                                    kind = all
-                                    referringProperties = catalog:Item/properties:relations
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationItemView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:item
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationRelatedToView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:relatedTo
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationTypeView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:relationType
                                 }
                             }
                         }
@@ -168,14 +138,12 @@ GwtPackage {
                     view = {
                         JavaBeanView {
                             name = CategoryView
-                            kind = none
                             included = {
                                 catalog:Item/properties:id
                                 catalog:Item/properties:catalog
                                 catalog:Item/properties:parents
                                 catalog:Item/properties:propertyValues
                                 catalog:Item/properties:properties
-                                catalog:Item/properties:relations
                                 catalog:Category/properties:containsProducts
                             }
                             views = {
@@ -230,26 +198,6 @@ GwtPackage {
                                     kind = all
                                     referringProperties = catalog:EnumValue/properties:labels
                                 }
-                                JavaBeanPropertyView {
-                                    name = RelationsView
-                                    kind = all
-                                    referringProperties = catalog:Item/properties:relations
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationItemView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:item
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationRelatedToView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:relatedTo
-                                }
-                                JavaBeanPropertyView {
-                                    name = RelationTypeView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:relationType
-                                }
                             }
                         }
                     }
@@ -259,13 +207,11 @@ GwtPackage {
                     view = {
                         JavaBeanView {
                             name = ProductView
-                            kind = none
                             included = {
                                 catalog:Item/properties:id
                                 catalog:Item/properties:catalog
                                 catalog:Item/properties:propertyValues
                                 catalog:Item/properties:properties
-                                catalog:Item/properties:relations
                             }
                             views = {
                                 JavaBeanPropertyView {
@@ -314,27 +260,86 @@ GwtPackage {
                                     kind = all
                                     referringProperties = catalog:EnumValue/properties:labels
                                 }
+                            }
+                        }
+                    }
+                }
+                GwtMethod {
+                    name = getOrCreateCatalog
+                    view = {
+                        JavaBeanView {
+                            kind = all
+                            views = {
                                 JavaBeanPropertyView {
-                                    name = RelationsView
+                                    name = ShopsView
                                     kind = all
-                                    referringProperties = catalog:Item/properties:relations
+                                    referringProperties = catalog:Catalog/properties:outputChannels
                                 }
                                 JavaBeanPropertyView {
-                                    name = RelationItemView
-                                    kind = all
-                                    referringProperties = catalog:Relation/properties:item
+                                    name = CatalogFromShopsView
+                                    referringProperties = catalog:OutputChannel/properties:catalog
                                 }
                                 JavaBeanPropertyView {
-                                    name = RelationRelatedToView
+                                    name = LanguageView
                                     kind = all
-                                    referringProperties = catalog:Relation/properties:relatedTo
+                                    referringProperties = catalog:Catalog/properties:languages
                                 }
                                 JavaBeanPropertyView {
-                                    name = RelationTypeView
+                                    name = ItemsView
                                     kind = all
-                                    referringProperties = catalog:Relation/properties:relationType
+                                    referringProperties = catalog:Catalog/properties:items
                                 }
-                                
+                                JavaBeanPropertyView {
+                                    name = ParentsView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:parents
+                                }
+                                JavaBeanPropertyView {
+                                    name = ChildrenView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:children
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuesView
+                                    kind = all
+                                    excluded = catalog:PropertyValue/properties:mediaValue
+                                    referringProperties = catalog:Item/properties:propertyValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertiesView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:properties
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:enumValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesLabelsView
+                                    kind = all
+                                    referringProperties = catalog:EnumValue/properties:labels
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
                             }
                         }
                     }

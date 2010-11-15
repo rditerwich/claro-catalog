@@ -4,7 +4,7 @@ import java.util.Date;
 
 import agilexs.catalogxsadmin.presentation.client.i18n.I18NCatalogXS;
 import agilexs.catalogxsadmin.presentation.client.page.View;
-import agilexs.catalogxsadmin.presentation.client.shop.OrderStatus;
+import agilexs.catalogxsadmin.presentation.client.order.OrderStatus;
 import agilexs.catalogxsadmin.presentation.client.widget.Table;
 
 import com.google.gwt.core.client.GWT;
@@ -52,6 +52,7 @@ public class OrderView extends Composite implements View {
 
     ordersFP.add(refresh);
     refresh.getElement().getStyle().setMarginRight(20, Unit.PX);
+    Util.add(refresh, Styles.button3);
     ordersFP.add(new InlineLabel(i18n.filter()));
     ordersFP.add(statusFilter);
     statusFilter.addItem("<no filter>", "");

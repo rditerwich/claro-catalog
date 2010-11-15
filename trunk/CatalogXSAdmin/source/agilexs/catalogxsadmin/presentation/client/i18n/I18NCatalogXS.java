@@ -4,152 +4,177 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface I18NCatalogXS extends Messages {
 
-  @DefaultMessage("<h2>{0}</h2>")
-  String h2(String text);
 
-  @DefaultMessage("<h3>{0}</h3>")
-  String h3(String text);
+	// TODO Move these to a more appropriate util.
+	@DefaultMessage("<h2>{0}</h2>") 
+	String h2(String text);
 
-  String inheritedProperties();
+	@DefaultMessage("<h3>{0}</h3>")
+	String h3(String text);
 
-  @DefaultMessage("Today {0} products in promotion")
-  @PluralText({"none", "Today no promotions",
-    "one", "Today 1 product in promotion"})
-  String nrOfPromotions(@PluralCount int nrOfPromotions);
+	String inheritedProperties();
 
-  String newGroup();
+	@DefaultMessage("Today {0} products in promotion")
+	@PluralText( { "none", "Today no promotions", "one",
+			"Today 1 product in promotion" })
+	String nrOfPromotions(@PluralCount int nrOfPromotions);
 
-  String saveChanges();
+	String newCategory();
 
-  String containsProducts();
+	String saveChanges();
 
-  String newProduct();
+	String containsProducts();
 
-  String noProducts();
+	String newProduct();
 
-  String backToProductOverview();
+	String noProducts();
 
-  String explainNavigationList();
+	String backToProductOverview();
 
-  String name();
+	String explainNavigationList();
 
-  String type();
+	String name();
 
-  String value();
+	String type();
 
-  String languageSpecificValue();
+	String value();
 
-  String languageSpecificName();
+	String languageSpecificValue();
 
-  String groupOnly();
+	String languageSpecificName();
 
-  String add();
+	String categoryOnly();
 
-  String products();
+	String add();
 
-  String group();
+	String products();
 
-  String catalog();
+	String category();
+	
+	String categoryName(String categoryName);
 
-  String navigation();
+	String catalog();
 
-  String promotions();
-  
-  String orders();
+	String shop();
 
-  String settings();
+	String navigation();
 
-  String todo();
+	String promotions();
 
-  String promotionSaved();
+	String orders();
 
-  String productSaved();
+	String settings();
 
-  String productGroupSaved(String groupName);
+	String todo();
 
-  String fileUploaded(String fileName);
+	String promotionSaved();
 
-  String navigationSaved();
+	String productSaved();
 
-  String loading();
+	String productCategorySaved(String groupName);
 
-  String upload();
+	String fileUploaded(String fileName);
 
-  String uploadFile();
+	String navigationSaved();
 
-  String deletePromotionQuestion();
+	String loading();
 
-  String promotionDeleted();
+	String upload();
 
-  String deletePropertyQuestion();
-  
-  String propertiesFrom(String name);
-  
-  String explainLanguages();
+	String uploadFile();
 
-  String save();
+	String deletePromotionQuestion();
 
-  String languagesSaved();
+	String promotionDeleted();
 
-  String deleteProductQuestion();
+	String deletePropertyQuestion();
 
-  String productDeleted();
+	String propertiesFrom(String name);
 
-  String explainEnums();
+	String explainLanguages();
 
-  String cancel();
+	String save();
 
-  String ok();
+	String languagesSaved();
 
-  String editEnumTitle();
+	String deleteProductQuestion();
 
-  String noValue();
+	String productDeleted();
 
-  String relatedTo();
+	String explainEnums();
 
-  String parents();
+	String cancel();
 
-  String properties();
+	String ok();
 
-  String propertyValues();
+	String editEnumTitle();
 
-  String orderDate();
+	String noValue();
 
-  String orderVolume();
+	String relatedTo();
 
-  String orderPrice();
+	String parents();
 
-  String publish();
+	String properties();
 
-  String publishSucess();
-  
-  String explainPublish();
+	String propertyValues();
 
-  String orderCustomer();
-  
-  String orderStatus();
+	String orderDate();
 
-  String orderStatusUpdated();
+	String orderVolume();
 
-  String backToOrdersOverview();
-  
-  String saving();
-  
-  String noProperties(String groupName);
+	String orderPrice();
 
-  String filter();
+	String publish();
 
-  String taxonomy();
+	String publishSucess();
 
-  String allProducts();
+	String explainPublish();
 
-  String refresh();
+	String orderCustomer();
 
-  String explainOwnerGroup();
+	String orderStatus();
 
-  String orderDateDetail();
+	String orderStatusUpdated();
 
-  String orderCustomerDetail();
+	String backToOrdersOverview();
 
-  String orderStatusDetail();
+	String saving();
+
+	String noProperties(String groupName);
+
+	String filter();
+
+	String taxonomy();
+
+	String allProducts();
+
+	String refresh();
+
+	String explainOwnerCategory();
+
+	String orderDateDetail();
+
+	String orderCustomerDetail();
+
+	String orderStatusDetail();
+
+	String language();
+
+	String subNavigations();
+
+	String newNavigation();
+
+	String categories();
+
+	String productDetailsOf(String name);
+
+	String productsIn(String name);
+
+	String up();
+	
+	String down();
+
+	String containedProducts(int nr);
+
 }

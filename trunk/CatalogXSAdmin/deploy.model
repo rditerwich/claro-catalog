@@ -32,13 +32,14 @@ DeploymentConfiguration {
 }
 
 DeploymentConfiguration {
-    id = agilexs.catalogxs.deployment.local.reinier
-    name = "CatalogXS Deployment Local Reinier"
+    id = agilexs.catalogxs.deployment.local.reinier.laptop
+    name = "CatalogXS Deployment Local Reinier Laptop"
     productConfigurations = {
         Glassfish2Configuration {
-            installDir = "c:/progs/glassfishv3"
+            installDir = "c:/progs/glassfishv3/glassfish"
             domain = domain1
-            
+            ideIntegration = false
+            httpPort = 7070
 
             webConfiguration = GwtWebConfiguration {
                 userAgent = All
@@ -54,6 +55,38 @@ DeploymentConfiguration {
                 password = postgres
                 schemaUpdateKind = full
                 jdbcDriverClasspath = "C:/Program Files/psqlJDBC/postgresql-8.4-701.jdbc3.jar"
+            }
+
+            jpaConfiguration = EclipseLinkConfiguration {
+            }
+        }
+    }
+}
+DeploymentConfiguration {
+    id = agilexs.catalogxs.deployment.local.reinier
+    name = "CatalogXS Deployment Local Reinier"
+    productConfigurations = {
+        Glassfish2Configuration {
+            installDir = "d:/progs/glassfishv3/glassfish"
+            domain = domain1
+            httpPort = 7070
+            ideIntegration = true
+            
+
+            webConfiguration = GwtWebConfiguration {
+                userAgent = All
+                skipGwtCompilation = true
+            }
+
+            dbConfiguration = PostgreSQLConfiguration {
+                installDir = "C:/Program Files (x86)/PostgreSQL/8.3"
+                server = localhost
+                port = 5432
+                databaseName = CatalogXSDatabase
+                username = postgres
+                password = postgres
+                schemaUpdateKind = full
+                jdbcDriverClasspath = "C:/Program Files (x86)/psqlJDBC/postgresql-8.3-603.jdbc3.jar"
             }
 
             jpaConfiguration = EclipseLinkConfiguration {

@@ -720,8 +720,9 @@ Package {
         Enumeration {
             name = Status
             literals = {
+                @comment "_ as a workaround for java identifier restrictions"
                 Literal {
-                    name = new
+                    name = new_
                 }
                 Literal {
                     name = approved
