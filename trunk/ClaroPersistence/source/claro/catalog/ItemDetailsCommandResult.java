@@ -1,6 +1,9 @@
 package claro.catalog;
 
-import claro.jpa.catalog.Item;
+import java.util.Map;
+
+import claro.catalog.model.PropertyData;
+import claro.jpa.catalog.Property;
 
 abstract class CommandResult {
 	final String view;
@@ -8,5 +11,7 @@ abstract class CommandResult {
 }
 public class ItemDetailsCommandResult {
 
+	Map<Property, PropertyData> propertyData;
+	Map<Property, PropertyData> danglingPropertyData;
 	
 }

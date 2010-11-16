@@ -26,4 +26,8 @@ public class CatalogModel {
 	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, String searchString, String searchLanguage, ImportSource ImportSource, Alternate alternate) {
 		return null;
 	}
+	
+	public Item getItemDetails(Catalog catalog, OutputChannel outputChannel, String language, ImportSource importSource, Alternate alternate) {
+		
+	}
 }
