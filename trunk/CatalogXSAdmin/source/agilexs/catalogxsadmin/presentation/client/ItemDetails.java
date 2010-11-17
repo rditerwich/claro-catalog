@@ -29,7 +29,7 @@ public class ItemDetails extends Composite {
 //			add(new Trail());
 
 			// Title
-			add(new TextBox(){{
+			add(new TextBox() {{
 				Util.add(this, Styles.itemName);
 				HasTextBinding.bind(this, itemBinding.name());
 			}});
@@ -39,13 +39,13 @@ public class ItemDetails extends Composite {
 			    add(productImage = new Image() {{
 			    	setSize("150px", "150px");
 			    }});
-			    add(new Label(){{
+			    add(new Label() {{
 			    	Util.add(this, Styles.productprice);
 			    	setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 			    	
 			    	HasTextBinding.bind(this, itemBinding.price());
 			    }});
-			    add(new FlowPanel(){{
+			    add(new FlowPanel() {{
 			    	add(new Anchor(Util.i18n.containedProducts(0)));
 			    }});
 			}});
