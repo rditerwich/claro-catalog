@@ -13,7 +13,6 @@ import agilexs.catalogxsadmin.jpa.catalog.Label;
 import agilexs.catalogxsadmin.jpa.catalog.Property;
 import agilexs.catalogxsadmin.jpa.catalog.PropertyType;
 import agilexs.catalogxsadmin.jpa.catalog.PropertyValue;
-import agilexs.catalogxsadmin.jpa.catalog.Status;
 
 
 public class DefaultContent {
