@@ -10,25 +10,26 @@ import java.util.Set;
 
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.ParentChild;
+import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyValue;
 
 public class ItemModel {
 
-	private final CatalogModel catalog;
-	private Item entity;
+	final CatalogModel catalog;
+	final CatalogDao dao;
+	final Long id;
 	private Set<ItemModel> parents;
 	private Set<ItemModel> parentExtent;
 	private Set<ItemModel> children;
 	private Set<ItemModel> childExtent;
-	private Set<PropertyModel> definedProperties;
 	private Set<PropertyModel> properties;
+	private Set<PropertyModel> propertyExtent;
+	private Set<PropertyModel> danglingProperties;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
-		entity = catalog.em.find(Item.class, id);
-		if (entity == null) {
-			entity = new Item();
-			entity.setId(id);
-		}
+		this.dao = catalog.dao;
+		this.id = id;
   }
 	
 	void invalidate() {
@@ -37,8 +38,9 @@ public class ItemModel {
 			children = null;
 			parentExtent = null;
 			childExtent = null;
-			definedProperties = null;
 			properties = null;
+			propertyExtent = null;
+			danglingProperties = null;
 		}		
 	}
 
@@ -49,8 +51,8 @@ public class ItemModel {
 	public Set<ItemModel> getParents() {
 		synchronized (catalog) {
 			if (parents == null) {
-				parents = new LinkedHashSet<ItemModel>(entity.getParents().size());
-				List<ParentChild> parentChildren = new ArrayList<ParentChild>(entity.getParents());
+				parents = new LinkedHashSet<ItemModel>();
+				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getParents());
 				Collections.sort(parentChildren, new Comparator<ParentChild>() {
 					public int compare(ParentChild o1, ParentChild o2) {
 						int i1 = o1.getIndex() == null ? 0 : o1.getIndex();
@@ -69,16 +71,16 @@ public class ItemModel {
 	}
 	
 	public void setParents(List<Long> parentIds) {
-		List<Long> currentParentIds = new ArrayList<Long>();
-		for (ItemModel item : getParents()) {
-			currentParentIds.add(item.entity.getId());
-		}
-		if (!parentIds.equals(currentParentIds)) {
-			catalog.invalidate(getParentExtent());
+		catalog.checkUpdating();
+		if (dao.setItemParents(getEntity(), dao.getItems(parentIds))) {
 			catalog.invalidate(getChildExtent());
-			
+			catalog.invalidate(getParentExtent());
 		}
 	}
+
+	private Item getEntity() {
+	  return dao.getItem(id);
+  }
 	
 	/**
 	 * Returns the parents of this item, and their parents transitively.
@@ -111,8 +113,8 @@ public class ItemModel {
 	public Set<ItemModel> getChildren() {
 		synchronized (catalog) {
 			if (children == null) {
-				children = new HashSet<ItemModel>(entity.getChildren().size());
-				List<ParentChild> parentChildren = new ArrayList<ParentChild>(entity.getChildren());
+				children = new HashSet<ItemModel>(getEntity().getChildren().size());
+				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getChildren());
 				for (ParentChild parentChild : parentChildren) {
 					if (parentChild.getChild() != null) {
 						children.add(catalog.getItem(parentChild.getChild().getId()));
@@ -146,15 +148,48 @@ public class ItemModel {
 		}
   }
 	
-	public Set<PropertyModel> getDefinedProperties() {
+	public Set<PropertyModel> getProperties() {
 		synchronized (catalog) {
-			if (definedProperties == null) {
+			if (properties == null) {
+				properties = new HashSet<PropertyModel>();
+				for (Property property : getEntity().getProperties()) {
+					properties.add(new PropertyModel(this, this, property));
+				}
 				
 			}
+			return properties;
 		}		
 	}
 	
-	public Set<PropertyModel> getProperties() {
-		
+	public Set<PropertyModel> getPropertyExtent() {
+		synchronized (catalog) {
+			if (propertyExtent == null) {
+				propertyExtent = new HashSet<PropertyModel>();
+				for (ItemModel parent : getParentExtent()) {
+					for (Property property : parent.getEntity().getProperties()) {
+						propertyExtent.add(new PropertyModel(this, parent, property));
+					}
+				}
+				propertyExtent.addAll(getProperties());
+				
+			}
+			return propertyExtent;
+		}		
 	}
+	
+	public Set<PropertyModel> getDanglingProperties() {
+		synchronized (catalog) {
+			if (danglingProperties == null) {
+				Set<Property> entities = PropertyModel.getEntities(getPropertyExtent());
+				for (PropertyValue value : getEntity().getPropertyValues()) {
+					if (!entities.contains(value.getProperty())) {
+						danglingProperties.add(new PropertyModel(this, null, value.getProperty()));
+					}
+				}
+			}
+			return danglingProperties;
+		}		
+	}
+	
+
 }

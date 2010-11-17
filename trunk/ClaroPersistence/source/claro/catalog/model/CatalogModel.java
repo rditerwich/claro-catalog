@@ -2,9 +2,6 @@ package claro.catalog.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
-
-import javax.persistence.EntityManager;
 
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
@@ -13,7 +10,7 @@ import claro.jpa.catalog.PropertyType;
 
 public class CatalogModel {
 
-	final EntityManager em;
+	final CatalogDao dao;
 	final Catalog catalog;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	final Property nameProperty;
@@ -28,19 +25,19 @@ public class CatalogModel {
 
 	private final ThreadLocal<UpdateStatus> updateStatus = new ThreadLocal<UpdateStatus>();
 
-	public CatalogModel(Long id, EntityManager em) {
-		this.em = em;
-		this.catalog = CatalogModelUtil.findOrCreateCatalog(id, em);
-		Category root = CatalogModelUtil.findOrCreateRootCategory(catalog, em);
-		nameProperty = CatalogModelUtil.findOrCreateProperty(root, "Name", PropertyType.String, em);
-		variantProperty = CatalogModelUtil.findOrCreateProperty(root, "Variant", PropertyType.String, em);
-		articleNumberProperty = CatalogModelUtil.findOrCreateProperty(root, "ArticleNumber", PropertyType.String, em);
-		descriptionProperty = CatalogModelUtil.findOrCreateProperty(root, "Description", PropertyType.String, em);
-		imageProperty = CatalogModelUtil.findOrCreateProperty(root, "Image", PropertyType.Media, em);
-		smallImageProperty = CatalogModelUtil.findOrCreateProperty(root, "SmallImage", PropertyType.Media, em);
-		priceProperty = CatalogModelUtil.findOrCreateProperty(root, "Price", PropertyType.Money, em);
-		supplierProperty = CatalogModelUtil.findOrCreateProperty(root, "Supplier", PropertyType.String, em);
-		supplierArticleNumberProperty = CatalogModelUtil.findOrCreateProperty(root, "SupplierArticleNumber", PropertyType.String, em);
+	public CatalogModel(Long id, CatalogDao dao) {
+		this.dao = dao;
+		this.catalog = dao.findOrCreateCatalog(id);
+		Category root = dao.findOrCreateRootCategory(catalog);
+		nameProperty = dao.findOrCreateProperty(root, "Name", PropertyType.String);
+		variantProperty = dao.findOrCreateProperty(root, "Variant", PropertyType.String);
+		articleNumberProperty = dao.findOrCreateProperty(root, "ArticleNumber", PropertyType.String);
+		descriptionProperty = dao.findOrCreateProperty(root, "Description", PropertyType.String);
+		imageProperty = dao.findOrCreateProperty(root, "Image", PropertyType.Media);
+		smallImageProperty = dao.findOrCreateProperty(root, "SmallImage", PropertyType.Media);
+		priceProperty = dao.findOrCreateProperty(root, "Price", PropertyType.Money);
+		supplierProperty = dao.findOrCreateProperty(root, "Supplier", PropertyType.String);
+		supplierArticleNumberProperty = dao.findOrCreateProperty(root, "SupplierArticleNumber", PropertyType.String);
   }
 	
 	public synchronized ItemModel getItem(Long id) {

@@ -17,3 +17,4 @@ public class PropertyData {
 	Map<Supplier, Map<String, PropertyValue>> supplierValues;
 	Map<ImportSource, Map<String, PropertyValue>> importSourceValues;
 }
+	
