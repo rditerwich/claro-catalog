@@ -17,4 +17,6 @@ Module {
             module = metaphor.models
         }
     }
+    
+    exposedPackages = claro.catalog.model
 }
