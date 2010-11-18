@@ -53,11 +53,26 @@ public class PropertyModel {
 				Item item = this.item.getEntity();
 				for (PropertyValue value : item.getPropertyValues()) {
 					if (value.getImportSource() == null && value.getOutputChannel() == null && value.getAlternate() == null) {
-						values = values.add(value.getLanguage(), getValue(value));
+						values = values.add(value.getLanguage(), getTypedValue(value));
 					}
 				}
 			}
 			return values;
+		}
+	}
+	
+	public PropertyValues getEffectiveValues() {
+		synchronized (item.catalog) {
+			if (effectiveValues == null) {
+				effectiveValues = PropertyValues.EMPTY;
+				Item item = this.item.getEntity();
+				for (PropertyValue value : item.getPropertyValues()) {
+					if (value.getImportSource() == null && value.getOutputChannel() == null && value.getAlternate() == null) {
+						effectiveValues = effectiveValues.add(value.getLanguage(), getTypedValue(value));
+					}
+				}
+			}
+			return effectiveValues;
 		}
 	}
 	
@@ -69,7 +84,7 @@ public class PropertyModel {
 		return result;
 	}
 
-	private static Object getValue(PropertyValue value) {
+	private static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
 		case String: return value.getStringValue(); 
 		}
