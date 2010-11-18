@@ -1,4 +1,5 @@
-package claro.catalog.model;
+package claro.catalog;
+
 
 public class KeywordSearchCriterium extends SearchCriterium {
 	String keywords;

@@ -8,6 +8,8 @@ import com.google.common.base.Objects;
 public abstract class PropertyValues implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final PropertyValues EMPTY = new Empty();
 
 	public boolean hasValue() {
 		return getValue() != null;

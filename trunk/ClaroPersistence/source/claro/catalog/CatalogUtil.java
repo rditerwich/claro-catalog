@@ -73,7 +73,7 @@ public class CatalogUtil {
 	public static List<Item> getChildren(Item item) {
 		List<Item> result = new ArrayList<Item>();
 		for (ParentChild parentChild : sort(item.getChildren())) {
-			if (parentChild.getChild() != null && equals(parentChild.getChild().getCatalog(), item.getCatalog())) {
+			if (parentChild.getChild() != null && eq(parentChild.getChild().getCatalog(), item.getCatalog())) {
 				result.add(parentChild.getChild());
 			}
 		}
@@ -83,7 +83,7 @@ public class CatalogUtil {
 	public static List<Item> getParents(Item item) {
 		List<Item> result = new ArrayList<Item>();
 		for (ParentChild parentChild : sort(item.getParents())) {
-			if (parentChild.getParent() != null && equals(parentChild.getParent().getCatalog(), item.getCatalog())) {
+			if (parentChild.getParent() != null && eq(parentChild.getParent().getCatalog(), item.getCatalog())) {
 				result.add(parentChild.getParent());
 			}
 		}
@@ -146,7 +146,7 @@ public class CatalogUtil {
 		// filter values
 		List<PropertyValue> values = new ArrayList<PropertyValue>();
 		for (PropertyValue value : item.getPropertyValues()) {
-			if (equals(property, value.getProperty())) {
+			if (eq(property, value.getProperty())) {
 				if (supplier == null || (value.getSupplier() != null && equals(supplier, value.getSupplier().getId()))) {
 					if (importSource == null || (value.getImportSource() != null && equals(importSource, value.getImportSource().getId()))) {
 						if (value.getLanguage() == null || equals(language, value.getLanguage())) {

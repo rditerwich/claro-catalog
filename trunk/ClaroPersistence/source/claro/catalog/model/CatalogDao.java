@@ -27,7 +27,11 @@ public class CatalogDao {
 	public Item getItem(Long id) {
 		return em.find(Item.class, id);
 	}
-	
+
+	public Property getProperty(Long id) {
+		return em.find(Property.class, id);
+	}
+
 	public List<Item> getItems(Collection<Long> ids) {
 		List<Item> result = new ArrayList<Item>();
 		for (Long id : ids) {

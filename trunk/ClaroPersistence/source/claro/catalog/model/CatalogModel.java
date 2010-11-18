@@ -10,7 +10,6 @@ import claro.jpa.catalog.PropertyType;
 
 public class CatalogModel {
 
-	final CatalogDao dao;
 	final Catalog catalog;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	final Property nameProperty;
@@ -23,10 +22,8 @@ public class CatalogModel {
 	final Property supplierProperty;
   final Property supplierArticleNumberProperty;
 
-	private final ThreadLocal<UpdateStatus> updateStatus = new ThreadLocal<UpdateStatus>();
-
-	public CatalogModel(Long id, CatalogDao dao) {
-		this.dao = dao;
+	public CatalogModel(Long id) {
+		CatalogDao dao = CatalogAccess.getDao();
 		this.catalog = dao.findOrCreateCatalog(id);
 		Category root = dao.findOrCreateRootCategory(catalog);
 		nameProperty = dao.findOrCreateProperty(root, "Name", PropertyType.String);
@@ -49,45 +46,23 @@ public class CatalogModel {
 		return itemData;
 	}
 
-	private UpdateStatus getUpdateStatus() {
-		UpdateStatus updateStatus = this.updateStatus.get();
-		if (updateStatus == null) {
-			throw new RuntimeException("No update active. Please call " + getClass().getName() + ".update()");
-		}
-		return updateStatus;
+	public static void access(CatalogDao dao, Runnable runnable) {
+		CatalogAccess.access(dao, runnable, false);
 	}
 	
-	public synchronized void update(Runnable runnable) {
-		UpdateStatus updateStatus = this.updateStatus.get();
-		if (updateStatus == null) {
-			updateStatus = new UpdateStatus();
-			this.updateStatus.set(updateStatus);
-			try {
-				runnable.run();
-			} finally {
-				this.updateStatus.set(null);
-				for (ItemModel item : updateStatus.invalidItems) {
-					item.invalidate();
-				}
-			}
-		} else {
-			runnable.run();
-		}
+	public synchronized void update(CatalogDao dao, Runnable runnable) {
+		CatalogAccess.access(dao, runnable, true);
 	}
 	
-	public void invalidate(ItemModel... items) {
+	void invalidate(ItemModel... items) {
 		for (ItemModel item : items) {
-			getUpdateStatus().invalidItems.add(item);
+			CatalogAccess.getInvalidItems().add(item);
 		}
 	}
 	
-	public void invalidate(Iterable<ItemModel> items) {
+	void invalidate(Iterable<ItemModel> items) {
 		for (ItemModel item : items) {
-			getUpdateStatus().invalidItems.add(item);
+			CatalogAccess.getInvalidItems().add(item);
 		}
-	}
-	
-	public void checkUpdating() {
-		getUpdateStatus();
 	}
 }

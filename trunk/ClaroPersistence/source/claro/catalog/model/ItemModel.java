@@ -16,8 +16,7 @@ import claro.jpa.catalog.PropertyValue;
 public class ItemModel {
 
 	final CatalogModel catalog;
-	final CatalogDao dao;
-	final Long id;
+	final Long itemId;
 	private Set<ItemModel> parents;
 	private Set<ItemModel> parentExtent;
 	private Set<ItemModel> children;
@@ -28,20 +27,11 @@ public class ItemModel {
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
-		this.dao = catalog.dao;
-		this.id = id;
+		this.itemId = id;
   }
-	
-	void invalidate() {
-		synchronized (catalog) {
-			parents = null;
-			children = null;
-			parentExtent = null;
-			childExtent = null;
-			properties = null;
-			propertyExtent = null;
-			danglingProperties = null;
-		}		
+
+	public Long getItemId() {
+		return itemId;
 	}
 
 	/**
@@ -71,15 +61,15 @@ public class ItemModel {
 	}
 	
 	public void setParents(List<Long> parentIds) {
-		catalog.checkUpdating();
+		CatalogDao dao = CatalogAccess.getDaoForUpdating();
 		if (dao.setItemParents(getEntity(), dao.getItems(parentIds))) {
 			catalog.invalidate(getChildExtent());
 			catalog.invalidate(getParentExtent());
 		}
 	}
 
-	private Item getEntity() {
-	  return dao.getItem(id);
+	public Item getEntity() {
+	  return CatalogAccess.getDao().getItem(itemId);
   }
 	
 	/**
@@ -153,7 +143,7 @@ public class ItemModel {
 			if (properties == null) {
 				properties = new HashSet<PropertyModel>();
 				for (Property property : getEntity().getProperties()) {
-					properties.add(new PropertyModel(this, this, property));
+					properties.add(new PropertyModel(this, this, property.getId()));
 				}
 				
 			}
@@ -167,7 +157,7 @@ public class ItemModel {
 				propertyExtent = new HashSet<PropertyModel>();
 				for (ItemModel parent : getParentExtent()) {
 					for (Property property : parent.getEntity().getProperties()) {
-						propertyExtent.add(new PropertyModel(this, parent, property));
+						propertyExtent.add(new PropertyModel(this, parent, property.getId()));
 					}
 				}
 				propertyExtent.addAll(getProperties());
@@ -183,7 +173,7 @@ public class ItemModel {
 				Set<Property> entities = PropertyModel.getEntities(getPropertyExtent());
 				for (PropertyValue value : getEntity().getPropertyValues()) {
 					if (!entities.contains(value.getProperty())) {
-						danglingProperties.add(new PropertyModel(this, null, value.getProperty()));
+						danglingProperties.add(new PropertyModel(this, null, value.getProperty().getId()));
 					}
 				}
 			}
@@ -191,5 +181,15 @@ public class ItemModel {
 		}		
 	}
 	
-
+	void invalidate() {
+		synchronized (catalog) {
+			parents = null;
+			children = null;
+			parentExtent = null;
+			childExtent = null;
+			properties = null;
+			propertyExtent = null;
+			danglingProperties = null;
+		}		
+	}
 }
