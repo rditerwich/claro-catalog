@@ -46,6 +46,17 @@ public abstract class StaticMap<K, V> implements Serializable {
 		copy[values.length] = value;
 		return copy;
 	}
+	
+	<T> Object[][] arrays(Object[] values, Object... values2) {
+		Object[][] result = new Object[values.length + values2.length][];
+		for (int i = 0; i < values.length; i++) {
+			result[i] = array(values[i]); 
+		}
+		for (int i = 0; i < values2.length; i++) {
+			result[values.length + i] = array(values2[i]); 
+		}
+		return result;
+	}
 }
 
 abstract class Single<K, V> extends StaticMap<K, V> {
@@ -153,7 +164,7 @@ class MultikeySingleValue<K, V> extends Single<K, V> {
 	protected StaticMap<K, V> add(K key, V value) {
 		for (int i = 0; i < keys.length; i++) {
 			if (Objects.equal(keys[i], key)) {
-				return new MultikeyMultiValue<K, V>(array(keys, key), array(values, value));
+				return new MultikeyMultiValue<K, V>(array(keys, key), arrays(values, value) );
 			}
 		}
 		return new MultikeySingleValue<K, V>(array(keys, key), array(values, value));
@@ -182,7 +193,7 @@ class SinglekeyMultiValue<K, V> extends Many<K, V> {
 		if (Objects.equal(this.key, key)) {
 			return new SinglekeyMultiValue<K, V>(key, array(values, value));
 		} else {
-			return new MultikeyMultiValue<K, V>(array(this.key, key), array(values, array(value)); 
+			return new MultikeyMultiValue<K, V>(array(this.key, key), arrays(values, value); 
 		}
 	}
 }
@@ -191,6 +202,9 @@ class MultikeyMultiValue<K, V> extends Many<K, V> {
 	private static final long serialVersionUID = 1L;
 	private Object[] keys;
 	private Object[][] values;
+	public MultikeyMultiValue(Object[] keys, Object[][] values) {
+		
+	}
 	public MultikeyMultiValue(K key, Object[] values, K key2, V values2) {
 		this.keys = new String[] { key, key2 };
 		this.values = new Object[][] { values, new Object[] { values2} };
