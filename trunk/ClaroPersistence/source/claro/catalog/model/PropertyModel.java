@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import claro.catalog.util.SMap;
 import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Property;
@@ -16,9 +17,9 @@ public class PropertyModel {
 	final ItemModel item;
 	final ItemModel ownerItem;
 	final Long propertyId;
-	private PropertyValues values;
-	private PropertyValues effectiveValues;
-	private Map<ImportSource, PropertyValues> importSourceValues;
+	private SMap<String, Object> values;
+	private SMap<String, Object> effectiveValues;
+	private SMap<ImportSource, SMap<String, Object>> importSourceValues;
 
 	public PropertyModel(ItemModel item, ItemModel ownerItem, Long propertyId) {
 		this.item = item;
@@ -46,10 +47,10 @@ public class PropertyModel {
 		return ownerItem == null;
 	}
 
-	public PropertyValues getValues() {
+	public SMap<String, Object> getValues() {
 		synchronized (item.catalog) {
 			if (values == null) {
-				values = PropertyValues.EMPTY;
+				values = SMap.empty();
 				Item item = this.item.getEntity();
 				for (PropertyValue value : item.getPropertyValues()) {
 					if (value.getImportSource() == null && value.getOutputChannel() == null && value.getAlternate() == null) {
@@ -61,10 +62,10 @@ public class PropertyModel {
 		}
 	}
 	
-	public PropertyValues getEffectiveValues() {
+	public SMap<String, Object> getEffectiveValues() {
 		synchronized (item.catalog) {
 			if (effectiveValues == null) {
-				effectiveValues = PropertyValues.EMPTY;
+				effectiveValues = SMap.empty();
 				Item item = this.item.getEntity();
 				for (PropertyValue value : item.getPropertyValues()) {
 					if (value.getImportSource() == null && value.getOutputChannel() == null && value.getAlternate() == null) {
@@ -75,6 +76,22 @@ public class PropertyModel {
 			return effectiveValues;
 		}
 	}
+	
+	public SMap<ImportSource, SMap<String, Object>> getImportSourceValues() {
+		synchronized (item.catalog) {
+			if (importSourceValues == null) {
+				importSourceValues = SMap.empty();
+				Item item = this.item.getEntity();
+				for (PropertyValue value : item.getPropertyValues()) {
+					if (value.getImportSource() == null && value.getOutputChannel() == null && value.getAlternate() == null) {
+					}
+				}
+			}
+			return importSourceValues;
+		}
+	}
+	
+	
 	
 	public static Set<Property> getEntities(Collection<PropertyModel> properties) {
 		Set<Property> result = new LinkedHashSet<Property>();

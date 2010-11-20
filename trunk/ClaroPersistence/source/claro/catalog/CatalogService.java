@@ -28,6 +28,7 @@ public class CatalogService {
 	}
 	
 	public Item getItemDetails(Catalog catalog, OutputChannel outputChannel, String language, ImportSource importSource, Alternate alternate) {
+		return null;
 		
 	}
 }

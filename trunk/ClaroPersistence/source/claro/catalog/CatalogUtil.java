@@ -1,5 +1,7 @@
 package claro.catalog;
 
+import static com.google.common.base.Objects.equal;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -127,7 +129,7 @@ public class CatalogUtil {
 	}
 	
 	public static PropertyValue getValue(Item item, Property property, Supplier supplier, ImportSource importSource, String language, OutputChannel outputChannel) {
-		return getValue(item, property, supplier != null ? supplier.getId() : null, importSource != null ? importSource.getId() : null, language, outputChannel != null ? outputChannel.getId() : null);
+		return getValue(item, property, supplier != null ? supplier.getId() : null, importSource != null ? importSource.getId() : null, language, outputChannel != null ? outputChannel.getId() : null, false);
 	}
 	
 	/**
@@ -147,10 +149,10 @@ public class CatalogUtil {
 		List<PropertyValue> values = new ArrayList<PropertyValue>();
 		for (PropertyValue value : item.getPropertyValues()) {
 			if (eq(property, value.getProperty())) {
-				if (supplier == null || (value.getSupplier() != null && equals(supplier, value.getSupplier().getId()))) {
-					if (importSource == null || (value.getImportSource() != null && equals(importSource, value.getImportSource().getId()))) {
-						if (value.getLanguage() == null || equals(language, value.getLanguage())) {
-							if (value.getOutputChannel() == null || equals(outputChannel, value.getOutputChannel())) {
+				if (supplier == null || (value.getAlternate() != null && equal(supplier, value.getAlternate().getId()))) {
+					if (importSource == null || (value.getImportSource() != null && equal(importSource, value.getImportSource().getId()))) {
+						if (value.getLanguage() == null || equal(language, value.getLanguage())) {
+							if (value.getOutputChannel() == null || equal(outputChannel, value.getOutputChannel())) {
 								values.add(value);
 							}
 						}
@@ -162,7 +164,7 @@ public class CatalogUtil {
 		// filter values with a supplier 
 		if (supplier == null) {
 			for (int i = 0; i < values.size(); i++) {
-				if (values.get(i).getSupplier() != null) {
+				if (values.get(i).getAlternate() != null) {
 					values.set(i, null);
 				}
 			}
@@ -174,9 +176,9 @@ public class CatalogUtil {
 				if (values.get(i) != null) {
 					for (int j = 0; j < values.size(); j++) {
 						if (values.get(j) != null) {
-							if (equals(values.get(i).getProperty(), values.get(j).getProperty())) {
-								if (equals(values.get(i).getSupplier(), values.get(j).getSupplier())) {
-									if (equals(values.get(i).getLanguage(), values.get(j).getLanguage())) {
+							if (equal(values.get(i).getProperty(), values.get(j).getProperty())) {
+								if (equal(values.get(i).getAlternate(), values.get(j).getAlternate())) {
+									if (equal(values.get(i).getLanguage(), values.get(j).getLanguage())) {
 										int priorityI = values.get(i).getImportSource() != null ? values.get(i).getImportSource().getPriority() : Integer.MAX_VALUE; 
 										int priorityJ = values.get(j).getImportSource() != null ? values.get(j).getImportSource().getPriority() : Integer.MAX_VALUE;
 										if (priorityI > priorityJ) {
@@ -196,7 +198,7 @@ public class CatalogUtil {
 			if (values.get(i) != null) {
 				for (int j = 0; j < values.size(); j++) {
 					if (values.get(j) != null) {
-						if (equals(values.get(i).getProperty(), values.get(j).getProperty())) {
+						if (equal(values.get(i).getProperty(), values.get(j).getProperty())) {
 							if (values.get(i).getLanguage() != null && values.get(j).getLanguage() == null) {
 								values.set(j, null);
 							}
@@ -211,7 +213,7 @@ public class CatalogUtil {
 			if (values.get(i) != null) {
 				for (int j = 0; j < values.size(); j++) {
 					if (values.get(j) != null) {
-						if (equals(values.get(i).getProperty(), values.get(j).getProperty())) {
+						if (equal(values.get(i).getProperty(), values.get(j).getProperty())) {
 							if (values.get(i).getOutputChannel() != null && values.get(j).getOutputChannel() == null) {
 								values.set(j, null);
 							}
