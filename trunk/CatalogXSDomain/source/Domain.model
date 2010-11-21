@@ -7,10 +7,10 @@ import Metaphor.PIM.Domain.Package
 import Metaphor.PIM.Domain.Parameter
 
 path primitive=/packages:Metaphor/packages:PIM/packages:Domain/types
-path catalog=/packages:AgileXS/packages:Domain/packages:Catalog/types
+path catalog=/packages:Claro/packages:Domain/packages:Catalog/types
 
 Package {
-    name = AgileXS
+    name = Claro
     packages = {
         Package {
             name = Domain

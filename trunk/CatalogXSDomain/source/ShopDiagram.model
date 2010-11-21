@@ -9,7 +9,7 @@ import Metaphor.Eclipse.DomainDiagrams.SuperClassReference
 
 DomainDiagram {
     name = ShopDiagram
-    package = /packages:AgileXS/packages:Domain/packages:Shop
+    package = /packages:Claro/packages:Domain/packages:Shop
     classes = {
         DiagramClass {
             bounds = {
@@ -20,7 +20,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel
         }
         DiagramClass {
             bounds = {
@@ -31,7 +31,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop
+            domainClass = /packages:Claro/packages:Domain/packages:Shop/types:Shop
         }
         DiagramClass {
             bounds = {
@@ -42,7 +42,7 @@ DomainDiagram {
                     height = 57
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation
+            domainClass = /packages:Claro/packages:Domain/packages:Shop/types:Navigation
         }
         DiagramClass {
             bounds = {
@@ -53,7 +53,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:Promotion
+            domainClass = /packages:Claro/packages:Domain/packages:Shop/types:Promotion
         }
         DiagramClass {
             bounds = {
@@ -64,15 +64,15 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Shop/types:VolumeDiscountPromotion
+            domainClass = /packages:Claro/packages:Domain/packages:Shop/types:VolumeDiscountPromotion
         }
     }
     references = {
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:navigation
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Shop/types:Shop/attributes:navigation
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Shop/attributes:promotions
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Shop/types:Shop/attributes:promotions
         }
         Reference {
             bendPoints = {
@@ -93,17 +93,17 @@ DomainDiagram {
                     y = 398
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Shop/types:Navigation/attributes:subNavigation
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Shop/types:Navigation/attributes:subNavigation
         }
     }
     superClassReferences = {
         SuperClassReference {
-            source = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:VolumeDiscountPromotion
-            target = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:Promotion
+            source = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:VolumeDiscountPromotion
+            target = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:Promotion
         }
         SuperClassReference {
-            source = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Shop\/types\:Shop
-            target = /domainDiagrams:ShopDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:OutputChannel
+            source = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:Shop
+            target = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:OutputChannel
         }
     }
 }

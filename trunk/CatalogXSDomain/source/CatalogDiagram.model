@@ -10,7 +10,7 @@ import Metaphor.Eclipse.DomainDiagrams.SuperClassReference
 
 DomainDiagram {
     name = CatalogDiagram
-    package = /packages:AgileXS/packages:Domain/packages:Catalog
+    package = /packages:Claro/packages:Domain/packages:Catalog
     classes = {
         DiagramClass {
             bounds = {
@@ -21,7 +21,7 @@ DomainDiagram {
                     height = 105
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog
         }
         DiagramClass {
             bounds = {
@@ -32,7 +32,7 @@ DomainDiagram {
                     height = 96
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Product
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Product
         }
         DiagramClass {
             bounds = {
@@ -43,7 +43,7 @@ DomainDiagram {
                     height = 97
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Category
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Category
         }
         DiagramClass {
             bounds = {
@@ -54,7 +54,7 @@ DomainDiagram {
                     height = 140
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Property
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Property
         }
         DiagramClass {
             bounds = {
@@ -65,7 +65,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue
         }
         DiagramClass {
             bounds = {
@@ -76,7 +76,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:EnumValue
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:EnumValue
         }
         DiagramClass {
             bounds = {
@@ -87,7 +87,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Label
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Label
         }
         DiagramClass {
             bounds = {
@@ -98,7 +98,7 @@ DomainDiagram {
                     height = 170
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Template
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Template
             hidden = true
         }
         DiagramClass {
@@ -110,7 +110,7 @@ DomainDiagram {
                     height = 117
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Item
         }
         DiagramClass {
             bounds = {
@@ -121,7 +121,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Language
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Language
         }
         DiagramClass {
             bounds = {
@@ -132,7 +132,7 @@ DomainDiagram {
                     height = 97
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyGroup
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup
         }
         DiagramClass {
             bounds = {
@@ -143,7 +143,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild
         }
         DiagramClass {
             bounds = {
@@ -154,7 +154,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:ImportSource
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:ImportSource
         }
         DiagramClass {
             bounds = {
@@ -165,7 +165,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel
         }
         DiagramClass {
             bounds = {
@@ -176,7 +176,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Catalog/types:Alternate
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Alternate
         }
     }
     enumerations = {
@@ -189,12 +189,12 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainEnum = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyType
+            domainEnum = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyType
         }
     }
     references = {
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:property
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:property
         }
         Reference {
             bendPoints = {
@@ -203,7 +203,7 @@ DomainDiagram {
                     y = 590
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Property/attributes:enumValues
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Property/attributes:enumValues
         }
         Reference {
             bendPoints = {
@@ -212,7 +212,7 @@ DomainDiagram {
                     y = 44
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:templates
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:templates
         }
         Reference {
             bendPoints = {
@@ -221,7 +221,7 @@ DomainDiagram {
                     y = 78
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Product/attributes:templates
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Product/attributes:templates
         }
         Reference {
             bendPoints = {
@@ -230,7 +230,7 @@ DomainDiagram {
                     y = 175
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:properties
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:properties
         }
         Reference {
             bendPoints = {
@@ -239,13 +239,13 @@ DomainDiagram {
                     y = 314
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:propertyValues
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:propertyValues
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:templates
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:templates
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:items
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:items
         }
         Reference {
             bendPoints = {
@@ -254,13 +254,13 @@ DomainDiagram {
                     y = 593
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Property/attributes:labels
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Property/attributes:labels
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:EnumValue/attributes:labels
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:EnumValue/attributes:labels
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:languages
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:languages
         }
         Reference {
             bendPoints = {
@@ -269,7 +269,7 @@ DomainDiagram {
                     y = 320
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:properties
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:properties
         }
         Reference {
             bendPoints = {
@@ -278,7 +278,7 @@ DomainDiagram {
                     y = 149
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:propertyGroups
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:propertyGroups
         }
         Reference {
             bendPoints = {
@@ -287,7 +287,7 @@ DomainDiagram {
                     y = 423
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:labels
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:labels
         }
         Reference {
             bendPoints = {
@@ -296,7 +296,7 @@ DomainDiagram {
                     y = 15
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Catalog/attributes:root
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:root
         }
         Reference {
             bendPoints = {
@@ -309,10 +309,10 @@ DomainDiagram {
                     y = 122
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:itemValue
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:itemValue
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild/attributes:parent
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild/attributes:parent
         }
         Reference {
             bendPoints = {
@@ -321,13 +321,13 @@ DomainDiagram {
                     y = 152
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:ParentChild/attributes:child
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild/attributes:child
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:Item/attributes:children
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:children
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:importSource
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:importSource
         }
         Reference {
             bendPoints = {
@@ -336,7 +336,7 @@ DomainDiagram {
                     y = 565
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:outputChannel
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:outputChannel
         }
         Reference {
             bendPoints = {
@@ -345,7 +345,7 @@ DomainDiagram {
                     y = 2
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel/attributes:catalog
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:catalog
         }
         Reference {
             bendPoints = {
@@ -358,7 +358,7 @@ DomainDiagram {
                     y = 682
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedProperties
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedProperties
         }
         Reference {
             bendPoints = {
@@ -367,7 +367,7 @@ DomainDiagram {
                     y = 89
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedItems
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedItems
         }
         Reference {
             bendPoints = {
@@ -376,17 +376,17 @@ DomainDiagram {
                     y = 615
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Catalog/types:PropertyValue/attributes:alternate
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:alternate
         }
     }
     superClassReferences = {
         SuperClassReference {
-            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:Product
-            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:Item
+            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Product
+            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Item
         }
         SuperClassReference {
-            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:Category
-            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Catalog\/types\:Item
+            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Category
+            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Item
         }
     }
 }

@@ -4,14 +4,14 @@ import Metaphor.Core.Version
 import Metaphor.PSM.JavaEE.JavaEEProduct
 
 JavaEEProduct {
-    id = claro.persistence
+    id = claro.catalog.model
     name = ClaroPersistence
     provider = Claro
     version = Version { major = 1 minor = 0 micro = 0 }
     modules = {
-        claro.persistence
-        agilexs.catalogxs.domain
+        claro.catalog.model
+        claro.catalog.domain
     }
-    domain = /packages:AgileXS/packages:Domain
+    domain = /packages:Claro/packages:Domain
     architecture = /architecture:ClaroPersistenceArchitecture
 }

@@ -12,9 +12,9 @@ import Metaphor.PSM.JavaEEAspects.Query
 import Metaphor.PSM.Jpa.JpaCodeGeneration
 import Metaphor.PSM.Rdbms.Column
 
-path domain = /packages:AgileXS/packages:Domain/packages
-path catalog = /packages:AgileXS/packages:Domain/packages:Catalog/types
-path shop = /packages:AgileXS/packges:Domain/packages:Shop/types
+path domain = /packages:Claro/packages:Domain/packages
+path catalog = /packages:Claro/packages:Domain/packages:Catalog/types
+path shop = /packages:Claro/packges:Domain/packages:Shop/types
 
 JavaEEArchitectureJpa {
     name = ClaroPersistenceArchitecture

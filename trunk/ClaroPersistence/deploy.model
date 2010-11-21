@@ -7,8 +7,8 @@ import Metaphor.PSM.Glassfish2.Glassfish2Configuration
 import Metaphor.PSM.PostgreSQL.PostgreSQLConfiguration
 
 DeploymentConfiguration {
-    id = claro.persistene.deployment.local.ruud
-    name = "Claro Persistence Deployment"
+    id = claro.catalog.model.deployment.local.ruud
+    name = "Claro Model Deployment"
     productConfigurations = {
         Glassfish2Configuration {
             ideIntegration = true

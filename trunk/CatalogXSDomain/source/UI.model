@@ -1,4 +1,4 @@
-root /packages:AgileXS/packages:Domain/packages
+root /packages:Claro/packages:Domain/packages
 
 import Metaphor.PIM.UI.UIPackage
 import Metaphor.PIM.UI.Style

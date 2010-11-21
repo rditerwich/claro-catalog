@@ -11,13 +11,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyValue;
-import claro.jpa.catalog.Supplier;
 
 public class CatalogUtil {
 	
@@ -128,7 +128,7 @@ public class CatalogUtil {
 		return result;
 	}
 	
-	public static PropertyValue getValue(Item item, Property property, Supplier supplier, ImportSource importSource, String language, OutputChannel outputChannel) {
+	public static PropertyValue getValue(Item item, Property property, Alternate supplier, ImportSource importSource, String language, OutputChannel outputChannel) {
 		return getValue(item, property, supplier != null ? supplier.getId() : null, importSource != null ? importSource.getId() : null, language, outputChannel != null ? outputChannel.getId() : null, false);
 	}
 	
@@ -136,20 +136,20 @@ public class CatalogUtil {
 	 * A value variant: value for a specific language, output channel, supplier and status
 	 * @param item
 	 * @param property
-	 * @param supplier
+	 * @param alternate
 	 * @param importSource
 	 * @param language
 	 * @param outputChannel
 	 * @return
 	 */
-	public static PropertyValue getValue(Item item, Property property, Long supplier, Long importSource, String language, Long outputChannel, Boolean published) {
+	public static PropertyValue getValue(Item item, Property property, Long alternate, Long importSource, String language, Long outputChannel, Boolean published) {
 		
 
 		// filter values
 		List<PropertyValue> values = new ArrayList<PropertyValue>();
 		for (PropertyValue value : item.getPropertyValues()) {
 			if (eq(property, value.getProperty())) {
-				if (supplier == null || (value.getAlternate() != null && equal(supplier, value.getAlternate().getId()))) {
+				if (alternate == null || (value.getAlternate() != null && equal(alternate, value.getAlternate().getId()))) {
 					if (importSource == null || (value.getImportSource() != null && equal(importSource, value.getImportSource().getId()))) {
 						if (value.getLanguage() == null || equal(language, value.getLanguage())) {
 							if (value.getOutputChannel() == null || equal(outputChannel, value.getOutputChannel())) {
@@ -162,7 +162,7 @@ public class CatalogUtil {
 		}
 		
 		// filter values with a supplier 
-		if (supplier == null) {
+		if (alternate == null) {
 			for (int i = 0; i < values.size(); i++) {
 				if (values.get(i).getAlternate() != null) {
 					values.set(i, null);
@@ -231,7 +231,7 @@ public class CatalogUtil {
 		}
 
 		for (Item parent : getParentExtent(item, false)) {
-			PropertyValue value = getValue(parent, property, supplier, importSource, language, outputChannel, published);
+			PropertyValue value = getValue(parent, property, alternate, importSource, language, outputChannel, published);
 			if (value != null) {
 				return value;
 			}

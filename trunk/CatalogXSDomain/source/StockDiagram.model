@@ -9,7 +9,7 @@ import Metaphor.Eclipse.DomainDiagrams.SuperClassReference
 
 DomainDiagram {
     name = StockDiagram
-    package = /packages:AgileXS/packages:Domain/packages:Stock
+    package = /packages:Claro/packages:Domain/packages:Stock
     classes = {
         DiagramClass {
             bounds = {
@@ -20,7 +20,7 @@ DomainDiagram {
                     height = 69
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:Exchange
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:Exchange
         }
         DiagramClass {
             bounds = {
@@ -31,7 +31,7 @@ DomainDiagram {
                     height = 90
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:Underlying
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:Underlying
         }
         DiagramClass {
             bounds = {
@@ -42,7 +42,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionChain
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:OptionChain
         }
         DiagramClass {
             bounds = {
@@ -53,7 +53,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:Option
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:Option
         }
         DiagramClass {
             bounds = {
@@ -64,7 +64,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionIdType
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:OptionIdType
         }
         DiagramClass {
             bounds = {
@@ -75,7 +75,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionId
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:OptionId
         }
         DiagramClass {
             bounds = {
@@ -86,7 +86,7 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:PutOption
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:PutOption
         }
         DiagramClass {
             bounds = {
@@ -97,15 +97,15 @@ DomainDiagram {
                     height = -1
                 }
             }
-            domainClass = /packages:AgileXS/packages:Domain/packages:Stock/types:CallOption
+            domainClass = /packages:Claro/packages:Domain/packages:Stock/types:CallOption
         }
     }
     references = {
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionChain/attributes:exchange
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Stock/types:OptionChain/attributes:exchange
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionChain/attributes:underlying
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Stock/types:OptionChain/attributes:underlying
         }
         Reference {
             bendPoints = {
@@ -114,23 +114,23 @@ DomainDiagram {
                     y = 287
                 }
             }
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionChain/attributes:options
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Stock/types:OptionChain/attributes:options
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Stock/types:Option/attributes:ids
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Stock/types:Option/attributes:ids
         }
         Reference {
-            sourceAttribute = /packages:AgileXS/packages:Domain/packages:Stock/types:OptionId/attributes:type
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Stock/types:OptionId/attributes:type
         }
     }
     superClassReferences = {
         SuperClassReference {
-            source = /domainDiagrams:StockDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Stock\/types\:PutOption
-            target = /domainDiagrams:StockDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Stock\/types\:Option
+            source = /domainDiagrams:StockDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Stock\/types\:PutOption
+            target = /domainDiagrams:StockDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Stock\/types\:Option
         }
         SuperClassReference {
-            source = /domainDiagrams:StockDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Stock\/types\:CallOption
-            target = /domainDiagrams:StockDiagram/classes:\/packages\:AgileXS\/packages\:Domain\/packages\:Stock\/types\:Option
+            source = /domainDiagrams:StockDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Stock\/types\:CallOption
+            target = /domainDiagrams:StockDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Stock\/types\:Option
         }
     }
 }

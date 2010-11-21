@@ -8,11 +8,11 @@ import claro.jpa.catalog.PropertyValue;
 
 public class PropertyData {
 
-	SMap<String, PropertyValue> values;
-	SMap<String, PropertyValue> derivedValues;
-	SMap<OutputChannel, SMap<String, PropertyValue>> derivedOutputChannelValues;
-	SMap<OutputChannel, SMap<String, PropertyValue>> outputChannelSpecificValues;
-	SMap<Alternate, SMap<String, PropertyValue>> alternateValues;
-	SMap<ImportSource, SMap<String, PropertyValue>> importSourceValues;
+	public SMap<String, PropertyValue> values;
+	public SMap<String, PropertyValue> derivedValues;
+	public SMap<OutputChannel, SMap<String, PropertyValue>> derivedOutputChannelValues;
+	public SMap<OutputChannel, SMap<String, PropertyValue>> outputChannelSpecificValues;
+	public SMap<Alternate, SMap<String, PropertyValue>> alternateValues;
+	public SMap<ImportSource, SMap<String, PropertyValue>> importSourceValues;
 }
 	

@@ -5,18 +5,18 @@ import Metaphor.Core.Module
 import Metaphor.Core.Version
 
 Module {
-    id = claro.persistence
+    id = claro.catalog.model
     name = ClaroPersistence
     provider = Claro
     version = Version { major = 1 minor = 0 micro = 0 }
     dependencies = {
         Dependency {
-            module = agilexs.catalogxs.domain
+            module = claro.catalog.domain
         }
         Dependency {
             module = metaphor.models
         }
     }
     
-    exposedPackages = claro.catalog.model
+    exposedPackages = { claro.catalog claro.catalog.model claro.catalog.util }
 }
