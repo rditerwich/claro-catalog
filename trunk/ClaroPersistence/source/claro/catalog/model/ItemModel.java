@@ -1,5 +1,7 @@
 package claro.catalog.model;
 
+import static com.google.common.base.Objects.equal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyValue;
@@ -24,6 +27,8 @@ public class ItemModel {
 	private Set<PropertyModel> properties;
 	private Set<PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
+	private Set<String> usedLanguages;
+	private Set<OutputChannel> usedOutputChannels;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
@@ -51,12 +56,16 @@ public class ItemModel {
 					}
 				});
 				for (ParentChild parentChild : parentChildren) {
-					if (parentChild.getParent() != null) {
-						children.add(catalog.getItem(parentChild.getParent().getId()));
+					if (parentChild.getParent() != null && !equal(parentChild.getParent().getId(), itemId)) {
+						ItemModel parentItem = catalog.getItem(parentChild.getParent().getId());
+						// prevent cycles
+						if (!parentItem.getParentExtent().contains(this)) {
+							parents.add(parentItem);
+						}
 					}
 				}
 			}
-			return children;
+			return parents;
 		}
 	}
 	
@@ -106,7 +115,7 @@ public class ItemModel {
 				children = new HashSet<ItemModel>(getEntity().getChildren().size());
 				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getChildren());
 				for (ParentChild parentChild : parentChildren) {
-					if (parentChild.getChild() != null) {
+					if (parentChild.getChild() != null && !equal(parentChild.getChild().getId(), itemId)) {
 						children.add(catalog.getItem(parentChild.getChild().getId()));
 					}
 				}
@@ -150,6 +159,19 @@ public class ItemModel {
 			return properties;
 		}		
 	}
+
+	/**
+	 * @param propertyId
+	 * @return Property model or null.
+	 */
+	public PropertyModel findProperty(Long propertyId) {
+		for (PropertyModel property : getProperties()) {
+			if (equal(propertyId, property.propertyId)) {
+				return property;
+			}
+		}
+		return null;
+	}
 	
 	public Set<PropertyModel> getPropertyExtent() {
 		synchronized (catalog) {
@@ -170,14 +192,45 @@ public class ItemModel {
 	public Set<PropertyModel> getDanglingProperties() {
 		synchronized (catalog) {
 			if (danglingProperties == null) {
-				Set<Property> entities = PropertyModel.getEntities(getPropertyExtent());
+				danglingProperties = new HashSet<PropertyModel>();
+				Set<Property> propertyEntities = PropertyModel.getEntities(getPropertyExtent());
 				for (PropertyValue value : getEntity().getPropertyValues()) {
-					if (!entities.contains(value.getProperty())) {
+					if (!propertyEntities.contains(value.getProperty())) {
 						danglingProperties.add(new PropertyModel(this, null, value.getProperty().getId()));
 					}
 				}
 			}
 			return danglingProperties;
+		}		
+	}
+	
+	public Set<String> getUsedLanguages() {
+		synchronized (catalog) {
+			if (usedLanguages == null) {
+				usedLanguages = new HashSet<String>();
+				for (PropertyValue value : getEntity().getPropertyValues()) {
+					usedLanguages.add(value.getLanguage());
+				}
+				for (ItemModel parent : getParents()) {
+					usedLanguages.addAll(parent.getUsedLanguages());
+				}
+			}
+			return usedLanguages;
+		}		
+	}
+	
+	public Set<OutputChannel> getUsedOutputChannel() {
+		synchronized (catalog) {
+			if (usedOutputChannels == null) {
+				usedOutputChannels = new HashSet<OutputChannel>();
+				for (PropertyValue value : getEntity().getPropertyValues()) {
+					usedOutputChannels.add(value.getOutputChannel());
+				}
+				for (ItemModel parent : getParents()) {
+					usedOutputChannels.addAll(parent.getUsedOutputChannel());
+				}
+			}
+			return usedOutputChannels;
 		}		
 	}
 	
