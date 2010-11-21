@@ -8,8 +8,8 @@ import Metaphor.PSM.Glassfish2.Glassfish2Configuration
 import Metaphor.PSM.PostgreSQL.PostgreSQLConfiguration
 
 DeploymentConfiguration {
-    id = agilexs.catalogxsadmin.deployment.local
-    name = "CatalogXSAdmin Deployment Local"
+    id = claro.catalog.manager.deployment.local
+    name = "CatalogManager Deployment Local"
     productConfigurations = {
         Glassfish2Configuration {
             ideIntegration = true

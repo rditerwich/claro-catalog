@@ -1,0 +1,5 @@
+<!DOCTYPE document SYSTEM "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
+<!-- Includes the source files for the CatalogManager theme. -->
+<module>
+<stylesheet src="gwt/catalogmanager/catalogmanager.css"/>
+</module>

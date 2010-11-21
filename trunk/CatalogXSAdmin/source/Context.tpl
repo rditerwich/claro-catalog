@@ -1,4 +1,4 @@
-package agilexs.catalogxsadmin
+package claro.catalog.manager
 
 import metaphor.core.IModule
 import metaphor.deployment.IDeploymentContext

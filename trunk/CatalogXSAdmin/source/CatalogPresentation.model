@@ -1,0 +1,360 @@
+root /packages:Claro/packages:Catalog/packages:Manager/packages
+
+import Metaphor.PSM.GWT.GwtFileDownloadServlet
+import Metaphor.PSM.GWT.GwtMethod
+import Metaphor.PSM.GWT.GwtModule
+import Metaphor.PSM.GWT.GwtPackage
+import Metaphor.PSM.GWT.GwtService
+import Metaphor.PSM.Java.JavaBeanPropertyView
+import Metaphor.PSM.Java.JavaBeanView
+import Metaphor.PSM.Jpa.JpaPackage
+
+path catalog = /packages:Claro/packages:Catalog/packages:Manager/packages:Presentation/packages:Catalog/types
+path shop = /packages:Claro/packages:Catalog/packages:Manager/packages:Presentation/packages:Shop/types
+
+GwtPackage {
+    name = Presentation
+    modules = {
+        GwtModule {
+            name = CatalogManager
+            url = /
+            inherits = com.google.gwt.user.datepicker.DatePicker
+        }
+    }
+    servlets = {
+        GwtService {
+            name = CatalogService
+            methods = {
+                GwtMethod {
+                    name = findAllCategoryNames
+                    view = {
+                        JavaBeanView {
+                            name = CategoryNamesView
+                            kind = all
+                            views = {
+                                JavaBeanPropertyView {
+                                    name = ProductCategoryView
+                                    included = catalog:Item/properties:id
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
+                            }
+                        }
+                    }
+                }
+                GwtMethod {
+                    name = findAllCategoryChildren
+                    view = {
+                        JavaBeanView {
+                            name = CategoryView
+                            included = {
+                                catalog:Item/properties:id
+                                catalog:Item/properties:catalog
+                                catalog:Item/properties:parents
+                                catalog:Item/properties:propertyValues
+                                catalog:Item/properties:properties
+                                catalog:Category/properties:containsProducts
+                            }
+                            views = {
+                                JavaBeanPropertyView {
+                                    name = CatalogView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:catalog
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentsView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:parents
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentChildView
+                                    included = catalog:Item/properties:children
+                                    referringProperties = catalog:ParentChild/properties:parent
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuesView
+                                    kind = all
+                                    excluded = catalog:PropertyValue/properties:mediaValue
+                                    referringProperties = catalog:Item/properties:propertyValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertiesView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:properties
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:enumValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesLabelsView
+                                    kind = all
+                                    referringProperties = catalog:EnumValue/properties:labels
+                                }
+                            }
+                        }
+                    }
+                }
+                GwtMethod {
+                    name = findAllItemParents
+                    view = {
+                        JavaBeanView {
+                            name = CategoryView
+                            included = {
+                                catalog:Item/properties:id
+                                catalog:Item/properties:catalog
+                                catalog:Item/properties:parents
+                                catalog:Item/properties:propertyValues
+                                catalog:Item/properties:properties
+                                catalog:Category/properties:containsProducts
+                            }
+                            views = {
+                                JavaBeanPropertyView {
+                                    name = CatalogView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:catalog
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentsView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:parents
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentChildView
+                                    included = catalog:Item/properties:children
+                                    referringProperties = catalog:ParentChild/properties:parent
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuesView
+                                    kind = all
+                                    excluded = catalog:PropertyValue/properties:mediaValue
+                                    referringProperties = catalog:Item/properties:propertyValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertiesView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:properties
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:enumValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesLabelsView
+                                    kind = all
+                                    referringProperties = catalog:EnumValue/properties:labels
+                                }
+                            }
+                        }
+                    }
+                }
+                GwtMethod {
+                    name = findAllByCategoryProducts
+                    view = {
+                        JavaBeanView {
+                            name = ProductView
+                            included = {
+                                catalog:Item/properties:id
+                                catalog:Item/properties:catalog
+                                catalog:Item/properties:propertyValues
+                                catalog:Item/properties:properties
+                            }
+                            views = {
+                                JavaBeanPropertyView {
+                                    name = CatalogView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:catalog
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuesView
+                                    kind = all
+                                    excluded = catalog:PropertyValue/properties:mediaValue
+                                    referringProperties = catalog:Item/properties:propertyValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertiesView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:properties
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:enumValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesLabelsView
+                                    kind = all
+                                    referringProperties = catalog:EnumValue/properties:labels
+                                }
+                            }
+                        }
+                    }
+                }
+                GwtMethod {
+                    name = getOrCreateCatalog
+                    view = {
+                        JavaBeanView {
+                            kind = all
+                            views = {
+                                JavaBeanPropertyView {
+                                    name = ShopsView
+                                    kind = all
+                                    referringProperties = catalog:Catalog/properties:outputChannels
+                                }
+                                JavaBeanPropertyView {
+                                    name = CatalogFromShopsView
+                                    referringProperties = catalog:OutputChannel/properties:catalog
+                                }
+                                JavaBeanPropertyView {
+                                    name = LanguageView
+                                    kind = all
+                                    referringProperties = catalog:Catalog/properties:languages
+                                }
+                                JavaBeanPropertyView {
+                                    name = ItemsView
+                                    kind = all
+                                    referringProperties = catalog:Catalog/properties:items
+                                }
+                                JavaBeanPropertyView {
+                                    name = ParentsView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:parents
+                                }
+                                JavaBeanPropertyView {
+                                    name = ChildrenView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:children
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuesView
+                                    kind = all
+                                    excluded = catalog:PropertyValue/properties:mediaValue
+                                    referringProperties = catalog:Item/properties:propertyValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertiesView
+                                    kind = all
+                                    referringProperties = catalog:Item/properties:properties
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:enumValues
+                                }
+                                JavaBeanPropertyView {
+                                    name = EnumValuesLabelsView
+                                    kind = all
+                                    referringProperties = catalog:EnumValue/properties:labels
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValuePropertyView
+                                    kind = all
+                                    referringProperties = catalog:PropertyValue/properties:property
+                                }
+                                JavaBeanPropertyView {
+                                    name = PropertyValueItemView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:item
+                                }
+                                JavaBeanPropertyView {
+                                    name = LabelsView
+                                    kind = all
+                                    referringProperties = catalog:Property/properties:labels
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    specialPurposeServlets = {
+        GwtFileDownloadServlet {
+            name = DownloadMedia
+        }
+    }
+}
+JpaPackage {
+    javaPackageName = claro.jpa
+}
