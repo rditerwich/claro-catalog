@@ -10,6 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
+import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
@@ -27,8 +30,9 @@ public class ItemModel {
 	private Set<PropertyModel> properties;
 	private Set<PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
-	private Set<String> usedLanguages;
+	private Set<Alternate> usedAlternates;
 	private Set<OutputChannel> usedOutputChannels;
+	private Set<String> usedLanguages;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
@@ -46,7 +50,7 @@ public class ItemModel {
 	public Set<ItemModel> getParents() {
 		synchronized (catalog) {
 			if (parents == null) {
-				parents = new LinkedHashSet<ItemModel>();
+				LinkedHashSet<ItemModel> parents = new LinkedHashSet<ItemModel>();
 				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getParents());
 				Collections.sort(parentChildren, new Comparator<ParentChild>() {
 					public int compare(ParentChild o1, ParentChild o2) {
@@ -64,6 +68,7 @@ public class ItemModel {
 						}
 					}
 				}
+				this.parents = ImmutableSet.copyOf(parents);
 			}
 			return parents;
 		}
@@ -89,7 +94,7 @@ public class ItemModel {
 	public Set<ItemModel> getParentExtent() {
 		synchronized (catalog) {
 			if (parentExtent == null) {
-				parentExtent = new LinkedHashSet<ItemModel>();
+				LinkedHashSet<ItemModel> parentExtent = new LinkedHashSet<ItemModel>();
 				LinkedHashSet<ItemModel> queue = new LinkedHashSet<ItemModel>();
 				queue.add(this);
 				for (ItemModel item : queue) {
@@ -100,6 +105,7 @@ public class ItemModel {
 						}
 					}
 				}
+				this.parentExtent = ImmutableSet.copyOf(parentExtent);
 			}
 			return parentExtent;
 		}
@@ -112,13 +118,14 @@ public class ItemModel {
 	public Set<ItemModel> getChildren() {
 		synchronized (catalog) {
 			if (children == null) {
-				children = new HashSet<ItemModel>(getEntity().getChildren().size());
+				HashSet<ItemModel> children = new HashSet<ItemModel>();
 				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getChildren());
 				for (ParentChild parentChild : parentChildren) {
 					if (parentChild.getChild() != null && !equal(parentChild.getChild().getId(), itemId)) {
 						children.add(catalog.getItem(parentChild.getChild().getId()));
 					}
 				}
+				this.children = ImmutableSet.copyOf(children);
 			}
 			return children;
 		}
@@ -131,17 +138,18 @@ public class ItemModel {
 	public Set<ItemModel> getChildExtent() {
 		synchronized (catalog) {
 			if (childExtent == null) {
-				childExtent = new LinkedHashSet<ItemModel>();
+				LinkedHashSet<ItemModel> children = new LinkedHashSet<ItemModel>();
 				LinkedHashSet<ItemModel> queue = new LinkedHashSet<ItemModel>();
 				queue.add(this);
 				for (ItemModel item : queue) {
 					for (ItemModel child : item.getChildren()) {
 						if (!queue.contains(child)) {
-							childExtent.add(child);
+							children.add(child);
 							queue.add(child);
 						}
 					}
 				}
+				childExtent = ImmutableSet.copyOf(children);
 			}
 			return childExtent;
 		}
@@ -150,11 +158,11 @@ public class ItemModel {
 	public Set<PropertyModel> getProperties() {
 		synchronized (catalog) {
 			if (properties == null) {
-				properties = new HashSet<PropertyModel>();
+				HashSet<PropertyModel> props = new HashSet<PropertyModel>();
 				for (Property property : getEntity().getProperties()) {
-					properties.add(new PropertyModel(this, this, property.getId()));
+					props.add(new PropertyModel(this, this, property.getId()));
 				}
-				
+				properties = ImmutableSet.copyOf(props);
 			}
 			return properties;
 		}		
@@ -176,14 +184,14 @@ public class ItemModel {
 	public Set<PropertyModel> getPropertyExtent() {
 		synchronized (catalog) {
 			if (propertyExtent == null) {
-				propertyExtent = new HashSet<PropertyModel>();
+				HashSet<PropertyModel> properties = new HashSet<PropertyModel>();
 				for (ItemModel parent : getParentExtent()) {
 					for (Property property : parent.getEntity().getProperties()) {
-						propertyExtent.add(new PropertyModel(this, parent, property.getId()));
+						properties.add(new PropertyModel(this, parent, property.getId()));
 					}
 				}
-				propertyExtent.addAll(getProperties());
-				
+				properties.addAll(getProperties());
+				propertyExtent = ImmutableSet.copyOf(properties);
 			}
 			return propertyExtent;
 		}		
@@ -192,45 +200,64 @@ public class ItemModel {
 	public Set<PropertyModel> getDanglingProperties() {
 		synchronized (catalog) {
 			if (danglingProperties == null) {
-				danglingProperties = new HashSet<PropertyModel>();
+				HashSet<PropertyModel> properties = new HashSet<PropertyModel>();
 				Set<Property> propertyEntities = PropertyModel.getEntities(getPropertyExtent());
 				for (PropertyValue value : getEntity().getPropertyValues()) {
 					if (!propertyEntities.contains(value.getProperty())) {
-						danglingProperties.add(new PropertyModel(this, null, value.getProperty().getId()));
+						properties.add(new PropertyModel(this, null, value.getProperty().getId()));
 					}
 				}
+				danglingProperties = ImmutableSet.copyOf(properties);
 			}
 			return danglingProperties;
 		}		
 	}
 	
-	public Set<String> getUsedLanguages() {
+	public Set<Alternate> getUsedAlternates() {
 		synchronized (catalog) {
-			if (usedLanguages == null) {
-				usedLanguages = new HashSet<String>();
+			if (usedAlternates == null) {
+				HashSet<Alternate> alternates = new HashSet<Alternate>();
 				for (PropertyValue value : getEntity().getPropertyValues()) {
-					usedLanguages.add(value.getLanguage());
+					alternates.add(value.getAlternate());
 				}
 				for (ItemModel parent : getParents()) {
-					usedLanguages.addAll(parent.getUsedLanguages());
+					alternates.addAll(parent.getUsedAlternates());
 				}
+				usedAlternates = ImmutableSet.copyOf(alternates);
 			}
-			return usedLanguages;
+			return usedAlternates;
 		}		
 	}
 	
 	public Set<OutputChannel> getUsedOutputChannel() {
 		synchronized (catalog) {
 			if (usedOutputChannels == null) {
-				usedOutputChannels = new HashSet<OutputChannel>();
+				Set<OutputChannel> outputChannels = new HashSet<OutputChannel>();
 				for (PropertyValue value : getEntity().getPropertyValues()) {
-					usedOutputChannels.add(value.getOutputChannel());
+					outputChannels.add(value.getOutputChannel());
 				}
 				for (ItemModel parent : getParents()) {
-					usedOutputChannels.addAll(parent.getUsedOutputChannel());
+					outputChannels.addAll(parent.getUsedOutputChannel());
 				}
+				usedOutputChannels = ImmutableSet.copyOf(outputChannels);
 			}
 			return usedOutputChannels;
+		}		
+	}
+	
+	public Set<String> getUsedLanguages() {
+		synchronized (catalog) {
+			if (usedLanguages == null) {
+				HashSet<String> languages = new HashSet<String>();
+				for (PropertyValue value : getEntity().getPropertyValues()) {
+					languages.add(value.getLanguage());
+				}
+				for (ItemModel parent : getParents()) {
+					languages.addAll(parent.getUsedLanguages());
+				}
+				usedLanguages = ImmutableSet.copyOf(languages);
+			}
+			return usedLanguages;
 		}		
 	}
 	

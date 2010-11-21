@@ -21,5 +21,4 @@ public class ImportSourceComparator implements Comparator<ImportSource> {
 		if (i1 > i2) return -1;
 	  return 0;
   }
-
 }
