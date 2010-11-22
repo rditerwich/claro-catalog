@@ -32,51 +32,35 @@ import easyenterprise.lib.util.SMap;
  *
  * @author ruud.diterwich
  */
-public class PropertyModel {
+public abstract class PropertyModel {
 
 	private static final SMap<String, Object> emptyValues = SMap.empty();
 	private static final SMap<OutputChannel, SMap<String, Object>> emptyOCValues = SMap.empty();
 	private static final Object undefined = new Object();
 	
-	final ItemModel item;
-	final ItemModel ownerItem;
-	final Long propertyId;
-	
 	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
 	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
 	private SMap<ImportSource, SMap<OutputChannel, SMap<String, Object>>> importSourceValues = SMap.empty();
 
-	public PropertyModel(ItemModel item, ItemModel ownerItem, Long propertyId) {
-		this.item = item;
-		this.ownerItem = ownerItem;
-		this.propertyId = propertyId;
-  }
-	
-	public Long getPropertyId() {
-		return propertyId;
-	}
-	
-	public ItemModel getItem() {
-	  return item;
-  }
-	
-	public ItemModel getOwnerItem() {
-	  return ownerItem;
-  }
+	public abstract Long getPropertyId();
+	public abstract ItemModel getItem();
+	public abstract ItemModel getOwnerItem();
+	public abstract SMap<String, String> getLabels();
+	public abstract SMap<Integer, SMap<String, String>> getEnumValues();
 
 	public Property getEntity() {
-		return CatalogAccess.getDao().getProperty(propertyId);
+		return CatalogAccess.getDao().getProperty(getPropertyId());
 	}
 	
 	public boolean isDangling() {
-		return ownerItem == null;
+		return getOwnerItem() == null;
 	}
 
 	/**
 	 * @return values or empty SMap
 	 */
 	public SMap<String, Object> getValues(Alternate alternate, OutputChannel outputChannel) {
-		synchronized (item.catalog) {
+		synchronized (getItem().catalog) {
 			SMap<OutputChannel, SMap<String, Object>> ocValues = values.getValue(alternate, emptyOCValues);
 			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
 			if (langValues == null) {
@@ -98,7 +82,7 @@ public class PropertyModel {
 	 * @return Effective values or empty SMap
 	 */
 	public SMap<String, Object> getEffectiveValues(Alternate alternate, OutputChannel outputChannel) {
-		synchronized (item.catalog) {
+		synchronized (getItem().catalog) {
 				
 			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.getValue(alternate, emptyOCValues);
 			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
@@ -114,8 +98,8 @@ public class PropertyModel {
 					
 					// look in parent items, first one wins, parents are ordered
 					if (effectiveValue == undefined) {
-						for (ItemModel parent : item.getParents()) {
-							PropertyModel property = parent.findProperty(propertyId);
+						for (ItemModel parent : getItem().getParents()) {
+							PropertyModel property = parent.findProperty(getPropertyId());
 							if (property != null) {
 								effectiveValue = property.getEffectiveValues(alternate, outputChannel).getValue(language, undefined);
 								if (effectiveValue != undefined) break;
@@ -138,7 +122,7 @@ public class PropertyModel {
 	 * @return Import source values or the empty map
 	 */
 	public SMap<OutputChannel, SMap<String, Object>> getImportSourceValues(ImportSource importSource) {
-		synchronized (item.catalog) {
+		synchronized (getItem().catalog) {
 			SMap<OutputChannel, SMap<String, Object>> ocValues = importSourceValues.getValue(importSource);
 			if (ocValues == null) {
 				ocValues = SMap.empty();
@@ -154,7 +138,7 @@ public class PropertyModel {
 			return ocValues;
 		}
 	}
-	
+
 	public static Set<Property> getEntities(Collection<PropertyModel> properties) {
 		Set<Property> result = new LinkedHashSet<Property>();
 		for (PropertyModel property : properties) {
@@ -165,9 +149,9 @@ public class PropertyModel {
 
 	private Iterable<PropertyValue> propertyValues = new Iterable<PropertyValue>() {
 		public Iterator<PropertyValue> iterator() {
-			return Iterators.filter(item.getEntity().getPropertyValues().iterator(), new Predicate<PropertyValue>() {
+			return Iterators.filter(getItem().getEntity().getPropertyValues().iterator(), new Predicate<PropertyValue>() {
 				public boolean apply(PropertyValue input) {
-	        return input.getProperty() != null && equal(input.getProperty().getId(), propertyId);
+	        return input.getProperty() != null && equal(input.getProperty().getId(), getPropertyId());
         }
 			});
 		}
