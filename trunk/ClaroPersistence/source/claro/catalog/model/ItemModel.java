@@ -10,14 +10,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
-import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.Item;
-import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyValue;
+
+import com.google.common.collect.ImmutableSet;
 
 public class ItemModel {
 
@@ -30,9 +28,9 @@ public class ItemModel {
 	private Set<PropertyModel> properties;
 	private Set<PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
-	private Set<Alternate> usedAlternates;
-	private Set<OutputChannel> usedOutputChannels;
-	private Set<String> usedLanguages;
+//	private Set<Alternate> usedAlternates;
+//	private Set<OutputChannel> usedOutputChannels;
+//	private Set<String> usedLanguages;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
@@ -213,53 +211,53 @@ public class ItemModel {
 		}		
 	}
 	
-	public Set<Alternate> getUsedAlternates() {
-		synchronized (catalog) {
-			if (usedAlternates == null) {
-				HashSet<Alternate> alternates = new HashSet<Alternate>();
-				for (PropertyValue value : getEntity().getPropertyValues()) {
-					alternates.add(value.getAlternate());
-				}
-				for (ItemModel parent : getParents()) {
-					alternates.addAll(parent.getUsedAlternates());
-				}
-				usedAlternates = ImmutableSet.copyOf(alternates);
-			}
-			return usedAlternates;
-		}		
-	}
-	
-	public Set<OutputChannel> getUsedOutputChannel() {
-		synchronized (catalog) {
-			if (usedOutputChannels == null) {
-				Set<OutputChannel> outputChannels = new HashSet<OutputChannel>();
-				for (PropertyValue value : getEntity().getPropertyValues()) {
-					outputChannels.add(value.getOutputChannel());
-				}
-				for (ItemModel parent : getParents()) {
-					outputChannels.addAll(parent.getUsedOutputChannel());
-				}
-				usedOutputChannels = ImmutableSet.copyOf(outputChannels);
-			}
-			return usedOutputChannels;
-		}		
-	}
-	
-	public Set<String> getUsedLanguages() {
-		synchronized (catalog) {
-			if (usedLanguages == null) {
-				HashSet<String> languages = new HashSet<String>();
-				for (PropertyValue value : getEntity().getPropertyValues()) {
-					languages.add(value.getLanguage());
-				}
-				for (ItemModel parent : getParents()) {
-					languages.addAll(parent.getUsedLanguages());
-				}
-				usedLanguages = ImmutableSet.copyOf(languages);
-			}
-			return usedLanguages;
-		}		
-	}
+//	public Set<Alternate> getUsedAlternates() {
+//		synchronized (catalog) {
+//			if (usedAlternates == null) {
+//				HashSet<Alternate> alternates = new HashSet<Alternate>();
+//				for (PropertyValue value : getEntity().getPropertyValues()) {
+//					alternates.add(value.getAlternate());
+//				}
+//				for (ItemModel parent : getParents()) {
+//					alternates.addAll(parent.getUsedAlternates());
+//				}
+//				usedAlternates = ImmutableSet.copyOf(alternates);
+//			}
+//			return usedAlternates;
+//		}		
+//	}
+//	
+//	public Set<OutputChannel> getUsedOutputChannel() {
+//		synchronized (catalog) {
+//			if (usedOutputChannels == null) {
+//				Set<OutputChannel> outputChannels = new HashSet<OutputChannel>();
+//				for (PropertyValue value : getEntity().getPropertyValues()) {
+//					outputChannels.add(value.getOutputChannel());
+//				}
+//				for (ItemModel parent : getParents()) {
+//					outputChannels.addAll(parent.getUsedOutputChannel());
+//				}
+//				usedOutputChannels = ImmutableSet.copyOf(outputChannels);
+//			}
+//			return usedOutputChannels;
+//		}		
+//	}
+//	
+//	public Set<String> getUsedLanguages() {
+//		synchronized (catalog) {
+//			if (usedLanguages == null) {
+//				HashSet<String> languages = new HashSet<String>();
+//				for (PropertyValue value : getEntity().getPropertyValues()) {
+//					languages.add(value.getLanguage());
+//				}
+//				for (ItemModel parent : getParents()) {
+//					languages.addAll(parent.getUsedLanguages());
+//				}
+//				usedLanguages = ImmutableSet.copyOf(languages);
+//			}
+//			return usedLanguages;
+//		}		
+//	}
 	
 	void invalidate() {
 		synchronized (catalog) {

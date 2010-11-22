@@ -3,15 +3,10 @@ package claro.catalog.model;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.ImportSource;
@@ -39,16 +34,17 @@ import easyenterprise.lib.util.SMap;
  */
 public class PropertyModel {
 
-	public static final SMap<String, Object> emptyValues = SMap.empty();
-	public static final SMap<OutputChannel, SMap<String, Object>> emptyOCValues = SMap.empty();
+	private static final SMap<String, Object> emptyValues = SMap.empty();
+	private static final SMap<OutputChannel, SMap<String, Object>> emptyOCValues = SMap.empty();
 	private static final Object undefined = new Object();
 	
 	final ItemModel item;
 	final ItemModel ownerItem;
 	final Long propertyId;
-	private SMap<ImportSource, SMap<Alternate, SMap<String, Object>>> importSourceValues;
-	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> values;
-	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> effectiveValues;
+	
+	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
+	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
+	private SMap<ImportSource, SMap<OutputChannel, SMap<String, Object>>> importSourceValues = SMap.empty();
 
 	public PropertyModel(ItemModel item, ItemModel ownerItem, Long propertyId) {
 		this.item = item;
@@ -77,126 +73,85 @@ public class PropertyModel {
 	}
 
 	/**
-	 * Returns the values for this property. These are the values that are maintained by
-	 * users of the catalog manager, they are not imported, nor are they alternates (like
-	 * from another stage/supplier).
-	 * <p>The values are grouped by output channel. The 'null' output channel denotes
-	 * the output-channel independent values. These are the most 'normal' values in the catalog.  
-	 * 
-	 * @return
+	 * @return values or empty SMap
 	 */
-	public SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> getValues() {
+	public SMap<String, Object> getValues(Alternate alternate, OutputChannel outputChannel) {
 		synchronized (item.catalog) {
-			if (values == null) {
-				values = SMap.empty();
+			SMap<OutputChannel, SMap<String, Object>> ocValues = values.getValue(alternate, emptyOCValues);
+			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
+			if (langValues == null) {
+				langValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					if (value.getImportSource() == null) {
-						SMap<OutputChannel, SMap<String, Object>> altValues = values.getValue(value.getAlternate(), emptyOCValues);
-						SMap<String, Object> osValues = altValues.getValue(value.getOutputChannel(), emptyValues);
-						osValues = osValues.add(value.getLanguage(), getTypedValue(value));
-						altValues = altValues.set(value.getOutputChannel(), osValues);
-						values = values.set(value.getAlternate(), altValues);
+					if (equal(alternate, value.getAlternate()) && equal(outputChannel, value.getOutputChannel()) && value.getImportSource() == null) {
+						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 					}
 				}
+				ocValues.set(outputChannel, langValues);
+				values.set(alternate, ocValues);
 			}
-			return values;
+			return langValues;
 		}
 	}
 	
 	/**
-	 * Returns the effective values of this property. This is the calculated value
-	 * taking language overrides, import source priorities, item inheritance into
-	 * account. This value is calculated for each combination of output channel and 
-	 * language.
 	 * 
-	 * <p>The result is grouped by output channel. The 'null' output channel denotes
-	 * the output-channel independent values.
-	 * 
-	 * @return
+	 * @return Effective values or empty SMap
 	 */
-	public SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> getEffectiveValues() {
+	public SMap<String, Object> getEffectiveValues(Alternate alternate, OutputChannel outputChannel) {
 		synchronized (item.catalog) {
-			if (effectiveValues == null) {
-				effectiveValues = SMap.empty();
 				
-				// determine all output channels, make sure to include the null output channel
-				Set<OutputChannel> outputChannels = new HashSet<OutputChannel>(item.getUsedOutputChannel());
-				outputChannels.add(null);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.getValue(alternate, emptyOCValues);
+			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
+			if (langValues == null) {
+				langValues = SMap.empty();
 				
-				// determine all languages, make sure to include the null language
-				Set<String> languages = new HashSet<String>(item.getUsedLanguages());
-				languages.add(null);
+				// calculate effective value for each output channel, language combination
+				EffectiveValueHelper helper = new EffectiveValueHelper(alternate, propertyValues);
+				for (String language : helper.getLanguages()) {
 
-				for (Alternate alternate : item.getUsedAlternates()) {
-					SMap<OutputChannel, SMap<String, Object>> alternateValues = emptyOCValues;
-
-					// calculate effective value for each output channel, language combination
-					EffectiveValueHelper helper = new EffectiveValueHelper(alternate, propertyValues);
-					for (OutputChannel outputChannel : outputChannels) {
-						SMap<String, Object> outputChannelValues = emptyValues;
-						for (String language : languages) {
-							// try (outputChannel, language)
-							Object effectiveValue = helper.getBestValue(outputChannel, language, undefined);
-							// try (null, language)
-							if (effectiveValue == undefined && outputChannel != null) {
-								effectiveValue = helper.getBestValue(null, language, undefined);
-							}
-							// try (outputChannel, null)
-							if (effectiveValue == undefined && language != null) {
-								effectiveValue = helper.getBestValue(outputChannel, null, undefined);
-								// try (null, null)
-								if (effectiveValue == undefined && outputChannel != null) {
-									effectiveValue = helper.getBestValue(null, null, undefined);
-								}
-							}
-							// look in parent items, first one wins, parents are ordered
-							if (effectiveValue == undefined) {
-								for (ItemModel parent : item.getParents()) {
-									PropertyModel property = parent.findProperty(propertyId);
-									if (property != null) {
-										effectiveValue = property.getEffectiveValues().getValue(alternate, emptyOCValues).getValue(outputChannel, emptyValues).getValue(language, undefined);
-										if (effectiveValue != undefined) break;
-									}
-								}
-							}
-							// found effective value? 
-							if (effectiveValue != undefined) {
-								outputChannelValues = outputChannelValues.add(language, effectiveValue);
+					// find best value in this item
+					Object effectiveValue = helper.getBestValue(outputChannel, language, undefined);
+					
+					// look in parent items, first one wins, parents are ordered
+					if (effectiveValue == undefined) {
+						for (ItemModel parent : item.getParents()) {
+							PropertyModel property = parent.findProperty(propertyId);
+							if (property != null) {
+								effectiveValue = property.getEffectiveValues(alternate, outputChannel).getValue(language, undefined);
+								if (effectiveValue != undefined) break;
 							}
 						}
-						alternateValues = alternateValues.add(outputChannel, outputChannelValues);
 					}
-					effectiveValues = effectiveValues.add(alternate, alternateValues);
+					// found effective value? 
+					if (effectiveValue != undefined) {
+						langValues = langValues.add(language, effectiveValue);
+					}
 				}
+				ocValues = ocValues.set(outputChannel, langValues);
+				effectiveValues = effectiveValues.set(alternate, ocValues);
 			}
-			return effectiveValues;
+			return langValues;
 		}
 	}
 
 	/**
-	 * Imported sources are ordered by priority, highest first. For example, result.getValues() 
-	 * returns the values for the import source with the highest priority.  
-	 * @return
+	 * @return Import source values or the empty map
 	 */
-	public SMap<ImportSource, SMap<Alternate, SMap<String, Object>>> getImportSourceValues() {
+	public SMap<OutputChannel, SMap<String, Object>> getImportSourceValues(ImportSource importSource) {
 		synchronized (item.catalog) {
-			if (importSourceValues == null) {
-				importSourceValues = SMap.empty();
-				Map<ImportSource, SMap<String, Object>> valuesByImportSource = new TreeMap<ImportSource, SMap<String,Object>>(ImportSourceComparator.instance); 
+			SMap<OutputChannel, SMap<String, Object>> ocValues = importSourceValues.getValue(importSource);
+			if (ocValues == null) {
+				ocValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					ImportSource importSource = value.getImportSource();
-					if (importSource != null) {
-						SMap<String, Object> map = valuesByImportSource.get(importSource);
-						if (map == null) {
-							map = SMap.empty();
-						}
-						map = map.add(value.getLanguage(), getTypedValue(value));
-						valuesByImportSource.put(importSource, map);
+					if (equal(value.getImportSource(), importSource) && value.getAlternate() == null) {
+						SMap<String, Object> langValues = ocValues.getValue(value.getOutputChannel(), emptyValues);
+						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
+						ocValues = ocValues.set(value.getOutputChannel(), langValues);
 					}
 				}
-				importSourceValues = importSourceValues.addAll(valuesByImportSource);
+				importSourceValues.set(importSource, ocValues);
 			}
-			return importSourceValues;
+			return ocValues;
 		}
 	}
 	
@@ -206,33 +161,6 @@ public class PropertyModel {
 			result.add(property.getEntity());
 		}
 		return result;
-	}
-
-	@SuppressWarnings("serial")
-  private static class EffectiveValueHelper extends TreeMap<ImportSource, List<PropertyValue>> {
-		public EffectiveValueHelper(Alternate alternate, Iterable<PropertyValue> propertyValues) {
-			for (PropertyValue value : propertyValues) {
-				if (equal(alternate, value.getAlternate())) {
-					ImportSource importSource = value.getImportSource();
-					List<PropertyValue> values = get(importSource);
-					if (values == null) {
-						values = new ArrayList<PropertyValue>();
-						put(importSource, values);
-					}
-					values.add(value);
-				}
-			}
-    }
-		public Object getBestValue(OutputChannel outputChannel, String language, Object defaultValue) {
-			for (List<PropertyValue> importValues : values()) {
-				for (PropertyValue importValue : importValues) {
-					if (equal(outputChannel, importValue.getOutputChannel()) && equal(language, importValue.getLanguage())) {
-						return getTypedValue(importValue);
-					}
-				}
-			}
-			return defaultValue;
-		}
 	}
 
 	private Iterable<PropertyValue> propertyValues = new Iterable<PropertyValue>() {
@@ -245,7 +173,7 @@ public class PropertyModel {
 		}
 	};
 	
-	private static Object getTypedValue(PropertyValue value) {
+	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
 		case String: return value.getStringValue(); 
 		}
