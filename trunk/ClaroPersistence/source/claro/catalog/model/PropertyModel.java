@@ -8,10 +8,14 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.Alternate;
+import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.ImportSource;
+import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 
 import com.google.common.base.Predicate;
@@ -41,21 +45,57 @@ public abstract class PropertyModel {
 	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
 	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
 	private SMap<ImportSource, SMap<OutputChannel, SMap<String, Object>>> importSourceValues = SMap.empty();
+	private final ItemModel item;
 
-	public abstract Long getPropertyId();
-	public abstract ItemModel getItem();
-	public abstract ItemModel getOwnerItem();
-	public abstract SMap<String, String> getLabels();
-	public abstract SMap<Integer, SMap<String, String>> getEnumValues();
+	static PropertyModel create(final PropertyModel root, ItemModel item) {
+		return new PropertyModel(item) {
+			PropertyModel getRoot() {
+				return root; 
+			}
+		};
+	}
+
+	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, ItemModel item) {
+		return new PropertyModel(item) {
+			private PropertyInfo propertyInfo = createPropertyInfo(getItem(), getEntity(), isDangling);
+			PropertyModel getRoot() {
+				return this;
+			}
+			@Override
+			public PropertyInfo getPropertyInfo() {
+				return propertyInfo;
+			}
+		};			
+	}
+	
+	public PropertyModel(ItemModel item) {
+		this.item = item;
+	}
+	
+	public Long getPropertyId() {
+		return getPropertyInfo().propertyId;
+	}
+	
+	public ItemModel getOwnerItem() {
+		return getRoot().getItem();
+	}
+	
+	public ItemModel getItem() {
+		return item;
+	}
+
+	public PropertyInfo getPropertyInfo() {
+		return getRoot().getPropertyInfo();
+	}
+	
+	public boolean isDangling() {
+		return getPropertyInfo().isDangling;
+	}
 
 	public Property getEntity() {
 		return CatalogAccess.getDao().getProperty(getPropertyId());
 	}
 	
-	public boolean isDangling() {
-		return getOwnerItem() == null;
-	}
-
 	/**
 	 * @return values or empty SMap
 	 */
@@ -147,6 +187,8 @@ public abstract class PropertyModel {
 		return result;
 	}
 
+	abstract PropertyModel getRoot();
+
 	private Iterable<PropertyValue> propertyValues = new Iterable<PropertyValue>() {
 		public Iterator<PropertyValue> iterator() {
 			return Iterators.filter(getItem().getEntity().getPropertyValues().iterator(), new Predicate<PropertyValue>() {
@@ -162,5 +204,27 @@ public abstract class PropertyModel {
 		case String: return value.getStringValue(); 
 		}
 		return null;
+	}
+	
+	private static PropertyInfo createPropertyInfo(ItemModel ownerItem, Property entity, boolean isDangling) {
+		PropertyInfo info = new PropertyInfo(); 
+		info.ownerItemId = ownerItem.getItemId();
+		info.propertyId = entity.getId();
+		info.type = entity.getType();
+		info.isMany = entity.getIsMany();
+		info.isDangling = isDangling;
+		for (Label label : entity.getLabels()) {
+			info.labels = info.labels.add(label.getLanguage(), label.getLabel());
+		}
+		if (entity.getType() == PropertyType.Enum) {
+			for (EnumValue enumValue : entity.getEnumValues()) {
+				SMap<String,String> enumLabels = SMap.empty();
+				for (Label label : enumValue.getLabels()) {
+					enumLabels = enumLabels.add(label.getLanguage(), label.getLabel());
+				}
+				info.enumValues = info.enumValues.add(enumValue.getValue(), enumLabels);
+			}
+		}
+		return info;
 	}
 }

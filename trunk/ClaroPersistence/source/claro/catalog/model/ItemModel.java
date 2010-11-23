@@ -25,7 +25,7 @@ public class ItemModel {
 	private Set<ItemModel> parentExtent;
 	private Set<ItemModel> children;
 	private Set<ItemModel> childExtent;
-	private Set<RootPropertyModel> properties;
+	private Set<PropertyModel> properties;
 	private Set<PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
 //	private Set<Alternate> usedAlternates;
@@ -153,12 +153,12 @@ public class ItemModel {
 		}
   }
 	
-	public Set<RootPropertyModel> getProperties() {
+	public Set<PropertyModel> getProperties() {
 		synchronized (catalog) {
 			if (properties == null) {
-				HashSet<RootPropertyModel> props = new HashSet<RootPropertyModel>();
+				HashSet<PropertyModel> props = new HashSet<PropertyModel>();
 				for (Property property : getEntity().getProperties()) {
-					props.add(new RootPropertyModel(this, property.getId()));
+					props.add(PropertyModel.createRoot(property.getId(), false, this));
 				}
 				properties = ImmutableSet.copyOf(props);
 			}
@@ -184,8 +184,8 @@ public class ItemModel {
 			if (propertyExtent == null) {
 				HashSet<PropertyModel> properties = new HashSet<PropertyModel>();
 				for (ItemModel parent : getParentExtent()) {
-					for (RootPropertyModel root : parent.getProperties()) {
-						properties.add(new DerivedPropertyModel(root, this));
+					for (PropertyModel root : parent.getProperties()) {
+						properties.add(PropertyModel.create(root, this));
 					}
 				}
 				properties.addAll(getProperties());
@@ -202,7 +202,7 @@ public class ItemModel {
 				Set<Property> propertyEntities = PropertyModel.getEntities(getPropertyExtent());
 				for (PropertyValue value : getEntity().getPropertyValues()) {
 					if (!propertyEntities.contains(value.getProperty())) {
-						properties.add(new DanglingPropertyModel(this, value.getProperty().getId()));
+						properties.add(PropertyModel.createRoot(value.getProperty().getId(), true, this));
 					}
 				}
 				danglingProperties = ImmutableSet.copyOf(properties);
