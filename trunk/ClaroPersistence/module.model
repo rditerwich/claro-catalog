@@ -18,5 +18,6 @@ Module {
         }
     }
     
-    exposedPackages = { claro.catalog claro.catalog.model claro.catalog.util }
+    exposedPackages = { claro.catalog claro.catalog.model }
+    
 }
