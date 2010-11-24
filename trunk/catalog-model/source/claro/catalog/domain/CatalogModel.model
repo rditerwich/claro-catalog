@@ -6,7 +6,7 @@ import Metaphor.PSM.Rdbms.RdbmsPackage
 
 
 ModelPackage {
-    name = ClaroPersistence
+    name = CatalogModel
     packages = {
         JpaPackage {
             name = "Jpa"

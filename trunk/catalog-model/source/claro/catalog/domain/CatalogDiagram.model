@@ -1,0 +1,392 @@
+root /domainDiagrams
+
+import Metaphor.Eclipse.Diagrams.Point
+import Metaphor.Eclipse.Diagrams.Rectangle
+import Metaphor.Eclipse.DomainDiagrams.DiagramClass
+import Metaphor.Eclipse.DomainDiagrams.DiagramEnum
+import Metaphor.Eclipse.DomainDiagrams.DomainDiagram
+import Metaphor.Eclipse.DomainDiagrams.Reference
+import Metaphor.Eclipse.DomainDiagrams.SuperClassReference
+
+DomainDiagram {
+    name = CatalogDiagram
+    package = /packages:Claro/packages:Domain/packages:Catalog
+    classes = {
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 341
+                    y = -63
+                    width = 153
+                    height = 105
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 489
+                    y = 270
+                    width = 145
+                    height = 96
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Product
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 271
+                    y = 268
+                    width = 155
+                    height = 97
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Category
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 84
+                    y = 423
+                    width = 245
+                    height = 140
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Property
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 412
+                    y = 416
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 160
+                    y = 632
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:EnumValue
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 27
+                    y = 624
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Label
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 1012
+                    y = -49
+                    width = 140
+                    height = 170
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Template
+            hidden = true
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 371
+                    y = 77
+                    width = 163
+                    height = 117
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Item
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 106
+                    y = -38
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Language
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 34
+                    y = 127
+                    width = 155
+                    height = 97
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 635
+                    y = 167
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 683
+                    y = 493
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:ImportSource
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 776
+                    y = 334
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 748
+                    y = 593
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Alternate
+        }
+    }
+    enumerations = {
+        DiagramEnum {
+            bounds = {
+                Rectangle {
+                    x = 960
+                    y = -44
+                    width = -1
+                    height = -1
+                }
+            }
+            domainEnum = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyType
+        }
+    }
+    references = {
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:property
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 194
+                    y = 590
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Property/attributes:enumValues
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 832
+                    y = 44
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:templates
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 717
+                    y = 78
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Product/attributes:templates
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 224
+                    y = 175
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:properties
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 447
+                    y = 314
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:propertyValues
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:templates
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:items
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 101
+                    y = 593
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Property/attributes:labels
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:EnumValue/attributes:labels
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:languages
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 176
+                    y = 320
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:properties
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 297
+                    y = 149
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:propertyGroups
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 50
+                    y = 423
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroup/attributes:labels
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 298
+                    y = 15
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Catalog/attributes:root
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 725
+                    y = 470
+                }
+                Point {
+                    x = 725
+                    y = 122
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:itemValue
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild/attributes:parent
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 671
+                    y = 152
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:ParentChild/attributes:child
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:children
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:importSource
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 831
+                    y = 565
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:outputChannel
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 875
+                    y = 2
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:catalog
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 877
+                    y = 682
+                }
+                Point {
+                    x = 290
+                    y = 682
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedProperties
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 802
+                    y = 89
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedItems
+        }
+        Reference {
+            bendPoints = {
+                Point {
+                    x = 642
+                    y = 615
+                }
+            }
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:alternate
+        }
+    }
+    superClassReferences = {
+        SuperClassReference {
+            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Product
+            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Item
+        }
+        SuperClassReference {
+            source = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Category
+            target = /domainDiagrams:CatalogDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:Item
+        }
+    }
+}

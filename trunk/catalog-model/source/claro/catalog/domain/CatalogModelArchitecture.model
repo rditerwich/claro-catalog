@@ -17,7 +17,7 @@ path catalog = /packages:Claro/packages:Domain/packages:Catalog/types
 path shop = /packages:Claro/packges:Domain/packages:Shop/types
 
 JavaEEArchitectureJpa {
-    name = ClaroPersistenceArchitecture
+    name = CatalogModelArchitecture
     providerPackage = /packages:Claro
     databaseVendor = postgresql
     jpaVendor = EclipseLink
