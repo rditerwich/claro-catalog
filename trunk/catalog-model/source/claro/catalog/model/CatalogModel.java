@@ -22,6 +22,10 @@ public class CatalogModel {
 	final Property supplierProperty;
   final Property supplierArticleNumberProperty;
 
+	public static void access(CatalogDao dao, Runnable runnable) {
+		CatalogAccess.access(dao, runnable);
+	}
+
 	public CatalogModel(Long id) {
 		CatalogDao dao = CatalogAccess.getDao();
 		this.catalog = dao.findOrCreateCatalog(id);
@@ -44,14 +48,6 @@ public class CatalogModel {
 			items.put(id, itemData);
 		}
 		return itemData;
-	}
-
-	public static void access(CatalogDao dao, Runnable runnable) {
-		CatalogAccess.access(dao, runnable, false);
-	}
-	
-	public synchronized void update(CatalogDao dao, Runnable runnable) {
-		CatalogAccess.access(dao, runnable, true);
 	}
 	
 	void invalidate(ItemModel... items) {

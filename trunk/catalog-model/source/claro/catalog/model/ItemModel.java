@@ -70,7 +70,7 @@ public class ItemModel {
 	}
 	
 	public void setParents(List<Long> parentIds) {
-		CatalogDao dao = CatalogAccess.getDaoForUpdating();
+		CatalogDao dao = CatalogAccess.getDao();
 		if (dao.setItemParents(getEntity(), dao.getItems(parentIds))) {
 			catalog.invalidate(getChildExtent());
 			catalog.invalidate(getParentExtent());
