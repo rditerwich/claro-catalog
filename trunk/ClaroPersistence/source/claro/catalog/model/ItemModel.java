@@ -28,9 +28,6 @@ public class ItemModel {
 	private Set<PropertyModel> properties;
 	private Set<PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
-//	private Set<Alternate> usedAlternates;
-//	private Set<OutputChannel> usedOutputChannels;
-//	private Set<String> usedLanguages;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
@@ -210,7 +207,6 @@ public class ItemModel {
 			return danglingProperties;
 		}		
 	}
-	
 	
 	void invalidate() {
 		synchronized (catalog) {
