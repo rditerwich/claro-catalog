@@ -101,8 +101,8 @@ public abstract class PropertyModel {
 	 */
 	public SMap<String, Object> getValues(StagingArea stagingArea, OutputChannel outputChannel) {
 		synchronized (getItem().catalog) {
-			SMap<OutputChannel, SMap<String, Object>> ocValues = values.getValue(stagingArea, emptyOCValues);
-			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = values.get(stagingArea, emptyOCValues);
+			SMap<String, Object> langValues = ocValues.get(outputChannel);
 			if (langValues == null) {
 				langValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
@@ -124,8 +124,8 @@ public abstract class PropertyModel {
 	public SMap<String, Object> getEffectiveValues(StagingArea stagingArea, OutputChannel outputChannel) {
 		synchronized (getItem().catalog) {
 				
-			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.getValue(stagingArea, emptyOCValues);
-			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.get(stagingArea, emptyOCValues);
+			SMap<String, Object> langValues = ocValues.get(outputChannel);
 			if (langValues == null) {
 				langValues = SMap.empty();
 				
@@ -141,7 +141,7 @@ public abstract class PropertyModel {
 						for (ItemModel parent : getItem().getParents()) {
 							PropertyModel property = parent.findProperty(getPropertyId());
 							if (property != null) {
-								effectiveValue = property.getEffectiveValues(stagingArea, outputChannel).getValue(language, undefined);
+								effectiveValue = property.getEffectiveValues(stagingArea, outputChannel).get(language, undefined);
 								if (effectiveValue != undefined) break;
 							}
 						}
@@ -163,12 +163,12 @@ public abstract class PropertyModel {
 	 */
 	public SMap<OutputChannel, SMap<String, Object>> getImportSourceValues(ImportSource importSource) {
 		synchronized (getItem().catalog) {
-			SMap<OutputChannel, SMap<String, Object>> ocValues = importSourceValues.getValue(importSource);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = importSourceValues.get(importSource);
 			if (ocValues == null) {
 				ocValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
 					if (equal(value.getImportSource(), importSource) && value.getStagingArea() == null) {
-						SMap<String, Object> langValues = ocValues.getValue(value.getOutputChannel(), emptyValues);
+						SMap<String, Object> langValues = ocValues.get(value.getOutputChannel(), emptyValues);
 						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 						ocValues = ocValues.set(value.getOutputChannel(), langValues);
 					}
