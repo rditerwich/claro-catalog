@@ -170,13 +170,13 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 748
-                    y = 593
+                    x = 598
+                    y = 416
                     width = -1
                     height = -1
                 }
             }
-            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Alternate
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:StagingArea
         }
     }
     enumerations = {
@@ -370,13 +370,7 @@ DomainDiagram {
             sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:OutputChannel/attributes:excludedItems
         }
         Reference {
-            bendPoints = {
-                Point {
-                    x = 642
-                    y = 615
-                }
-            }
-            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:alternate
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:stagingArea
         }
     }
     superClassReferences = {

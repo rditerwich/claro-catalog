@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import claro.catalog.data.PropertyInfo;
-import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.Label;
@@ -17,6 +16,7 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.StagingArea;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -42,8 +42,8 @@ public abstract class PropertyModel {
 	private static final SMap<OutputChannel, SMap<String, Object>> emptyOCValues = SMap.empty();
 	private static final Object undefined = new Object();
 	
-	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
-	private SMap<Alternate, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
+	private SMap<StagingArea, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
+	private SMap<StagingArea, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
 	private SMap<ImportSource, SMap<OutputChannel, SMap<String, Object>>> importSourceValues = SMap.empty();
 	private final ItemModel item;
 
@@ -99,19 +99,19 @@ public abstract class PropertyModel {
 	/**
 	 * @return values or empty SMap
 	 */
-	public SMap<String, Object> getValues(Alternate alternate, OutputChannel outputChannel) {
+	public SMap<String, Object> getValues(StagingArea stagingArea, OutputChannel outputChannel) {
 		synchronized (getItem().catalog) {
-			SMap<OutputChannel, SMap<String, Object>> ocValues = values.getValue(alternate, emptyOCValues);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = values.getValue(stagingArea, emptyOCValues);
 			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
 			if (langValues == null) {
 				langValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					if (equal(alternate, value.getAlternate()) && equal(outputChannel, value.getOutputChannel()) && value.getImportSource() == null) {
+					if (equal(stagingArea, value.getStagingArea()) && equal(outputChannel, value.getOutputChannel()) && value.getImportSource() == null) {
 						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 					}
 				}
 				ocValues.set(outputChannel, langValues);
-				values.set(alternate, ocValues);
+				values.set(stagingArea, ocValues);
 			}
 			return langValues;
 		}
@@ -121,16 +121,16 @@ public abstract class PropertyModel {
 	 * 
 	 * @return Effective values or empty SMap
 	 */
-	public SMap<String, Object> getEffectiveValues(Alternate alternate, OutputChannel outputChannel) {
+	public SMap<String, Object> getEffectiveValues(StagingArea stagingArea, OutputChannel outputChannel) {
 		synchronized (getItem().catalog) {
 				
-			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.getValue(alternate, emptyOCValues);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = effectiveValues.getValue(stagingArea, emptyOCValues);
 			SMap<String, Object> langValues = ocValues.getValue(outputChannel);
 			if (langValues == null) {
 				langValues = SMap.empty();
 				
 				// calculate effective value for each output channel, language combination
-				EffectiveValueHelper helper = new EffectiveValueHelper(alternate, propertyValues);
+				EffectiveValueHelper helper = new EffectiveValueHelper(stagingArea, propertyValues);
 				for (String language : helper.getLanguages()) {
 
 					// find best value in this item
@@ -141,7 +141,7 @@ public abstract class PropertyModel {
 						for (ItemModel parent : getItem().getParents()) {
 							PropertyModel property = parent.findProperty(getPropertyId());
 							if (property != null) {
-								effectiveValue = property.getEffectiveValues(alternate, outputChannel).getValue(language, undefined);
+								effectiveValue = property.getEffectiveValues(stagingArea, outputChannel).getValue(language, undefined);
 								if (effectiveValue != undefined) break;
 							}
 						}
@@ -152,7 +152,7 @@ public abstract class PropertyModel {
 					}
 				}
 				ocValues = ocValues.set(outputChannel, langValues);
-				effectiveValues = effectiveValues.set(alternate, ocValues);
+				effectiveValues = effectiveValues.set(stagingArea, ocValues);
 			}
 			return langValues;
 		}
@@ -167,7 +167,7 @@ public abstract class PropertyModel {
 			if (ocValues == null) {
 				ocValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					if (equal(value.getImportSource(), importSource) && value.getAlternate() == null) {
+					if (equal(value.getImportSource(), importSource) && value.getStagingArea() == null) {
 						SMap<String, Object> langValues = ocValues.getValue(value.getOutputChannel(), emptyValues);
 						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 						ocValues = ocValues.set(value.getOutputChannel(), langValues);

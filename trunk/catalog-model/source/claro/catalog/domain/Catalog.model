@@ -253,7 +253,7 @@ Package {
             }
         }
         Class {
-            name = Alternate
+            name = StagingArea
         }
         Class {
             name = EnumValue
@@ -337,8 +337,8 @@ Package {
                 }
                 
                 Attribute {
-                    name = alternate
-                    type = catalog:Alternate
+                    name = stagingArea
+                    type = catalog:StagingArea
                     lower = 0
                 }
                 

@@ -11,7 +11,7 @@ public class PropertyValue {
     private Long id;
     private Property property;
     private String language;
-    private Alternate alternate;
+    private StagingArea stagingArea;
     private OutputChannel outputChannel;
     private ImportSource importSource;
     private String stringValue;
@@ -50,12 +50,12 @@ public class PropertyValue {
         this.language = value;
     }
 
-    public Alternate getAlternate() {
-        return alternate;
+    public StagingArea getStagingArea() {
+        return stagingArea;
     }
 
-    public void setAlternate(Alternate value) {
-        this.alternate = value;
+    public void setStagingArea(StagingArea value) {
+        this.stagingArea = value;
     }
 
     public OutputChannel getOutputChannel() {

@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import claro.jpa.catalog.Alternate;
 import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.StagingArea;
 
 @SuppressWarnings("serial")
 class EffectiveValueHelper extends TreeMap<ImportSource, List<PropertyValue>> {
@@ -20,10 +20,10 @@ class EffectiveValueHelper extends TreeMap<ImportSource, List<PropertyValue>> {
 
 	Set<String> languages = new HashSet<String>();
 	
-	public EffectiveValueHelper(Alternate alternate, Iterable<PropertyValue> propertyValues) {
+	public EffectiveValueHelper(StagingArea stagingArea, Iterable<PropertyValue> propertyValues) {
 		for (PropertyValue value : propertyValues) {
 			languages.add(value.getLanguage());
-			if (equal(alternate, value.getAlternate())) {
+			if (equal(stagingArea, value.getStagingArea())) {
 				ImportSource importSource = value.getImportSource();
 				List<PropertyValue> values = get(importSource);
 				if (values == null) {

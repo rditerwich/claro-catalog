@@ -3,1342 +3,6 @@ CREATE SCHEMA catalog;
 COMMIT;
 
 BEGIN;
-CREATE TABLE catalog.propertytype();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertytype ADD COLUMN id VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertytype ALTER COLUMN id TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertytype ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertytype ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.catalog();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ADD COLUMN name VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN name TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN name SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ADD COLUMN root_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN root_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ALTER COLUMN root_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.catalog ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.item();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ADD COLUMN type VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN type TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN type SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ADD COLUMN catalog_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN catalog_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN catalog_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ADD COLUMN containsproducts BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN containsproducts TYPE BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ALTER COLUMN containsproducts DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.item ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.parentchild();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ADD COLUMN parent_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN parent_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN parent_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ADD COLUMN child_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN child_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN child_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ADD COLUMN index INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN index TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN index SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.parentchild ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.propertygroup();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ADD COLUMN item_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ALTER COLUMN item_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ALTER COLUMN item_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertygroup ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.property();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD COLUMN categoryproperty BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN categoryproperty TYPE BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN categoryproperty SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD COLUMN item_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN item_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN item_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD COLUMN type_id VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN type_id TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN type_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD COLUMN ismany BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN ismany TYPE BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN ismany SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.property_propertygroups();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ADD COLUMN propertygroups_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ALTER COLUMN propertygroups_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ALTER COLUMN propertygroups_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ADD COLUMN properties_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ALTER COLUMN properties_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.property_propertygroups ALTER COLUMN properties_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.importsource();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ADD COLUMN priority INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ALTER COLUMN priority TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ALTER COLUMN priority SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importsource ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.alternate();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.alternate ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.alternate ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.alternate ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.alternate ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.enumvalue();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ADD COLUMN value INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN value TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN value SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ADD COLUMN property_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN property_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN property_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.enumvalue ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.label();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN language VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN language TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN language DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN label VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN label TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN label SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN property_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN property_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN property_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN propertygroup_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN propertygroup_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN propertygroup_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN enumvalue_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN enumvalue_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN enumvalue_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.propertyvalue();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN property_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN property_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN property_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN language VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN language TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN language DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN alternate_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN alternate_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN alternate_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN importsource_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN importsource_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN importsource_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN stringvalue VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN stringvalue TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN stringvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN integervalue INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN integervalue TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN integervalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN enumvalue INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN enumvalue TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN enumvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN realvalue FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN realvalue TYPE FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN realvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN booleanvalue BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN booleanvalue TYPE BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN booleanvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN moneyvalue FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN moneyvalue TYPE FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN moneyvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN moneycurrency VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN moneycurrency TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN moneycurrency DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN mediavalue BYTEA;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN mediavalue TYPE BYTEA;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN mediavalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN itemvalue_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN itemvalue_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN itemvalue_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN mimetype VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN mimetype TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN mimetype DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN item_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN item_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN item_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD COLUMN outputchannel_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN outputchannel_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ALTER COLUMN outputchannel_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.propertyvalue ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.template();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN name VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN name TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN name SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN language VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN language TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN language DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN templatexml VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN templatexml TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN templatexml SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN item_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN item_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN item_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ALTER COLUMN shop_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.template ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.language();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ADD COLUMN name VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN name TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN name SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ADD COLUMN displayname VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN displayname TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN displayname SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.language ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.outputchannel();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN type VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN type TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN type SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN name VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN name TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN name SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN catalog_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN catalog_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN catalog_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN defaultlanguage VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN name2 VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN name2 TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN name2 DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN urlprefix VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN urlprefix TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN urlprefix DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD COLUMN defaultlanguage2 VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage2 TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage2 DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.outputchannel_excludedproperties();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ADD COLUMN excludedproperties_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN excludedproperties_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN excludedproperties_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ADD COLUMN outputchannel_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN outputchannel_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN outputchannel_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.outputchannel_excludeditems();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ADD COLUMN excludeditems_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN excludeditems_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN excludeditems_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ADD COLUMN outputchannel_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN outputchannel_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN outputchannel_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.query();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN type VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN type TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN type SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN stringvalue VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN stringvalue TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN stringvalue DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN category_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN category_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN category_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN stringvalue2 VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN stringvalue2 TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN stringvalue2 DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN shop_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD COLUMN shop_id2 INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN shop_id2 TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ALTER COLUMN shop_id2 DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.shop_excludedproperties();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ADD COLUMN excludedproperties_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN excludedproperties_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN excludedproperties_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN shop_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.shop_excludeditems();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ADD COLUMN excludeditems_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ALTER COLUMN excludeditems_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ALTER COLUMN excludeditems_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ALTER COLUMN shop_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.navigation();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD COLUMN category_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN category_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN category_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD COLUMN index INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN index TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN index SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD COLUMN parentshop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN parentshop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN parentshop_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD COLUMN parentnavigation_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN parentnavigation_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ALTER COLUMN parentnavigation_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.promotion();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN type VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN type TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN type SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN startdate DATE;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN startdate TYPE DATE;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN startdate SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN enddate DATE;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN enddate TYPE DATE;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN enddate SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN shop_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN product_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN product_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN product_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN price FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN price TYPE FLOAT;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN price DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN pricecurrency VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN pricecurrency TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN pricecurrency DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD COLUMN volumediscount INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN volumediscount TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ALTER COLUMN volumediscount DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.promotion_templates();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ADD COLUMN templates_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ALTER COLUMN templates_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ALTER COLUMN templates_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ADD COLUMN promotion_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ALTER COLUMN promotion_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ALTER COLUMN promotion_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
 CREATE TABLE catalog.orderstatus();
 COMMIT;
 
@@ -1360,18 +24,6 @@ COMMIT;
 
 BEGIN;
 CREATE TABLE catalog.order();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD COLUMN shop_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ALTER COLUMN shop_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ALTER COLUMN shop_id SET NOT NULL;
 COMMIT;
 
 BEGIN;
@@ -1423,6 +75,18 @@ ALTER TABLE catalog.order ALTER COLUMN id SET NOT NULL;
 COMMIT;
 
 BEGIN;
+ALTER TABLE catalog.order ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ALTER COLUMN shop_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
 ALTER TABLE catalog.order ADD COLUMN deliveryaddress_id INTEGER;
 COMMIT;
 
@@ -1464,30 +128,6 @@ COMMIT;
 
 BEGIN;
 CREATE TABLE catalog.productorder();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ADD COLUMN product_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ALTER COLUMN product_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ALTER COLUMN product_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ADD COLUMN promotion_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ALTER COLUMN promotion_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ALTER COLUMN promotion_id DROP NOT NULL;
 COMMIT;
 
 BEGIN;
@@ -1548,6 +188,30 @@ COMMIT;
 
 BEGIN;
 ALTER TABLE catalog.productorder ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ADD COLUMN product_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ALTER COLUMN product_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ALTER COLUMN product_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ADD COLUMN promotion_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ALTER COLUMN promotion_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ALTER COLUMN promotion_id DROP NOT NULL;
 COMMIT;
 
 BEGIN;
@@ -2011,6 +675,1258 @@ ALTER TABLE catalog.address ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
+CREATE TABLE catalog.navigation();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD COLUMN index INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN index TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN index SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD COLUMN category_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN category_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN category_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD COLUMN parentshop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN parentshop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN parentshop_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD COLUMN parentnavigation_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN parentnavigation_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ALTER COLUMN parentnavigation_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.promotion();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN type VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN type TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN type SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN startdate DATE;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN startdate TYPE DATE;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN startdate SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN enddate DATE;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN enddate TYPE DATE;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN enddate SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN price FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN price TYPE FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN price DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN pricecurrency VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN pricecurrency TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN pricecurrency DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN volumediscount INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN volumediscount TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN volumediscount DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN shop_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD COLUMN product_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN product_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ALTER COLUMN product_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.query();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN type VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN type TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN type SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN stringvalue VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN stringvalue TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN stringvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN stringvalue2 VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN stringvalue2 TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN stringvalue2 DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN shop_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN category_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN category_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN category_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD COLUMN shop_id2 INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN shop_id2 TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ALTER COLUMN shop_id2 DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.propertytype();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertytype ADD COLUMN id VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertytype ALTER COLUMN id TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertytype ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertytype ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.catalog();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ADD COLUMN name VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN name TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN name SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ADD COLUMN root_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN root_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ALTER COLUMN root_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.catalog ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.item();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ADD COLUMN type VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN type TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN type SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ADD COLUMN catalog_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN catalog_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN catalog_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ADD COLUMN containsproducts BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN containsproducts TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ALTER COLUMN containsproducts DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.item ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.parentchild();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ADD COLUMN parent_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN parent_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN parent_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ADD COLUMN child_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN child_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN child_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ADD COLUMN index INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN index TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN index SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.parentchild ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.propertygroup();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ADD COLUMN item_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ALTER COLUMN item_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ALTER COLUMN item_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertygroup ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.property();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD COLUMN categoryproperty BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN categoryproperty TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN categoryproperty SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD COLUMN item_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN item_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN item_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD COLUMN type_id VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN type_id TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN type_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD COLUMN ismany BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN ismany TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN ismany SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.property_propertygroups();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ADD COLUMN propertygroups_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ALTER COLUMN propertygroups_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ALTER COLUMN propertygroups_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ADD COLUMN properties_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ALTER COLUMN properties_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.property_propertygroups ALTER COLUMN properties_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.importsource();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ADD COLUMN priority INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ALTER COLUMN priority TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ALTER COLUMN priority SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importsource ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.stagingarea();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.stagingarea ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.stagingarea ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.stagingarea ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.stagingarea ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.enumvalue();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ADD COLUMN value INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN value TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN value SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ADD COLUMN property_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN property_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN property_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.enumvalue ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.label();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN language VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN language TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN language DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN label VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN label TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN label SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN property_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN property_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN property_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN propertygroup_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN propertygroup_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN propertygroup_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN enumvalue_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN enumvalue_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN enumvalue_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.label ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.propertyvalue();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN property_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN property_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN property_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN language VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN language TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN language DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN stagingarea_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN stagingarea_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN stagingarea_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN importsource_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN importsource_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN importsource_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN stringvalue VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN stringvalue TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN stringvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN integervalue INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN integervalue TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN integervalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN enumvalue INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN enumvalue TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN enumvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN realvalue FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN realvalue TYPE FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN realvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN booleanvalue BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN booleanvalue TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN booleanvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN moneyvalue FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN moneyvalue TYPE FLOAT;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN moneyvalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN moneycurrency VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN moneycurrency TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN moneycurrency DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN mediavalue BYTEA;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN mediavalue TYPE BYTEA;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN mediavalue DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN itemvalue_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN itemvalue_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN itemvalue_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN mimetype VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN mimetype TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN mimetype DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN item_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN item_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN item_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD COLUMN outputchannel_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN outputchannel_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ALTER COLUMN outputchannel_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.propertyvalue ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.template();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN name VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN name TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN name SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN language VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN language TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN language DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN templatexml VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN templatexml TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN templatexml SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN item_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN item_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN item_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ALTER COLUMN shop_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.template ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.language();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ADD COLUMN name VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN name TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN name SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ADD COLUMN displayname VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN displayname TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN displayname SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.language ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.outputchannel();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN type VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN type TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN type SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN name VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN name TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN name SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN catalog_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN catalog_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN catalog_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN defaultlanguage VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN name2 VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN name2 TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN name2 DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN urlprefix VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN urlprefix TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN urlprefix DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD COLUMN defaultlanguage2 VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage2 TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ALTER COLUMN defaultlanguage2 DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.outputchannel_excludedproperties();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ADD COLUMN excludedproperties_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN excludedproperties_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN excludedproperties_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ADD COLUMN outputchannel_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN outputchannel_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludedproperties ALTER COLUMN outputchannel_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.outputchannel_excludeditems();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ADD COLUMN excludeditems_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN excludeditems_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN excludeditems_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ADD COLUMN outputchannel_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN outputchannel_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.outputchannel_excludeditems ALTER COLUMN outputchannel_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
 CREATE TABLE catalog.exchange();
 COMMIT;
 
@@ -2375,6 +2291,90 @@ ALTER TABLE catalog.label2 ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
+CREATE TABLE catalog.shop_excludedproperties();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ADD COLUMN excludedproperties_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN excludedproperties_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN excludedproperties_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ALTER COLUMN shop_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.shop_excludeditems();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ADD COLUMN excludeditems_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ALTER COLUMN excludeditems_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ALTER COLUMN excludeditems_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ADD COLUMN shop_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ALTER COLUMN shop_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ALTER COLUMN shop_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.promotion_templates();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ADD COLUMN templates_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ALTER COLUMN templates_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ALTER COLUMN templates_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ADD COLUMN promotion_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ALTER COLUMN promotion_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ALTER COLUMN promotion_id DROP NOT NULL;
+COMMIT;
+
+BEGIN;
 CREATE TABLE catalog.catalog_templates();
 COMMIT;
 
@@ -2459,6 +2459,102 @@ ALTER TABLE catalog.product_templates ALTER COLUMN product_id DROP NOT NULL;
 COMMIT;
 
 BEGIN;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_shippingaddress FOREIGN KEY (shippingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_billingaddress FOREIGN KEY (billingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENCES catalog.party (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentnavigation FOREIGN KEY (parentnavigation_id) REFERENCES catalog.navigation (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
 ALTER TABLE catalog.catalog ADD CONSTRAINT fk_root FOREIGN KEY (root_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
@@ -2515,7 +2611,7 @@ ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_property FOREIGN KEY (proper
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_alternate FOREIGN KEY (alternate_id) REFERENCES catalog.alternate (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_stagingarea FOREIGN KEY (stagingarea_id) REFERENCES catalog.stagingarea (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
 BEGIN;
@@ -2563,126 +2659,6 @@ ALTER TABLE catalog.outputchannel_excludeditems ADD CONSTRAINT fk_outputchannel 
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_property FOREIGN KEY (excludedproperties_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ADD CONSTRAINT fk_item FOREIGN KEY (excludeditems_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.shop_excludeditems ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentnavigation FOREIGN KEY (parentnavigation_id) REFERENCES catalog.navigation (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_shippingaddress FOREIGN KEY (shippingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_billingaddress FOREIGN KEY (billingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENCES catalog.party (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
 ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_exchange FOREIGN KEY (exchange_id) REFERENCES catalog.exchange (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
@@ -2711,6 +2687,30 @@ ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REF
 COMMIT;
 
 BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_property FOREIGN KEY (excludedproperties_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ADD CONSTRAINT fk_item FOREIGN KEY (excludeditems_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.shop_excludeditems ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
@@ -2734,6 +2734,35 @@ BEGIN;
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_item FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
+
+-- Update initial content in orderstatus
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
+COMMIT;
 
 -- Update initial content in propertytype
 BEGIN;
@@ -2810,34 +2839,5 @@ INSERT INTO catalog.propertytype (id) VALUES ('Acceleration');
 COMMIT;
 BEGIN;
 INSERT INTO catalog.propertytype (id) VALUES ('Item');
-COMMIT;
-
--- Update initial content in orderstatus
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
 COMMIT;
 
