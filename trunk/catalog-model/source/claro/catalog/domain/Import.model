@@ -51,14 +51,6 @@ Package {
             }
         }
         Class {
-            name = 
-            attributes = {
-                Attribute {
-                    name = importSource
-                }
-            }
-        }
-        Class {
             name = TabularImportDefinition
             superClass = import:ImportDefinition
             attributes = {
