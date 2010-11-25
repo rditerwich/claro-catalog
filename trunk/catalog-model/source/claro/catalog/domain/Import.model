@@ -1,0 +1,70 @@
+root /packages:Claro/packages:Domain/packages
+
+import Metaphor.PIM.Archetypes.CrmArchetype
+import Metaphor.PIM.Domain.Attribute
+import Metaphor.PIM.Domain.Class
+import Metaphor.PIM.Domain.Enumeration
+import Metaphor.PIM.Domain.Literal
+import Metaphor.PIM.Domain.Operation
+import Metaphor.PIM.Domain.Package
+import Metaphor.PIM.Domain.Parameter
+
+path primitive = /packages:Metaphor/packages:PIM/packages:Domain/types
+path catalog = /packages:Claro/packages:Domain/packages:Catalog/types
+path shop = /packages:Claro/packages:Domain/packages:Shop/types
+path party = /packages:Claro/packages:Domain/packages:Party/types
+path import = /packages:Claro/packages:Domain/packages:Import/types
+
+Package {
+    name = Import
+    types = {
+        Class {
+            name = ImportDefinition
+            attributes = {
+                Attribute {
+                    name = name
+                    type = primitive:String
+                }
+                Attribute {
+                    name = importUrl
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = importFileBaseName
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = importFilePattern
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = importSourceName
+                    type = primitive:String
+                }
+                Attribute {
+                    name = importSourceNameAppendFileName
+                    type = primitive:Boolean
+                }
+            }
+        }
+        Class {
+            name = 
+            attributes = {
+                Attribute {
+                    name = importSource
+                }
+            }
+        }
+        Class {
+            name = TabularImportDefinition
+            superClass = import:ImportDefinition
+            attributes = {
+                
+            }
+        }
+    }
+}
+ 
