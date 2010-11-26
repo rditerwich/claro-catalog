@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  
+  <!-- Servlets -->
+  <servlet>
+    <servlet-name>greetServlet</servlet-name>
+    <servlet-class>claro.catalog.manager.server.GreetingServiceImpl</servlet-class>
+  </servlet>
+
+  
+  <servlet>
+    <servlet-name>CatalogServlet</servlet-name>
+    <servlet-class>claro.catalog.CatalogServlet</servlet-class>
+        <init-param>
+        <param-name>javax.persistence.jdbc.driver</param-name>
+        <param-value>org.postgresql.Driver</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.url</param-name>
+        <param-value>jdbc:postgresql:postgres/catalog</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.user</param-name>
+        <param-value>postgres</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.password</param-name>
+        <param-value>postgres</param-value>
+      </init-param>
+    </servlet>
+    
+    <servlet-mapping>
+      <servlet-name>CatalogServlet</servlet-name>
+      <url-pattern>/catalogmanager/command</url-pattern>
+    </servlet-mapping>
+  
+  
+  <servlet-mapping>
+    <servlet-name>greetServlet</servlet-name>
+    <url-pattern>/catalogmanager/greet</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>CatalogManager.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>
