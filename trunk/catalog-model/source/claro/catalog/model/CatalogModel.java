@@ -22,8 +22,12 @@ public class CatalogModel {
 	final Property supplierProperty;
   final Property supplierArticleNumberProperty;
 
-	public static void access(CatalogDao dao, Runnable runnable) {
-		CatalogAccess.access(dao, runnable);
+	public static void startOperation(CatalogDao dao) {
+		CatalogAccess.startOperation(dao);
+	}
+	
+	public static void endOperation() {
+		CatalogAccess.endOperation();
 	}
 
 	public CatalogModel(Long id) {

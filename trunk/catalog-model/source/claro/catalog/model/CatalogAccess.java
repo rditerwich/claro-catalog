@@ -30,20 +30,20 @@ public class CatalogAccess {
 		return updateStatus;
 	}
 	
-	static void access(CatalogDao dao, Runnable runnable) {
+	static void startOperation(CatalogDao dao) {
 		CatalogAccess accessInfo = threadInstance.get();
 		if (accessInfo != null) {
 			throw new RuntimeException("No nested catalog access allowed");
 		}
 		accessInfo = new CatalogAccess(dao);
 		threadInstance.set(accessInfo);
-		try {
-			runnable.run();
-		} finally {
-			threadInstance.set(null);
-			for (ItemModel item : accessInfo.invalidItems) {
-				item.invalidate();
-			}
+	}
+	
+	static void endOperation() {
+		CatalogAccess accessInfo = threadInstance.get();
+		threadInstance.set(null);
+		for (ItemModel item : accessInfo.invalidItems) {
+			item.invalidate();
 		}
 	}
 }
