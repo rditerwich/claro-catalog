@@ -13,10 +13,10 @@ path primitive = /packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog = /packages:Claro/packages:Domain/packages:Catalog/types
 path shop = /packages:Claro/packages:Domain/packages:Shop/types
 path party = /packages:Claro/packages:Domain/packages:Party/types
-path import = /packages:Claro/packages:Domain/packages:Import/types
+path import = /packages:Claro/packages:Domain/packages:Importing/types
 
 Package {
-    name = Import
+    name = Importing
     types = {
         Class {
             name = ImportDefinition
