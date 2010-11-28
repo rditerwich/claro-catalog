@@ -2,7 +2,6 @@ package claro.catalog.command;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
-import claro.jpa.catalog.Property;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.util.SMap;
 
