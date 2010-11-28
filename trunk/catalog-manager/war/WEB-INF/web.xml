@@ -5,16 +5,9 @@
 
 <web-app>
   
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>claro.catalog.manager.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-
-  
   <servlet>
     <servlet-name>CatalogServlet</servlet-name>
-    <servlet-class>claro.catalog.CatalogServlet</servlet-class>
+    <servlet-class>claro.catalog.manager.server.CatalogManagerServlet</servlet-class>
         <init-param>
         <param-name>javax.persistence.jdbc.driver</param-name>
         <param-value>org.postgresql.Driver</param-value>
@@ -37,12 +30,6 @@
       <servlet-name>CatalogServlet</servlet-name>
       <url-pattern>/catalogmanager/command</url-pattern>
     </servlet-mapping>
-  
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/catalogmanager/greet</url-pattern>
-  </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>

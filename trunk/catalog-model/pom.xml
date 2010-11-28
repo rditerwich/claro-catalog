@@ -4,7 +4,7 @@
 	<groupId>claro</groupId>
 	<artifactId>catalog-model</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<name>Claro Persistence</name>
+	<name>Claro Catalog Model</name>
 	<inceptionYear>2010</inceptionYear>
 	<properties>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -111,6 +111,19 @@
 			</plugin>
  		</plugins>
  		<resources>      
+			<resource>
+			     <directory>source</directory>
+	        <includes>
+	          <include>claro/catalog/command/**</include>
+	          <include>claro/catalog/data/**</include>
+	        </includes>
+			</resource>
+			<resource>
+			     <directory>generated</directory>
+	        <includes>
+	          <include>**</include>
+	        </includes>
+			</resource>
 			<resource>
 			     <directory>resources</directory>
 			</resource>
