@@ -60,14 +60,14 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 			
 			// fill propertyData
 			// TODO Ruud: is the clone necessary?
-			propertyData.values = SMap.create(channel, CommandService.clone(property.getValues(area, channel), valuesView));
-			propertyData.effectiveValues = SMap.create(area, SMap.create(channel, CommandService.clone(property.getEffectiveValues(area, channel), effectiveValuesView)));
+			propertyData.values = SMap.create(channel, property.getValues(area, channel));
+			propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
 			
 			// TODO How to do this???
-//			propertyData.importSourceValues = SMap.create(channel, CommandService.clone(property.getImportSourceValues(null), importValuesView));
+//			propertyData.importSourceValues = SMap.create(channel, property.getImportSourceValues(null)));
 
 			// Add propertyinfo to result
-			result.propertyData.add(CommandService.clone(property.getPropertyInfo(), propertyInfoView), propertyData);
+			result.propertyData.add(property.getPropertyInfo(), propertyData);
 		}
 		
 		return result;
