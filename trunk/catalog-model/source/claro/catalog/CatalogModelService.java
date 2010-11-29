@@ -19,13 +19,13 @@ public class CatalogModelService extends CommandWrapper {
 
 	private static Map<Long, CatalogModel> catalogModels = new MapMaker().makeComputingMap(new Function<Long, CatalogModel>() {
 		public CatalogModel apply(Long id) {
-			CatalogModel.startOperation(createDao());
-			try {
+//			CatalogModel.startOperation(createDao());
+//			try {
 				return new CatalogModel(id);
-			}
-			finally {
-				CatalogModel.endOperation();
-			}
+//			}
+//			finally {
+//				CatalogModel.endOperation();
+//			}
 		}
 	});
 	

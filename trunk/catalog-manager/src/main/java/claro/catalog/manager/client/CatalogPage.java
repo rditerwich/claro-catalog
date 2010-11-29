@@ -45,7 +45,7 @@ public class CatalogPage extends Page {
 
 		// Lots more need here :)
 		selectedItem = new Item();
-		selectedItem.setId(0L);
+		selectedItem.setId(2L);
 		
 		// retrieve data
 		ItemDetailsCommand cmd = new ItemDetailsCommand();

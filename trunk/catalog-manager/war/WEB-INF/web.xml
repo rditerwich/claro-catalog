@@ -8,13 +8,13 @@
   <servlet>
     <servlet-name>CatalogServlet</servlet-name>
     <servlet-class>claro.catalog.manager.server.CatalogManagerServlet</servlet-class>
-        <init-param>
+      <init-param>
         <param-name>javax.persistence.jdbc.driver</param-name>
         <param-value>org.postgresql.Driver</param-value>
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.url</param-name>
-        <param-value>jdbc:postgresql:postgres/catalog</param-value>
+        <param-value>jdbc:postgresql:catalog</param-value>
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.user</param-name>
