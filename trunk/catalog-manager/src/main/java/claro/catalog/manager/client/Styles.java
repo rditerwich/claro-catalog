@@ -1,5 +1,7 @@
 package claro.catalog.manager.client;
 
+import com.google.gwt.user.client.ui.UIObject;
+
 public enum Styles {
 	button1,
 	button2,
@@ -21,4 +23,11 @@ public enum Styles {
 	product, 
 	productpanel, 
 	itemName, 
+	catalogresultspanel, 
+	filterpanel;
+	
+	public static void add(UIObject uiObject, Styles style) {
+		uiObject.addStyleName(style.toString());
+	}
+
 }

@@ -30,8 +30,8 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 	public ItemDetailsCommandResult execute() throws CommandException {
 		
 		// Obtain entities for input:
-		StagingArea area = null;
 		
+		StagingArea area = null;
 		if (getStagingArea() != null) {
 			area = JpaService.getEntityManager().find(StagingArea.class, getStagingArea());
 			if (area == null) {

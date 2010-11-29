@@ -9,6 +9,7 @@ public abstract class Page extends Composite {
 	private final PlaceController placeController;
 
 	public abstract Place getPlace();
+	public abstract void show();
 	
 	public Page(PlaceController placeController) {
 		this.placeController = placeController;

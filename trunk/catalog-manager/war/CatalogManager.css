@@ -96,6 +96,12 @@ table.catalogheader {
 }
 
 
+/** catalogpage styles */
+
+table.filterpanel { margin-left: 20px; vertical-align: middle; }
+table.filterpanel input.gwt-TextBox { margin-right: 40px; }
+
+
 /** Move used styles above this line */
 
 
