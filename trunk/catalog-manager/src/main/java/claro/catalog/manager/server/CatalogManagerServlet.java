@@ -17,10 +17,12 @@ public class CatalogManagerServlet extends RemoteServiceServlet implements GwtCo
 	private static final long serialVersionUID = 1L;
 
 	private CatalogServer server;
+
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		org.eclipse.persistence.Version.getVersion();
 		server = new CatalogServer(config);
 	}
 	
