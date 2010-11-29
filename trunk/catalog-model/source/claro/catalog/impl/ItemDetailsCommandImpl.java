@@ -30,20 +30,26 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 	public ItemDetailsCommandResult execute() throws CommandException {
 		
 		// Obtain entities for input:
-		StagingArea area = JpaService.getEntityManager().find(StagingArea.class, getStagingArea());
-		if (area == null) {
-			throw new CommandException("Area not found");
-		}
+		StagingArea area = null;
 		
-		OutputChannel channel = JpaService.getEntityManager().find(OutputChannel.class, getOutputChannel());
-		if (channel == null) {
-			throw new CommandException("Channel not found");
+		if (getStagingArea() != null) {
+			area = JpaService.getEntityManager().find(StagingArea.class, getStagingArea());
+			if (area == null) {
+				throw new CommandException("Area not found");
+			}
+		}
+
+		OutputChannel channel = null;
+		if (getOutputChannel() != null) {
+			channel = JpaService.getEntityManager().find(OutputChannel.class, getOutputChannel());
+			if (channel == null) {
+				throw new CommandException("Channel not found");
+			}
 		}
 
 		// Obtain model for item:
 		CatalogModel catalogModel = CatalogModelService.getCatalogModel(getCatalogId());
 		ItemModel itemModel = catalogModel.getItem(getItem());
-
 		
 		// Convert item model to result.
 		ItemDetailsCommandResult result = new ItemDetailsCommandResult();
@@ -53,8 +59,9 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 			PropertyData propertyData = new PropertyData();
 			
 			// fill propertyData
-			propertyData.values = SMap.create(channel, property.getValues(area, channel));
-			propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
+			// TODO Ruud: is the clone necessary?
+			propertyData.values = SMap.create(channel, CommandService.clone(property.getValues(area, channel), valuesView));
+			propertyData.effectiveValues = SMap.create(area, SMap.create(channel, CommandService.clone(property.getEffectiveValues(area, channel), effectiveValuesView)));
 			
 			// TODO How to do this???
 //			propertyData.importSourceValues = SMap.create(channel, CommandService.clone(property.getImportSourceValues(null), importValuesView));

@@ -29,7 +29,7 @@ public class CatalogServer implements CommandExecutor {
 	}
 
 	public CatalogServer(Map<String, String> properties) {
-		entityManagerFactory = Persistence.createEntityManagerFactory("catalog", properties);
+		entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", properties);
 		CommandServer server = new CommandServer(registeredCommands);
 		executor = new JpaService(new CatalogModelService(server), entityManagerFactory);
 	}
