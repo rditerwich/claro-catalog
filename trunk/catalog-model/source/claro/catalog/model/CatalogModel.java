@@ -45,11 +45,10 @@ public class CatalogModel {
 		supplierArticleNumberProperty = dao.findOrCreateProperty(root, "SupplierArticleNumber", PropertyType.String);
   }
 	
-	public synchronized ItemModel getItem(Long id) {
+	public synchronized ItemModel getItem(Long id) throws ItemNotFoundException {
 		ItemModel itemData = items.get(id);
 		if (itemData == null) {
-			itemData = new ItemModel(this, id);
-			items.put(id, itemData);
+			throw new ItemNotFoundException(id);
 		}
 		return itemData;
 	}

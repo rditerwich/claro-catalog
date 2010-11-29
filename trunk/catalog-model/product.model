@@ -10,7 +10,6 @@ JavaEEProduct {
     version = Version { major = 1 minor = 0 micro = 0 }
     modules = {
         claro.catalog.model
-        claro.catalog.domain
     }
     domain = /packages:Claro/packages:Domain
     architecture = /architecture:CatalogModelArchitecture

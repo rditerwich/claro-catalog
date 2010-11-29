@@ -13,6 +13,9 @@ Module {
         Dependency {
             module = metaphor.models
         }
+        Dependency {
+            module = metaphor.eclipse.models
+        }
     }
     
     exposedPackages = { claro.catalog claro.catalog.model }

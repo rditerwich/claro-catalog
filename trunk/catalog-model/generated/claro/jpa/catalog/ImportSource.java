@@ -4,9 +4,6 @@ import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 
-import javax.persistence.Entity;
-
-@Entity
 public class ImportSource {
     private Long id;
     private Integer priority;
