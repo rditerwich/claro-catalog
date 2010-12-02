@@ -24,7 +24,8 @@ public enum Styles {
 	productpanel, 
 	itemName, 
 	catalogresultspanel, 
-	filterpanel;
+	filterpanel, 
+	productvariant;
 	
 	public static void add(UIObject uiObject, Styles style) {
 		uiObject.addStyleName(style.toString());

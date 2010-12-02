@@ -73,15 +73,15 @@ public interface I18NCatalog extends Messages {
 //
 //	String productCategorySaved(String groupName);
 //
-//	String fileUploaded(String fileName);
+	String fileUploaded(String fileName);
 //
 //	String navigationSaved();
 //
-//	String loading();
+	String loading();
 //
-//	String upload();
+	String upload();
 //
-//	String uploadFile();
+	String uploadFile();
 //
 //	String deletePromotionQuestion();
 //
@@ -175,6 +175,8 @@ public interface I18NCatalog extends Messages {
 //	
 //	String down();
 //
+	String price();
+	String product();
 	String containedProducts(int nr);
 
 }

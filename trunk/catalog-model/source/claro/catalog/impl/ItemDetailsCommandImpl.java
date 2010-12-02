@@ -22,10 +22,6 @@ import easyenterprise.lib.util.SMap;
 public class ItemDetailsCommandImpl extends ItemDetailsCommand implements CommandImpl<ItemDetailsCommandResult>, CatalogCommand {
 
 	private static final long serialVersionUID = 1L;
-	private static final View propertyInfoView = new BasicView();
-	private static final View valuesView = new BasicView();
-	private static final View effectiveValuesView = new BasicView();
-	private static final View importValuesView = new BasicView();
 
 	public ItemDetailsCommandResult execute() throws CommandException {
 		
@@ -59,7 +55,6 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 			PropertyData propertyData = new PropertyData();
 			
 			// fill propertyData
-			// TODO Ruud: is the clone necessary?
 			propertyData.values = SMap.create(channel, property.getValues(area, channel));
 			propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
 			

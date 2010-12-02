@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.ImportSource;
@@ -201,7 +202,8 @@ public abstract class PropertyModel {
 	
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
-		case String: return value.getStringValue(); 
+		case String: return value.getStringValue();
+		case Media: return new MediaValue(value.getId(), value.getMimeType(), value.getStringValue());
 		}
 		return null;
 	}
