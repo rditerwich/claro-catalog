@@ -3,7 +3,7 @@ package claro.catalog.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import claro.catalog.RootProperties;
+import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Property;

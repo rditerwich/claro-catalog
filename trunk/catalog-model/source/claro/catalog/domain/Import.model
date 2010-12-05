@@ -61,44 +61,6 @@ Package {
                 
             }
         }
-        Enumeration {
-            name = ImportingExpressionType
-            literals = {
-                Literal {
-                    name = Constant
-                }
-                Literal {
-                    name = ColumnRef
-                }
-                Literal {
-                    name = RegExp
-                }
-            }
-        }
-        Class {
-            name = ImportingExpression
-            attributes = {
-                Attribute {
-                    name = type
-                    type = importing:ImportingExpressionType
-                }
-                Attribute {
-                    name = value
-                    type = primitive:String
-                }
-                Attribute {
-                    name = value2
-                    type = primitive:String
-                }
-                Attribute {
-                    name = children
-                    type = importing:ImportingExpression
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                }
-            }
-        }
    }
 }
  

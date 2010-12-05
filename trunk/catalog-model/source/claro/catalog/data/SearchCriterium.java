@@ -1,4 +1,4 @@
-package claro.catalog;
+package claro.catalog.data;
 
 public class SearchCriterium {
 

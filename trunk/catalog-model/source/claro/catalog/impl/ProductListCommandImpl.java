@@ -25,7 +25,7 @@ public class ProductListCommandImpl extends ProductListCommand implements Comman
 
 		// Compile product list:
 		// TODO
-		List<ItemModel> products;
+		List<ItemModel> products = null;
 		
 		// Collect effective values:
 		result.products = SMap.empty();
