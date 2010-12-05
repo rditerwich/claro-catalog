@@ -68,6 +68,8 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 		dlp.add(tabPanel);
 
 		CatalogPage catalogPage = new CatalogPage(placeController);
+		ImportPage importPage = new ImportPage(placeController);
+		tabPanel.add(importPage, "Import"); // TODO Remove this again...
 		tabPanel.add(catalogPage, "Details"); // TODO Remove this again...
 //		tabPanel.add(catalog.getView(), i18n.catalog());
 //		tabPanel.add(taxonomies.getView(), i18n.taxonomy());
@@ -81,7 +83,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				((Page)tabPanel.getWidget(event.getSelectedItem())).show();
 			}
 		});
-		catalogPage.show();
+		importPage.show();
 //				case 0:
 //					catalog.show();
 //					break;

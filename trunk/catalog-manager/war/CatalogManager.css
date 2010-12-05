@@ -304,3 +304,12 @@ button.button1, button.button2, button.button3, button.button4, button.button5 {
 .cxs-table .cxs-even {
 	background-color: white;
 }
+
+/**
+ * SExpr
+ */
+ 
+.sexpr-error {
+	color: red;
+	font-weight: bold;
+}

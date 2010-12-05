@@ -129,3 +129,7 @@ public class CatalogPage extends Page {
 		mainPanel.add(details);
 	}
 }
+
+
+
+

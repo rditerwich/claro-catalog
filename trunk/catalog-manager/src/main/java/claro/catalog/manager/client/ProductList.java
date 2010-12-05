@@ -2,10 +2,10 @@ package claro.catalog.manager.client;
 
 import java.util.List;
 
-import claro.catalog.RootProperties;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.Table;
 import claro.jpa.catalog.Item;
@@ -158,7 +158,9 @@ public class ProductList extends Composite {
 			// price
 			final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
 			// TODO Use locale in the following format??
-			productTable.setWidget(i, PRICE_COL, new Label(price instanceof Double? String.format("%d.2", price) : "") {{
+			// TODO fomat double by some other means: String.format is not supported by GWT
+//			productTable.setWidget(i, PRICE_COL, new Label(price instanceof Double? String.format("%d.2", price) : "") {{
+			productTable.setWidget(i, PRICE_COL, new Label(price.toString()) {{
 				Styles.add(this, Styles.productprice);
 			}});
 			
