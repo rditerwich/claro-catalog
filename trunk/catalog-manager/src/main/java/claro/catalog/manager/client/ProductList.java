@@ -2,21 +2,18 @@ package claro.catalog.manager.client;
 
 import java.util.List;
 
-import claro.catalog.command.RootProperties;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.MoneyValue;
-import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.Table;
-import claro.jpa.catalog.Item;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
