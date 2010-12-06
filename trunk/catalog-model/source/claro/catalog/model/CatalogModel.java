@@ -6,6 +6,7 @@ import java.util.Map;
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
+import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 
@@ -53,7 +54,13 @@ public class CatalogModel {
 	public synchronized ItemModel getItem(Long id) throws ItemNotFoundException {
 		ItemModel itemData = items.get(id);
 		if (itemData == null) {
-			throw new ItemNotFoundException(id);
+			Item item = CatalogAccess.getDao().getItem(id);
+			if (item != null) {
+				itemData = new ItemModel(this, id);
+				items.put(id, itemData);
+			} else {
+				throw new ItemNotFoundException(id);
+			}
 		}
 		return itemData;
 	}

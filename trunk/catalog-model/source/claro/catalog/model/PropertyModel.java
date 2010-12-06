@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import claro.catalog.data.MediaValue;
+import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.ImportSource;
@@ -204,6 +205,7 @@ public abstract class PropertyModel {
 		switch (value.getProperty().getType()) {
 		case String: return value.getStringValue();
 		case Media: return new MediaValue(value.getId(), value.getMimeType(), value.getStringValue());
+		case Money: return new MoneyValue(value.getMoneyValue(), value.getMoneyCurrency());
 		}
 		return null;
 	}

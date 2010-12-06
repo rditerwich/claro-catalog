@@ -2,15 +2,17 @@ package claro.catalog.manager.client;
 
 import java.util.List;
 
+import claro.catalog.command.RootProperties;
 import claro.catalog.data.MediaValue;
+import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
-import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.Table;
 import claro.jpa.catalog.Item;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -158,11 +160,12 @@ public class ProductList extends Composite {
 			// price
 			final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
 			// TODO Use locale in the following format??
-			// TODO fomat double by some other means: String.format is not supported by GWT
-//			productTable.setWidget(i, PRICE_COL, new Label(price instanceof Double? String.format("%d.2", price) : "") {{
-			productTable.setWidget(i, PRICE_COL, new Label(price.toString()) {{
-				Styles.add(this, Styles.productprice);
-			}});
+			if (price instanceof MoneyValue) {
+				MoneyValue priceMoney = (MoneyValue) price;
+				productTable.setWidget(i, PRICE_COL, new Label(NumberFormat.getCurrencyFormat(priceMoney.currency).format(priceMoney.value)) {{
+					Styles.add(this, Styles.productprice);
+				}});
+			}
 			
 			i++;
 		}

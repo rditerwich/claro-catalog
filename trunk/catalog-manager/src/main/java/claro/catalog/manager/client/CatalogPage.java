@@ -50,7 +50,7 @@ public class CatalogPage extends Page {
 
 		// Lots more need here :)
 		selectedItem = new Item();
-		selectedItem.setId(2L);
+		selectedItem.setId(3L);
 		
 		// retrieve data
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
@@ -80,19 +80,27 @@ public class CatalogPage extends Page {
 		
 		// search panel
 		mainPanel.add(new FlowPanel() {{
-			add(new Grid(1, 5){{
+			add(new Grid(1, 6){{
 				Styles.add(this, Styles.filterpanel);
-				setWidget(0, 0, new TextBox() {{
+				setWidget(0, 0, new ListBox() {{
+					addItem("Default");
+					addItem("English");
+					addItem("French");
+					addItem("  Shop");
+					addItem("    English");
+					addItem("    French");
+				}});
+				setWidget(0, 1, new TextBox() {{
 					setText("articlenumber: 234444");
 				}});
-				setWidget(0, 1, new Label("Filter1")); // TODO i18n
-				setWidget(0, 2, new ListBox() {{
+				setWidget(0, 2, new Label("Filter1")); // TODO i18n
+				setWidget(0, 3, new ListBox() {{
 					addItem("Option1");
 					addItem("Option2");
 					addItem("Option3");
 				}});
-				setWidget(0, 3, new Label("Filter2")); // TODO i18n
-				setWidget(0, 4, new ListBox() {{
+				setWidget(0, 4, new Label("Filter2")); // TODO i18n
+				setWidget(0, 5, new ListBox() {{
 					addItem("Option4");
 					addItem("Option5");
 					addItem("Option6");
@@ -129,7 +137,3 @@ public class CatalogPage extends Page {
 		mainPanel.add(details);
 	}
 }
-
-
-
-
