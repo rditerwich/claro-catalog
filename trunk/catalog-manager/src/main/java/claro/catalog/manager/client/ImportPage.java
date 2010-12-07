@@ -1,15 +1,14 @@
 package claro.catalog.manager.client;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.gwt.ui.SExprExprEditor;
+import easyenterprise.lib.gwt.ui.SExprExprEditor.Item;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
+import easyenterprise.lib.util.SortedList;
 
 public class ImportPage extends Page {
 
@@ -38,9 +37,8 @@ public class ImportPage extends Page {
 		if (initialized) return;
 		initialized = true;
 		
-		
-		
-		mainPanel.add(new SExprExprEditor(null) {{
+		SortedList<Item> items = SExprExprEditor.getItems(context);
+		mainPanel.add(new SExprExprEditor(items) {{
 			
 		}});
 	}
