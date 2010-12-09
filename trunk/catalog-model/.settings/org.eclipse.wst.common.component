@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="ClaroCatalogModel" project-version="1.5.0">
+    <wb-module deploy-name="ClaroCatalogModel">
+        <wb-resource deploy-path="/" source-path="/deploy/EarContent"/>
+        <wb-resource deploy-path="/" source-path="/source"/>
+        <wb-resource deploy-path="/" source-path="/generated"/>
+        <property name="java-output-path"/>
+    </wb-module>
+</project-modules>

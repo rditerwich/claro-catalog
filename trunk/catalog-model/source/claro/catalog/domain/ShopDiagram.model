@@ -98,12 +98,12 @@ DomainDiagram {
     }
     superClassReferences = {
         SuperClassReference {
-            source = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:VolumeDiscountPromotion
-            target = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:Promotion
-        }
-        SuperClassReference {
             source = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:Shop
             target = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Catalog\/types\:OutputChannel
+        }
+        SuperClassReference {
+            source = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:VolumeDiscountPromotion
+            target = /domainDiagrams:ShopDiagram/classes:\/packages\:Claro\/packages\:Domain\/packages\:Shop\/types\:Promotion
         }
     }
 }
