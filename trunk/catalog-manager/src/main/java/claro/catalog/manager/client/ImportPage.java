@@ -1,9 +1,13 @@
 package claro.catalog.manager.client;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
+import easyenterprise.lib.gwt.ui.RichTextEditor;
+import easyenterprise.lib.gwt.ui.SExprEditor;
 import easyenterprise.lib.gwt.ui.SExprExprEditor;
 import easyenterprise.lib.gwt.ui.SExprExprEditor.Item;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
@@ -37,10 +41,21 @@ public class ImportPage extends Page {
 		if (initialized) return;
 		initialized = true;
 		
-		SortedList<Item> items = SExprExprEditor.getItems(context);
-		mainPanel.add(new SExprExprEditor(items) {{
+		final RichTextEditor rich = new RichTextEditor();
+//		mainPanel.add(rich);
+		rich.addChangeHandler(new ChangeHandler() {
 			
-		}});
+			@Override
+			public void onChange(ChangeEvent event) {
+				System.out.println(rich.getSelection());
+				
+			}
+		});
+//		SortedList<Item> items = SExprExprEditor.getItems(context);
+//		mainPanel.add(new SExprExprEditor(items) {{
+//			
+//		}});
+		mainPanel.add(new SExprEditor());
 	}
 
 		
