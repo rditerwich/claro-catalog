@@ -26,7 +26,7 @@ public class ProductList extends Composite {
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
 
-	private static final int NR_COLS = 0;
+	private static final int NR_COLS = 3;
 
 	
 	private boolean initialized;
@@ -115,7 +115,7 @@ public class ProductList extends Composite {
 		productTable.clear();  // TODO Do more efficiently
 		List<Long> productKeys = products.getKeys();
 		productTable.resizeRows(1 + productKeys.size());
-		int i = 1;
+		int i = 0;
 		for (Long productId : productKeys) {
 			SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
 			

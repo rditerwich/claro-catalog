@@ -57,11 +57,15 @@ public abstract class PropertyModel {
 		};
 	}
 
-	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, ItemModel item) {
+	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, final ItemModel item) {
 		return new PropertyModel(item) {
-			private PropertyInfo propertyInfo = createPropertyInfo(getItem(), getEntity(), isDangling);
+			private PropertyInfo propertyInfo = createPropertyInfo(item, getEntity(), isDangling);
 			PropertyModel getRoot() {
 				return this;
+			}
+			@Override
+			public Long getPropertyId() {
+				return propertyId;
 			}
 			@Override
 			public PropertyInfo getPropertyInfo() {

@@ -125,7 +125,7 @@ public class Table extends Grid {
 		boolean even = (startIndex & 1) == 0;
 
 		super.resizeRows(rows);
-		if (oldRows < 1) {
+		if (rows > 0 && oldRows < 1) {
 			getRowFormatter().addStyleName(0, "cxs-first");
 		}
 		for (int i = startIndex; i < numRows; i++) {

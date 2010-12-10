@@ -95,8 +95,18 @@ table.catalogheader {
     background: url(images/homepage07.gif) repeat-x left top;
 }
 
+/** master detail styles */
+
+.detailPanel { background-color: #FFF3DF; border: 2px solid #9c0000; }
+#.detailPanel { border: 2px solid #9c0000; }
+.erasePanel { border-left: 2px solid #FFF3DF;}
+.selectionPanel { border: 2px solid #9c0000;}
+.masterDetail table td { padding: 0px; margin: 0px;}
+.masterselection td { background-color: #FFF3DF; padding: 0px;}
 
 /** catalogpage styles */
+
+.masterdetailtest { padding: 5px;}
 
 table.filterpanel { margin-left: 20px; vertical-align: middle; }
 table.filterpanel input.gwt-TextBox { margin-right: 40px; }

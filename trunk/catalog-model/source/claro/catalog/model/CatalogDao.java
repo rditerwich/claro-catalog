@@ -73,6 +73,7 @@ public class CatalogDao {
 	  Property property = new Property();
 	  property.setType(type);
 	  property.setItem(item);
+	  property.setIsMany(false);
 	  item.getProperties().add(property);
 	  getOrCreateLabel(property, name, null);
 	  return property;

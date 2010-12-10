@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 
@@ -76,26 +77,28 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				
 			}}, 40);
 			
-				add(new TabLayoutPanel(50, Unit.PX) {{
-					this.addStyleName("mainTabPanel");
-					
-					add(new ImportPage(placeController), "Import");
-					add(new CatalogPage(placeController), "Details");
+			add(new TabLayoutPanel(50, Unit.PX) {{
+				this.addStyleName("mainTabPanel");
+				
+				add(new ScrollPanel(new CatalogPage(placeController)), "Details");
+				add(new ScrollPanel(new ImportPage(placeController)), "Import");
+				
+				add(new MasterDetailTestPage(placeController), "MasterDetail");
 //		tabPanel.add(catalog.getView(), i18n.catalog());
 //		tabPanel.add(taxonomies.getView(), i18n.taxonomy());
 //		tabPanel.add(navigation.getView(), i18n.navigation());
 //		tabPanel.add(promotions.getView(), i18n.promotions());
 //		tabPanel.add(orders.getView().asWidget(), i18n.orders());
 //		tabPanel.add(settings.getView().asWidget(), i18n.settings());
-					addSelectionHandler(new SelectionHandler<Integer>() {
-						@Override
-						public void onSelection(SelectionEvent<Integer> event) {
-							((Page)getWidget(event.getSelectedItem())).show();
-						}
-					});
-					((Page)getWidget(0)).show();
-				}});
-				
+				addSelectionHandler(new SelectionHandler<Integer>() {
+					@Override
+					public void onSelection(SelectionEvent<Integer> event) {
+//						((Page)((ScrollPanel)getWidget(event.getSelectedItem())).getWidget()).show();
+						((Page)(getWidget(event.getSelectedItem()))).show();
+					}
+				});
+				selectTab(2);
 			}});
+		}});
 	}
 }
