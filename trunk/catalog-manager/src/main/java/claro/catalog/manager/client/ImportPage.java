@@ -7,12 +7,9 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.gwt.ui.RichTextEditor;
-import easyenterprise.lib.gwt.ui.SExprEditor;
-import easyenterprise.lib.gwt.ui.SExprExprEditor;
-import easyenterprise.lib.gwt.ui.SExprExprEditor.Item;
+import easyenterprise.lib.gwt.ui.SExprEditor2;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
-import easyenterprise.lib.util.SortedList;
 
 public class ImportPage extends Page {
 
@@ -55,7 +52,7 @@ public class ImportPage extends Page {
 //		mainPanel.add(new SExprExprEditor(items) {{
 //			
 //		}});
-		mainPanel.add(new SExprEditor());
+		mainPanel.add(new SExprEditor2());
 	}
 
 		
