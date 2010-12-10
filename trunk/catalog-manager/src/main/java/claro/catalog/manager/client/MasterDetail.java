@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
-public abstract class MasterDetail<M> extends Composite {
+public abstract class MasterDetail extends Composite {
 
 	private final LayoutPanel mainPanel;
 	private LayoutPanel headerPanel;
@@ -78,11 +78,6 @@ public abstract class MasterDetail<M> extends Composite {
 		
 		initializeDetailPanel();
 		
-		
-		// render detail
-//		detailPanel.clear();
-//		renderDetail(detailPanel, master);
-		
 		// Determine size/offset of selected table row.
 		int offsetTop = masterTable.getRowFormatter().getElement(row).getOffsetTop() + headerSize;
 		int offsetHeight = masterTable.getRowFormatter().getElement(row).getOffsetHeight();
@@ -146,7 +141,7 @@ public abstract class MasterDetail<M> extends Composite {
 		
 		// animate
 		// Determine size/offset of selected table row.
-		final int offsetTop = masterTable.getRowFormatter().getElement(currentRow).getOffsetTop();
+		final int offsetTop = masterTable.getRowFormatter().getElement(currentRow).getOffsetTop() + headerSize;
 		final int offsetHeight = masterTable.getRowFormatter().getElement(currentRow).getOffsetHeight();
 		int offsetLeft = masterTable.getRowFormatter().getElement(currentRow).getOffsetLeft();
 		
