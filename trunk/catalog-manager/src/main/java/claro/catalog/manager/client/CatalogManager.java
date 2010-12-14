@@ -80,8 +80,8 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 			add(new TabLayoutPanel(50, Unit.PX) {{
 				this.addStyleName("mainTabPanel");
 				
-				add(new ScrollPanel(new CatalogPage(placeController)), "Details");
-				add(new ScrollPanel(new ImportPage(placeController)), "Import");
+				add(new CatalogPage(placeController), "Details");
+				add(new ImportPage(placeController), "Import");
 				
 				add(new MasterDetailTestPage(placeController), "MasterDetail");
 //		tabPanel.add(catalog.getView(), i18n.catalog());
@@ -97,7 +97,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 						((Page)(getWidget(event.getSelectedItem()))).show();
 					}
 				});
-				selectTab(2);
+				selectTab(1);
 			}});
 		}});
 	}

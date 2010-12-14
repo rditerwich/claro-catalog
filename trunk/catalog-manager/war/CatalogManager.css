@@ -1,5 +1,14 @@
 /** Add css rules here for your application. */
 
+body, th, td, input, textarea, select {
+  font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #726936;
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
+}
+
 .footer {
 /*    width: 900px;*/
     height: 40px;
@@ -158,11 +167,6 @@ table.cxs-table .productprice {
     text-align: right;
 }
 
-body, th, td, input, textarea, select {
-  font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
-    font-size: 11px;
-    color: #726936;
-}
 pre {
   font-family: "courier new", courier;
   font-size: small;

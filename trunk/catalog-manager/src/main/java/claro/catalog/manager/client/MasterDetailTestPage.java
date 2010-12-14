@@ -42,7 +42,7 @@ public class MasterDetailTestPage extends Page {
 		}
 		initialized = true;
 		
-		MasterDetail<String> m;
+		MasterDetail m;
 		final List<String> masterData = Arrays.asList(
 				"bladibladibladibla0",
 				"bladibladibladibla1",
@@ -55,7 +55,7 @@ public class MasterDetailTestPage extends Page {
 				"bladibladibladibla8",
 				"bladibladibladibla9"
 		);
-		mainPanel.add(m = new MasterDetail<String>(50, 50) {{
+		mainPanel.add(m = new MasterDetail(50, 50) {{
 			final Table masterTable = getMaster();
 			masterTable.resizeColumns(5);
 			masterTable.resizeHeaderRows(1);

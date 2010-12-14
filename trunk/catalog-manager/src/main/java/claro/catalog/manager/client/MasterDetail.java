@@ -117,7 +117,7 @@ public abstract class MasterDetail extends Composite {
 		
 
 		final int oldRow = currentRow;
-		mainPanel.animate(300, new AnimationCallback() {
+		mainPanel.animate(100, new AnimationCallback() {
 			public void onLayout(Layer layer, double progress) {
 			}
 			public void onAnimationComplete() {
