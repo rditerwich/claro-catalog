@@ -5,6 +5,8 @@ import claro.catalog.manager.client.i18n.I18NCatalog;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -19,7 +21,7 @@ import com.google.gwt.user.client.ui.Image;
  * the widget will display the UploadWidget which enables the user to upload
  * files to the server.
  */
-public class MediaWidget extends Composite {
+public class MediaWidget extends Composite implements HasClickHandlers {
 
 	private final static I18NCatalog i18n = Util.i18n;
 
@@ -62,6 +64,12 @@ public class MediaWidget extends Composite {
 				
 			}
 		}});
+	}
+	
+	
+	@Override
+	public HandlerRegistration addClickHandler(ClickHandler handler) {
+		return image.addClickHandler(handler);
 	}
 	
 	public HandlerRegistration addSubmitCompleteHandler(SubmitCompleteHandler handler) {

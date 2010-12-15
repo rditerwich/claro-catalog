@@ -2,18 +2,21 @@ package claro.catalog.manager.client;
 
 import claro.catalog.command.ItemDetailsCommand;
 import claro.catalog.command.ItemDetailsCommandResult;
+import claro.catalog.command.ProductListCommand;
+import claro.catalog.command.ProductListCommandResult;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
+import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.catalog.Item;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -21,19 +24,25 @@ import easyenterprise.lib.command.gwt.GwtCommandFacade;
 
 public class CatalogPage extends Page {
 
-	private FlowPanel mainPanel;
+	private LayoutPanel mainPanel;
 	ProductList filteredProductList;
-	private ItemDetails details;
 
 	private Item selectedItem;
 	private boolean initialized;
 	protected HTML filterLabel;
 	
+	private long currentCatalogId;
+	private long currentOuputChannel;
+	private String currentLanguage;
+	private String filterString;
+
+	
+	
 	public CatalogPage(PlaceController placeController) {
 		super(placeController);
 		
-		mainPanel = new FlowPanel();
-		initWidget(mainPanel);
+		currentCatalogId = -1L; // TODO Make dynamic.
+		initWidget(mainPanel = new LayoutPanel());
 	}
 
 	@Override
@@ -46,28 +55,7 @@ public class CatalogPage extends Page {
 		initializeMainPanel();
 		
 		// Retrieve Products for filter:
-		// TODO
-
-		// Lots more need here :)
-		selectedItem = new Item();
-		selectedItem.setId(11L);
-		
-		// retrieve data
-		ItemDetailsCommand cmd = new ItemDetailsCommand();
-		cmd.setCatalogId(-1L)
-		   .setItem(selectedItem.getId());
-		GwtCommandFacade.execute(cmd, new AsyncCallback<ItemDetailsCommandResult>() {
-			public void onSuccess(ItemDetailsCommandResult result) {
-				details.setItemData(selectedItem, result.propertyData);
-				System.out.println("Gelukt");
-			}
-			public void onFailure(Throwable caught) {
-				System.out.println("Niet gelukt: " + caught);
-				caught.printStackTrace();
-			}			
-		});
-
-		// TODO See whether it was cached 
+		updateProductList();
 
 	}
 	
@@ -78,9 +66,9 @@ public class CatalogPage extends Page {
 
 		initialized = true;
 		
-		// search panel
-		mainPanel.add(new FlowPanel() {{
-			add(new Grid(1, 6){{
+		mainPanel.add(filteredProductList = new ProductList(50, 0) {{
+			// search panel
+			getMasterHeader().add(new Grid(2, 6){{
 				Styles.add(this, Styles.filterpanel);
 				setWidget(0, 0, new ListBox() {{
 					addItem("Default");
@@ -91,7 +79,13 @@ public class CatalogPage extends Page {
 					addItem("    French");
 				}});
 				setWidget(0, 1, new TextBox() {{
-					setText("articlenumber: 234444");
+					addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							filterString = getText();
+							updateFilterLabel();
+							updateProductList();
+						}
+					});
 				}});
 				setWidget(0, 2, new Label("Filter1")); // TODO i18n
 				setWidget(0, 3, new ListBox() {{
@@ -106,34 +100,73 @@ public class CatalogPage extends Page {
 					addItem("Option6");
 				}});
 			}});
-			add(new FlowPanel() {{
-				Styles.add(this, Styles.catalogresultspanel);
-				add(filterLabel = new HTML("Search results for <b>articlenumber: 234444</b>") {{
-					setVisible(true); // TODO should be false..
-				}});  // TODO i18n
-				add(filteredProductList = new ProductList());
-			}});
-		}});
+			getMasterHeader().add(filterLabel = new HTML() {{
+				setVisible(true); // TODO should be false..
+			}});  // TODO i18n
+		}
+		
+			protected void productSelected(final Long productId) {
+				// retrieve data
+				updateProductSelection(productId);
+			}
+		});
 		
 		// Read Root properties
+		updateProductListRootProperties();		
+		
+		// TODO Listen to language selection??
+	}
+
+	private void updateProductListRootProperties() {
 		RootPropertiesCommand cmd = new RootPropertiesCommand();
 		cmd.setCatalogId(-1L);
-		GwtCommandFacade.execute(cmd, new AsyncCallback<RootPropertiesCommandResult>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Paniek!!
-			}
-
-			@Override
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<RootPropertiesCommandResult>() {
 			public void onSuccess(RootPropertiesCommandResult result) {
 				filteredProductList.setRootProperties(result.rootProperties);
 			}
-		});		
+		});
+	}
+	
+	private void updateProductList() {
+		ProductListCommand cmd = new ProductListCommand();
+		cmd .setCatalogId(currentCatalogId)
+			.setOutputChannelId(currentOuputChannel)
+			.setLanguage(currentLanguage)
+			.setFilterString(constructFilterString());
+
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ProductListCommandResult>(Util.i18n.loadingProducts()) {
+			public void onSuccess(ProductListCommandResult result) {
+				updateFilterLabel();
+				filteredProductList.setProducts(result.products);
+			}
+		});
+	}
+
+	private String constructFilterString() {
+		// TODO add drop down filter options:
+		return filterString;
+	}
+	
+	private void updateFilterLabel() {
+		String actualFilter = constructFilterString();
+		if (actualFilter != null && !actualFilter.trim().equals("")) {
+			filterLabel.setHTML(Util.i18n.filterMessage(actualFilter)); 
+			filterLabel.setVisible(true);
+		} else {
+			filterLabel.setVisible(false);
+		}
+	}
+
+	private void updateProductSelection(final Long productId) {
+		ItemDetailsCommand cmd = new ItemDetailsCommand();
+		cmd .setCatalogId(currentCatalogId)
+			.setItem(selectedItem.getId());
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
+			public void onSuccess(ItemDetailsCommandResult result) {
+				filteredProductList.setSelectedProduct(productId, result.propertyData);
+			}
+		});
 		
-		// TODO Listen to language selection??
-		
-		details = new ItemDetails();
-		mainPanel.add(details);
+		// TODO See whether it was cached 
 	}
 }

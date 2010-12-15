@@ -45,6 +45,10 @@ public abstract class MasterDetail extends Composite {
 		}});
 
 	}
+	
+	public int getHeight() {
+		return this.headerSize + this.footerSize + masterTable.getRowFormatter().getElement(masterTable.getRowCount()).getOffsetHeight();
+	}
 
 	protected LayoutPanel getMasterHeader() {
 		initializeMainPanel();

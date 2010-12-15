@@ -31,7 +31,7 @@ public class ItemPropertyValues extends Composite {
 	Grid mainGrid;
 	private List<String> languages;
 	private SMap<PropertyInfo, PropertyData> values;
-	private Item item;
+	private Long itemId;
 	
 	public ItemPropertyValues() {
 		mainGrid = new Grid();
@@ -45,11 +45,11 @@ public class ItemPropertyValues extends Composite {
 	/**
 	 * set the item data and (re)render.
 	 * 
-	 * @param item
+	 * @param itemId
 	 * @param values
 	 */
-	public void setItemData(Item item, SMap<PropertyInfo, PropertyData> values) {
-		this.item = item;
+	public void setItemData(Long itemId, SMap<PropertyInfo, PropertyData> values) {
+		this.itemId = itemId;
 		this.values = values;
 		render();
 	}
@@ -98,7 +98,7 @@ public class ItemPropertyValues extends Composite {
 		int row = mainGrid.getRowCount();
 		mainGrid.resizeRows(row + 1);
 		
-		boolean isInherited = !item.getId().equals(property.ownerItemId);
+		boolean isInherited = !itemId.equals(property.ownerItemId);
 
 //		propertyBinding.setData(property);
 		mainGrid.setWidget(row, NAME_COLUMN, createNameWidget(property, null, isInherited));

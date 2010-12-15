@@ -4,24 +4,25 @@ import java.util.List;
 
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.MoneyValue;
+import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.catalog.manager.client.widgets.Table;
 
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.util.SMap;
 
-public class ProductList extends Composite {
+abstract public class ProductList extends MasterDetail {
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
@@ -30,8 +31,6 @@ public class ProductList extends Composite {
 
 	
 	private boolean initialized;
-	private FlowPanel mainPanel;
-	private Table productTable;
 
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
 
@@ -46,10 +45,8 @@ public class ProductList extends Composite {
 	private PropertyInfo smallImageProperty;
 
 
-	public ProductList() {
-		mainPanel = new FlowPanel();
-		
-		initWidget(mainPanel);
+	public ProductList(int headerSize, int footerSize) {
+		super(headerSize, footerSize);
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
@@ -73,7 +70,7 @@ public class ProductList extends Composite {
 	public void switchLanguage(String newLanguage) {
 		language = newLanguage;
 		
-		setHeader(productTable, language);
+		setHeader(getMaster(), language);
 		
 		render(); // TODO More delicate rerender?
 	}
@@ -88,15 +85,9 @@ public class ProductList extends Composite {
 		}
 		
 		initialized = true;
-		
-		mainPanel.add(new DockLayoutPanel(Unit.PX) {{
-			 add(new ScrollPanel(){{
-				 Styles.add(this, Styles.productpanel);
-				 setWidget(productTable = new Table(0, NR_COLS) {{
-					 ProductList.this.setHeader(this, language);
-				 }});
-			 }});
-		}});
+
+		getMaster().resizeColumns(NR_COLS);
+		ProductList.this.setHeader(getMaster(), language);
 	}
 	
 	private void setHeader(Table productTable, String language) {
@@ -112,11 +103,14 @@ public class ProductList extends Composite {
 			return;
 		}
 		
+		Table productTable = getMaster();
+		
 		productTable.clear();  // TODO Do more efficiently
 		List<Long> productKeys = products.getKeys();
 		productTable.resizeRows(1 + productKeys.size());
 		int i = 0;
 		for (Long productId : productKeys) {
+			final int row = i;
 			SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
 			
 			// image
@@ -129,6 +123,11 @@ public class ProductList extends Composite {
 				
 				productTable.setWidget(i, IMAGE_COL, new MediaWidget(false) {{
 					setData(value.propertyValueId, value.mimeType, value.filename);
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							rowSelected(row);
+						}
+					});
 				}});
 			}
 			
@@ -166,5 +165,34 @@ public class ProductList extends Composite {
 			
 			i++;
 		}
+	}
+	
+	public void setSelectedProduct(Long productId, SMap<PropertyInfo, PropertyData> propertyValues) {
+		int row = products.getKeys().indexOf(productId);
+
+		LayoutPanel detailPanel = getDetail();
+		detailPanel.clear();
+		
+		detailPanel.add(new Anchor("Close") {{
+			addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					closeDetail();
+				}
+			});
+		}});
+		
+		ItemDetails details = new ItemDetails();
+		details.setItemData(productId, propertyValues);
+		detailPanel.add(details);
+		
+		openDetail(row);
+	}
+	
+	abstract protected void productSelected(Long productId);
+	
+	private void rowSelected(int row) {
+		StatusMessage.get().show(Util.i18n.loadingProductDetails());
+
+		productSelected(products.getKeys().get(row));
 	}
 }

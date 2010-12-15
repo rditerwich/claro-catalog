@@ -1,5 +1,6 @@
 package claro.catalog.manager.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,18 +44,10 @@ public class MasterDetailTestPage extends Page {
 		initialized = true;
 		
 		MasterDetail m;
-		final List<String> masterData = Arrays.asList(
-				"bladibladibladibla0",
-				"bladibladibladibla1",
-				"bladibladibladibla2",
-				"bladibladibladibla3",
-				"bladibladibladibla4",
-				"bladibladibladibla5",
-				"bladibladibladibla6",
-				"bladibladibladibla7",
-				"bladibladibladibla8",
-				"bladibladibladibla9"
-		);
+		final List<String> masterData = new ArrayList<String>();
+		for (int i = 0; i < 100; i++) {
+			masterData.add("bladibladibladibla" + i);
+		}
 		mainPanel.add(m = new MasterDetail(50, 50) {{
 			final Table masterTable = getMaster();
 			masterTable.resizeColumns(5);
@@ -104,6 +97,8 @@ public class MasterDetailTestPage extends Page {
 			}
 
 		}});
+//		int height = m.getHeight();
+//		mainPanel.setHeight(height + "px");
 	}
 }
 

@@ -33,7 +33,6 @@ public class ItemDetails extends Composite {
 
 	private Image productImage;
 	private ItemPropertyValues propertyValues;
-	private Item item;
 	private SMap<PropertyInfo, PropertyData> values;
 	
 	public ItemDetails() {
@@ -74,11 +73,10 @@ public class ItemDetails extends Composite {
 	 * @param item
 	 * @param values
 	 */
-	public void setItemData(Item item, SMap<PropertyInfo, PropertyData> values) {
-		this.item = item;
+	public void setItemData(Long itemId, SMap<PropertyInfo, PropertyData> values) {
 		this.values = values;
 		
-		propertyValues.setItemData(item, values);
+		propertyValues.setItemData(itemId, values);
 	}
 	
 

@@ -5,7 +5,10 @@ import com.google.gwt.i18n.client.Messages;
 public interface I18NCatalog extends Messages {
 
 
-//	// TODO Move these to a more appropriate util.
+	String loadingProductDetails();
+	
+	String filterMessage(String filter);
+	//	// TODO Move these to a more appropriate util.
 //	@DefaultMessage("<h2>{0}</h2>") 
 //	String h2(String text);
 //
@@ -178,5 +181,12 @@ public interface I18NCatalog extends Messages {
 	String price();
 	String product();
 	String containedProducts(int nr);
+
+	String loadingProducts();
+
+	String failureRetryingMessage(String action, int retryNr);
+	String failureMessage(String action);
+	String internalFailureRetryingMessage(int retryNr);
+	String internalFailureMessage();
 
 }

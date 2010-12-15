@@ -66,4 +66,8 @@ public class StatusMessage {
 		this.message.setHTML(message);
 		status.setPopupPositionAndShow(pc);
 	}
+	
+	public  void showError(String message, Throwable cause) {
+		show(message); // TODO show link with panel for details.
+	}
 }
