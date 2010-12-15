@@ -25,7 +25,7 @@ public class CatalogAccess {
 	static CatalogAccess getInstance() {
 		CatalogAccess updateStatus = threadInstance.get();
 		if (updateStatus == null) {
-			throw new RuntimeException("No catalog access allowed. Please call " + CatalogModel.class.getName() + ".access or " + CatalogModel.class.getName() + ".update");
+			throw new RuntimeException("No catalog access allowed. Please call " + CatalogModel.class.getName() + ".startOperation(...)");
 		}
 		return updateStatus;
 	}

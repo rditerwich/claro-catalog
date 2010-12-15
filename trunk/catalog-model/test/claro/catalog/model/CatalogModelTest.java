@@ -3,8 +3,6 @@ package claro.catalog.model;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import javax.persistence.EntityManager;
-
 import org.junit.Test;
 
 import claro.catalog.model.test.util.CatalogTestBase;
@@ -17,7 +15,10 @@ public class CatalogModelTest extends CatalogTestBase {
 //		script.execute(getConnection());
 //		script = new DBScript(getClass().getResourceAsStream("/CreateSchema.sql"));
 //		script.execute(getConnection()).assertSuccess();
-		EntityManager em = getEntityManager();
+//		EntityManager em = getEntityManager();
 //		CatalogDao dao = getCatalogDao();
+		CatalogModel model = getCatalogModel();
+
+		
 	}
 }

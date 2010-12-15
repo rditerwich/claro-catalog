@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -98,6 +99,7 @@ public class CatalogTestBase {
 		if (entityManager == null) {
 			ensureDatabaseCreated();
 			entityManager = getEntityManagerFactory().createEntityManager();
+			entityManager.getTransaction().begin();
 		}
 		return entityManager;
 	}
@@ -106,8 +108,9 @@ public class CatalogTestBase {
 		return new CatalogDao(getEntityManager());
 	}
 	
-	protected CatalogModel getCatalogModel() {
+	protected CatalogModel getCatalogModel() throws SQLException {
 		if (catalogModel == null) {
+			CatalogModel.startOperation(getCatalogDao());
 			catalogModel = new CatalogModel(TEST_CATALOG_ID);
 		}
 		return catalogModel;
@@ -123,5 +126,18 @@ public class CatalogTestBase {
 	public void initializeTest() {
 		entityManager = null;
 		catalogModel = null;
+	}
+	
+	@After
+	public void finish() {
+		if (catalogModel != null) { 
+			CatalogModel.endOperation();
+		}
+		if (entityManager != null) {
+			if (entityManager.getTransaction().isActive()) {
+				entityManager.getTransaction().commit();
+			}
+			entityManager.close();
+		}
 	}
 }
