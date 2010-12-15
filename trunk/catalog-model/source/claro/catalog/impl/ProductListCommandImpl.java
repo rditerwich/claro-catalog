@@ -23,6 +23,8 @@ public class ProductListCommandImpl extends ProductListCommand implements Comman
 	public ProductListCommandResult execute() throws CommandException {
 		ProductListCommandResult result = new ProductListCommandResult();
 
+		CatalogModel catalogModel = CatalogModelService.getCatalogModel(getCatalogId());
+
 		// Compile product list:
 		// TODO
 		List<ItemModel> products = null;

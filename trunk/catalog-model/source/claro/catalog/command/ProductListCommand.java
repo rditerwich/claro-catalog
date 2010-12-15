@@ -7,7 +7,8 @@ public class ProductListCommand implements Command<ProductListCommandResult>, Ca
 	private static final long serialVersionUID = 1L;
 
 	private Long catalogId;
-	private Long shopId;
+	private Long outputChannelId;
+	private String language;
 	private String filterString;
 
 	public Long getCatalogId() {
@@ -19,14 +20,25 @@ public class ProductListCommand implements Command<ProductListCommandResult>, Ca
 		return this;
 	}
 
-	public Long getShopId() {
-		return shopId;
+	public Long getOutputChannelId() {
+		return outputChannelId;
 	}
 
-	public ProductListCommand setShopId(Long shopId) {
-		this.shopId = shopId;
+	public ProductListCommand setOutputChannelId(Long outputChannelId) {
+		this.outputChannelId = outputChannelId;
 		return this;
 	}
+	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public ProductListCommand setLanguage(String language) {
+		this.language = language;
+		return this;
+	}
+	
+	
 
 	public String getFilterString() {
 		return filterString;
