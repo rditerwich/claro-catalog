@@ -2,7 +2,6 @@ package claro.catalog;
 
 import java.util.Map;
 
-import claro.catalog.command.CatalogCommand;
 import claro.catalog.model.CatalogDao;
 import claro.catalog.model.CatalogModel;
 
@@ -17,15 +16,15 @@ import easyenterprise.lib.command.jpa.JpaService;
 
 public class CatalogModelService extends CommandWrapper {
 
+	private static final ThreadLocal<State> stateLocal = new ThreadLocal<State>() {
+		protected State initialValue() {
+			return new State();
+		};
+	};
+
 	private static Map<Long, CatalogModel> catalogModels = new MapMaker().makeComputingMap(new Function<Long, CatalogModel>() {
 		public CatalogModel apply(Long id) {
-//			CatalogModel.startOperation(createDao());
-//			try {
 				return new CatalogModel(id);
-//			}
-//			finally {
-//				CatalogModel.endOperation();
-//			}
 		}
 	});
 	
@@ -34,6 +33,11 @@ public class CatalogModelService extends CommandWrapper {
 	}
 	
 	public static CatalogModel getCatalogModel(Long catalogId) {
+		State state = stateLocal.get();
+		if (!state.operationStarted && !state.parentHasStartedOperation) {
+			CatalogModel.startOperation(createDao());
+			state.operationStarted = true;
+		}
 		return catalogModels.get(catalogId);
 	}
 
@@ -42,16 +46,23 @@ public class CatalogModelService extends CommandWrapper {
 	}
 
 	public <T extends CommandResult, I extends CommandImpl<T>> T executeImpl(I command) throws CommandException {
-		if (command instanceof CatalogCommand) {
-			CatalogModel.startOperation(createDao());
-			try {
-				return super.executeImpl(command);
-			}
-			finally {
+		State oldState = stateLocal.get();
+		State state = new State();
+		state.parentHasStartedOperation = oldState.operationStarted;
+		stateLocal.set(state);
+		try {
+			return super.executeImpl(command);
+		}
+		finally {
+			if (state.operationStarted) {
+				stateLocal.set(oldState);
 				CatalogModel.endOperation();
 			}
-		} else {
-			return super.execute(command);
 		}
+	}
+	
+	public static class State {
+		boolean parentHasStartedOperation;
+		boolean operationStarted;
 	}
 }

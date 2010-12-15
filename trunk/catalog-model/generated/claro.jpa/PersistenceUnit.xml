@@ -177,7 +177,27 @@
             </basic>
             <basic name="importSourceNameAppendFileName" optional="false">
                 <column name="importsourcenameappendfilename" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
+            </basic>
+            <many-to-many name="categories" target-entity="claro.jpa.importing.ImportCategory">
+                <join-table name="importdefinition_categories" schema="catalog">
+                    <join-column name="importdefinition_id" referenced-column-name="id" table="importdefinition_categories" nullable="true" unique="false" insertable="true" updatable="true"/>
+                    <inverse-join-column name="categories_id" referenced-column-name="id" table="importdefinition_categories" nullable="true" unique="false" insertable="true" updatable="true"/>
+                </join-table>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-many>
+            <many-to-many name="properties" target-entity="claro.jpa.importing.ImportProperty">
+                <join-table name="importdefinition_properties" schema="catalog">
+                    <join-column name="importdefinition_id" referenced-column-name="id" table="importdefinition_properties" nullable="true" unique="false" insertable="true" updatable="true"/>
+                    <inverse-join-column name="properties_id" referenced-column-name="id" table="importdefinition_properties" nullable="true" unique="false" insertable="true" updatable="true"/>
+                </join-table>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-many>   
         </attributes>
     </entity>
     <entity name="TabularImportDefinition" class="claro.jpa.importing.TabularImportDefinition" access="FIELD">
@@ -188,295 +208,45 @@
             </basic>   
         </attributes>
     </entity>
-    <entity name="Shop" class="claro.jpa.shop.Shop" access="FIELD">
-        <discriminator-value>shop.shop</discriminator-value>
-        <attributes>
-            <basic name="name" optional="false">
-                <column name="name2" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="urlPrefix">
-                <column name="urlprefix" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="defaultLanguage">
-                <column name="defaultlanguage2" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <one-to-many name="navigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentShop">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </one-to-many>
-            <one-to-many name="promotions" target-entity="claro.jpa.shop.Promotion" mapped-by="shop">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </one-to-many>
-            <many-to-many name="excludedProperties" target-entity="claro.jpa.catalog.Property">
-                <join-table name="shop_excludedproperties" schema="catalog">
-                    <join-column name="shop_id" referenced-column-name="id" table="shop_excludedproperties" nullable="true" unique="false" insertable="true" updatable="true"/>
-                    <inverse-join-column name="excludedproperties_id" referenced-column-name="id" table="shop_excludedproperties" nullable="true" unique="false" insertable="true" updatable="true"/>
-                </join-table>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-many>
-            <many-to-many name="excludedItems" target-entity="claro.jpa.catalog.Item">
-                <join-table name="shop_excludeditems" schema="catalog">
-                    <join-column name="shop_id" referenced-column-name="id" table="shop_excludeditems" nullable="true" unique="false" insertable="true" updatable="true"/>
-                    <inverse-join-column name="excludeditems_id" referenced-column-name="id" table="shop_excludeditems" nullable="true" unique="false" insertable="true" updatable="true"/>
-                </join-table>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-many>
-            <many-to-many name="templates" target-entity="claro.jpa.catalog.Template">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </many-to-many>   
-        </attributes>
-    </entity>
-    <entity name="Navigation" class="claro.jpa.shop.Navigation" access="FIELD">
-        <table name="navigation" schema="catalog">
+    <entity name="ImportCategory" class="claro.jpa.importing.ImportCategory" access="FIELD">
+        <table name="importcategory" schema="catalog">
             <unique-constraint>
                 <column-name>id</column-name>
             </unique-constraint>
         </table>
-        <sequence-generator name="navigation_id_seq" sequence-name="catalog.navigation_id_seq" allocation-size="1"/>
+        <sequence-generator name="importcategory_id_seq" sequence-name="catalog.importcategory_id_seq" allocation-size="1"/>
         <attributes>
             <id name="id">
-                <column name="id" table="navigation" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="navigation_id_seq"/>
+                <column name="id" table="importcategory" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="importcategory_id_seq"/>
             </id>
-            <basic name="index" optional="false">
-                <column name="index" table="navigation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="category" target-entity="claro.jpa.catalog.Category">
-                <join-column name="category_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-one name="parentShop" target-entity="claro.jpa.shop.Shop">
-                <join-column name="parentshop_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-one name="parentNavigation" target-entity="claro.jpa.shop.Navigation">
-                <join-column name="parentnavigation_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <one-to-many name="subNavigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentNavigation">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </one-to-many>   
-        </attributes>
-    </entity>
-    <entity name="Promotion" class="claro.jpa.shop.Promotion" access="FIELD">
-        <table name="promotion" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <inheritance strategy="SINGLE_TABLE" />
-        <discriminator-value>shop.promotion</discriminator-value>
-        <discriminator-column name="type" discriminator-type="STRING" />
-        <sequence-generator name="promotion_id_seq" sequence-name="catalog.promotion_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="promotion" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="promotion_id_seq"/>
-            </id>
-            <basic name="startDate" optional="false">
-                <column name="startdate" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <temporal>DATE</temporal>
-            </basic>
-            <basic name="endDate" optional="false">
-                <column name="enddate" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <temporal>DATE</temporal>
-            </basic>
-            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
-                <join-column name="shop_id" referenced-column-name="id" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-many name="templates" target-entity="claro.jpa.catalog.Template">
-                <join-table name="promotion_templates" schema="catalog">
-                    <join-column name="promotion_id" referenced-column-name="id" table="promotion_templates" nullable="true" unique="false" insertable="true" updatable="true"/>
-                    <inverse-join-column name="templates_id" referenced-column-name="id" table="promotion_templates" nullable="true" unique="false" insertable="true" updatable="true"/>
-                </join-table>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-many>   
-        </attributes>
-    </entity>
-    <entity name="VolumeDiscountPromotion" class="claro.jpa.shop.VolumeDiscountPromotion" access="FIELD">
-        <discriminator-value>shop.volumediscountpromotion</discriminator-value>
-        <attributes>
-            <basic name="price" optional="false">
-                <column name="price" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="priceCurrency" optional="false">
-                <column name="pricecurrency" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="volumeDiscount" optional="false">
-                <column name="volumediscount" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="product" target-entity="claro.jpa.catalog.Product" optional="false">
-                <join-column name="product_id" referenced-column-name="id" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="Party" class="claro.jpa.party.Party" access="FIELD">
-        <table name="party" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="party_id_seq" sequence-name="catalog.party_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="party" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="party_id_seq"/>
-            </id>
-            <basic name="name" optional="false">
-                <column name="name" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="phoneNumber" optional="false">
-                <column name="phonenumber" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="website">
-                <column name="website" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="billingName">
-                <column name="billingname" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="address" target-entity="claro.jpa.party.Address" optional="false">
-                <join-column name="address_id" referenced-column-name="id" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-one name="shippingAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="shippingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-one name="deliveryAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="deliveryaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>
-            <many-to-one name="billingAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="billingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="User" class="claro.jpa.party.User" access="FIELD">
-        <table name="user" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="user_id_seq" sequence-name="catalog.user_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="user" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="user_id_seq"/>
-            </id>
-            <basic name="email" optional="false">
-                <column name="email" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="password" optional="false">
-                <column name="password" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="isCatalogUser" optional="false">
-                <column name="iscataloguser" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="party" target-entity="claro.jpa.party.Party" optional="false">
-                <join-column name="party_id" referenced-column-name="id" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <cascade>
-                    <cascade-persist />
-                    <cascade-merge />
-                </cascade>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="EmailConfirmation" class="claro.jpa.party.EmailConfirmation" access="FIELD">
-        <table name="emailconfirmation" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="emailconfirmation_id_seq" sequence-name="catalog.emailconfirmation_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="emailconfirmation" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="emailconfirmation_id_seq"/>
-            </id>
-            <basic name="email" optional="false">
-                <column name="email" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="confirmationKey" optional="false">
-                <column name="confirmationkey" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="expirationTime" optional="false">
-                <column name="expirationtime" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            <basic name="expression" optional="false">
+                <column name="expression" table="importcategory" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>   
         </attributes>
     </entity>
-    <entity name="Address" class="claro.jpa.party.Address" access="FIELD">
-        <table name="address" schema="catalog">
+    <entity name="ImportProperty" class="claro.jpa.importing.ImportProperty" access="FIELD">
+        <table name="importproperty" schema="catalog">
             <unique-constraint>
                 <column-name>id</column-name>
             </unique-constraint>
         </table>
-        <sequence-generator name="address_id_seq" sequence-name="catalog.address_id_seq" allocation-size="1"/>
+        <sequence-generator name="importproperty_id_seq" sequence-name="catalog.importproperty_id_seq" allocation-size="1"/>
         <attributes>
             <id name="id">
-                <column name="id" table="address" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="address_id_seq"/>
+                <column name="id" table="importproperty" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="importproperty_id_seq"/>
             </id>
-            <basic name="address1" optional="false">
-                <column name="address1" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            <basic name="expression" optional="false">
+                <column name="expression" table="importproperty" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <basic name="address2">
-                <column name="address2" table="address" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="town" optional="false">
-                <column name="town" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="postalCode" optional="false">
-                <column name="postalcode" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="country" optional="false">
-                <column name="country" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
+            <many-to-one name="property" target-entity="claro.jpa.catalog.Property" optional="false">
+                <join-column name="property_id" referenced-column-name="id" table="importproperty" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>   
         </attributes>
     </entity>
     <entity name="Catalog" class="claro.jpa.catalog.Catalog" access="FIELD">
@@ -1066,6 +836,60 @@
             </basic>   
         </attributes>
     </entity>
+    <entity name="Query" class="claro.jpa.query.Query" access="FIELD">
+        <table name="query" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <inheritance strategy="SINGLE_TABLE" />
+        <discriminator-value>query.query</discriminator-value>
+        <discriminator-column name="type" discriminator-type="STRING" />
+        <sequence-generator name="query_id_seq" sequence-name="catalog.query_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="query" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="query_id_seq"/>
+            </id>   
+        </attributes>
+    </entity>
+    <entity name="ProductShopQuery" class="claro.jpa.query.ProductShopQuery" access="FIELD">
+        <discriminator-value>query.productshopquery</discriminator-value>
+        <attributes>
+            <basic name="stringValue" optional="false">
+                <column name="stringvalue" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
+                <join-column name="shop_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="AllProductsQuery" class="claro.jpa.query.AllProductsQuery" access="FIELD">
+        <discriminator-value>query.allproductsquery</discriminator-value>
+        <attributes>
+            <basic name="stringValue" optional="false">
+                <column name="stringvalue2" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="category" target-entity="claro.jpa.catalog.Category" optional="false">
+                <join-column name="category_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
+                <join-column name="shop_id2" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>   
+        </attributes>
+    </entity>
     <entity name="Order" class="claro.jpa.order.Order" access="FIELD">
         <table name="order" schema="catalog">
             <unique-constraint>
@@ -1227,31 +1051,53 @@
             </many-to-one>   
         </attributes>
     </entity>
-    <entity name="Query" class="claro.jpa.query.Query" access="FIELD">
-        <table name="query" schema="catalog">
+    <entity name="Party" class="claro.jpa.party.Party" access="FIELD">
+        <table name="party" schema="catalog">
             <unique-constraint>
                 <column-name>id</column-name>
             </unique-constraint>
         </table>
-        <inheritance strategy="SINGLE_TABLE" />
-        <discriminator-value>query.query</discriminator-value>
-        <discriminator-column name="type" discriminator-type="STRING" />
-        <sequence-generator name="query_id_seq" sequence-name="catalog.query_id_seq" allocation-size="1"/>
+        <sequence-generator name="party_id_seq" sequence-name="catalog.party_id_seq" allocation-size="1"/>
         <attributes>
             <id name="id">
-                <column name="id" table="query" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="query_id_seq"/>
-            </id>   
-        </attributes>
-    </entity>
-    <entity name="ProductShopQuery" class="claro.jpa.query.ProductShopQuery" access="FIELD">
-        <discriminator-value>query.productshopquery</discriminator-value>
-        <attributes>
-            <basic name="stringValue" optional="false">
-                <column name="stringvalue" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <column name="id" table="party" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="party_id_seq"/>
+            </id>
+            <basic name="name" optional="false">
+                <column name="name" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
-                <join-column name="shop_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            <basic name="phoneNumber" optional="false">
+                <column name="phonenumber" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="website">
+                <column name="website" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="billingName">
+                <column name="billingname" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="address" target-entity="claro.jpa.party.Address" optional="false">
+                <join-column name="address_id" referenced-column-name="id" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-one name="shippingAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="shippingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-one name="deliveryAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="deliveryaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-one name="billingAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="billingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
                 <cascade>
                     <cascade-persist />
                     <cascade-merge />
@@ -1259,21 +1105,236 @@
             </many-to-one>   
         </attributes>
     </entity>
-    <entity name="AllProductsQuery" class="claro.jpa.query.AllProductsQuery" access="FIELD">
-        <discriminator-value>query.allproductsquery</discriminator-value>
+    <entity name="User" class="claro.jpa.party.User" access="FIELD">
+        <table name="user" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="user_id_seq" sequence-name="catalog.user_id_seq" allocation-size="1"/>
         <attributes>
-            <basic name="stringValue" optional="false">
-                <column name="stringvalue2" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            <id name="id">
+                <column name="id" table="user" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="user_id_seq"/>
+            </id>
+            <basic name="email" optional="false">
+                <column name="email" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <many-to-one name="category" target-entity="claro.jpa.catalog.Category" optional="false">
-                <join-column name="category_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            <basic name="password" optional="false">
+                <column name="password" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="isCatalogUser" optional="false">
+                <column name="iscataloguser" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="party" target-entity="claro.jpa.party.Party" optional="false">
+                <join-column name="party_id" referenced-column-name="id" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="EmailConfirmation" class="claro.jpa.party.EmailConfirmation" access="FIELD">
+        <table name="emailconfirmation" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="emailconfirmation_id_seq" sequence-name="catalog.emailconfirmation_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="emailconfirmation" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="emailconfirmation_id_seq"/>
+            </id>
+            <basic name="email" optional="false">
+                <column name="email" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="confirmationKey" optional="false">
+                <column name="confirmationkey" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="expirationTime" optional="false">
+                <column name="expirationtime" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="Address" class="claro.jpa.party.Address" access="FIELD">
+        <table name="address" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="address_id_seq" sequence-name="catalog.address_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="address" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="address_id_seq"/>
+            </id>
+            <basic name="address1" optional="false">
+                <column name="address1" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="address2">
+                <column name="address2" table="address" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="town" optional="false">
+                <column name="town" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="postalCode" optional="false">
+                <column name="postalcode" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="country" optional="false">
+                <column name="country" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="Shop" class="claro.jpa.shop.Shop" access="FIELD">
+        <discriminator-value>shop.shop</discriminator-value>
+        <attributes>
+            <basic name="name" optional="false">
+                <column name="name2" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="urlPrefix">
+                <column name="urlprefix" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="defaultLanguage">
+                <column name="defaultlanguage2" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <one-to-many name="navigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentShop">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </one-to-many>
+            <one-to-many name="promotions" target-entity="claro.jpa.shop.Promotion" mapped-by="shop">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </one-to-many>
+            <many-to-many name="excludedProperties" target-entity="claro.jpa.catalog.Property">
+                <join-table name="shop_excludedproperties" schema="catalog">
+                    <join-column name="shop_id" referenced-column-name="id" table="shop_excludedproperties" nullable="true" unique="false" insertable="true" updatable="true"/>
+                    <inverse-join-column name="excludedproperties_id" referenced-column-name="id" table="shop_excludedproperties" nullable="true" unique="false" insertable="true" updatable="true"/>
+                </join-table>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-many>
+            <many-to-many name="excludedItems" target-entity="claro.jpa.catalog.Item">
+                <join-table name="shop_excludeditems" schema="catalog">
+                    <join-column name="shop_id" referenced-column-name="id" table="shop_excludeditems" nullable="true" unique="false" insertable="true" updatable="true"/>
+                    <inverse-join-column name="excludeditems_id" referenced-column-name="id" table="shop_excludeditems" nullable="true" unique="false" insertable="true" updatable="true"/>
+                </join-table>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-many>
+            <many-to-many name="templates" target-entity="claro.jpa.catalog.Template">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </many-to-many>   
+        </attributes>
+    </entity>
+    <entity name="Navigation" class="claro.jpa.shop.Navigation" access="FIELD">
+        <table name="navigation" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="navigation_id_seq" sequence-name="catalog.navigation_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="navigation" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="navigation_id_seq"/>
+            </id>
+            <basic name="index" optional="false">
+                <column name="index" table="navigation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="category" target-entity="claro.jpa.catalog.Category">
+                <join-column name="category_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
                 <cascade>
                     <cascade-persist />
                     <cascade-merge />
                 </cascade>
             </many-to-one>
+            <many-to-one name="parentShop" target-entity="claro.jpa.shop.Shop">
+                <join-column name="parentshop_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-one name="parentNavigation" target-entity="claro.jpa.shop.Navigation">
+                <join-column name="parentnavigation_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <one-to-many name="subNavigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentNavigation">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </one-to-many>   
+        </attributes>
+    </entity>
+    <entity name="Promotion" class="claro.jpa.shop.Promotion" access="FIELD">
+        <table name="promotion" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <inheritance strategy="SINGLE_TABLE" />
+        <discriminator-value>shop.promotion</discriminator-value>
+        <discriminator-column name="type" discriminator-type="STRING" />
+        <sequence-generator name="promotion_id_seq" sequence-name="catalog.promotion_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="promotion" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="promotion_id_seq"/>
+            </id>
+            <basic name="startDate" optional="false">
+                <column name="startdate" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <temporal>DATE</temporal>
+            </basic>
+            <basic name="endDate" optional="false">
+                <column name="enddate" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <temporal>DATE</temporal>
+            </basic>
             <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
-                <join-column name="shop_id2" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+                <join-column name="shop_id" referenced-column-name="id" table="promotion" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-one>
+            <many-to-many name="templates" target-entity="claro.jpa.catalog.Template">
+                <join-table name="promotion_templates" schema="catalog">
+                    <join-column name="promotion_id" referenced-column-name="id" table="promotion_templates" nullable="true" unique="false" insertable="true" updatable="true"/>
+                    <inverse-join-column name="templates_id" referenced-column-name="id" table="promotion_templates" nullable="true" unique="false" insertable="true" updatable="true"/>
+                </join-table>
+                <cascade>
+                    <cascade-persist />
+                    <cascade-merge />
+                </cascade>
+            </many-to-many>   
+        </attributes>
+    </entity>
+    <entity name="VolumeDiscountPromotion" class="claro.jpa.shop.VolumeDiscountPromotion" access="FIELD">
+        <discriminator-value>shop.volumediscountpromotion</discriminator-value>
+        <attributes>
+            <basic name="price" optional="false">
+                <column name="price" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="priceCurrency" optional="false">
+                <column name="pricecurrency" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="volumeDiscount" optional="false">
+                <column name="volumediscount" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="product" target-entity="claro.jpa.catalog.Product" optional="false">
+                <join-column name="product_id" referenced-column-name="id" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
                 <cascade>
                     <cascade-persist />
                     <cascade-merge />

@@ -1,12 +1,12 @@
 package claro.catalog.impl;
 
 import claro.catalog.CatalogModelService;
-import claro.catalog.command.CatalogCommand;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.catalog.util.CatalogCommand;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.util.SMap;

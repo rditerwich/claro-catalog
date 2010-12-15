@@ -1,6 +1,7 @@
 package claro.catalog.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import claro.catalog.data.RootProperties;
@@ -9,6 +10,8 @@ import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
+import claro.jpa.importing.ImportDefinition;
+import easyenterprise.lib.util.Paging;
 
 public class CatalogModel {
 

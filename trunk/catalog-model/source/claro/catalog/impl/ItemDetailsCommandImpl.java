@@ -1,13 +1,13 @@
 package claro.catalog.impl;
 
 import claro.catalog.CatalogModelService;
-import claro.catalog.command.CatalogCommand;
 import claro.catalog.command.ItemDetailsCommand;
 import claro.catalog.command.ItemDetailsCommandResult;
 import claro.catalog.data.PropertyData;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.catalog.util.CatalogCommand;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;

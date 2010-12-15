@@ -48,6 +48,20 @@ Package {
                     name = importSourceNameAppendFileName
                     type = primitive:Boolean
                 }
+                Attribute {
+                    name = categories
+                    type = importing:ImportCategory
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                }
+                Attribute {
+                    name = properties
+                    type = importing:ImportProperty
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                }
             }
         }
         Class {
@@ -59,6 +73,28 @@ Package {
                     type = primitive:Boolean
                 }
                 
+            }
+        }
+        Class {
+            name = ImportCategory
+            attributes = {
+                Attribute {
+                    name = expression
+                    type = primitive:String
+                }
+            }
+        }
+        Class {
+            name = ImportProperty
+            attributes = {
+                Attribute {
+                    name = property
+                    type = catalog:Property
+                }
+                Attribute {
+                    name = expression
+                    type = primitive:String
+                }
             }
         }
    }

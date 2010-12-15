@@ -2,7 +2,7 @@ package claro.catalog.command;
 
 import easyenterprise.lib.command.Command;
 
-public class ProductListCommand implements Command<ProductListCommandResult>, CatalogCommand {
+public class ProductListCommand implements Command<ProductListCommandResult> {
 
 	private static final long serialVersionUID = 1L;
 

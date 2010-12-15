@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
@@ -13,8 +14,11 @@ import claro.jpa.catalog.Label;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
+import claro.jpa.importing.ImportDefinition;
 
 import com.google.common.base.Objects;
+
+import easyenterprise.lib.util.Paging;
 
 public class CatalogDao {
 
@@ -135,5 +139,14 @@ public class CatalogDao {
 			}
 		}
 		return changed;
+	}
+
+	public List<ImportDefinition> getImportDefinitions(Paging paging) {
+		TypedQuery<ImportDefinition> query = em.createQuery("SELECT def FROM ImportDefinition def", ImportDefinition.class);
+		if (paging.shouldPage()) {
+			query.setFirstResult(paging.getPageStart());
+			query.setMaxResults(paging.getPageSize());
+		}
+		return query.getResultList();
 	}
 }

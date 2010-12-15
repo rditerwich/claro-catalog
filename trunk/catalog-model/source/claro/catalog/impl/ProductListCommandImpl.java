@@ -3,19 +3,15 @@ package claro.catalog.impl;
 import java.util.List;
 
 import claro.catalog.CatalogModelService;
-import claro.catalog.command.CatalogCommand;
 import claro.catalog.command.ProductListCommand;
 import claro.catalog.command.ProductListCommandResult;
-import claro.catalog.command.RootPropertiesCommand;
-import claro.catalog.command.RootPropertiesCommandResult;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
-import claro.catalog.model.PropertyModel;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.util.SMap;
 
-public class ProductListCommandImpl extends ProductListCommand implements CommandImpl<ProductListCommandResult>, CatalogCommand {
+public class ProductListCommandImpl extends ProductListCommand implements CommandImpl<ProductListCommandResult> {
 
 	private static final long serialVersionUID = 1L;
 
