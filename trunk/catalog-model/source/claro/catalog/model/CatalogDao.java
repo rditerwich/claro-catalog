@@ -11,9 +11,11 @@ import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
+import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
+import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportDefinition;
 
 import com.google.common.base.Objects;
@@ -50,6 +52,7 @@ public class CatalogDao {
 			catalog = new Catalog();
 			catalog.setId(id);
 			em.persist(catalog);
+			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
 		}
 		findOrCreateRootCategory(catalog);
 		return catalog;
@@ -80,6 +83,9 @@ public class CatalogDao {
 	  property.setIsMany(false);
 	  item.getProperties().add(property);
 	  getOrCreateLabel(property, name, null);
+	  
+	  em.persist(property);
+	  
 	  return property;
   }
 
@@ -94,7 +100,9 @@ public class CatalogDao {
   	lbl.setLanguage(language);
   	lbl.setProperty(property);
   	property.getLabels().add(lbl);
+  	
   	em.persist(lbl);
+  	
   	return lbl;
   }
 	
@@ -140,6 +148,26 @@ public class CatalogDao {
 		}
 		return changed;
 	}
+	
+	
+	public List<Item> findItems(Long catalogId, OutputChannel outputChannel) {
+		StringBuilder queryString = new StringBuilder("select item from Item item where catalog.id = :catalogId");
+		if (outputChannel != null) {
+			queryString.append(" and not exists(select channel from OutputChannel channel where channel.excludedItems contains :channel)");
+		}
+		
+		TypedQuery<Item> query = em.createQuery(queryString.toString(), Item.class);
+		if (outputChannel != null) {
+			query.setParameter("outputChannel", outputChannel);
+		}
+		
+		return query.getResultList();
+	}
+	
+	public OutputChannel getOutputChannel(Long outputChannelId) {
+		return em.find(OutputChannel.class, outputChannelId);
+	}
+	
 
 	public List<ImportDefinition> getImportDefinitions(Paging paging) {
 		TypedQuery<ImportDefinition> query = em.createQuery("SELECT def FROM ImportDefinition def", ImportDefinition.class);
@@ -148,5 +176,9 @@ public class CatalogDao {
 			query.setMaxResults(paging.getPageSize());
 		}
 		return query.getResultList();
+	}
+
+	public StagingArea getStagingArea(Long stagingAreaId) {
+		return em.find(StagingArea.class, stagingAreaId);
 	}
 }

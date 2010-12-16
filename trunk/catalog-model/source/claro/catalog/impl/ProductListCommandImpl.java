@@ -20,6 +20,8 @@ public class ProductListCommandImpl extends ProductListCommand implements Comman
 		ProductListCommandResult result = new ProductListCommandResult();
 
 		CatalogModel catalogModel = CatalogModelService.getCatalogModel(getCatalogId());
+		
+		
 
 		// Compile product list:
 		// TODO

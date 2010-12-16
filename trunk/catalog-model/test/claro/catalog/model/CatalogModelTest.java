@@ -19,6 +19,5 @@ public class CatalogModelTest extends CatalogTestBase {
 //		CatalogDao dao = getCatalogDao();
 		CatalogModel model = getCatalogModel();
 
-		
 	}
 }
