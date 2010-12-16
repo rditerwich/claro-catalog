@@ -80,6 +80,7 @@ public class CatalogDao {
 	  	}
 	  }
 	  Property property = new Property();
+	  property.setCategoryProperty(false);
 	  property.setType(type);
 	  property.setItem(item);
 	  property.setIsMany(false);
