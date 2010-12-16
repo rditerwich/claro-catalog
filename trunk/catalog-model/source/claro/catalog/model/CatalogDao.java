@@ -52,6 +52,7 @@ public class CatalogDao {
 			catalog = new Catalog();
 			catalog.setId(id);
 			em.persist(catalog);
+//			em.flush();
 			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
 		}
 		findOrCreateRootCategory(catalog);
@@ -64,6 +65,7 @@ public class CatalogDao {
 	  	root = new Category();
 	  	catalog.setRoot(root);
 	  	root.setCatalog(catalog);
+	  	em.persist(root);
 	  }
 	  return root;
   }
