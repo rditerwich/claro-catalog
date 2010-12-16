@@ -29,7 +29,21 @@ public class CatalogDao {
 	public CatalogDao(EntityManager em) {
 		this.em = em;
   }
-	
+
+	public <T> T findOrCreate(Class<T> type, Long id) {
+		if (id != null) {
+			return em.find(type, id);
+		} else {
+			try {
+				T impl = type.newInstance();
+				em.persist(impl);
+				return impl;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
 	public Item getItem(Long id) {
 		return em.find(Item.class, id);
 	}
@@ -169,7 +183,6 @@ public class CatalogDao {
 	public OutputChannel getOutputChannel(Long outputChannelId) {
 		return em.find(OutputChannel.class, outputChannelId);
 	}
-	
 
 	public List<ImportDefinition> getImportDefinitions(Paging paging) {
 		TypedQuery<ImportDefinition> query = em.createQuery("SELECT def FROM ImportDefinition def", ImportDefinition.class);
