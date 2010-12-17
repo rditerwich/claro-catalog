@@ -1775,6 +1775,18 @@ CREATE TABLE catalog.importcategory();
 COMMIT;
 
 BEGIN;
+ALTER TABLE catalog.importcategory ADD COLUMN importdefinition_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN importdefinition_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN importdefinition_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
 ALTER TABLE catalog.importcategory ADD COLUMN expression VARCHAR;
 COMMIT;
 
@@ -1799,23 +1811,23 @@ ALTER TABLE catalog.importcategory ALTER COLUMN id SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importcategory ADD COLUMN importdefinition_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN importdefinition_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN importdefinition_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
 ALTER TABLE catalog.importcategory ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
 CREATE TABLE catalog.importproperty();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD COLUMN importdefinition_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN importdefinition_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN importdefinition_id SET NOT NULL;
 COMMIT;
 
 BEGIN;
@@ -1852,18 +1864,6 @@ COMMIT;
 
 BEGIN;
 ALTER TABLE catalog.importproperty ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD COLUMN importdefinition_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN importdefinition_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN importdefinition_id DROP NOT NULL;
 COMMIT;
 
 BEGIN;
@@ -2835,11 +2835,11 @@ ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importdefinition FOREIGN KE
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
 BEGIN;

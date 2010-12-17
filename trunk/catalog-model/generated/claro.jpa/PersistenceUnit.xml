@@ -748,16 +748,16 @@
             <basic name="importSourceNameAppendFileName" optional="false">
                 <column name="importsourcenameappendfilename" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <many-to-many name="categories" target-entity="claro.jpa.importing.ImportCategory">
+            <one-to-many name="categories" target-entity="claro.jpa.importing.ImportCategory" mapped-by="importDefinition">
                 <cascade>
                     <cascade-all />
                 </cascade>
-            </many-to-many>
-            <many-to-many name="properties" target-entity="claro.jpa.importing.ImportProperty">
+            </one-to-many>
+            <one-to-many name="properties" target-entity="claro.jpa.importing.ImportProperty" mapped-by="importDefinition">
                 <cascade>
                     <cascade-all />
                 </cascade>
-            </many-to-many>   
+            </one-to-many>   
         </attributes>
     </entity>
     <entity name="TabularImportDefinition" class="claro.jpa.importing.TabularImportDefinition" access="FIELD">
@@ -782,7 +782,10 @@
             </id>
             <basic name="expression" optional="false">
                 <column name="expression" table="importcategory" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
+            </basic>
+            <many-to-one name="importDefinition" target-entity="claro.jpa.importing.ImportDefinition" optional="false">
+                <join-column name="importdefinition_id" referenced-column-name="id" table="importcategory" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
         </attributes>
     </entity>
     <entity name="ImportProperty" class="claro.jpa.importing.ImportProperty" access="FIELD">
@@ -800,6 +803,9 @@
             <basic name="expression" optional="false">
                 <column name="expression" table="importproperty" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
+            <many-to-one name="importDefinition" target-entity="claro.jpa.importing.ImportDefinition" optional="false">
+                <join-column name="importdefinition_id" referenced-column-name="id" table="importproperty" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
             <many-to-one name="property" target-entity="claro.jpa.catalog.Property" optional="false">
                 <join-column name="property_id" referenced-column-name="id" table="importproperty" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>   

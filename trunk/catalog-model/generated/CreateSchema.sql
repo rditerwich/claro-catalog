@@ -248,17 +248,17 @@ CREATE TABLE catalog.importdefinition (
 );
 
 CREATE TABLE catalog.importcategory (
+    importdefinition_id  INTEGER NOT NULL,
     expression           VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
-    importdefinition_id  INTEGER,
     PRIMARY KEY (id) 
 );
 
 CREATE TABLE catalog.importproperty (
+    importdefinition_id  INTEGER NOT NULL,
     property_id          INTEGER NOT NULL,
     expression           VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
-    importdefinition_id  INTEGER,
     PRIMARY KEY (id) 
 );
 
@@ -443,8 +443,8 @@ ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFEREN
 
 ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_property FOREIGN KEY (excludedproperties_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.shop_excludedproperties ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
