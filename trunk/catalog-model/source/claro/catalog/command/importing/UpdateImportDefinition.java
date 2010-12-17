@@ -39,6 +39,7 @@ public class UpdateImportDefinition implements Command<Result> {
 	public List<ImportProperty> importPropertiesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
+		validate (importDefinition != null && importDefinition.getId() != null);
 		if (remove) validate(!skipImportDefinition);
 		if (remove) validate(isEmpty(importCategoriesToBeRemoved));
 		if (remove) validate(isEmpty(importPropertiesToBeRemoved));

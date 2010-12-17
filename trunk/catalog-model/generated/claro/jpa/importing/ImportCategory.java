@@ -6,6 +6,7 @@ import java.lang.String;
 
 public class ImportCategory {
     private Long id;
+    private ImportDefinition importDefinition;
     private String expression;
 
     public Long getId() {
@@ -14,6 +15,14 @@ public class ImportCategory {
 
     public void setId(Long value) {
         this.id = value;
+    }
+
+    public ImportDefinition getImportDefinition() {
+        return importDefinition;
+    }
+
+    public void setImportDefinition(ImportDefinition value) {
+        this.importDefinition = value;
     }
 
     public String getExpression() {

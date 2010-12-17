@@ -18,6 +18,9 @@ import claro.catalog.CatalogServer;
 import claro.catalog.model.CatalogDao;
 import claro.catalog.model.CatalogModel;
 import claro.jpa.catalog.Catalog;
+import easyenterprise.lib.command.Command;
+import easyenterprise.lib.command.CommandException;
+import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
@@ -87,6 +90,10 @@ public class CatalogTestBase {
 		}
 		return server;
   }
+	
+	protected static <T extends CommandResult> T executeCommand(Command<T> command) throws CommandException, SQLException {
+		return getServer().execute(command);
+	}
 	
 	private static EntityManagerFactory getEntityManagerFactory() throws SQLException {
 		if (entityManagerFactory == null) {

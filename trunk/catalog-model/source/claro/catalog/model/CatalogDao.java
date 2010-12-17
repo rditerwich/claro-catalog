@@ -30,10 +30,10 @@ public class CatalogDao {
 		this.em = em;
 	}
 	
-	public <T> T merge(T instance) {
-		return em.merge(instance);
+	public EntityManager getEntityManager() {
+		return em;
 	}
-
+	
 	public <T> T findOrCreate(Class<T> type, Long id) {
 		if (id != null) {
 			return em.find(type, id);

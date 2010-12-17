@@ -7,7 +7,6 @@ import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.jpa.JpaService;
 
-@SuppressWarnings("serial")
 public class GetImportDefinitionsImpl extends GetImportDefinitionsCommand implements CommandImpl<GetImportDefinitionsResult>{
 
 	@Override
