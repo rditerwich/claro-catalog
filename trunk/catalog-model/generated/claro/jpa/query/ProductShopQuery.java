@@ -1,10 +1,12 @@
 package claro.jpa.query;
 
+import java.io.Serializable;
 import java.lang.Override;
 import java.lang.String;
 import claro.jpa.shop.Shop;
 
-public class ProductShopQuery extends Query {
+@SuppressWarnings("serial")
+public class ProductShopQuery extends Query implements Serializable {
     private String stringValue;
     private Shop shop;
 

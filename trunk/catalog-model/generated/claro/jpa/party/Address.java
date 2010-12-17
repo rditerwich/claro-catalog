@@ -1,10 +1,12 @@
 package claro.jpa.party;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class Address {
+@SuppressWarnings("serial")
+public class Address implements Serializable {
     private Long id;
     private String address1;
     private String address2;

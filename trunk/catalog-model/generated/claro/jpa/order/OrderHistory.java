@@ -1,12 +1,14 @@
 package claro.jpa.order;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.Date;
 import claro.jpa.party.User;
 
-public class OrderHistory {
+@SuppressWarnings("serial")
+public class OrderHistory implements Serializable {
     private Long id;
     private User user;
     private OrderStatus newStatus;

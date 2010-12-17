@@ -1,10 +1,12 @@
 package claro.jpa.party;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class EmailConfirmation {
+@SuppressWarnings("serial")
+public class EmailConfirmation implements Serializable {
     private Long id;
     private String email;
     private String confirmationKey;

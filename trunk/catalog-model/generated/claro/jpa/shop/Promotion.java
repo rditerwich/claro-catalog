@@ -1,5 +1,6 @@
 package claro.jpa.shop;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
@@ -7,7 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import claro.jpa.catalog.Template;
 
-public class Promotion {
+@SuppressWarnings("serial")
+public class Promotion implements Serializable {
     private Long id;
     private Date startDate;
     private Date endDate;

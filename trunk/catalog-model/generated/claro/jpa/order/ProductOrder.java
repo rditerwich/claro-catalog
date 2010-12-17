@@ -1,5 +1,6 @@
 package claro.jpa.order;
 
+import java.io.Serializable;
 import java.lang.Double;
 import java.lang.Integer;
 import java.lang.Long;
@@ -8,7 +9,8 @@ import java.lang.String;
 import claro.jpa.catalog.Product;
 import claro.jpa.shop.Promotion;
 
-public class ProductOrder {
+@SuppressWarnings("serial")
+public class ProductOrder implements Serializable {
     private Long id;
     private Product product;
     private Promotion promotion;

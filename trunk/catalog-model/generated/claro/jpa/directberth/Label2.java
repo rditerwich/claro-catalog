@@ -1,10 +1,12 @@
 package claro.jpa.directberth;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class Label2 {
+@SuppressWarnings("serial")
+public class Label2 implements Serializable {
     private Long id;
     private String language;
     private String label;

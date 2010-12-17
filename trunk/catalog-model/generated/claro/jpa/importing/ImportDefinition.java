@@ -1,5 +1,6 @@
 package claro.jpa.importing;
 
+import java.io.Serializable;
 import java.lang.Boolean;
 import java.lang.Long;
 import java.lang.Override;
@@ -7,7 +8,8 @@ import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ImportDefinition {
+@SuppressWarnings("serial")
+public class ImportDefinition implements Serializable {
     private Long id;
     private String name;
     private String importUrl;

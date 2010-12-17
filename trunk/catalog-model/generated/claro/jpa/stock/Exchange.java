@@ -1,10 +1,12 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class Exchange {
+@SuppressWarnings("serial")
+public class Exchange implements Serializable {
     private Long id;
     private String name;
 

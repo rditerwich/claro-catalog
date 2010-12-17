@@ -1,13 +1,14 @@
 package claro.jpa.importing;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import claro.jpa.catalog.Property;
 
-public class ImportProperty {
+@SuppressWarnings("serial")
+public class ImportProperty implements Serializable {
     private Long id;
-    private ImportDefinition importDefinition;
     private Property property;
     private String expression;
 
@@ -17,14 +18,6 @@ public class ImportProperty {
 
     public void setId(Long value) {
         this.id = value;
-    }
-
-    public ImportDefinition getImportDefinition() {
-        return importDefinition;
-    }
-
-    public void setImportDefinition(ImportDefinition value) {
-        this.importDefinition = value;
     }
 
     public Property getProperty() {

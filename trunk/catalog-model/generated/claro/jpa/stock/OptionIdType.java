@@ -1,10 +1,12 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class OptionIdType {
+@SuppressWarnings("serial")
+public class OptionIdType implements Serializable {
     private Long id;
     private String name;
 

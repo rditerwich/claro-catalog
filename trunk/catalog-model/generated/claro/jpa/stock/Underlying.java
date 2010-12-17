@@ -1,9 +1,11 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 
-public class Underlying {
+@SuppressWarnings("serial")
+public class Underlying implements Serializable {
     private Long id;
 
     public Long getId() {

@@ -1,5 +1,6 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
@@ -7,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Catalog {
+@SuppressWarnings("serial")
+public class Catalog implements Serializable {
     private Long id;
     private String name;
     private Collection<Item> items;

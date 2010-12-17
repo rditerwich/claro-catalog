@@ -1,5 +1,6 @@
 package claro.jpa.shop;
 
+import java.io.Serializable;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.Template;
 
-public class Shop extends OutputChannel {
+@SuppressWarnings("serial")
+public class Shop extends OutputChannel implements Serializable {
     private String name;
     private String urlPrefix;
     private String defaultLanguage;

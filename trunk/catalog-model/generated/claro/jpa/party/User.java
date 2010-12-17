@@ -1,11 +1,13 @@
 package claro.jpa.party;
 
+import java.io.Serializable;
 import java.lang.Boolean;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class User {
+@SuppressWarnings("serial")
+public class User implements Serializable {
     private Long id;
     private String email;
     private String password;

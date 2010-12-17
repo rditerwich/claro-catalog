@@ -1,10 +1,12 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Product extends Item {
+@SuppressWarnings("serial")
+public class Product extends Item implements Serializable {
     private Collection<Template> templates;
 
     public Collection<Template> getTemplates() {

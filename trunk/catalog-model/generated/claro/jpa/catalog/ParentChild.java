@@ -1,10 +1,12 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 
-public class ParentChild {
+@SuppressWarnings("serial")
+public class ParentChild implements Serializable {
     private Long id;
     private Item parent;
     private Item child;

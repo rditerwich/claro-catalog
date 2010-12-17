@@ -1,9 +1,11 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 
-public class StagingArea {
+@SuppressWarnings("serial")
+public class StagingArea implements Serializable {
     private Long id;
 
     public Long getId() {

@@ -1,5 +1,6 @@
 package claro.jpa.shop;
 
+import java.io.Serializable;
 import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
@@ -7,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import claro.jpa.catalog.Category;
 
-public class Navigation {
+@SuppressWarnings("serial")
+public class Navigation implements Serializable {
     private Long id;
     private Category category;
     private Integer index;

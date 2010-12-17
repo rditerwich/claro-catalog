@@ -1,5 +1,6 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Double;
 import java.lang.Long;
 import java.lang.Override;
@@ -7,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-public class Option {
+@SuppressWarnings("serial")
+public class Option implements Serializable {
     private Long id;
     private Date expirationDate;
     private Double strike;

@@ -1,10 +1,12 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 
-public class ImportSource {
+@SuppressWarnings("serial")
+public class ImportSource implements Serializable {
     private Long id;
     private Integer priority;
 

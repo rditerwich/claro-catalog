@@ -1,12 +1,14 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class OptionChain {
+@SuppressWarnings("serial")
+public class OptionChain implements Serializable {
     private Long id;
     private Exchange exchange;
     private Underlying underlying;

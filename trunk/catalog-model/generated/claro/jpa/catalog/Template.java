@@ -1,10 +1,12 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class Template {
+@SuppressWarnings("serial")
+public class Template implements Serializable {
     private Long id;
     private String name;
     private String language;

@@ -1,9 +1,11 @@
 package claro.jpa.query;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 
-public class Query {
+@SuppressWarnings("serial")
+public class Query implements Serializable {
     private Long id;
 
     public Long getId() {

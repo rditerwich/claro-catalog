@@ -1,12 +1,14 @@
 package claro.jpa.shop;
 
+import java.io.Serializable;
 import java.lang.Double;
 import java.lang.Integer;
 import java.lang.Override;
 import java.lang.String;
 import claro.jpa.catalog.Product;
 
-public class VolumeDiscountPromotion extends Promotion {
+@SuppressWarnings("serial")
+public class VolumeDiscountPromotion extends Promotion implements Serializable {
     private Product product;
     private Double price;
     private String priceCurrency;

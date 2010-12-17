@@ -1,9 +1,11 @@
 package claro.jpa.importing;
 
+import java.io.Serializable;
 import java.lang.Boolean;
 import java.lang.Override;
 
-public class TabularImportDefinition extends ImportDefinition {
+@SuppressWarnings("serial")
+public class TabularImportDefinition extends ImportDefinition implements Serializable {
     private Boolean headerLine;
 
     public Boolean getHeaderLine() {

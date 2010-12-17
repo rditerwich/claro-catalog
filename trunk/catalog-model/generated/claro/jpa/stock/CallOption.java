@@ -1,8 +1,10 @@
 package claro.jpa.stock;
 
+import java.io.Serializable;
 import java.lang.Override;
 
-public class CallOption extends Option {
+@SuppressWarnings("serial")
+public class CallOption extends Option implements Serializable {
 
     @Override
     public boolean equals(Object other) {

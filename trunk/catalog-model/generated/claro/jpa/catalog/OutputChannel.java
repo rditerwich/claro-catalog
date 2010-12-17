@@ -1,12 +1,14 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class OutputChannel {
+@SuppressWarnings("serial")
+public class OutputChannel implements Serializable {
     private Long id;
     private String name;
     private Catalog catalog;

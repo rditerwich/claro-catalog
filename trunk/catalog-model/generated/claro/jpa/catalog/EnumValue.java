@@ -1,12 +1,14 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class EnumValue {
+@SuppressWarnings("serial")
+public class EnumValue implements Serializable {
     private Long id;
     private Integer value;
     private Collection<Label> labels;

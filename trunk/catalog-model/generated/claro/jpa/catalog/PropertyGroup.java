@@ -1,11 +1,13 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class PropertyGroup {
+@SuppressWarnings("serial")
+public class PropertyGroup implements Serializable {
     private Long id;
     private Collection<Label> labels;
     private Item item;

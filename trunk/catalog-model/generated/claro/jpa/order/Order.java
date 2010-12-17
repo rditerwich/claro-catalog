@@ -1,5 +1,6 @@
 package claro.jpa.order;
 
+import java.io.Serializable;
 import java.lang.Double;
 import java.lang.Long;
 import java.lang.Override;
@@ -10,7 +11,8 @@ import claro.jpa.party.Address;
 import claro.jpa.party.User;
 import claro.jpa.shop.Shop;
 
-public class Order {
+@SuppressWarnings("serial")
+public class Order implements Serializable {
     private Long id;
     private Shop shop;
     private Date orderDate;

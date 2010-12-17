@@ -1,9 +1,11 @@
 package claro.jpa.catalog;
 
+import java.io.Serializable;
 import java.lang.Boolean;
 import java.lang.Override;
 
-public class Category extends Item {
+@SuppressWarnings("serial")
+public class Category extends Item implements Serializable {
     private Boolean containsProducts;
 
     public Boolean getContainsProducts() {

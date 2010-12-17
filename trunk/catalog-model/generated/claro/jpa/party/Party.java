@@ -1,10 +1,12 @@
 package claro.jpa.party;
 
+import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 
-public class Party {
+@SuppressWarnings("serial")
+public class Party implements Serializable {
     private Long id;
     private String name;
     private String phoneNumber;
