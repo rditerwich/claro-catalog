@@ -15,6 +15,7 @@ import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.Paging;
+import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
@@ -72,14 +73,8 @@ public class CatalogModel {
 	}
 	
 	
-	public synchronized List<ItemModel> findItems(Long stagingAreaId, Long outputChannelId, String uiLanguage, String language, String filter, Paging paging) {
+	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter, Paging paging) {
 		List<ItemModel> result = new ArrayList<ItemModel>(paging.shouldPage()?paging.getPageSize() : 20);
-		
-		// Find a staging area.
-		StagingArea stagingArea = CatalogAccess.getDao().getStagingArea(stagingAreaId);
-		
-		// find a channel
-		OutputChannel outputChannel = CatalogAccess.getDao().getOutputChannel(outputChannelId);
 		
 		// Split of filter:
 		String[] filterCriteria = filter.toLowerCase().split(" ");
@@ -88,27 +83,31 @@ public class CatalogModel {
 		for (String criterium : filterCriteria) {
 			String[] splitCriterium = criterium.split(":");
 			if (splitCriterium.length == 2) {
-				propertyCriteria.add(new PropertyCriterium(splitCriterium[0], splitCriterium[1]));
+				if (splitCriterium[1] != null && splitCriterium[1].trim().length() > 0) {
+					propertyCriteria.add(new PropertyCriterium(splitCriterium[0], splitCriterium[1]));
+				}
 			} else {
-				simpleCriteria.add(criterium);
+				if (criterium != null && criterium.trim().length() > 0) {
+					simpleCriteria.add(criterium);
+				}
 			}
 		}
 		
 		// For each item, obtain model, and filter.
 		int offset = 0;
 		int results = 0;
-		for (Item item : CatalogAccess.getDao().findItems(catalog.getId(), outputChannel)) {
+		for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel)) {
 			// Do we have enough results already?
 			if (paging.shouldPage() && results >= paging.getPageSize()) {
 				break;
 			}
 
 			// Obtain model
-			ItemModel itemModel = getItem(outputChannelId);
+			ItemModel itemModel = getItem(item.getId());
 
 			// add unfiltered items
 			if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language) 
-			&& paging.shouldPage() && ++offset > paging.getPageStart()) {
+			&& (!paging.shouldPage() || ++offset > paging.getPageStart())) {
 				result.add(itemModel);
 				results++;
 			}
@@ -120,31 +119,42 @@ public class CatalogModel {
 	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language) {
 		List<String> unsatisfiedSimpleCriteria = new ArrayList<String>(simpleCriteria);
 		List<PropertyCriterium> unsatisfiedPropertyCriteria = new ArrayList<PropertyCriterium>(propertyCriteria);
-		for (PropertyModel propertyModel : item.getProperties()) {
-			// Try simple criteria
-			for (String criterium : simpleCriteria) {
-				for (Object value : propertyModel.getEffectiveValues(stagingArea, outputChannel)) {
-					if (value != null && value.toString().contains(criterium)) {
-						// TODO remove from unsatisfied;
+		for (PropertyModel propertyModel : item.getPropertyExtent()) {
+			
+			// Obtain value for property:
+			SMap<String, Object> effectiveValues = propertyModel.getEffectiveValues(stagingArea, outputChannel);
+			Object objectValue = effectiveValues.tryGet(language, null);
+			if (objectValue != null) {
+				String value = objectValue.toString().toLowerCase();
+
+				// Try simple criteria
+				for (String criterium : new ArrayList<String>(unsatisfiedSimpleCriteria)) {
+					if (value.contains(criterium)) {
+						unsatisfiedSimpleCriteria.remove(criterium);
 					}
 				}
-			}
-			
-			// try property criteria:
-			String propertyLabel = propertyModel.getPropertyInfo().labels.tryGet(language, null);
-			if (propertyLabel != null) {
-				for (PropertyCriterium criterium : propertyCriteria) {
-					if (propertyLabel.contains(criterium.property)) {
-						for (Object value : propertyModel.getEffectiveValues(stagingArea, outputChannel)) {
-							if (value != null && value.toString().contains(criterium.value)) {
-								// TODO remove from unsatisfied;
+				
+				// try property criteria:
+				String propertyLabel = propertyModel.getPropertyInfo().labels.tryGet(uiLanguage, null);
+				if (propertyLabel != null) {
+					String lowerPropertyLabel = propertyLabel.toLowerCase();
+					for (PropertyCriterium criterium : new ArrayList<PropertyCriterium>(unsatisfiedPropertyCriteria)) {
+						if (lowerPropertyLabel.contains(criterium.property)) {
+							if (value.contains(criterium.value)) {
+								unsatisfiedPropertyCriteria.remove(criterium);
 							}
 						}
 					}
 				}
 			}
+			
+			// Early out:
+			if (unsatisfiedSimpleCriteria.isEmpty() && unsatisfiedPropertyCriteria.isEmpty()) {
+				break;
+			}
 		}
-		return false;
+		
+		return unsatisfiedSimpleCriteria.isEmpty() && unsatisfiedPropertyCriteria.isEmpty();
 	}
 
 	void invalidate(ItemModel... items) {

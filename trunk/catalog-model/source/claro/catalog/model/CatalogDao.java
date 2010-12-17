@@ -1,5 +1,6 @@
 package claro.catalog.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +16,7 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
+import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportDefinition;
 
@@ -108,6 +110,39 @@ public class CatalogDao {
 	  
 	  return property;
   }
+	
+	public void setPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language, Object value) {
+		for (PropertyValue propertyValue : item.getPropertyValues()) {
+			if (propertyValue.getProperty().equals(property) 
+			&& Objects.equal(propertyValue.getStagingArea(), stagingArea)
+			&& Objects.equal(propertyValue.getOutputChannel(), outputChannel)
+			&& Objects.equal(propertyValue.getLanguage(), language)) {
+				setValue(propertyValue, value, property.getType());
+				return;
+			}
+		}
+
+		// No candidate found, create a new one
+		PropertyValue newPropertyValue = new PropertyValue();
+		item.getPropertyValues().add(newPropertyValue);
+		newPropertyValue.setItem(item);
+		
+		newPropertyValue.setProperty(property);
+		newPropertyValue.setStagingArea(stagingArea);
+		newPropertyValue.setOutputChannel(outputChannel);
+		setValue(newPropertyValue, value, property.getType());
+		
+		em.persist(newPropertyValue);
+	}
+	
+	private void setValue(PropertyValue propertyValue, Object value, PropertyType type) {
+		switch(type) {
+		// TODO add actual cases...
+		default:
+			propertyValue.setStringValue(value.toString());
+			
+		}
+	}
 
 	public Label getOrCreateLabel(Property property, String label, String language) {
   	for (Label lbl : property.getLabels()) {
@@ -170,13 +205,14 @@ public class CatalogDao {
 	}
 	
 	
-	public List<Item> findItems(Long catalogId, OutputChannel outputChannel) {
-		StringBuilder queryString = new StringBuilder("select item from Item item where catalog.id = :catalogId");
+	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel) {
+		StringBuilder queryString = new StringBuilder("select item from Item item where item.catalog = :catalog");
 		if (outputChannel != null) {
 			queryString.append(" and not exists(select channel from OutputChannel channel where channel.excludedItems contains :channel)");
 		}
 		
 		TypedQuery<Item> query = em.createQuery(queryString.toString(), Item.class);
+		query.setParameter("catalog", catalog);
 		if (outputChannel != null) {
 			query.setParameter("outputChannel", outputChannel);
 		}

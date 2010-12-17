@@ -90,19 +90,20 @@ public class ItemModel {
 		synchronized (catalog) {
 			if (parentExtent == null) {
 				LinkedHashSet<ItemModel> parentExtent = new LinkedHashSet<ItemModel>();
-				LinkedHashSet<ItemModel> queue = new LinkedHashSet<ItemModel>();
-				queue.add(this);
-				for (ItemModel item : queue) {
-					for (ItemModel parent : item.getParents()) {
-						if (!queue.contains(parent)) {
-							parentExtent.add(parent);
-							queue.add(parent);
-						}
-					}
-				}
+
+				getParentExtent(this, parentExtent);
+				
 				this.parentExtent = ImmutableSet.copyOf(parentExtent);
 			}
 			return parentExtent;
+		}
+	}
+	
+	private void getParentExtent(ItemModel item, LinkedHashSet<ItemModel> parentExtent) {
+		for (ItemModel parent : item.getParents()) {
+			if (parentExtent.add(parent)) {
+				getParentExtent(parent, parentExtent);
+			}
 		}
 	}
 	
@@ -125,7 +126,6 @@ public class ItemModel {
 			return children;
 		}
 	}
-	
 	/**
 	 * Returns the children of this item, in order (linked hash map).
 	 * @return
@@ -134,21 +134,20 @@ public class ItemModel {
 		synchronized (catalog) {
 			if (childExtent == null) {
 				LinkedHashSet<ItemModel> children = new LinkedHashSet<ItemModel>();
-				LinkedHashSet<ItemModel> queue = new LinkedHashSet<ItemModel>();
-				queue.add(this);
-				for (ItemModel item : queue) {
-					for (ItemModel child : item.getChildren()) {
-						if (!queue.contains(child)) {
-							children.add(child);
-							queue.add(child);
-						}
-					}
-				}
+				getChildExtent(this, children);
 				childExtent = ImmutableSet.copyOf(children);
 			}
 			return childExtent;
 		}
   }
+	
+	private void getChildExtent(ItemModel item, LinkedHashSet<ItemModel> childExtent) {
+		for (ItemModel child : item.getChildren()) {
+			if (childExtent.add(child)) {
+				getChildExtent(child, childExtent);
+			}
+		}
+	}
 	
 	public Set<PropertyModel> getProperties() {
 		synchronized (catalog) {

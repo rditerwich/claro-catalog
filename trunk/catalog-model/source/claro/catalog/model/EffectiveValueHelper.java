@@ -21,6 +21,7 @@ class EffectiveValueHelper extends TreeMap<ImportSource, List<PropertyValue>> {
 	Set<String> languages = new HashSet<String>();
 	
 	public EffectiveValueHelper(StagingArea stagingArea, Iterable<PropertyValue> propertyValues) {
+		super(ImportSourceComparator.instance);
 		for (PropertyValue value : propertyValues) {
 			languages.add(value.getLanguage());
 			if (equal(stagingArea, value.getStagingArea())) {
