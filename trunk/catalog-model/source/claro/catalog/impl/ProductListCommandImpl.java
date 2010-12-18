@@ -11,6 +11,7 @@ import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.Product;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
@@ -46,16 +47,18 @@ public class ProductListCommandImpl extends ProductListCommand implements Comman
 
 		// Compile product list:
 		// TODO Should we find categories as well, and add all products in the children extent?
-		List<ItemModel> products = catalogModel.findItems(stagingArea, outputChannel, uiLanguage, language, filterString, paging);
+		List<ItemModel> productCandidates = catalogModel.findItems(stagingArea, outputChannel, uiLanguage, language, filterString, true, paging);
 		
 		// Collect effective values:
 		result.products = SMap.empty();
-		for (ItemModel product : products) {
-			SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
-			result.products.add(product.getItemId(), propertyValues);
-			Set<PropertyModel> properties = product.getPropertyExtent();
-			for (PropertyModel property : properties) {
-				propertyValues.add(property.getPropertyInfo(), property.getEffectiveValues(stagingArea, outputChannel));
+		for (ItemModel candidate : productCandidates) {
+			if (candidate.getEntity() instanceof Product) {
+				SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
+				result.products.add(candidate.getItemId(), propertyValues);
+				Set<PropertyModel> properties = candidate.getPropertyExtent();
+				for (PropertyModel property : properties) {
+					propertyValues.add(property.getPropertyInfo(), property.getEffectiveValues(stagingArea, outputChannel));
+				}
 			}
 		}
 		

@@ -80,13 +80,13 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		getEntityManager().flush();
 		
-		List<ItemModel> items = model.findItems(null, null, null, null, "Deskjet", Paging.NO_PAGING);
+		List<ItemModel> items = model.findItems(null, null, null, null, "Deskjet", true, Paging.NO_PAGING);
 		System.out.println("Items:");
 		for (ItemModel item : items) {
 			System.out.println("  Item: " + item.getItemId());
 		}
 
-		items = model.findItems(null, null, null, null, "arti:123", Paging.NO_PAGING);
+		items = model.findItems(null, null, null, null, "arti:123", true, Paging.NO_PAGING);
 		System.out.println("Items:");
 		for (ItemModel item : items) {
 			System.out.println("  Item: " + item.getItemId());

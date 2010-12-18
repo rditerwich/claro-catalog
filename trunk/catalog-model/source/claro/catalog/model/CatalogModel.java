@@ -73,7 +73,7 @@ public class CatalogModel {
 	}
 	
 	
-	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter, Paging paging) {
+	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter, boolean productsOnly, Paging paging) {
 		List<ItemModel> result = new ArrayList<ItemModel>(paging.shouldPage()?paging.getPageSize() : 20);
 		
 		// Split of filter:
@@ -96,7 +96,7 @@ public class CatalogModel {
 		// For each item, obtain model, and filter.
 		int offset = 0;
 		int results = 0;
-		for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel)) {
+		for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel, productsOnly)) {
 			// Do we have enough results already?
 			if (paging.shouldPage() && results >= paging.getPageSize()) {
 				break;

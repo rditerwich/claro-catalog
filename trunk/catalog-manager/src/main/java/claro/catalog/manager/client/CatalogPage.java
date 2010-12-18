@@ -26,6 +26,7 @@ public class CatalogPage extends Page {
 
 	private LayoutPanel mainPanel;
 	ProductList filteredProductList;
+	private Label noProductsFoundLabel;
 
 	private Item selectedItem;
 	private boolean initialized;
@@ -101,8 +102,11 @@ public class CatalogPage extends Page {
 				}});
 			}});
 			getMasterHeader().add(filterLabel = new HTML() {{
-				setVisible(true); // TODO should be false..
-			}});  // TODO i18n
+				setVisible(false); // TODO should be false..
+			}}); 
+			getMasterHeader().add(noProductsFoundLabel = new Label(Util.i18n.noProductsFound()) {{
+				setVisible(false);
+			}});
 		}
 		
 			protected void productSelected(final Long productId) {
@@ -137,6 +141,7 @@ public class CatalogPage extends Page {
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ProductListCommandResult>(Util.i18n.loadingProducts()) {
 			public void onSuccess(ProductListCommandResult result) {
 				updateFilterLabel();
+				noProductsFoundLabel.setVisible(result.products.isEmpty());
 				filteredProductList.setProducts(result.products);
 			}
 		});

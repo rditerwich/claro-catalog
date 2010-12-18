@@ -189,4 +189,6 @@ public interface I18NCatalog extends Messages {
 	String internalFailureRetryingMessage(int retryNr);
 	String internalFailureMessage();
 
+	String noProductsFound();
+
 }

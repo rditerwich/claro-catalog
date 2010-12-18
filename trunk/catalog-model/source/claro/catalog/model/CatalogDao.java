@@ -71,6 +71,7 @@ public class CatalogDao {
 		if (catalog == null) {
 			catalog = new Catalog();
 			catalog.setId(id);
+			catalog.setName(""); // TODO Should we pass the name as par here?
 			em.persist(catalog);
 			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
 		}
@@ -205,8 +206,16 @@ public class CatalogDao {
 	}
 	
 	
-	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel) {
-		StringBuilder queryString = new StringBuilder("select item from Item item where item.catalog = :catalog");
+	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, boolean productsOnly) {
+		StringBuilder queryString = new StringBuilder("select item from ");
+		
+		if (productsOnly) {
+			queryString.append("Product ");
+		} else {
+			queryString.append("Item ");
+		}
+		
+		queryString.append("item where item.catalog = :catalog");
 		if (outputChannel != null) {
 			queryString.append(" and not exists(select channel from OutputChannel channel where channel.excludedItems contains :channel)");
 		}

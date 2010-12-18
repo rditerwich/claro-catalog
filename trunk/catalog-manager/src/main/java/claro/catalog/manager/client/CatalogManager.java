@@ -93,11 +93,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				addSelectionHandler(new SelectionHandler<Integer>() {
 					@Override
 					public void onSelection(SelectionEvent<Integer> event) {
-//						((Page)((ScrollPanel)getWidget(event.getSelectedItem())).getWidget()).show();
 						((Page)(getWidget(event.getSelectedItem()))).show();
 					}
 				});
-				selectTab(1);
+				selectTab(0);
 			}});
 		}});
 	}
