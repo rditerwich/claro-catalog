@@ -2,7 +2,6 @@ package claro.catalog;
 
 import java.util.Map;
 
-import claro.catalog.model.CatalogDao;
 import claro.catalog.model.CatalogModel;
 
 import com.google.common.base.Function;

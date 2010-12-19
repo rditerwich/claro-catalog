@@ -3,7 +3,6 @@ package claro.catalog.data;
 import java.io.Serializable;
 
 import claro.jpa.catalog.PropertyType;
-
 import easyenterprise.lib.util.SMap;
 
 public class PropertyInfo implements Serializable {

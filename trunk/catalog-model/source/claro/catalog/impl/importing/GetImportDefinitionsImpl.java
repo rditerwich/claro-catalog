@@ -8,19 +8,18 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import claro.catalog.CatalogDao;
 import claro.catalog.command.importing.GetImportDefinitions;
-import claro.catalog.command.importing.GetImportDefinitionsResult;
-import claro.catalog.model.CatalogDao;
 import claro.jpa.importing.ImportDefinition;
 import claro.jpa.importing.ImportDefinition_;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.jpa.JpaService;
 
-public class GetImportDefinitionsImpl extends GetImportDefinitions implements CommandImpl<GetImportDefinitionsResult>{
+public class GetImportDefinitionsImpl extends GetImportDefinitions implements CommandImpl<GetImportDefinitions.Result>{
 
 	@Override
-	public GetImportDefinitionsResult execute() throws CommandException {
+	public Result execute() throws CommandException {
 		checkValid();
 		
 		Result result = new Result();
@@ -46,7 +45,7 @@ public class GetImportDefinitionsImpl extends GetImportDefinitions implements Co
 		System.out.println(result.importDefinitions);
 //		dao.getImportDefinitions(paging);
 		
-		return new GetImportDefinitionsResult();
+		return result;
 	}
 
 }

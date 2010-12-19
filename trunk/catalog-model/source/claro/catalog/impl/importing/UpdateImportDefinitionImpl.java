@@ -1,9 +1,10 @@
 package claro.catalog.impl.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
+import claro.catalog.CatalogDao;
 import claro.catalog.command.importing.UpdateImportDefinition;
-import claro.catalog.model.CatalogDao;
 import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportDefinition;
 import claro.jpa.importing.ImportProperty;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
@@ -17,19 +18,31 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 	public Result execute() throws CommandException {
 		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
 		validateCommand(dao);
+		Result result = new Result();
 		if (remove) {
 			dao.getEntityManager().remove(importDefinition);
 		} else {
+			if (skipImportDefinition) {
+				result.importDefinition = new ImportDefinition();
+				result.importDefinition.setId(importDefinition.getId());
+			} else {
+				if (importDefinition.getId() == null) {
+//					dao.getEntityManager().persist(importDefinition);
+//					dao.getEntityManager().merge(importDefinition);
+				}  
+				result.importDefinition = 
+					dao.getEntityManager().merge(importDefinition);
+//				dao.getEntityManager().flush();
+			}
 			for (ImportCategory cat : CollectionUtil.notNull(importDefinition.getCategories())) {
 				cat.setImportDefinition(importDefinition);
-				dao.getEntityManager().merge(cat);
+				result.importDefinition.getCategories().add(
+					dao.getEntityManager().merge(cat));
 			}
 			for (ImportProperty prop : CollectionUtil.notNull(importDefinition.getProperties())) {
 				prop.setImportDefinition(importDefinition);
-				dao.getEntityManager().merge(prop);
-			}
-			if (!skipImportDefinition) {
-				dao.getEntityManager().merge(importDefinition);
+				result.importDefinition.getProperties().add(
+					dao.getEntityManager().merge(prop));
 			}
 			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
 				dao.getEntityManager().remove(cat);
@@ -38,7 +51,7 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 				dao.getEntityManager().remove(prop);
 			}
 		}
-		return new Result();
+		return result;
 	}
 	
 	private void validateCommand(CatalogDao dao) throws CommandValidationException {

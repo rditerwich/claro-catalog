@@ -14,8 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import claro.catalog.CatalogDao;
 import claro.catalog.CatalogServer;
-import claro.catalog.model.CatalogDao;
 import claro.catalog.model.CatalogModel;
 import claro.jpa.catalog.Catalog;
 import easyenterprise.lib.command.Command;

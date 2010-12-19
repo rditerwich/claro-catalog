@@ -2,6 +2,7 @@ package claro.jpa.importing;
 
 import java.io.Serializable;
 import java.lang.Boolean;
+import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
@@ -10,7 +11,6 @@ import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class ImportDefinition implements Serializable {
-	
     private Long id;
     private String name;
     private String importUrl;
@@ -18,8 +18,11 @@ public class ImportDefinition implements Serializable {
     private String importFilePattern;
     private String importSourceName;
     private Boolean importSourceNameAppendFileName;
+    private Integer priority;
+    private Integer sequenceNr;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
+    private Collection<ImportSource> importSources;
 
     public Long getId() {
         return id;
@@ -77,6 +80,22 @@ public class ImportDefinition implements Serializable {
         this.importSourceNameAppendFileName = value;
     }
 
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer value) {
+        this.priority = value;
+    }
+
+    public Integer getSequenceNr() {
+        return sequenceNr;
+    }
+
+    public void setSequenceNr(Integer value) {
+        this.sequenceNr = value;
+    }
+
     public Collection<ImportCategory> getCategories() {
         if (categories == null) {
             categories = new ArrayList<ImportCategory>();
@@ -97,6 +116,17 @@ public class ImportDefinition implements Serializable {
 
     public void setProperties(Collection<ImportProperty> value) {
         this.properties = value;
+    }
+
+    public Collection<ImportSource> getImportSources() {
+        if (importSources == null) {
+            importSources = new ArrayList<ImportSource>();
+        }
+        return importSources;
+    }
+
+    public void setImportSources(Collection<ImportSource> value) {
+        this.importSources = value;
     }
 
     @Override

@@ -148,17 +148,6 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 683
-                    y = 493
-                    width = -1
-                    height = -1
-                }
-            }
-            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:ImportSource
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
                     x = 776
                     y = 334
                     width = -1

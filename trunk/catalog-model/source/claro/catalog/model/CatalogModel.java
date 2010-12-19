@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import claro.catalog.CatalogDao;
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
@@ -53,6 +54,10 @@ public class CatalogModel {
 		supplierProperty = dao.findOrCreateProperty(root, RootProperties.SUPPLIER, PropertyType.String);
 		supplierArticleNumberProperty = dao.findOrCreateProperty(root, RootProperties.SUPPLIER_ARTICLENUMBER, PropertyType.String);
   }
+	
+	public Catalog getCatalog() {
+		return catalog;
+	}
 	
 	public ItemModel getRootItem() throws ItemNotFoundException {
 		return getItem(catalog.getRoot().getId());

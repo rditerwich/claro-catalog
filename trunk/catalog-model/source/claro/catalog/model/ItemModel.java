@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import claro.catalog.CatalogDao;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;

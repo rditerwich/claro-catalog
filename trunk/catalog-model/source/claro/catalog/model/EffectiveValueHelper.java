@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.importing.ImportSource;
 
 @SuppressWarnings("serial")
 class EffectiveValueHelper extends TreeMap<ImportSource, List<PropertyValue>> {

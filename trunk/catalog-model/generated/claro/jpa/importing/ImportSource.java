@@ -1,14 +1,13 @@
-package claro.jpa.catalog;
+package claro.jpa.importing;
 
 import java.io.Serializable;
-import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class ImportSource implements Serializable {
     private Long id;
-    private Integer priority;
+    private ImportDefinition importDefinition;
 
     public Long getId() {
         return id;
@@ -18,12 +17,12 @@ public class ImportSource implements Serializable {
         this.id = value;
     }
 
-    public Integer getPriority() {
-        return priority;
+    public ImportDefinition getImportDefinition() {
+        return importDefinition;
     }
 
-    public void setPriority(Integer value) {
-        this.priority = value;
+    public void setImportDefinition(ImportDefinition value) {
+        this.importDefinition = value;
     }
 
     @Override

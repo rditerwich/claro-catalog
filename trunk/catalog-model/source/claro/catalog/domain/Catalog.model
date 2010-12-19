@@ -12,6 +12,7 @@ import Metaphor.PIM.Domain.Parameter
 path primitive=/packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog=/packages:Claro/packages:Domain/packages:Catalog/types
 path shop=/packages:Claro/packages:Domain/packages:Shop/types
+path importing=/packages:Claro/packages:Domain/packages:Importing/types
 
 Package {
     name = Catalog
@@ -245,15 +246,6 @@ Package {
             }
         }
         Class {
-            name = ImportSource
-            attributes = {
-                Attribute {
-                    name = priority
-                    type = primitive:Integer
-                }
-            }
-        }
-        Class {
             name = StagingArea
         }
         Class {
@@ -351,7 +343,7 @@ Package {
                 
                 Attribute {
                     name = importSource
-                    type = catalog:ImportSource
+                    type = importing:ImportSource
                     lower = 0
                 }
                 /**

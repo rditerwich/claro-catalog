@@ -25,28 +25,25 @@ Package {
                     name = name
                     type = primitive:String
                 }
+                @comment "Expression for import url"
                 Attribute {
                     name = importUrl
                     type = primitive:String
                     lower = 0
                 }
-                Attribute {
-                    name = importFileBaseName
-                    type = primitive:String
-                    lower = 0
-                }
-                Attribute {
-                    name = importFilePattern
-                    type = primitive:String
-                    lower = 0
-                }
+                @comment "Expression for import source name"
                 Attribute {
                     name = importSourceName
                     type = primitive:String
+                    lower = 0
                 }
                 Attribute {
-                    name = importSourceNameAppendFileName
-                    type = primitive:Boolean
+                    name = priority
+                    type = primitive:Integer
+                }
+                Attribute {
+                    name = sequenceNr
+                    type = primitive:Integer
                 }
                 Attribute {
                     name = categories
@@ -64,6 +61,14 @@ Package {
                     isComposite = true
                     opposite = importing:ImportProperty/attributes:importDefinition
                 }
+                Attribute {
+                    name = importSources
+                    type = importing:ImportSource
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = importing:ImportSource/attributes:importDefinition
+                }
             }
         }
         Class {
@@ -73,6 +78,11 @@ Package {
                 Attribute {
                     name = headerLine
                     type = primitive:Boolean
+                }
+                Attribute {
+                    name = charset
+                    type = primitive:String
+                    lower = 0
                 }
                 
             }
@@ -106,6 +116,16 @@ Package {
                 Attribute {
                     name = expression
                     type = primitive:String
+                }
+            }
+        }
+        Class {
+            name = ImportSource
+            attributes = {
+                Attribute {
+                    name = importDefinition
+                    type = importing:ImportDefinition
+                    opposite = importing:ImportDefinition/attributes:importSources
                 }
             }
         }

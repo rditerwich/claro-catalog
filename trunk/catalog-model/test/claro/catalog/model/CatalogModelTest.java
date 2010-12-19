@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import claro.catalog.CatalogDao;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;

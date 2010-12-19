@@ -3,6 +3,8 @@ package claro.catalog.model;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import claro.catalog.CatalogDao;
+
 public class CatalogAccess {
 	
 	private static final ThreadLocal<CatalogAccess> threadInstance = new ThreadLocal<CatalogAccess>();

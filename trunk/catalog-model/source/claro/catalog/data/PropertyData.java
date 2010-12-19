@@ -1,8 +1,8 @@
 package claro.catalog.data;
 
-import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.util.SMap;
 
 public class PropertyData {

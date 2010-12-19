@@ -1,4 +1,4 @@
-package claro.catalog.model;
+package claro.catalog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,21 +7,28 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
+import claro.jpa.catalog.Category_;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
+import claro.jpa.catalog.Label_;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.PropertyValue_;
+import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportDefinition;
 import claro.jpa.importing.ImportDefinition_;
@@ -171,6 +178,26 @@ public class CatalogDao {
   	
   	return lbl;
   }
+	
+	public Category getCategoryByName(Catalog catalog, String name) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<Category> c = cb.createQuery(Category.class);
+		
+		ParameterExpression<String> nameParam = cb.parameter(String.class);
+		
+		Root<Category> root = c.from(Category.class);
+		Join<Category, PropertyValue> valuesJoin = root.join(Category_.propertyValues);
+		Join<PropertyValue, Property> propertyJoin = valuesJoin.join(PropertyValue_.property);
+		Join<Property,Label> labelsJoin = propertyJoin.join(Property_.labels);
+		
+		CriteriaQuery<Category> query = c.select(root).where(cb.and(
+			cb.isNull(labelsJoin.get(Label_.language)),
+			cb.equal(labelsJoin.get(Label_.label), RootProperties.NAME),
+			cb.equal(valuesJoin.get(PropertyValue_.stringValue), nameParam)));
+		
+		return getEntityManager().createQuery(c).setParameter(nameParam, name).getSingleResult();
+		
+	}
 	
 	public boolean setItemParents(Item item, List<Item> parents) {
 		boolean changed = false;

@@ -8,26 +8,30 @@ import claro.jpa.importing.ImportDefinition;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.util.Paging;
 
-public class GetImportDefinitions implements Command<GetImportDefinitions.Result> {
+public class PerformImport implements Command<PerformImport.Result> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public Long importDefinitionId = null;
+	public Long catalogId;
 	
-	public String importDefinitionName = null;
+	public Long importDefinitionId;
 	
-	public Paging paging = Paging.NO_PAGING;
+	/**
+	 * Override import definition attributes, but instead read
+	 * data from this url. Optional.
+	 */
+	public String importUrl = null;
+
+	/**
+	 * Overwrite 
+	 */
+	public boolean overwriteAllImportSources = false;
 	
-	public boolean includeLastRunStatistics;
-	
-	public boolean includeDefinitionDetails = false;
+	public boolean overwriteLastImportSource = false;
 	
 	public void checkValid() throws CommandValidationException {
-		if (importDefinitionId != null) validate(paging.equals(Paging.NO_PAGING));
-		if (!paging.equals(Paging.NO_PAGING)) validate(importDefinitionId == null);
-		validate(importDefinitionId == null || importDefinitionName == null);
+		validate(!overwriteAllImportSources || !overwriteLastImportSource);
 	}
 	
 	public static class Result implements CommandResult {

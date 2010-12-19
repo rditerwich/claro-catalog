@@ -12,13 +12,13 @@ import claro.catalog.data.MediaValue;
 import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
-import claro.jpa.catalog.ImportSource;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.importing.ImportSource;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
