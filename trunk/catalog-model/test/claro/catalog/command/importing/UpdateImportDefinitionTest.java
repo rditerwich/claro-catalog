@@ -1,4 +1,4 @@
-package claro.catalog.importing;
+package claro.catalog.command.importing;
 
 public class UpdateImportDefinitionTest {
 
