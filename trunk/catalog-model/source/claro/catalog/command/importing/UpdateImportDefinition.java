@@ -1,4 +1,4 @@
-package claro.catalog.importing.command;
+package claro.catalog.command.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import static easyenterprise.lib.util.CollectionUtil.isEmpty;
