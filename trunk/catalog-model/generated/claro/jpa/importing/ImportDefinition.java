@@ -10,6 +10,7 @@ import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class ImportDefinition implements Serializable {
+	
     private Long id;
     private String name;
     private String importUrl;

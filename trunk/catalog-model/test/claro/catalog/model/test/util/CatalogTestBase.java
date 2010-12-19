@@ -45,6 +45,7 @@ public class CatalogTestBase {
 		properties.put("javax.persistence.jdbc.password", "postgres");
 		properties.put("eclipselink.ddl-generation", "none");
 		properties.put("eclipselink.ddl-generation.output-mode", "none");
+		properties.put("eclipselink.logging.level", "FINE");
 		properties.putAll(System.getenv());
 		for (String name : System.getProperties().stringPropertyNames()) {
 			properties.put(name, System.getProperty(name));

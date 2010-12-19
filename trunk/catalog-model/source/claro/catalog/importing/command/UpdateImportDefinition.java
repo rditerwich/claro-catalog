@@ -1,4 +1,4 @@
-package claro.catalog.command.importing;
+package claro.catalog.importing.command;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import static easyenterprise.lib.util.CollectionUtil.isEmpty;
@@ -39,16 +39,16 @@ public class UpdateImportDefinition implements Command<Result> {
 	public List<ImportProperty> importPropertiesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
-		validate (importDefinition != null && importDefinition.getId() != null);
+		validate (importDefinition != null);
 		if (remove) validate(!skipImportDefinition);
 		if (remove) validate(isEmpty(importCategoriesToBeRemoved));
 		if (remove) validate(isEmpty(importPropertiesToBeRemoved));
-		if (skipImportDefinition) validate(importDefinition != null && importDefinition.getId() != null);
-		if (!isEmpty(importCategoriesToBeRemoved)) validate(importDefinition != null && importDefinition.getId() != null);
-		if (!isEmpty(importPropertiesToBeRemoved)) validate(importDefinition != null && importDefinition.getId() != null);
+		if (skipImportDefinition) validate(importDefinition.getId() != null);
+		if (!isEmpty(importCategoriesToBeRemoved)) validate(importDefinition.getId() != null);
+		if (!isEmpty(importPropertiesToBeRemoved)) validate(importDefinition.getId() != null);
 	}
 	
 	public static class Result implements CommandResult {
-
+		public ImportDefinition importDefinition;
 	}
 }

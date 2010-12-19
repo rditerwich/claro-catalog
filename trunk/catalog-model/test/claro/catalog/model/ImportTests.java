@@ -5,6 +5,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import claro.catalog.command.importing.GetImportDefinitions;
+import claro.catalog.command.importing.GetImportDefinitionsResult;
 import claro.catalog.command.importing.UpdateImportDefinition;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.importing.ImportCategory;
@@ -26,5 +28,8 @@ public class ImportTests extends CatalogTestBase {
 		update.importDefinition.getCategories().add(importCategory);
 		executeCommand(update);
 		
+		GetImportDefinitions query = new GetImportDefinitions();
+		query.importDefinitionName = "my-imp";
+		GetImportDefinitionsResult importDefinitions = executeCommand(query);
 	}
 }

@@ -1,12 +1,17 @@
 package claro.catalog.model;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Parameter;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
@@ -19,6 +24,7 @@ import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportDefinition_;
 
 import com.google.common.base.Objects;
 
@@ -26,23 +32,27 @@ import easyenterprise.lib.util.Paging;
 
 public class CatalogDao {
 
-	private final EntityManager em;
+	private final EntityManager entityManager;
 
-	public CatalogDao(EntityManager em) {
-		this.em = em;
+	public CatalogDao(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 	
 	public EntityManager getEntityManager() {
-		return em;
+		return entityManager;
+	}
+	
+	public CriteriaBuilder getCriteriaBuilder() {
+		return entityManager.getCriteriaBuilder();
 	}
 	
 	public <T> T findOrCreate(Class<T> type, Long id) {
 		if (id != null) {
-			return em.find(type, id);
+			return entityManager.find(type, id);
 		} else {
 			try {
 				T impl = type.newInstance();
-				em.persist(impl);
+				entityManager.persist(impl);
 				return impl;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -51,11 +61,11 @@ public class CatalogDao {
 	}
 
 	public Item getItem(Long id) {
-		return em.find(Item.class, id);
+		return entityManager.find(Item.class, id);
 	}
 
 	public Property getProperty(Long id) {
-		return em.find(Property.class, id);
+		return entityManager.find(Property.class, id);
 	}
 
 	public List<Item> getItems(Collection<Long> ids) {
@@ -67,13 +77,13 @@ public class CatalogDao {
 	}
 	
 	public Catalog findOrCreateCatalog(Long id) {
-		Catalog catalog = em.find(Catalog.class, id);
+		Catalog catalog = entityManager.find(Catalog.class, id);
 		if (catalog == null) {
 			catalog = new Catalog();
 			catalog.setId(id);
 			catalog.setName(""); // TODO Should we pass the name as par here?
-			em.persist(catalog);
-			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
+			entityManager.persist(catalog);
+			entityManager.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
 		}
 		findOrCreateRootCategory(catalog);
 		return catalog;
@@ -85,7 +95,7 @@ public class CatalogDao {
 	  	root = new Category();
 	  	catalog.setRoot(root);
 	  	root.setCatalog(catalog);
-	  	em.persist(root);
+	  	entityManager.persist(root);
 	  }
 	  return root;
   }
@@ -107,7 +117,7 @@ public class CatalogDao {
 	  item.getProperties().add(property);
 	  getOrCreateLabel(property, name, null);
 	  
-	  em.persist(property);
+	  entityManager.persist(property);
 	  
 	  return property;
   }
@@ -133,7 +143,7 @@ public class CatalogDao {
 		newPropertyValue.setOutputChannel(outputChannel);
 		setValue(newPropertyValue, value, property.getType());
 		
-		em.persist(newPropertyValue);
+		entityManager.persist(newPropertyValue);
 	}
 	
 	private void setValue(PropertyValue propertyValue, Object value, PropertyType type) {
@@ -157,7 +167,7 @@ public class CatalogDao {
   	lbl.setProperty(property);
   	property.getLabels().add(lbl);
   	
-  	em.persist(lbl);
+  	entityManager.persist(lbl);
   	
   	return lbl;
   }
@@ -171,7 +181,7 @@ public class CatalogDao {
 				if (!parents.contains(parent)) {
 					parent.getChildren().remove(parentChild);
 					item.getParents().remove(parentChild);
-					em.remove(parentChild);
+					entityManager.remove(parentChild);
 					changed = true;
 				}
 			}
@@ -190,7 +200,7 @@ public class CatalogDao {
 				parentChild.setChild(item);
 				parent.getChildren().add(parentChild);
 				item.getParents().add(parentChild);
-				em.persist(parentChild);
+				entityManager.persist(parentChild);
 				changed = true;
 			}
 		}
@@ -220,7 +230,7 @@ public class CatalogDao {
 			queryString.append(" and not exists(select channel from OutputChannel channel where channel.excludedItems contains :channel)");
 		}
 		
-		TypedQuery<Item> query = em.createQuery(queryString.toString(), Item.class);
+		TypedQuery<Item> query = entityManager.createQuery(queryString.toString(), Item.class);
 		query.setParameter("catalog", catalog);
 		if (outputChannel != null) {
 			query.setParameter("outputChannel", outputChannel);
@@ -230,11 +240,44 @@ public class CatalogDao {
 	}
 	
 	public OutputChannel getOutputChannel(Long outputChannelId) {
-		return em.find(OutputChannel.class, outputChannelId);
+		return entityManager.find(OutputChannel.class, outputChannelId);
 	}
 
 	public List<ImportDefinition> getImportDefinitions(Paging paging) {
-		TypedQuery<ImportDefinition> query = em.createQuery("SELECT def FROM ImportDefinition def", ImportDefinition.class);
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
+		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
+		c.select(importDefinition);
+		
+		TypedQuery<ImportDefinition> query = entityManager.createQuery(c);
+		if (paging.shouldPage()) {
+			query.setFirstResult(paging.getPageStart());
+			query.setMaxResults(paging.getPageSize());
+		}
+		return query.getResultList();
+	}
+	
+	public ImportDefinition getImportDefinitionById(Long id) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
+		Parameter<Long> idParam = cb.parameter(Long.class);
+		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
+		Path<Long> idAttr = importDefinition.get(ImportDefinition_.id);
+		c.select(importDefinition).where(cb.equal(idAttr, idParam));
+		
+		TypedQuery<ImportDefinition> query = entityManager.createQuery(c).setParameter(idParam, id);
+		return query.getSingleResult();
+	}
+	
+	public List<ImportDefinition> getImportDefinitionsByName(String name, Paging paging) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
+		ParameterExpression<String> nameParam = cb.parameter(String.class);
+		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
+		Path<String> nameAttr = importDefinition.get(ImportDefinition_.name);
+		c.select(importDefinition).where(cb.like(nameAttr, nameParam));
+
+		TypedQuery<ImportDefinition> query = entityManager.createQuery(c).setParameter(nameParam, "%" + name + "%");
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
@@ -243,6 +286,6 @@ public class CatalogDao {
 	}
 
 	public StagingArea getStagingArea(Long stagingAreaId) {
-		return em.find(StagingArea.class, stagingAreaId);
+		return entityManager.find(StagingArea.class, stagingAreaId);
 	}
 }

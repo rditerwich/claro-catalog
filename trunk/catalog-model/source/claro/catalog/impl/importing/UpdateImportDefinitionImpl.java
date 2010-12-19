@@ -16,8 +16,10 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 	@Override
 	public Result execute() throws CommandException {
 		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
-		checkValid();
-		if (!remove) {
+		validateCommand(dao);
+		if (remove) {
+			dao.getEntityManager().remove(importDefinition);
+		} else {
 			for (ImportCategory cat : CollectionUtil.notNull(importDefinition.getCategories())) {
 				cat.setImportDefinition(importDefinition);
 				dao.getEntityManager().merge(cat);
@@ -35,19 +37,36 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 			for (ImportProperty prop : CollectionUtil.notNull(importPropertiesToBeRemoved)) {
 				dao.getEntityManager().remove(prop);
 			}
-		} else {
-			dao.getEntityManager().remove(importDefinition);
 		}
 		return new Result();
 	}
 	
 	private void validateCommand(CatalogDao dao) throws CommandValidationException {
 		checkValid();
+		// categories to be removed should exist
 		for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
 			validate(cat.getId() != null);
-			ImportCategory existing = dao.getEntityManager().find(ImportCategory.class, cat.getId());
-			if (existing != null) {
-				validate(existing.getImportDefinition().equals(importDefinition));
+		}
+		// all categories should belong to the current import definition
+		for (ImportCategory cat : CollectionUtil.concat(importDefinition.getCategories(), importCategoriesToBeRemoved)) {
+			if (cat.getId() != null) {
+				ImportCategory existing = dao.getEntityManager().find(ImportCategory.class, cat.getId());
+				if (existing != null) {
+					validate(existing.getImportDefinition().equals(importDefinition));
+				}
+			}
+		}
+		// properties to be removed should exist
+		for (ImportProperty prop : CollectionUtil.notNull(importPropertiesToBeRemoved)) {
+			validate(prop.getId() != null);
+		}
+		// all properties should belong to the current import definition
+		for (ImportProperty prop : CollectionUtil.concat(importDefinition.getProperties(), importPropertiesToBeRemoved)) {
+			if (prop.getId() != null) {
+				ImportProperty existing = dao.getEntityManager().find(ImportProperty.class, prop.getId());
+				if (existing != null) {
+					validate(existing.getImportDefinition().equals(importDefinition));
+				}
 			}
 		}
 		
