@@ -646,17 +646,11 @@
             <basic name="importUrl">
                 <column name="importurl" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <basic name="importFileBaseName">
-                <column name="importfilebasename" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
+            <basic name="importSourceName">
+                <column name="importsourcename" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <basic name="importFilePattern">
-                <column name="importfilepattern" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="importSourceName" optional="false">
-                <column name="importsourcename" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="importSourceNameAppendFileName" optional="false">
-                <column name="importsourcenameappendfilename" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
+            <basic name="matchProperty" optional="false">
+                <column name="matchproperty" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>
             <basic name="priority" optional="false">
                 <column name="priority" table="importdefinition" nullable="false" unique="false" insertable="true" updatable="true"/>
@@ -687,7 +681,7 @@
             <basic name="headerLine" optional="false">
                 <column name="headerline" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <basic name="charset" optional="false">
+            <basic name="charset">
                 <column name="charset" table="importdefinition" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>   
         </attributes>

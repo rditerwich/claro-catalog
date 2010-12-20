@@ -1,7 +1,6 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
-import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
@@ -14,10 +13,8 @@ public class ImportDefinition implements Serializable {
     private Long id;
     private String name;
     private String importUrl;
-    private String importFileBaseName;
-    private String importFilePattern;
     private String importSourceName;
-    private Boolean importSourceNameAppendFileName;
+    private String matchProperty;
     private Integer priority;
     private Integer sequenceNr;
     private Collection<ImportCategory> categories;
@@ -48,22 +45,6 @@ public class ImportDefinition implements Serializable {
         this.importUrl = value;
     }
 
-    public String getImportFileBaseName() {
-        return importFileBaseName;
-    }
-
-    public void setImportFileBaseName(String value) {
-        this.importFileBaseName = value;
-    }
-
-    public String getImportFilePattern() {
-        return importFilePattern;
-    }
-
-    public void setImportFilePattern(String value) {
-        this.importFilePattern = value;
-    }
-
     public String getImportSourceName() {
         return importSourceName;
     }
@@ -72,12 +53,12 @@ public class ImportDefinition implements Serializable {
         this.importSourceName = value;
     }
 
-    public Boolean getImportSourceNameAppendFileName() {
-        return importSourceNameAppendFileName;
+    public String getMatchProperty() {
+        return matchProperty;
     }
 
-    public void setImportSourceNameAppendFileName(Boolean value) {
-        this.importSourceNameAppendFileName = value;
+    public void setMatchProperty(String value) {
+        this.matchProperty = value;
     }
 
     public Integer getPriority() {

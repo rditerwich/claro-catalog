@@ -1,5 +1,7 @@
 package claro.catalog.impl.importing;
 
+import static java.lang.Math.max;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -78,20 +80,41 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		// determine structure of import file
 		Charset charset = Charset.forName(importDefinition.getCharset() != null ? importDefinition.getCharset() : "UTF-8");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(new URL(url).openStream(), charset));
-		String line = reader.readLine();
-		if (line == null) return;
-		List<String> headerLine = Collections.emptyList();
+		List<String> headerFields = Collections.emptyList();
 		if (importDefinition.getHeaderLine()) {
-			headerLine = parseLine(line);
+			String line = reader.readLine();
+			if (line == null) throw new PerformImportException("Missing header-line in file " + url);
+			headerFields = parseLine(line);
+		}
+		int maxFields = headerFields.size();
+		
+		// loop over lines
+		for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+			
+			// parse fields
+			List<String> fields = parseLine(line);
+			maxFields = max(maxFields, fields.size());
+			
+			// add a context variable for each field
+			for (int i = 0; i < maxFields; i++) {
+				String value = i < fields.size() ? fields.get(i) : "";
+				exprContext.setVariable("" + i, value);
+				if (i < headerFields.size()) {
+					exprContext.setVariable(headerFields.get(i), value);
+				}
+			}
+			
+			// find categories for this line
+			List<Category> categories = new ArrayList<Category>();
+			for (ImportCategory ic : importDefinition.getCategories()) {
+				SExpr expr = exprParser.parse(ic.getExpression());
+				String categoryName = expr.evaluate(exprContext);
+				categories.add(cache.get(categoryName));
+			}
+			
+			// match existing product
 		}
 		
-		// find categories
-		List<Category> categories = new ArrayList<Category>();
-		for (ImportCategory ic : importDefinition.getCategories()) {
-			SExpr expr = exprParser.parse(ic.getExpression());
-			String categoryName = expr.evaluate(exprContext);
-			categories.add(cache.get(categoryName));
-		}
 	}
 	
 	private List<String> parseLine(String line) {

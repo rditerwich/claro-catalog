@@ -37,10 +37,16 @@ Package {
                     type = primitive:String
                     lower = 0
                 }
+                @comment "Determines what property is used to match products"
+                Attribute {
+                    name = matchProperty
+                    type = primitive:String
+                }
                 Attribute {
                     name = priority
                     type = primitive:Integer
                 }
+                @comment "Incremented in every import, can be used in expressions"
                 Attribute {
                     name = sequenceNr
                     type = primitive:Integer

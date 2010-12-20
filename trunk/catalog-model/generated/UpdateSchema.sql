@@ -1531,30 +1531,6 @@ ALTER TABLE catalog.importdefinition ALTER COLUMN importurl DROP NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importdefinition ADD COLUMN importfilebasename VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importfilebasename TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importfilebasename DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importdefinition ADD COLUMN importfilepattern VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importfilepattern TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importfilepattern DROP NOT NULL;
-COMMIT;
-
-BEGIN;
 ALTER TABLE catalog.importdefinition ADD COLUMN importsourcename VARCHAR;
 COMMIT;
 
@@ -1563,19 +1539,19 @@ ALTER TABLE catalog.importdefinition ALTER COLUMN importsourcename TYPE VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importsourcename SET NOT NULL;
+ALTER TABLE catalog.importdefinition ALTER COLUMN importsourcename DROP NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importdefinition ADD COLUMN importsourcenameappendfilename BOOLEAN;
+ALTER TABLE catalog.importdefinition ADD COLUMN matchproperty VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importsourcenameappendfilename TYPE BOOLEAN;
+ALTER TABLE catalog.importdefinition ALTER COLUMN matchproperty TYPE VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.importdefinition ALTER COLUMN importsourcenameappendfilename SET NOT NULL;
+ALTER TABLE catalog.importdefinition ALTER COLUMN matchproperty SET NOT NULL;
 COMMIT;
 
 BEGIN;

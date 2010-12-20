@@ -20,7 +20,6 @@ public class ImportTests extends CatalogTestBase {
 		update.importDefinition = new ImportDefinition();
 		update.importDefinition.setName("my-import");
 		update.importDefinition.setImportSourceName("my-import");
-		update.importDefinition.setImportSourceNameAppendFileName(false);
 		update.importDefinition.setImportUrl("file:///test");
 		ImportCategory importCategory = new ImportCategory();
 		importCategory.setExpression("Wines");
