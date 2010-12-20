@@ -12,6 +12,7 @@ import claro.catalog.data.MediaValue;
 import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
+import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
@@ -20,6 +21,7 @@ import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportSource;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
@@ -100,6 +102,45 @@ public abstract class PropertyModel {
 
 	public Property getEntity() {
 		return CatalogAccess.getDao().getProperty(getPropertyId());
+	}
+	
+	public boolean setValue(StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
+		synchronized(getItem().catalog) {
+
+			// Do we have a property value already?
+			Item itemEntity = item.getEntity();
+			Property propertyEntity = getEntity();
+			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(stagingArea, outputChannel, itemEntity, propertyEntity, language);
+			if (propertyValue != null) {
+				
+				// Are we changing anything?
+				Object existingValue = getTypedValue(propertyValue);
+				if (Objects.equal(value, existingValue)) {
+					return false;
+
+				}
+				
+				// Set the actual value
+				setTypedValue(propertyValue, value);
+			} else {
+				
+				// No candidate found, create a new one
+				propertyValue = new PropertyValue();
+				itemEntity.getPropertyValues().add(propertyValue);
+				propertyValue.setItem(itemEntity);
+				
+				propertyValue.setProperty(propertyEntity);
+				propertyValue.setStagingArea(stagingArea);
+				propertyValue.setOutputChannel(outputChannel);
+				
+				// Set the actual value.
+				setTypedValue(propertyValue, value);
+				
+				CatalogAccess.getDao().getEntityManager().persist(propertyValue);
+			}
+			
+			return true;
+		}
 	}
 	
 	/**
@@ -204,6 +245,18 @@ public abstract class PropertyModel {
 			});
 		}
 	};
+	
+	
+	static void setTypedValue(PropertyValue propertyValue, Object value) {
+		switch(propertyValue.getProperty().getType()) {
+		// TODO add actual cases...
+		default:
+			propertyValue.setStringValue(value.toString());
+			
+		}
+	}
+
+
 	
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {

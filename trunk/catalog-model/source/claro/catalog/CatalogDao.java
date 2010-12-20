@@ -129,37 +129,18 @@ public class CatalogDao {
 	  return property;
   }
 	
-	public void setPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language, Object value) {
-		for (PropertyValue propertyValue : item.getPropertyValues()) {
-			if (propertyValue.getProperty().equals(property) 
-			&& Objects.equal(propertyValue.getStagingArea(), stagingArea)
-			&& Objects.equal(propertyValue.getOutputChannel(), outputChannel)
-			&& Objects.equal(propertyValue.getLanguage(), language)) {
-				setValue(propertyValue, value, property.getType());
-				return;
-			}
-		}
 
-		// No candidate found, create a new one
-		PropertyValue newPropertyValue = new PropertyValue();
-		item.getPropertyValues().add(newPropertyValue);
-		newPropertyValue.setItem(item);
+	public PropertyValue getPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language) {
+		TypedQuery<PropertyValue> query = entityManager.createQuery("select propertyValue from PropertyValue propertyValue where ", PropertyValue.class);
 		
-		newPropertyValue.setProperty(property);
-		newPropertyValue.setStagingArea(stagingArea);
-		newPropertyValue.setOutputChannel(outputChannel);
-		setValue(newPropertyValue, value, property.getType());
-		
-		entityManager.persist(newPropertyValue);
-	}
-	
-	private void setValue(PropertyValue propertyValue, Object value, PropertyType type) {
-		switch(type) {
-		// TODO add actual cases...
-		default:
-			propertyValue.setStringValue(value.toString());
-			
+		List<PropertyValue> results = query.getResultList();
+		if (results.size() == 1) {
+			return results.get(0);
+		} else if (results.isEmpty()) {
+			return null;
 		}
+		
+		throw new RuntimeException("Inconsistent database: " + results); // TODO add results better.
 	}
 
 	public Label getOrCreateLabel(Property property, String label, String language) {

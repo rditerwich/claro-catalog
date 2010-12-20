@@ -4,12 +4,10 @@ import java.util.List;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
-import claro.jpa.catalog.ImportSource;
-import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.importing.ImportSource;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;

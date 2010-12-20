@@ -102,7 +102,7 @@ public class CatalogPage extends Page {
 				}});
 			}});
 			getMasterHeader().add(filterLabel = new HTML() {{
-				setVisible(false); // TODO should be false..
+				setVisible(false); 
 			}}); 
 			getMasterHeader().add(noProductsFoundLabel = new Label(Util.i18n.noProductsFound()) {{
 				setVisible(false);

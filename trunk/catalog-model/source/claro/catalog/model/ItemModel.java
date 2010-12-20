@@ -208,6 +208,12 @@ public class ItemModel {
 		}		
 	}
 	
+	void invalidateChildExtent() {
+		synchronized (catalog) {
+			catalog.invalidate(getChildExtent());
+		}
+	}
+	
 	void invalidate() {
 		synchronized (catalog) {
 			parents = null;
