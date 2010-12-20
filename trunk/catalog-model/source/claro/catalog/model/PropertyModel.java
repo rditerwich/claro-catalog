@@ -186,7 +186,7 @@ public abstract class PropertyModel {
 					// look in parent items, first one wins, parents are ordered
 					if (effectiveValue == undefined) {
 						for (ItemModel parent : getItem().getParents()) {
-							PropertyModel property = parent.findProperty(getPropertyId());
+							PropertyModel property = parent.findProperty(getPropertyId(), false);
 							if (property != null) {
 								effectiveValue = property.getEffectiveValues(stagingArea, outputChannel).get(language, undefined);
 								if (effectiveValue != undefined) break;
@@ -272,7 +272,7 @@ public abstract class PropertyModel {
 		info.ownerItemId = ownerItem.getItemId();
 		info.propertyId = entity.getId();
 		info.type = entity.getType();
-		info.isMany = entity.getIsMany();
+		info.isMany = entity.getIsMany() != null ? entity.getIsMany() : false;
 		info.isDangling = isDangling;
 		for (Label label : entity.getLabels()) {
 			info.labels = info.labels.add(label.getLanguage(), label.getLabel());

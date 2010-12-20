@@ -5,32 +5,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+
 import claro.catalog.CatalogDao;
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
-import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.Paging;
 import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
-	final Catalog catalog;
+	public final Catalog catalog;
+	public final PropertyModel nameProperty;
+	public final PropertyModel variantProperty;
+	public final PropertyModel articleNumberProperty;
+	public final PropertyModel descriptionProperty;
+	public final PropertyModel imageProperty;
+	public final PropertyModel smallImageProperty;
+	public final PropertyModel priceProperty;
+	public final PropertyModel supplierProperty;
+	public final PropertyModel supplierArticleNumberProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
-	final Property nameProperty;
-	final Property variantProperty;
-	final Property articleNumberProperty;
-	final Property descriptionProperty;
-	final Property imageProperty;
-	final Property smallImageProperty;
-	final Property priceProperty;
-	final Property supplierProperty;
-  final Property supplierArticleNumberProperty;
 
 	public static void startOperation(CatalogDao dao) {
 		CatalogAccess.startOperation(dao);
@@ -41,18 +41,17 @@ public class CatalogModel {
 	}
 
 	public CatalogModel(Long id) {
-		CatalogDao dao = CatalogAccess.getDao();
-		this.catalog = dao.findOrCreateCatalog(id);
-		Category root = dao.findOrCreateRootCategory(catalog);
-		nameProperty = dao.findOrCreateProperty(root, RootProperties.NAME, PropertyType.String);
-		variantProperty = dao.findOrCreateProperty(root, RootProperties.VARIANT, PropertyType.String);
-		articleNumberProperty = dao.findOrCreateProperty(root, RootProperties.ARTICLENUMBER, PropertyType.String);
-		descriptionProperty = dao.findOrCreateProperty(root, RootProperties.DESCRIPTION, PropertyType.String);
-		imageProperty = dao.findOrCreateProperty(root, RootProperties.IMAGE, PropertyType.Media);
-		smallImageProperty = dao.findOrCreateProperty(root, RootProperties.SMALLIMAGE, PropertyType.Media);
-		priceProperty = dao.findOrCreateProperty(root, RootProperties.PRICE, PropertyType.Money);
-		supplierProperty = dao.findOrCreateProperty(root, RootProperties.SUPPLIER, PropertyType.String);
-		supplierArticleNumberProperty = dao.findOrCreateProperty(root, RootProperties.SUPPLIER_ARTICLENUMBER, PropertyType.String);
+		this.catalog = findOrCreateCatalog(id);
+		ItemModel root = findOrCreateRootCategory();
+		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String);
+		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String);
+		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String);
+		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String);
+		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media);
+		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media);
+		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money);
+		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String);
+		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String);
   }
 	
 	public Catalog getCatalog() {
@@ -121,6 +120,30 @@ public class CatalogModel {
 		return result;
 	}
 	
+	private Catalog findOrCreateCatalog(Long id) {
+		EntityManager em = CatalogAccess.getEntityManager();
+		Catalog catalog = em.find(Catalog.class, id);
+		if (catalog == null) {
+			catalog = new Catalog();
+			catalog.setId(id);
+			catalog.setName(""); 
+			em.persist(catalog);
+			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
+		}
+		return catalog;
+  }
+
+	private ItemModel findOrCreateRootCategory() {
+	  ItemModel root;
+	  if (catalog.getRoot() == null) {
+	  	root = createCategory();
+			catalog.setRoot((Category) root.getEntity());
+	  } else {
+	  	root = getItem(catalog.getRoot().getId());
+	  }
+	  return root;
+  }	
+	
 	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language) {
 		List<String> unsatisfiedSimpleCriteria = new ArrayList<String>(simpleCriteria);
 		List<PropertyCriterium> unsatisfiedPropertyCriteria = new ArrayList<PropertyCriterium>(propertyCriteria);
@@ -162,6 +185,13 @@ public class CatalogModel {
 		return unsatisfiedSimpleCriteria.isEmpty() && unsatisfiedPropertyCriteria.isEmpty();
 	}
 
+	public ItemModel createCategory() {
+		Category category = new Category();
+		category.setCatalog(catalog);
+		CatalogAccess.getDao().getEntityManager().persist(category);
+		return getItem(category.getId());
+	}
+	
 	void invalidate(ItemModel... items) {
 		for (ItemModel item : items) {
 			CatalogAccess.getInvalidItems().add(item);
@@ -169,8 +199,10 @@ public class CatalogModel {
 	}
 	
 	void invalidate(Iterable<ItemModel> items) {
-		for (ItemModel item : items) {
-			CatalogAccess.getInvalidItems().add(item);
+		if (items != null) {
+			for (ItemModel item : items) {
+				CatalogAccess.getInvalidItems().add(item);
+			}
 		}
 	}
 	

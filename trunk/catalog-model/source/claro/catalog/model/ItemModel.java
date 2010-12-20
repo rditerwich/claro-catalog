@@ -12,11 +12,15 @@ import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.Label;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 
 import com.google.common.collect.ImmutableSet;
+
+import easyenterprise.lib.util.SMap;
 
 public class ItemModel {
 
@@ -164,16 +168,74 @@ public class ItemModel {
 	}
 
 	/**
+	 * Find property with a specific id.
 	 * @param propertyId
+	 * @param extent look in parent items?
 	 * @return Property model or null.
 	 */
-	public PropertyModel findProperty(Long propertyId) {
-		for (PropertyModel property : getProperties()) {
+	public PropertyModel findProperty(Long propertyId, boolean extent) {
+		for (PropertyModel property : extent ? getPropertyExtent() : getProperties()) {
 			if (equal(propertyId, property.getPropertyId())) {
 				return property;
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Find property with a specific id.
+	 * @param propertyId
+	 * @param extent look in parent items?
+	 * @return Property model or null.
+	 */
+	public PropertyModel findProperty(Property property, boolean extent) {
+		return findProperty(property.getId(), extent);
+	}
+	
+	/**
+	 * @param name Name of the property (label)
+	 * @param language Language of label to look (use null for default name)
+	 * @param extent look in parent items?
+	 * @return Property model or null.
+	 */
+	public PropertyModel findProperty(String propertyLabel, String language, boolean extent) {
+		for (PropertyModel property : extent ? getPropertyExtent() : getProperties()) {
+			if (equal(propertyLabel, property.getPropertyInfo().labels.get(language))) {
+				return property;
+			}
+		}
+		return null;
+	}
+	
+	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type) {
+		PropertyModel property = findProperty(propertyLabel, language, false);
+		if (property == null) {
+			property = createProperty(SMap.create(language, propertyLabel), type);
+		}
+		return property;
+	}
+	
+	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type) {
+		synchronized (catalog) {
+			Property property = new Property();
+			property.setType(type);
+			property.setIsMany(false);
+			property.setCategoryProperty(false);
+			for (String lanuage : initialLabels.getKeys()) {
+				Label label = new Label();
+				label.setLanguage(lanuage);
+				label.setLabel(initialLabels.get(lanuage));
+				label.setProperty(property);
+				property.getLabels().add(label);
+			}
+			CatalogAccess.getDao().getEntityManager().persist(property);
+			assert property.getId() != null;
+			getEntity().getProperties().add(property);
+			property.setItem(getEntity());
+			catalog.invalidate(this);
+			catalog.invalidate(childExtent);
+			return PropertyModel.createRoot(property.getId(), false, this);
+		}
 	}
 	
 	public Set<PropertyModel> getPropertyExtent() {
@@ -207,13 +269,10 @@ public class ItemModel {
 			return danglingProperties;
 		}		
 	}
-	
-	void invalidateChildExtent() {
-		synchronized (catalog) {
-			catalog.invalidate(getChildExtent());
-		}
-	}
-	
+
+	/**
+	 * Only called from CatalogAccess, do not call!
+	 */
 	void invalidate() {
 		synchronized (catalog) {
 			parents = null;

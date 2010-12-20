@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -83,30 +82,6 @@ public class CatalogDao {
 		return result;
 	}
 	
-	public Catalog findOrCreateCatalog(Long id) {
-		Catalog catalog = entityManager.find(Catalog.class, id);
-		if (catalog == null) {
-			catalog = new Catalog();
-			catalog.setId(id);
-			catalog.setName(""); // TODO Should we pass the name as par here?
-			entityManager.persist(catalog);
-			entityManager.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
-		}
-		findOrCreateRootCategory(catalog);
-		return catalog;
-}
-
-	public Category findOrCreateRootCategory(Catalog catalog) {
-	  Category root = catalog.getRoot();
-	  if (root == null) {
-	  	root = new Category();
-	  	catalog.setRoot(root);
-	  	root.setCatalog(catalog);
-	  	entityManager.persist(root);
-	  }
-	  return root;
-  }
-
 	public Property findOrCreateProperty(Item item, String name, PropertyType type) {
 	  for (Property property : item.getProperties()) {
 	  	for (Label label : property.getLabels()) {
@@ -176,7 +151,7 @@ public class CatalogDao {
 			cb.equal(labelsJoin.get(Label_.label), RootProperties.NAME),
 			cb.equal(valuesJoin.get(PropertyValue_.stringValue), nameParam)));
 		
-		return getEntityManager().createQuery(c).setParameter(nameParam, name).getSingleResult();
+		return entityManager.createQuery(c).setParameter(nameParam, name).getSingleResult();
 		
 	}
 	
