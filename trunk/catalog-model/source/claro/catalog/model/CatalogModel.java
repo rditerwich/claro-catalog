@@ -2,6 +2,7 @@ package claro.catalog.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.Paging;
@@ -85,11 +87,49 @@ public class CatalogModel {
 		return result;
 	}
 	
-	// TODO Extract initial item list (selection through categories).
-	// TODO productsOnly -> prods, cats, all
-	// TODO sorting.
-	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter, boolean productsOnly, Paging paging) {
-		List<ItemModel> result = new ArrayList<ItemModel>(paging.shouldPage()?paging.getPageSize() : 20);
+
+	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, List<Category> categories, String filter, Class<? extends Item> itemClass, List<Property> orderBy, Paging paging) {
+		List<ItemModel> candidates = findCategoryItems(categories, outputChannel, itemClass);
+		
+		List<ItemModel> result = filterItems(candidates, stagingArea, outputChannel, uiLanguage, language, filter);
+		
+		// TODO sort items
+//		Collections.sort(result, new ItemOrderComparator(orderBy));
+		if (paging.shouldPage()) {
+			return result.subList(paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
+		}
+		
+		return result;
+		
+	}
+	
+	
+	
+	private List<ItemModel> findCategoryItems(List<Category> categories, OutputChannel outputChannel, Class<? extends Item> itemClass) {
+		List<ItemModel> result = new ArrayList<ItemModel>();
+		if (categories.isEmpty()) {
+			for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel, itemClass)) {
+				result.add(getItem(item.getId()));
+			}
+			return result;
+		}
+
+		boolean first = true;
+		// TODO More efficiently?
+		for (Category category : categories) {
+			ItemModel categoryModel = getItem(category.getId());
+			if (first) {
+				result.addAll(categoryModel.getChildExtent());
+			} else {
+				result.retainAll(categoryModel.getChildExtent());
+			}
+		}
+		
+		return result;
+	}
+
+	private List<ItemModel> filterItems(List<ItemModel> candidates, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter) {
+		List<ItemModel> result = new ArrayList<ItemModel>();
 		
 		// Split of filter:
 		String[] filterCriteria = filter.toLowerCase().split(" ");
@@ -109,22 +149,10 @@ public class CatalogModel {
 		}
 		
 		// For each item, obtain model, and filter.
-		int offset = 0;
-		int results = 0;
-		for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel, productsOnly)) {
-			// Do we have enough results already?
-			if (paging.shouldPage() && results >= paging.getPageSize()) {
-				break;
-			}
-
-			// Obtain model
-			ItemModel itemModel = getItem(item.getId());
-
+		for (ItemModel itemModel : candidates) {
 			// add unfiltered items
-			if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language) 
-			&& (!paging.shouldPage() || ++offset > paging.getPageStart())) {
+			if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language)) {
 				result.add(itemModel);
-				results++;
 			}
 		}
 		

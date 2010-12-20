@@ -4,6 +4,7 @@ import static claro.catalog.model.PropertyModel.setTypedValue;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -89,13 +90,13 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		getEntityManager().flush();
 		
-		List<ItemModel> items = model.findItems(null, null, null, null, "Deskjet", true, Paging.NO_PAGING);
+		List<ItemModel> items = model.findItems(null, null, null, null, Collections.<Category>emptyList(), "Deskjet", Product.class, Collections.<Property>emptyList(), Paging.NO_PAGING);
 		System.out.println("Items:");
 		for (ItemModel item : items) {
 			System.out.println("  Item: " + item.getItemId());
 		}
 
-		items = model.findItems(null, null, null, null, "arti:123", true, Paging.NO_PAGING);
+		items = model.findItems(null, null, null, null, Collections.<Category>emptyList(), "arti:123", Product.class, Collections.<Property>emptyList(), Paging.NO_PAGING);
 		System.out.println("Items:");
 		for (ItemModel item : items) {
 			System.out.println("  Item: " + item.getItemId());

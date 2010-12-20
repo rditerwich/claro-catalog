@@ -166,11 +166,11 @@ public class CatalogDao {
 	}
 	
 	
-	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, boolean productsOnly) {
+	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, Class<? extends Item> itemClass) {
 		StringBuilder queryString = new StringBuilder("select item from ");
 		
-		if (productsOnly) {
-			queryString.append("Product ");
+		if (itemClass != null) {
+			queryString.append(itemClass.getSimpleName() + " ");
 		} else {
 			queryString.append("Item ");
 		}
