@@ -1,6 +1,5 @@
 package claro.catalog.model;
 
-import static claro.catalog.model.PropertyModel.getTypedValue;
 import static claro.catalog.model.PropertyModel.setTypedValue;
 
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.data.MoneyValue;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
@@ -54,37 +54,37 @@ public class CatalogModelTest extends CatalogTestBase {
 		addProduct(printers, "HP Deskjet 540 B&W", new Tuple[] { 
 			Tuple.create(model.articleNumberProperty, "ART123123123"),
 			Tuple.create(model.variantProperty, "HP Deskjet 540 Color"),
-			Tuple.create(model.priceProperty, "300"),
+			Tuple.create(model.priceProperty, new MoneyValue(300.00, "EUR")),
 		});
 		
 		addProduct(printers, "HP Deskjet 888 ", new Tuple[] { 
 				Tuple.create(model.articleNumberProperty, "ART123123123"),
 				Tuple.create(model.variantProperty, "HP Deskjet 888 Color"),
-				Tuple.create(model.priceProperty, "300"),
+				Tuple.create(model.priceProperty, new MoneyValue(300.00, "EUR")),
 		});
 		
 		addProduct(printers, "Canon Bla", new Tuple[] { 
 				Tuple.create(model.articleNumberProperty, "ART111222333"),
 				Tuple.create(model.variantProperty, "Canon Bla2"),
-				Tuple.create(model.priceProperty, "200"),
+				Tuple.create(model.priceProperty, new MoneyValue(200.00, "EUR")),
 		});
 		
 		addProduct(ink, "HP CYM ", new Tuple[] { 
 				Tuple.create(model.articleNumberProperty, "ART123123111"),
 				Tuple.create(model.variantProperty, "HP CYM XL"),
-				Tuple.create(model.priceProperty, "60"),
+				Tuple.create(model.priceProperty, new MoneyValue(60.00, "EUR")),
 		});
 		
 		addProduct(ink, "Canon Cyan", new Tuple[] { 
 				Tuple.create(model.articleNumberProperty, "ART111222444"),
 				Tuple.create(model.variantProperty, "Canon Cyan XL"),
-				Tuple.create(model.priceProperty, "20"),
+				Tuple.create(model.priceProperty, new MoneyValue(20.00, "EUR")),
 		});
 		
 		addProduct(ink, "Canon Magenta", new Tuple[] { 
 				Tuple.create(model.articleNumberProperty, "ART111222555"),
 				Tuple.create(model.variantProperty, "Canon Megenta XL"),
-				Tuple.create(model.priceProperty, "20"),
+				Tuple.create(model.priceProperty, new MoneyValue(20.00, "EUR")),
 		});
 		
 		getEntityManager().flush();
@@ -116,14 +116,14 @@ public class CatalogModelTest extends CatalogTestBase {
 		return c;
 	}
 	
-	private Product addProduct(Item parent, String name, Tuple<Property, Object>... properties) throws SQLException {
+	private Product addProduct(Item parent, String name, Tuple<PropertyModel, Object>... properties) throws SQLException {
 		Product p = new Product();
 		p.setCatalog(parent.getCatalog());
 		addChild(parent, p);
 		
 		setPropertyValue(null, null, p, getCatalogModel().nameProperty.getEntity(), null, name);
-		for (Tuple<Property, Object> property : properties) {
-			setPropertyValue(null, null, p, property.getFirst(), null, property.getSecond());
+		for (Tuple<PropertyModel, Object> property : properties) {
+			setPropertyValue(null, null, p, property.getFirst().getEntity(), null, property.getSecond());
 		}
 		
 		getEntityManager().persist(p);
@@ -166,5 +166,4 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		getEntityManager().persist(newPropertyValue);
 	}
-
 }

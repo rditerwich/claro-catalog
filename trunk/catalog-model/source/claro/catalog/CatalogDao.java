@@ -74,37 +74,6 @@ public class CatalogDao {
 		return entityManager.find(Property.class, id);
 	}
 
-	public List<Item> getItems(Collection<Long> ids) {
-		List<Item> result = new ArrayList<Item>();
-		for (Long id : ids) {
-			result.add(getItem(id));
-		}
-		return result;
-	}
-	
-	public Property findOrCreateProperty(Item item, String name, PropertyType type) {
-	  for (Property property : item.getProperties()) {
-	  	for (Label label : property.getLabels()) {
-	  		if (label.getLabel().equals(name) && label.getLanguage() == null) {
-	  			property.setType(type);
-	  			return property;
-	  		}
-	  	}
-	  }
-	  Property property = new Property();
-	  property.setCategoryProperty(false);
-	  property.setType(type);
-	  property.setItem(item);
-	  property.setIsMany(false);
-	  item.getProperties().add(property);
-	  getOrCreateLabel(property, name, null);
-	  
-	  entityManager.persist(property);
-	  
-	  return property;
-  }
-	
-
 	public PropertyValue getPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language) {
 		TypedQuery<PropertyValue> query = entityManager.createQuery("select propertyValue from PropertyValue propertyValue where ", PropertyValue.class);
 		

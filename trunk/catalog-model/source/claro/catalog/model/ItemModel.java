@@ -3,6 +3,7 @@ package claro.catalog.model;
 import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -74,12 +75,21 @@ public class ItemModel {
 		}
 	}
 	
-	public void setParents(List<Long> parentIds) {
+	public void setParents(Collection<ItemModel> parents) {
+		List<Item> items = new ArrayList<Item>();
+		for (ItemModel parent : parents) {
+			items.add(parent.getEntity());
+		}
 		CatalogDao dao = CatalogAccess.getDao();
-		if (dao.setItemParents(getEntity(), dao.getItems(parentIds))) {
+		if (dao.setItemParents(getEntity(), items)) {
 			catalog.invalidate(getChildExtent());
 			catalog.invalidate(getParentExtent());
+			for (ItemModel parent : parents) {
+				catalog.invalidate(parent.getChildExtent());
+				catalog.invalidate(parent.getParentExtent());
+			}
 		}
+		
 	}
 
 	public Item getEntity() {

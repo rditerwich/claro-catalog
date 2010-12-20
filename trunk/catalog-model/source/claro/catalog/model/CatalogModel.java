@@ -1,6 +1,7 @@
 package claro.catalog.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,14 @@ public class CatalogModel {
 		}
 		return itemData;
 	}
-	
+
+	public List<ItemModel> getItems(Collection<Long> ids) throws ItemNotFoundException {
+		List<ItemModel> result = new ArrayList<ItemModel>();
+		for (Long id : ids) {
+			result.add(getItem(id));
+		}
+		return result;
+	}
 	
 	// TODO Extract initial item list (selection through categories).
 	// TODO productsOnly -> prods, cats, all
