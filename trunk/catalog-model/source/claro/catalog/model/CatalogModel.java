@@ -77,6 +77,9 @@ public class CatalogModel {
 	}
 	
 	
+	// TODO Extract initial item list (selection through categories).
+	// TODO productsOnly -> prods, cats, all
+	// TODO sorting.
 	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter, boolean productsOnly, Paging paging) {
 		List<ItemModel> result = new ArrayList<ItemModel>(paging.shouldPage()?paging.getPageSize() : 20);
 		

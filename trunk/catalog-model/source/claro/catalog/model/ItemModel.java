@@ -269,11 +269,20 @@ public class ItemModel {
 			return danglingProperties;
 		}		
 	}
+	
+	void invalidateChildExtent(boolean includeSelf) {
+		// TODO Do we need synchronization?
+		
+		catalog.invalidate(childExtent);
+		if (includeSelf) {
+			catalog.invalidate(this);
+		}
+	}
 
 	/**
 	 * Only called from CatalogAccess, do not call!
 	 */
-	void invalidate() {
+	void doInvalidate() {
 		synchronized (catalog) {
 			parents = null;
 			children = null;

@@ -51,7 +51,7 @@ public class CatalogAccess {
 		CatalogAccess accessInfo = threadInstance.get();
 		threadInstance.set(null);
 		for (ItemModel item : accessInfo.invalidItems) {
-			item.invalidate();
+			item.doInvalidate();
 		}
 	}
 }

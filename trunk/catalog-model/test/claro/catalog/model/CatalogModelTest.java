@@ -1,5 +1,8 @@
 package claro.catalog.model;
 
+import static claro.catalog.model.PropertyModel.getTypedValue;
+import static claro.catalog.model.PropertyModel.setTypedValue;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -10,10 +13,15 @@ import claro.catalog.CatalogDao;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
-import claro.jpa.catalog.PropertyType;
+import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.StagingArea;
+
+import com.google.common.base.Objects;
+
 import easyenterprise.lib.util.Paging;
 import easyenterprise.lib.util.Tuple;
 
@@ -94,12 +102,15 @@ public class CatalogModelTest extends CatalogTestBase {
 		}
 	}
 	
+	// TODO Add test to invalidate item without childextent.
+	
 	private Category addCategory(Item parent, String name) throws SQLException {
 		Category c = new Category();
 		c.setCatalog(parent.getCatalog());
 		addChild(parent, c);
 		
-		getCatalogDao().setPropertyValue(null, null, c, getCatalogModel().nameProperty, null, name);
+		
+		setPropertyValue(null, null, c, getCatalogModel().nameProperty.getEntity(), null, name);
 		getEntityManager().persist(c);
 		
 		return c;
@@ -110,10 +121,9 @@ public class CatalogModelTest extends CatalogTestBase {
 		p.setCatalog(parent.getCatalog());
 		addChild(parent, p);
 		
-		CatalogDao dao = getCatalogDao();
-		dao.setPropertyValue(null, null, p, getCatalogModel().nameProperty, null, name);
+		setPropertyValue(null, null, p, getCatalogModel().nameProperty.getEntity(), null, name);
 		for (Tuple<Property, Object> property : properties) {
-			dao.setPropertyValue(null, null, p, property.getFirst(), null, property.getSecond());
+			setPropertyValue(null, null, p, property.getFirst(), null, property.getSecond());
 		}
 		
 		getEntityManager().persist(p);
@@ -132,4 +142,29 @@ public class CatalogModelTest extends CatalogTestBase {
 
 		getEntityManager().persist(pc);
 	}
+	
+	private void setPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language, Object value) throws SQLException {
+		for (PropertyValue propertyValue : item.getPropertyValues()) {
+			if (propertyValue.getProperty().equals(property) 
+			&& Objects.equal(propertyValue.getStagingArea(), stagingArea)
+			&& Objects.equal(propertyValue.getOutputChannel(), outputChannel)
+			&& Objects.equal(propertyValue.getLanguage(), language)) {
+				setTypedValue(propertyValue, value);
+				return;
+			}
+		}
+
+		// No candidate found, create a new one
+		PropertyValue newPropertyValue = new PropertyValue();
+		item.getPropertyValues().add(newPropertyValue);
+		newPropertyValue.setItem(item);
+		
+		newPropertyValue.setProperty(property);
+		newPropertyValue.setStagingArea(stagingArea);
+		newPropertyValue.setOutputChannel(outputChannel);
+		setTypedValue(newPropertyValue, value);
+		
+		getEntityManager().persist(newPropertyValue);
+	}
+
 }

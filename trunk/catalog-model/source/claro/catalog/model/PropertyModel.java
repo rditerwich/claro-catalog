@@ -104,7 +104,7 @@ public abstract class PropertyModel {
 		return CatalogAccess.getDao().getProperty(getPropertyId());
 	}
 	
-	public boolean setValue(StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
+	public void setValue(StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
 		synchronized(getItem().catalog) {
 
 			// Do we have a property value already?
@@ -115,13 +115,14 @@ public abstract class PropertyModel {
 				
 				// Are we changing anything?
 				Object existingValue = getTypedValue(propertyValue);
-				if (Objects.equal(value, existingValue)) {
-					return false;
-
+				if (!Objects.equal(value, existingValue)) {
+					
+					// Set the actual value
+					setTypedValue(propertyValue, value);
+					
+					// Item has changed:
+					item.invalidateChildExtent(true);
 				}
-				
-				// Set the actual value
-				setTypedValue(propertyValue, value);
 			} else {
 				
 				// No candidate found, create a new one
@@ -137,9 +138,10 @@ public abstract class PropertyModel {
 				setTypedValue(propertyValue, value);
 				
 				CatalogAccess.getDao().getEntityManager().persist(propertyValue);
+				
+				// Item has changed:
+				item.invalidateChildExtent(true);
 			}
-			
-			return true;
 		}
 	}
 	
@@ -249,22 +251,40 @@ public abstract class PropertyModel {
 	
 	static void setTypedValue(PropertyValue propertyValue, Object value) {
 		switch(propertyValue.getProperty().getType()) {
-		// TODO add actual cases...
+		case Media: 
+			if (value instanceof MediaValue) {
+				MediaValue mediaValue = (MediaValue) value;
+				propertyValue.setMimeType(mediaValue.mimeType);
+				propertyValue.setStringValue(mediaValue.filename);
+			} else {
+				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MediaValue");
+			}
+			break;
+		case Money:
+			if (value instanceof MoneyValue) {
+				MoneyValue moneyValue = (MoneyValue) value;
+				propertyValue.setMoneyValue(moneyValue.value);
+				propertyValue.setMoneyCurrency(moneyValue.currency);
+			} else {
+				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MoneyValue");
+			}
+			break;
+			
+		// TODO add other non-string values
 		default:
 			propertyValue.setStringValue(value.toString());
-			
 		}
 	}
 
 
 	
+	// TODO add other non-string values
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
-		case String: return value.getStringValue();
 		case Media: return new MediaValue(value.getId(), value.getMimeType(), value.getStringValue());
 		case Money: return new MoneyValue(value.getMoneyValue(), value.getMoneyCurrency());
+		default: return value.getStringValue();
 		}
-		return null;
 	}
 	
 	private static PropertyInfo createPropertyInfo(ItemModel ownerItem, Property entity, boolean isDangling) {
