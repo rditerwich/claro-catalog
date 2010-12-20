@@ -205,14 +205,14 @@ public class CatalogModel {
 	
 	void invalidate(ItemModel... items) {
 		for (ItemModel item : items) {
-			CatalogAccess.getInvalidItems().add(item);
+			item.doInvalidate();
 		}
 	}
 	
 	void invalidate(Iterable<ItemModel> items) {
 		if (items != null) {
 			for (ItemModel item : items) {
-				CatalogAccess.getInvalidItems().add(item);
+				item.doInvalidate();
 			}
 		}
 	}

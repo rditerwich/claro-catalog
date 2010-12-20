@@ -82,12 +82,14 @@ public class ItemModel {
 		}
 		CatalogDao dao = CatalogAccess.getDao();
 		if (dao.setItemParents(getEntity(), items)) {
-			catalog.invalidate(getChildExtent());
-			catalog.invalidate(getParentExtent());
+			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
+			invalidItems.addAll(getChildExtent());
+			invalidItems.addAll(getParentExtent());
 			for (ItemModel parent : parents) {
-				catalog.invalidate(parent.getChildExtent());
-				catalog.invalidate(parent.getParentExtent());
+				invalidItems.addAll(parent.getChildExtent());
+				invalidItems.addAll(parent.getParentExtent());
 			}
+			catalog.invalidate(invalidItems);
 		}
 		
 	}

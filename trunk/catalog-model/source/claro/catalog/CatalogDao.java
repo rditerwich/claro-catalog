@@ -1,7 +1,6 @@
 package claro.catalog;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,7 +23,6 @@ import claro.jpa.catalog.Label_;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
-import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
@@ -159,7 +157,7 @@ public class CatalogDao {
 		// re-index parents
 		for (ParentChild parentChild : new ArrayList<ParentChild>(item.getParents())) {
 			int index = parents.indexOf(parentChild.getParent());
-			if (parentChild.getIndex() != index) {
+			if (parentChild.getIndex() == null || parentChild.getIndex() != index) {
 				parentChild.setIndex(index);
 				changed = true;
 			}
