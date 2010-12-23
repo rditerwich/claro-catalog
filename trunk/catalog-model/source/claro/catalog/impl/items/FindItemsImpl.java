@@ -1,4 +1,4 @@
-package claro.catalog.impl;
+package claro.catalog.impl.items;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
-import claro.catalog.command.FindItems;
+import claro.catalog.command.items.FindItems;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;

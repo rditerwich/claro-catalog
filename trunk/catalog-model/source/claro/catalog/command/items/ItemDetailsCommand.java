@@ -1,4 +1,4 @@
-package claro.catalog.command;
+package claro.catalog.command.items;
 
 import easyenterprise.lib.command.Command;
 

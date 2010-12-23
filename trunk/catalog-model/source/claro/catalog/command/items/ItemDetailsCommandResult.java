@@ -1,4 +1,4 @@
-package claro.catalog.command;
+package claro.catalog.command.items;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;

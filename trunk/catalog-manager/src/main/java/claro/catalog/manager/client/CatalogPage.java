@@ -1,10 +1,10 @@
 package claro.catalog.manager.client;
 
-import claro.catalog.command.ItemDetailsCommand;
-import claro.catalog.command.ItemDetailsCommandResult;
-import claro.catalog.command.FindItems;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
+import claro.catalog.command.items.FindItems;
+import claro.catalog.command.items.ItemDetailsCommand;
+import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.catalog.Item;
 

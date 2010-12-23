@@ -1,8 +1,8 @@
-package claro.catalog.impl;
+package claro.catalog.impl.items;
 
 import claro.catalog.CatalogModelService;
-import claro.catalog.command.ItemDetailsCommand;
-import claro.catalog.command.ItemDetailsCommandResult;
+import claro.catalog.command.items.ItemDetailsCommand;
+import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.data.PropertyData;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;

@@ -7,8 +7,7 @@ import javax.persistence.EntityManager;
 
 import org.junit.Test;
 
-import claro.catalog.command.FindItems;
-import claro.catalog.command.FindItems.ResultType;
+import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.data.MoneyValue;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
