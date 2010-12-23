@@ -87,78 +87,6 @@ public class CatalogModel {
 		return result;
 	}
 	
-
-	public synchronized List<ItemModel> findItems(StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, List<Category> categories, String filter, Class<? extends Item> itemClass, List<Property> orderBy, Paging paging) {
-		List<ItemModel> candidates = findCategoryItems(categories, outputChannel, itemClass);
-		
-		List<ItemModel> result = filterItems(candidates, stagingArea, outputChannel, uiLanguage, language, filter);
-		
-		// TODO sort items
-//		Collections.sort(result, new ItemOrderComparator(orderBy));
-		if (paging.shouldPage()) {
-			return result.subList(paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
-		}
-		
-		return result;
-		
-	}
-	
-	
-	
-	private List<ItemModel> findCategoryItems(List<Category> categories, OutputChannel outputChannel, Class<? extends Item> itemClass) {
-		List<ItemModel> result = new ArrayList<ItemModel>();
-		if (categories.isEmpty()) {
-			for (Item item : CatalogAccess.getDao().findItems(catalog, outputChannel, itemClass)) {
-				result.add(getItem(item.getId()));
-			}
-			return result;
-		}
-
-		boolean first = true;
-		// TODO More efficiently?
-		for (Category category : categories) {
-			ItemModel categoryModel = getItem(category.getId());
-			if (first) {
-				result.addAll(categoryModel.getChildExtent());
-			} else {
-				result.retainAll(categoryModel.getChildExtent());
-			}
-		}
-		
-		return result;
-	}
-
-	private List<ItemModel> filterItems(List<ItemModel> candidates, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language, String filter) {
-		List<ItemModel> result = new ArrayList<ItemModel>();
-		
-		// Split of filter:
-		String[] filterCriteria = filter.toLowerCase().split(" ");
-		List<String> simpleCriteria = new ArrayList<String>();
-		List<PropertyCriterium> propertyCriteria = new ArrayList<PropertyCriterium>();
-		for (String criterium : filterCriteria) {
-			String[] splitCriterium = criterium.split(":");
-			if (splitCriterium.length == 2) {
-				if (splitCriterium[1] != null && splitCriterium[1].trim().length() > 0) {
-					propertyCriteria.add(new PropertyCriterium(splitCriterium[0], splitCriterium[1]));
-				}
-			} else {
-				if (criterium != null && criterium.trim().length() > 0) {
-					simpleCriteria.add(criterium);
-				}
-			}
-		}
-		
-		// For each item, obtain model, and filter.
-		for (ItemModel itemModel : candidates) {
-			// add unfiltered items
-			if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language)) {
-				result.add(itemModel);
-			}
-		}
-		
-		return result;
-	}
-	
 	private Catalog findOrCreateCatalog(Long id) {
 		EntityManager em = CatalogAccess.getEntityManager();
 		Catalog catalog = em.find(Catalog.class, id);
@@ -182,48 +110,6 @@ public class CatalogModel {
 	  }
 	  return root;
   }	
-	
-	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language) {
-		List<String> unsatisfiedSimpleCriteria = new ArrayList<String>(simpleCriteria);
-		List<PropertyCriterium> unsatisfiedPropertyCriteria = new ArrayList<PropertyCriterium>(propertyCriteria);
-		for (PropertyModel propertyModel : item.getPropertyExtent()) {
-			
-			// Obtain value for property:
-			SMap<String, Object> effectiveValues = propertyModel.getEffectiveValues(stagingArea, outputChannel);
-			Object objectValue = effectiveValues.tryGet(language, null);
-			if (objectValue != null) {
-				String value = objectValue.toString().toLowerCase();
-
-				// Try simple criteria
-				for (String criterium : new ArrayList<String>(unsatisfiedSimpleCriteria)) {
-					if (value.contains(criterium)) {
-						unsatisfiedSimpleCriteria.remove(criterium);
-					}
-				}
-				
-				// try property criteria:
-				String propertyLabel = propertyModel.getPropertyInfo().labels.tryGet(uiLanguage, null);
-				if (propertyLabel != null) {
-					String lowerPropertyLabel = propertyLabel.toLowerCase();
-					for (PropertyCriterium criterium : new ArrayList<PropertyCriterium>(unsatisfiedPropertyCriteria)) {
-						if (lowerPropertyLabel.contains(criterium.property)) {
-							if (value.contains(criterium.value)) {
-								unsatisfiedPropertyCriteria.remove(criterium);
-							}
-						}
-					}
-				}
-			}
-			
-			// Early out:
-			if (unsatisfiedSimpleCriteria.isEmpty() && unsatisfiedPropertyCriteria.isEmpty()) {
-				break;
-			}
-		}
-		
-		return unsatisfiedSimpleCriteria.isEmpty() && unsatisfiedPropertyCriteria.isEmpty();
-	}
-
 	public ItemModel createCategory() {
 		Category category = new Category();
 		category.setCatalog(catalog);
@@ -242,15 +128,6 @@ public class CatalogModel {
 			for (ItemModel item : items) {
 				item.doInvalidate();
 			}
-		}
-	}
-	
-	private class PropertyCriterium {
-		String property;
-		String value;
-		public PropertyCriterium(String property, String value) {
-			this.property = property;
-			this.value = value;
 		}
 	}
 }

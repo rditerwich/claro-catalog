@@ -2,8 +2,7 @@ package claro.catalog.manager.client;
 
 import claro.catalog.command.ItemDetailsCommand;
 import claro.catalog.command.ItemDetailsCommandResult;
-import claro.catalog.command.ProductListCommand;
-import claro.catalog.command.ProductListCommandResult;
+import claro.catalog.command.FindItems;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
 import claro.catalog.manager.client.command.StatusCallback;
@@ -132,17 +131,18 @@ public class CatalogPage extends Page {
 	}
 	
 	private void updateProductList() {
-		ProductListCommand cmd = new ProductListCommand();
-		cmd .setCatalogId(currentCatalogId)
-			.setOutputChannelId(currentOuputChannel)
-			.setLanguage(currentLanguage)
-			.setFilterString(constructFilterString());
+		FindItems cmd = new FindItems();
+		cmd.catalogId = currentCatalogId;
+		cmd.outputChannelId = currentOuputChannel;
+		cmd.language = currentLanguage;
+		cmd.filter = constructFilterString();
+		// TODO set more command pars.
 
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ProductListCommandResult>(Util.i18n.loadingProducts()) {
-			public void onSuccess(ProductListCommandResult result) {
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(Util.i18n.loadingProducts()) {
+			public void onSuccess(FindItems.Result result) {
 				updateFilterLabel();
-				noProductsFoundLabel.setVisible(result.products.isEmpty());
-				filteredProductList.setProducts(result.products);
+				noProductsFoundLabel.setVisible(result.items.isEmpty());
+				filteredProductList.setProducts(result.items);
 			}
 		});
 	}
