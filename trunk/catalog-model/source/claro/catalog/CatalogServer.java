@@ -23,6 +23,8 @@ public class CatalogServer implements CommandExecutor {
 
 	private final EntityManagerFactory entityManagerFactory;
 	private final CommandExecutor executor;
+
+	private final CatalogModelService catalogModelService;
 	
 	public CatalogServer(ServletConfig config) {
 		this(collectProperties(config));
@@ -31,12 +33,17 @@ public class CatalogServer implements CommandExecutor {
 	public CatalogServer(Map<String, String> properties) {
 		entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", properties);
 		CommandServer server = new CommandServer(registeredCommands);
-		executor = new JpaService(new CatalogModelService(server), entityManagerFactory);
+		catalogModelService = new CatalogModelService(server);
+		executor = new JpaService(catalogModelService, entityManagerFactory);
 	}
 	
 	@Override
 	public <T extends CommandResult, C extends Command<T>> T execute(C command) throws CommandException {
 		return executor.execute(command);
+	}
+	
+	public CatalogModelService getCatalogModelService() {
+		return catalogModelService;
 	}
 	
 	private static Map<String, String> collectProperties(ServletConfig config) {

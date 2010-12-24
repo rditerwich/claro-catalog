@@ -31,6 +31,11 @@ public class CatalogModelService extends CommandWrapper {
 		super(delegate);
 	}
 	
+	/**
+	 * Get the catalog model for <code>catalogId</code>.  Must only be called from commands that are executed by this service.
+	 * @param catalogId
+	 * @return
+	 */
 	public static CatalogModel getCatalogModel(Long catalogId) {
 		State state = stateLocal.get();
 		if (!state.operationStarted && !state.parentHasStartedOperation) {

@@ -32,17 +32,17 @@ public class CatalogAccess {
 	
 	static CatalogAccess getInstance() {
 		CatalogAccess updateStatus = threadInstance.get();
-		if (updateStatus == null) {
-			throw new RuntimeException("No catalog access allowed. Please call " + CatalogModel.class.getName() + ".startOperation(...)");
-		}
+//		if (updateStatus == null) {
+//			throw new RuntimeException("No catalog access allowed. Please call " + CatalogModel.class.getName() + ".startOperation(...)");
+//		}
 		return updateStatus;
 	}
 	
 	static void startOperation(CatalogDao dao) {
 		CatalogAccess accessInfo = threadInstance.get();
-		if (accessInfo != null) {
-			throw new RuntimeException("No nested catalog access allowed");
-		}
+//		if (accessInfo != null) {
+//			throw new RuntimeException("No nested catalog access allowed");
+//		}
 		accessInfo = new CatalogAccess(dao);
 		threadInstance.set(accessInfo);
 	}

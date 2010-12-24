@@ -62,7 +62,7 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 //			propertyData.importSourceValues = SMap.create(channel, property.getImportSourceValues(null)));
 
 			// Add propertyinfo to result
-			result.propertyData.add(property.getPropertyInfo(), propertyData);
+			result.propertyData = result.propertyData.add(property.getPropertyInfo(), propertyData);
 		}
 		
 		return result;

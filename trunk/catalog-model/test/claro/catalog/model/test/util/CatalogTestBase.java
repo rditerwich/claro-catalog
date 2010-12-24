@@ -15,12 +15,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.CatalogModelService;
 import claro.catalog.CatalogServer;
 import claro.catalog.model.CatalogModel;
 import claro.jpa.catalog.Catalog;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandResult;
+import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
@@ -30,8 +32,8 @@ public class CatalogTestBase {
 	
 	private static Connection connection;
 	private static CatalogServer server;
-	private static EntityManagerFactory entityManagerFactory;
 	private static boolean databaseCreated;
+	private static JpaService jpaService;
 
 	private EntityManager entityManager;
 
@@ -96,20 +98,21 @@ public class CatalogTestBase {
 		return getServer().execute(command);
 	}
 	
-	private static EntityManagerFactory getEntityManagerFactory() throws SQLException {
-		if (entityManagerFactory == null) {
-			entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties());
+	protected static void runInTransaction(Runnable r) {
+		getJpaService().runInTransaction(r);
+	}
+	
+	protected static JpaService getJpaService() {
+		if (jpaService == null) {
+			jpaService = new JpaService(null, Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties()));
 		}
-		return entityManagerFactory;
+		return jpaService;
 	}
 	
 	protected EntityManager getEntityManager() throws SQLException {
-		if (entityManager == null) {
-			ensureDatabaseCreated();
-			entityManager = getEntityManagerFactory().createEntityManager();
-			entityManager.getTransaction().begin();
-		}
-		return entityManager;
+		ensureDatabaseCreated();
+		getJpaService();
+		return JpaService.getEntityManager();
 	}
 	
 	protected CatalogDao getCatalogDao() throws SQLException {
@@ -117,17 +120,14 @@ public class CatalogTestBase {
 	}
 	
 	protected CatalogModel getCatalogModel() throws SQLException {
-		if (catalogModel == null) {
-			CatalogModel.startOperation(getCatalogDao());
-			catalogModel = new CatalogModel(TEST_CATALOG_ID);
-		}
-		return catalogModel;
+		getServer(); // Ensure that the server is intialized.
+		return CatalogModelService.getCatalogModel(TEST_CATALOG_ID);
 	}
 	
 	@BeforeClass
 	public static void initializeClass() {
 		server = null;
-		entityManagerFactory = null;
+		jpaService = null;
 	}
 	
 	@Before
