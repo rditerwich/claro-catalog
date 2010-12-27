@@ -6,8 +6,8 @@ import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyType;
+import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
-import claro.jpa.importing.ImportSource;
 
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -69,7 +69,7 @@ public class ItemPropertyValues extends Composite {
 				}
 			}
 
-			for (SMap<ImportSource, SMap<String, Object>> outputChannelValues : propertyData.importSourceValues.getAll()) {
+			for (SMap<Source, SMap<String, Object>> outputChannelValues : propertyData.sourceValues.getAll()) {
 				for (SMap<String, Object> importSourceValues : outputChannelValues.getAll()) {
 					addValueRow(property, importSourceValues, SMap.<String, Object>empty());
 				}
