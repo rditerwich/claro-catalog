@@ -31,6 +31,8 @@ public class PerformImport implements Command<PerformImport.Result> {
 	public boolean overwriteLastImportSource = false;
 	
 	public void checkValid() throws CommandValidationException {
+		validate(catalogId != null);
+		validate(importDefinitionId != null);
 		validate(!overwriteAllImportSources || !overwriteLastImportSource);
 	}
 	

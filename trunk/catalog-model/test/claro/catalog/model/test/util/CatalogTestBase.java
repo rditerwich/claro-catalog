@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -33,9 +32,6 @@ public class CatalogTestBase {
 	private static Connection connection;
 	private static CatalogServer server;
 	private static boolean databaseCreated;
-	private static JpaService jpaService;
-
-	private EntityManager entityManager;
 
 	private CatalogModel catalogModel;
 
@@ -88,35 +84,18 @@ public class CatalogTestBase {
 	
 	protected static CatalogServer getServer() throws SQLException {
 		if (server == null) {
-			ensureDatabaseCreated();
 			server = new CatalogServer(getProperties());
 		}
 		return server;
   }
 	
 	protected static <T extends CommandResult> T executeCommand(Command<T> command) throws CommandException, SQLException {
+		JpaService.commit();
 		return getServer().execute(command);
 	}
 	
-	protected static void runInTransaction(Runnable r) {
-		getJpaService().runInTransaction(r);
-	}
-	
-	protected static JpaService getJpaService() {
-		if (jpaService == null) {
-			jpaService = new JpaService(null, Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties()));
-		}
-		return jpaService;
-	}
-	
-	protected EntityManager getEntityManager() throws SQLException {
-		ensureDatabaseCreated();
-		getJpaService();
-		return JpaService.getEntityManager();
-	}
-	
 	protected CatalogDao getCatalogDao() throws SQLException {
-		return new CatalogDao(getEntityManager());
+		return new CatalogDao(JpaService.getEntityManager());
 	}
 	
 	protected CatalogModel getCatalogModel() throws SQLException {
@@ -127,12 +106,12 @@ public class CatalogTestBase {
 	@BeforeClass
 	public static void initializeClass() {
 		server = null;
-		jpaService = null;
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties());
+		JpaService.setGlobalEntityManagerFactory(entityManagerFactory);
 	}
 	
 	@Before
 	public void initializeTest() {
-		entityManager = null;
 		catalogModel = null;
 	}
 	
@@ -141,11 +120,6 @@ public class CatalogTestBase {
 		if (catalogModel != null) { 
 			CatalogModel.endOperation();
 		}
-		if (entityManager != null) {
-			if (entityManager.getTransaction().isActive()) {
-				entityManager.getTransaction().commit();
-			}
-			entityManager.close();
-		}
+		JpaService.commit();
 	}
 }

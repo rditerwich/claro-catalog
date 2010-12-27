@@ -2,7 +2,6 @@ package claro.catalog.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,7 @@ import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
-import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
-import claro.jpa.catalog.StagingArea;
-import easyenterprise.lib.util.Paging;
-import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
@@ -110,9 +104,11 @@ public class CatalogModel {
 	  }
 	  return root;
   }	
+	
 	public ItemModel createCategory() {
 		Category category = new Category();
 		category.setCatalog(catalog);
+		catalog.getItems().add(category);
 		CatalogAccess.getDao().getEntityManager().persist(category);
 		return getItem(category.getId());
 	}

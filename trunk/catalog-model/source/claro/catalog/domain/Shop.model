@@ -23,10 +23,6 @@ Package {
             superClass = catalog:OutputChannel        
             attributes = {
                 Attribute {
-                    name = name
-                    type = primitive:String
-                }
-                Attribute {
                     name = urlPrefix
                     type = primitive:String
                     lower = 0
@@ -36,29 +32,12 @@ Package {
                  * When not specified (null), denotes a default value applicable for all languages.
                  */
                 Attribute {
-                    name = defaultLanguage
-                    type = primitive:String
-                    lower = 0
-                } 
-                Attribute {
                     name = navigation
                     type = shop:Navigation
                     isComposite = true
                     lower = 0
                     upper = {}
                     opposite = shop:Navigation/attributes:parentShop
-                }
-                Attribute {
-                    name = excludedProperties
-                    type = catalog:Property
-                    lower = 0
-                    upper = {}
-                }
-                Attribute {
-                    name = excludedItems
-                    type = catalog:Item
-                    lower = 0
-                    upper = {}
                 }
                 Attribute {
                     name = promotions

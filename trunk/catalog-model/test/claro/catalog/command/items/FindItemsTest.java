@@ -16,6 +16,7 @@ import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
+import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.Tuple;
 
 public class FindItemsTest extends CatalogTestBase {
@@ -58,12 +59,12 @@ public class FindItemsTest extends CatalogTestBase {
 	@Before
 	@SuppressWarnings("unchecked")
 	public void setupItems() {
-		runInTransaction(new Runnable() {
+		JpaService.runInTransaction(new Runnable() {
 			
 			public void run() {
 				try {
 					CatalogModel model = getCatalogModel();
-					EntityManager entityManager = getEntityManager();
+					EntityManager entityManager = JpaService.getEntityManager();
 					
 					// First create some categories and items
 					Category root = model.catalog.getRoot();

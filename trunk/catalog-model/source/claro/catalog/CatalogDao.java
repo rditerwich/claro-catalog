@@ -32,6 +32,7 @@ import claro.jpa.importing.ImportDefinition_;
 
 import com.google.common.base.Objects;
 
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Paging;
 
 public class CatalogDao {
@@ -73,16 +74,31 @@ public class CatalogDao {
 	}
 
 	public PropertyValue getPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language) {
-		TypedQuery<PropertyValue> query = entityManager.createQuery("select propertyValue from PropertyValue propertyValue where ", PropertyValue.class);
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
 		
-		List<PropertyValue> results = query.getResultList();
-		if (results.size() == 1) {
-			return results.get(0);
-		} else if (results.isEmpty()) {
-			return null;
-		}
+		ParameterExpression<StagingArea> stagingParam = cb.parameter(StagingArea.class);
+		ParameterExpression<OutputChannel> outputChannelParam = cb.parameter(OutputChannel.class);
+		ParameterExpression<Item> itemParam = cb.parameter(Item.class);
+		ParameterExpression<Property> propertyParam = cb.parameter(Property.class);
+		ParameterExpression<String> languageParam = cb.parameter(String.class);
 		
-		throw new RuntimeException("Inconsistent database: " + results); // TODO add results better.
+		Root<PropertyValue> root = c.from(PropertyValue.class);
+		c.select(root).where(
+				cb.equal(root.get(PropertyValue_.stagingArea), stagingParam),
+				cb.equal(root.get(PropertyValue_.outputChannel), outputChannelParam),
+				cb.equal(root.get(PropertyValue_.item), itemParam),
+				cb.equal(root.get(PropertyValue_.property), propertyParam),
+				cb.equal(root.get(PropertyValue_.language), languageParam));
+		
+		TypedQuery<PropertyValue> query = entityManager.createQuery(c).
+			setParameter(stagingParam, stagingArea).
+			setParameter(outputChannelParam, outputChannel).
+			setParameter(itemParam, item).
+			setParameter(propertyParam, property).
+			setParameter(languageParam, language);
+
+		return CollectionUtil.firstOrNull(query.getResultList());
 	}
 
 	public Label getOrCreateLabel(Property property, String label, String language) {
@@ -113,7 +129,7 @@ public class CatalogDao {
 		Join<PropertyValue, Property> propertyJoin = valuesJoin.join(PropertyValue_.property);
 		Join<Property,Label> labelsJoin = propertyJoin.join(Property_.labels);
 		
-		CriteriaQuery<Category> query = c.select(root).where(cb.and(
+		c.select(root).where(cb.and(
 			cb.isNull(labelsJoin.get(Label_.language)),
 			cb.equal(labelsJoin.get(Label_.label), RootProperties.NAME),
 			cb.equal(valuesJoin.get(PropertyValue_.stringValue), nameParam)));

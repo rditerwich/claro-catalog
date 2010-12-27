@@ -41,15 +41,18 @@ Package {
                 Attribute {
                     name = matchProperty
                     type = primitive:String
+                    lower = 0
                 }
                 Attribute {
                     name = priority
                     type = primitive:Integer
+                    lower = 0
                 }
                 @comment "Incremented in every import, can be used in expressions"
                 Attribute {
                     name = sequenceNr
                     type = primitive:Integer
+                    lower = 0
                 }
                 Attribute {
                     name = categories

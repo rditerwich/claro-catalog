@@ -37,6 +37,9 @@ public class CatalogModelService extends CommandWrapper {
 	 * @return
 	 */
 	public static CatalogModel getCatalogModel(Long catalogId) {
+		if (catalogId == null) {
+			throw new RuntimeException("No catalog id specified");
+		}
 		State state = stateLocal.get();
 		if (!state.operationStarted && !state.parentHasStartedOperation) {
 			CatalogModel.startOperation(createDao());

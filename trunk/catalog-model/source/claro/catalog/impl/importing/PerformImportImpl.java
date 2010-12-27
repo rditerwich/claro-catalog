@@ -90,6 +90,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// loop over lines
 		for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+			System.out.println("Reading line: " + line);
 			
 			// parse fields
 			List<String> fields = parseLine(line);

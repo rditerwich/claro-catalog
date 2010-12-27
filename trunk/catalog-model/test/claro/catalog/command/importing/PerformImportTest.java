@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import claro.catalog.command.importing.UpdateImportDefinition.Result;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
@@ -20,7 +21,8 @@ public class PerformImportTest extends CatalogTestBase {
 	
 	@Test
 	public void test() throws SQLException, CommandException {
-		
+
+		ensureDatabaseCreated();
 		CatalogModel model = getCatalogModel();
 		
 		// create an import definition
@@ -45,10 +47,18 @@ public class PerformImportTest extends CatalogTestBase {
 		ImportCategory importCat = new ImportCategory();
 		importCat.setExpression(categoryName);
 		importDef.getCategories().add(importCat);
-		
+
+		// create an import definition
 		UpdateImportDefinition update = new UpdateImportDefinition();
 		update.importDefinition = importDef;
-		executeCommand(update);
+		Result updateResult = executeCommand(update);
 		
+		
+		// perform update
+		PerformImport performImport = new PerformImport();
+		performImport.catalogId = TEST_CATALOG_ID;
+		performImport.importDefinitionId = updateResult.importDefinition.getId();
+		performImport.importUrl = getClass().getResource("sample-products.csv").toString();
+		executeCommand(performImport);
 	}
 }
