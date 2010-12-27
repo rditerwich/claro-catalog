@@ -12,7 +12,7 @@ import claro.catalog.data.MoneyValue;
 import claro.jpa.catalog.PropertyType;
 import easyenterprise.lib.util.ObjectUtil;
 
-public class PropertyValueConversion {
+public class PropertyStringConverter {
 
 	public static final Map<String, Currency> currencyMap = createCurrencyMap();
 	
