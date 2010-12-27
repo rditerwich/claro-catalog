@@ -26,17 +26,15 @@ public class PerformImport implements Command<PerformImport.Result> {
 	/**
 	 * Overwrite 
 	 */
-	public boolean overwriteAllImportSources = false;
-	
-	public boolean overwriteLastImportSource = false;
+	public boolean replaceExistingData = false;
 	
 	public void checkValid() throws CommandValidationException {
-		validate(catalogId != null);
-		validate(importDefinitionId != null);
-		validate(!overwriteAllImportSources || !overwriteLastImportSource);
+		validate(catalogId != null, "no catalog specified");
+		validate(importDefinitionId != null, "no import definition specified");
 	}
 	
 	public static class Result implements CommandResult {
+		private static final long serialVersionUID = 1L;
 		public List<ImportDefinition> importDefinitions;
 	}
 }

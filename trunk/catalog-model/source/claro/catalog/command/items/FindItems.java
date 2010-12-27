@@ -1,9 +1,9 @@
 package claro.catalog.command.items;
 
 import java.util.List;
+import java.util.Map;
 
 import claro.catalog.data.PropertyInfo;
-
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.util.Paging;
@@ -25,6 +25,7 @@ public class FindItems implements Command<FindItems.Result> {
 	public String language;
 	
 	public List<Long> categoryIds;
+	public Map<Long, Object> propertyFilters;
 	public String filter;
 
 	public List<Long> orderByIds;

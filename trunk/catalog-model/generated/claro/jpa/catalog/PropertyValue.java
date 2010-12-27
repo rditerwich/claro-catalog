@@ -7,7 +7,6 @@ import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
-import claro.jpa.importing.ImportSource;
 
 @SuppressWarnings("serial")
 public class PropertyValue implements Serializable {
@@ -16,7 +15,7 @@ public class PropertyValue implements Serializable {
     private String language;
     private StagingArea stagingArea;
     private OutputChannel outputChannel;
-    private ImportSource importSource;
+    private Source source;
     private String stringValue;
     private Integer integerValue;
     private Integer enumValue;
@@ -69,12 +68,12 @@ public class PropertyValue implements Serializable {
         this.outputChannel = value;
     }
 
-    public ImportSource getImportSource() {
-        return importSource;
+    public Source getSource() {
+        return source;
     }
 
-    public void setImportSource(ImportSource value) {
-        this.importSource = value;
+    public void setSource(Source value) {
+        this.source = value;
     }
 
     public String getStringValue() {

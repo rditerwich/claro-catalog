@@ -9,6 +9,7 @@ import java.lang.String;
 public class TabularImportDefinition extends ImportDefinition implements Serializable {
     private Boolean headerLine;
     private String charset;
+    private String separatorChars;
 
     public Boolean getHeaderLine() {
         return headerLine;
@@ -24,6 +25,14 @@ public class TabularImportDefinition extends ImportDefinition implements Seriali
 
     public void setCharset(String value) {
         this.charset = value;
+    }
+
+    public String getSeparatorChars() {
+        return separatorChars;
+    }
+
+    public void setSeparatorChars(String value) {
+        this.separatorChars = value;
     }
 
     @Override

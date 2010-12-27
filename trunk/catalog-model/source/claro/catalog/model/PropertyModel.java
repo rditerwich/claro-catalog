@@ -18,8 +18,8 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
-import claro.jpa.importing.ImportSource;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -48,7 +48,7 @@ public abstract class PropertyModel {
 	
 	private SMap<StagingArea, SMap<OutputChannel, SMap<String, Object>>> values = SMap.empty();
 	private SMap<StagingArea, SMap<OutputChannel, SMap<String, Object>>> effectiveValues = SMap.empty();
-	private SMap<ImportSource, SMap<OutputChannel, SMap<String, Object>>> importSourceValues = SMap.empty();
+	private SMap<Source, SMap<OutputChannel, SMap<String, Object>>> sourceValues = SMap.empty();
 	private final ItemModel item;
 
 	static PropertyModel create(final PropertyModel root, ItemModel item) {
@@ -155,7 +155,7 @@ public abstract class PropertyModel {
 			if (langValues == null) {
 				langValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					if (equal(stagingArea, value.getStagingArea()) && equal(outputChannel, value.getOutputChannel()) && value.getImportSource() == null) {
+					if (equal(stagingArea, value.getStagingArea()) && equal(outputChannel, value.getOutputChannel()) && value.getSource() == null) {
 						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 					}
 				}
@@ -210,19 +210,19 @@ public abstract class PropertyModel {
 	/**
 	 * @return Import source values or the empty map
 	 */
-	public SMap<OutputChannel, SMap<String, Object>> getImportSourceValues(ImportSource importSource) {
+	public SMap<OutputChannel, SMap<String, Object>> getSourceValues(Source source) {
 		synchronized (getItem().catalog) {
-			SMap<OutputChannel, SMap<String, Object>> ocValues = importSourceValues.get(importSource);
+			SMap<OutputChannel, SMap<String, Object>> ocValues = sourceValues.get(source);
 			if (ocValues == null) {
 				ocValues = SMap.empty();
 				for (PropertyValue value : propertyValues) {
-					if (equal(value.getImportSource(), importSource) && value.getStagingArea() == null) {
+					if (equal(value.getSource(), source) && value.getStagingArea() == null) {
 						SMap<String, Object> langValues = ocValues.get(value.getOutputChannel(), emptyValues);
 						langValues = langValues.add(value.getLanguage(), getTypedValue(value));
 						ocValues = ocValues.set(value.getOutputChannel(), langValues);
 					}
 				}
-				importSourceValues.set(importSource, ocValues);
+				sourceValues.set(source, ocValues);
 			}
 			return ocValues;
 		}

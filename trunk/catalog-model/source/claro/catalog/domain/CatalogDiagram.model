@@ -167,6 +167,17 @@ DomainDiagram {
             }
             domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:StagingArea
         }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 670
+                    y = 501
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Source
+        }
     }
     enumerations = {
         DiagramEnum {
@@ -316,9 +327,6 @@ DomainDiagram {
             sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Item/attributes:children
         }
         Reference {
-            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:importSource
-        }
-        Reference {
             bendPoints = {
                 Point {
                     x = 831
@@ -360,6 +368,9 @@ DomainDiagram {
         }
         Reference {
             sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:stagingArea
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyValue/attributes:source
         }
     }
     superClassReferences = {

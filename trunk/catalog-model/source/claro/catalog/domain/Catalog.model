@@ -342,8 +342,8 @@ Package {
                 }
                 
                 Attribute {
-                    name = importSource
-                    type = importing:ImportSource
+                    name = source
+                    type = catalog:Source
                     lower = 0
                 }
                 /**
@@ -473,6 +473,16 @@ Package {
                 Attribute {
                     name = displayName
                     type = primitive:String
+                }
+            }
+        }
+        Class {
+            name = Source
+            attributes = {
+                Attribute {
+                    name = priority
+                    type = primitive:Integer
+                    lower = 0
                 }
             }
         }

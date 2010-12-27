@@ -22,7 +22,6 @@ public class UpdateImportDefinitionTest extends CatalogTestBase {
 		UpdateImportDefinition update = new UpdateImportDefinition();
 		update.importDefinition = new ImportDefinition();
 		update.importDefinition.setName("my-import");
-		update.importDefinition.setImportSourceName("my-import");
 		update.importDefinition.setImportUrl("file:///test");
 		update.importDefinition.setPriority(0);
 		ImportCategory importCategory = new ImportCategory();

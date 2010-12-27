@@ -2,32 +2,21 @@ package claro.jpa.importing;
 
 import java.io.Serializable;
 import java.lang.Integer;
-import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collection;
+import claro.jpa.catalog.Property;
+import claro.jpa.catalog.Source;
 
 @SuppressWarnings("serial")
-public class ImportDefinition implements Serializable {
-    private Long id;
+public class ImportDefinition extends Source implements Serializable {
     private String name;
     private String importUrl;
-    private String importSourceName;
-    private String matchProperty;
-    private Integer priority;
+    private Property matchProperty;
     private Integer sequenceNr;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
-    private Collection<ImportSource> importSources;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long value) {
-        this.id = value;
-    }
 
     public String getName() {
         return name;
@@ -45,28 +34,12 @@ public class ImportDefinition implements Serializable {
         this.importUrl = value;
     }
 
-    public String getImportSourceName() {
-        return importSourceName;
-    }
-
-    public void setImportSourceName(String value) {
-        this.importSourceName = value;
-    }
-
-    public String getMatchProperty() {
+    public Property getMatchProperty() {
         return matchProperty;
     }
 
-    public void setMatchProperty(String value) {
+    public void setMatchProperty(Property value) {
         this.matchProperty = value;
-    }
-
-    public Integer getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Integer value) {
-        this.priority = value;
     }
 
     public Integer getSequenceNr() {
@@ -99,31 +72,11 @@ public class ImportDefinition implements Serializable {
         this.properties = value;
     }
 
-    public Collection<ImportSource> getImportSources() {
-        if (importSources == null) {
-            importSources = new ArrayList<ImportSource>();
-        }
-        return importSources;
-    }
-
-    public void setImportSources(Collection<ImportSource> value) {
-        this.importSources = value;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other instanceof ImportDefinition) {
             ImportDefinition otherImportDefinition = (ImportDefinition) other;
-            if (this.id == null) {
-                if (otherImportDefinition.id != null) {
-                    return false;
-                }
-            } 
-            else if (!this.id.equals(otherImportDefinition.id)) {
-                return false;
-            }
-
-            return true;
+            return super.equals(otherImportDefinition);
         }
         return false;
     }
@@ -131,7 +84,6 @@ public class ImportDefinition implements Serializable {
     @Override
     public int hashCode() {
         int result = 17;
-        result = 37 * result + (id  == null? 0 : id .hashCode());
         return result;
     }
 

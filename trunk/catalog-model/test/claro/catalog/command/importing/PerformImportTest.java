@@ -15,6 +15,7 @@ import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.TabularImportDefinition;
 import easyenterprise.lib.command.CommandException;
+import easyenterprise.lib.sexpr.Constant;
 
 public class PerformImportTest extends CatalogTestBase {
 
@@ -45,7 +46,7 @@ public class PerformImportTest extends CatalogTestBase {
 		property.setValue(null, null, null, categoryName);
 		
 		ImportCategory importCat = new ImportCategory();
-		importCat.setExpression(categoryName);
+		importCat.setExpression(Constant.constant(categoryName));
 		importDef.getCategories().add(importCat);
 
 		// create an import definition
@@ -58,7 +59,7 @@ public class PerformImportTest extends CatalogTestBase {
 		PerformImport performImport = new PerformImport();
 		performImport.catalogId = TEST_CATALOG_ID;
 		performImport.importDefinitionId = updateResult.importDefinition.getId();
-		performImport.importUrl = getClass().getResource("sample-products.csv").toString();
+		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
 		executeCommand(performImport);
 	}
 }

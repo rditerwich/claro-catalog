@@ -20,6 +20,7 @@ Package {
     types = {
         Class {
             name = ImportDefinition
+            superClass = catalog:Source
             attributes = {
                 Attribute {
                     name = name
@@ -31,21 +32,10 @@ Package {
                     type = primitive:String
                     lower = 0
                 }
-                @comment "Expression for import source name"
-                Attribute {
-                    name = importSourceName
-                    type = primitive:String
-                    lower = 0
-                }
                 @comment "Determines what property is used to match products"
                 Attribute {
                     name = matchProperty
-                    type = primitive:String
-                    lower = 0
-                }
-                Attribute {
-                    name = priority
-                    type = primitive:Integer
+                    type = catalog:Property
                     lower = 0
                 }
                 @comment "Incremented in every import, can be used in expressions"
@@ -70,14 +60,6 @@ Package {
                     isComposite = true
                     opposite = importing:ImportProperty/attributes:importDefinition
                 }
-                Attribute {
-                    name = importSources
-                    type = importing:ImportSource
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                    opposite = importing:ImportSource/attributes:importDefinition
-                }
             }
         }
         Class {
@@ -90,6 +72,12 @@ Package {
                 }
                 Attribute {
                     name = charset
+                    type = primitive:String
+                    lower = 0
+                }
+                @comment "Defaults to ';\t"
+                Attribute {
+                    name = separatorChars
                     type = primitive:String
                     lower = 0
                 }
@@ -128,16 +116,6 @@ Package {
                 }
             }
         }
-        Class {
-            name = ImportSource
-            attributes = {
-                Attribute {
-                    name = importDefinition
-                    type = importing:ImportDefinition
-                    opposite = importing:ImportDefinition/attributes:importSources
-                }
-            }
-        }
-   }
+    }
 }
  

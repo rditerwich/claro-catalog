@@ -2,64 +2,111 @@ CREATE SCHEMA catalog;
 
 -- Create Tables
 
-CREATE TABLE catalog.berth (
+CREATE TABLE catalog.query (
+    type                 VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    stringvalue          VARCHAR,
+    stringvalue2         VARCHAR,
+    shop_id              INTEGER,
+    category_id          INTEGER,
+    shop_id2             INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.party (
+    name                 VARCHAR NOT NULL,
+    phonenumber          VARCHAR NOT NULL,
+    website              VARCHAR,
+    billingname          VARCHAR,
+    id                   SERIAL NOT NULL,
+    address_id           INTEGER NOT NULL,
+    shippingaddress_id   INTEGER,
+    deliveryaddress_id   INTEGER,
+    billingaddress_id    INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.user (
+    email                VARCHAR NOT NULL,
+    password             VARCHAR NOT NULL,
+    party_id             INTEGER NOT NULL,
+    iscataloguser        BOOLEAN NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.emailconfirmation (
+    email                VARCHAR NOT NULL,
+    confirmationkey      VARCHAR NOT NULL,
+    expirationtime       BIGINT NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.address (
+    address1             VARCHAR NOT NULL,
+    address2             VARCHAR,
+    town                 VARCHAR NOT NULL,
+    postalcode           VARCHAR NOT NULL,
+    country              VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.exchange (
     name                 VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
-    description2_id      INTEGER NOT NULL,
-    profile_id           INTEGER,
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.label2 (
-    language             VARCHAR,
-    label                VARCHAR NOT NULL,
+CREATE TABLE catalog.underlying (
     id                   SERIAL NOT NULL,
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.orderstatus (
+CREATE TABLE catalog.optionchain (
+    exchange_id          INTEGER NOT NULL,
+    underlying_id        INTEGER NOT NULL,
+    symbol               VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.option (
+    type                 VARCHAR NOT NULL,
+    expirationdate       DATE NOT NULL,
+    strike               FLOAT NOT NULL,
+    id                   SERIAL NOT NULL,
+    optionchain_id       INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.optionidtype (
+    name                 VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.optionid (
+    type_id              INTEGER NOT NULL,
     id                   VARCHAR NOT NULL,
+    id2                  SERIAL NOT NULL,
+    option_id            INTEGER NOT NULL,
+    PRIMARY KEY (id2) 
+);
+
+CREATE TABLE catalog.importcategory (
+    expression           VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    importdefinition_id  INTEGER NOT NULL,
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.order (
-    orderdate            DATE NOT NULL,
-    status_id            VARCHAR NOT NULL,
-    amountpaid           FLOAT NOT NULL,
+CREATE TABLE catalog.importproperty (
+    expression           VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
-    shop_id              INTEGER NOT NULL,
-    deliveryaddress_id   INTEGER,
-    transport_id         INTEGER NOT NULL,
-    user_id              INTEGER NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.productorder (
-    volume               INTEGER NOT NULL,
-    price                FLOAT NOT NULL,
-    pricecurrency        VARCHAR NOT NULL,
-    order_id             INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
-    product_id           INTEGER NOT NULL,
-    promotion_id         INTEGER,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.transport (
-    desciption           VARCHAR NOT NULL,
-    transportcompany     VARCHAR NOT NULL,
-    deliverytime         INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.orderhistory (
-    newstatus_id         VARCHAR NOT NULL,
-    comment              VARCHAR NOT NULL,
-    date                 DATE NOT NULL,
-    id                   SERIAL NOT NULL,
-    order_id             INTEGER,
-    user_id              INTEGER NOT NULL,
+    importdefinition_id  INTEGER NOT NULL,
+    property_id          INTEGER NOT NULL,
     PRIMARY KEY (id) 
 );
 
@@ -151,7 +198,7 @@ CREATE TABLE catalog.propertyvalue (
     item_id              INTEGER NOT NULL,
     id                   SERIAL NOT NULL,
     outputchannel_id     INTEGER,
-    importsource_id      INTEGER,
+    source_id            INTEGER,
     PRIMARY KEY (id) 
 );
 
@@ -169,6 +216,20 @@ CREATE TABLE catalog.language (
     name                 VARCHAR NOT NULL,
     displayname          VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.source (
+    type                 VARCHAR NOT NULL,
+    priority             INTEGER,
+    id                   SERIAL NOT NULL,
+    name                 VARCHAR,
+    importurl            VARCHAR,
+    matchproperty_id     INTEGER,
+    sequencenr           INTEGER,
+    headerline           BOOLEAN,
+    charset              VARCHAR,
+    separatorchars       VARCHAR,
     PRIMARY KEY (id) 
 );
 
@@ -194,120 +255,49 @@ CREATE TABLE catalog.outputchannel_excludeditems (
      
 );
 
-CREATE TABLE catalog.exchange (
-    name                 VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.underlying (
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.optionchain (
-    exchange_id          INTEGER NOT NULL,
-    underlying_id        INTEGER NOT NULL,
-    symbol               VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.option (
-    type                 VARCHAR NOT NULL,
-    expirationdate       DATE NOT NULL,
-    strike               FLOAT NOT NULL,
-    id                   SERIAL NOT NULL,
-    optionchain_id       INTEGER,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.optionidtype (
-    name                 VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.optionid (
-    type_id              INTEGER NOT NULL,
+CREATE TABLE catalog.orderstatus (
     id                   VARCHAR NOT NULL,
-    id2                  SERIAL NOT NULL,
-    option_id            INTEGER NOT NULL,
-    PRIMARY KEY (id2) 
+    PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.party (
-    name                 VARCHAR NOT NULL,
-    phonenumber          VARCHAR NOT NULL,
-    website              VARCHAR,
-    billingname          VARCHAR,
-    id                   SERIAL NOT NULL,
-    address_id           INTEGER NOT NULL,
-    shippingaddress_id   INTEGER,
+CREATE TABLE catalog.order (
+    orderdate            DATE NOT NULL,
     deliveryaddress_id   INTEGER,
-    billingaddress_id    INTEGER,
+    user_id              INTEGER NOT NULL,
+    status_id            VARCHAR NOT NULL,
+    amountpaid           FLOAT NOT NULL,
+    id                   SERIAL NOT NULL,
+    shop_id              INTEGER NOT NULL,
+    transport_id         INTEGER NOT NULL,
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.user (
-    email                VARCHAR NOT NULL,
-    password             VARCHAR NOT NULL,
-    party_id             INTEGER NOT NULL,
-    iscataloguser        BOOLEAN NOT NULL,
+CREATE TABLE catalog.productorder (
+    product_id           INTEGER NOT NULL,
+    volume               INTEGER NOT NULL,
+    price                FLOAT NOT NULL,
+    pricecurrency        VARCHAR NOT NULL,
+    order_id             INTEGER NOT NULL,
+    id                   SERIAL NOT NULL,
+    promotion_id         INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.transport (
+    desciption           VARCHAR NOT NULL,
+    transportcompany     VARCHAR NOT NULL,
+    deliverytime         INTEGER NOT NULL,
     id                   SERIAL NOT NULL,
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.emailconfirmation (
-    email                VARCHAR NOT NULL,
-    confirmationkey      VARCHAR NOT NULL,
-    expirationtime       BIGINT NOT NULL,
+CREATE TABLE catalog.orderhistory (
+    user_id              INTEGER NOT NULL,
+    newstatus_id         VARCHAR NOT NULL,
+    comment              VARCHAR NOT NULL,
+    date                 DATE NOT NULL,
     id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.address (
-    address1             VARCHAR NOT NULL,
-    address2             VARCHAR,
-    town                 VARCHAR NOT NULL,
-    postalcode           VARCHAR NOT NULL,
-    country              VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.importdefinition (
-    type                 VARCHAR NOT NULL,
-    name                 VARCHAR NOT NULL,
-    importurl            VARCHAR,
-    importsourcename     VARCHAR,
-    matchproperty        VARCHAR,
-    priority             INTEGER,
-    sequencenr           INTEGER,
-    id                   SERIAL NOT NULL,
-    headerline           BOOLEAN,
-    charset              VARCHAR,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.importcategory (
-    importdefinition_id  INTEGER NOT NULL,
-    expression           VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.importproperty (
-    importdefinition_id  INTEGER NOT NULL,
-    property_id          INTEGER NOT NULL,
-    expression           VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.importsource (
-    importdefinition_id  INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
+    order_id             INTEGER,
     PRIMARY KEY (id) 
 );
 
@@ -339,14 +329,18 @@ CREATE TABLE catalog.promotion_templates (
      
 );
 
-CREATE TABLE catalog.query (
-    type                 VARCHAR NOT NULL,
+CREATE TABLE catalog.berth (
+    name                 VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
-    stringvalue          VARCHAR,
-    shop_id              INTEGER,
-    category_id          INTEGER,
-    stringvalue2         VARCHAR,
-    shop_id2             INTEGER,
+    description2_id      INTEGER NOT NULL,
+    profile_id           INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.label2 (
+    language             VARCHAR,
+    label                VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
     PRIMARY KEY (id) 
 );
 
@@ -370,22 +364,29 @@ CREATE TABLE catalog.product_templates (
 
 -- Create Foreign key constraints
 
-ALTER TABLE catalog.berth ADD CONSTRAINT fk_description2 FOREIGN KEY (description2_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_shippingaddress FOREIGN KEY (shippingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.party ADD CONSTRAINT fk_billingaddress FOREIGN KEY (billingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENCES catalog.party (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_exchange FOREIGN KEY (exchange_id) REFERENCES catalog.exchange (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_underlying FOREIGN KEY (underlying_id) REFERENCES catalog.underlying (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.option ADD CONSTRAINT fk_optionchain FOREIGN KEY (optionchain_id) REFERENCES catalog.optionchain (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.optionid ADD CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES catalog.optionidtype (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.optionid ADD CONSTRAINT fk_option FOREIGN KEY (option_id) REFERENCES catalog.option (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.catalog ADD CONSTRAINT fk_root FOREIGN KEY (root_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 
@@ -413,10 +414,12 @@ ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_stagingarea FOREIGN KEY (sta
 ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_itemvalue FOREIGN KEY (itemvalue_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_outputchannel FOREIGN KEY (outputchannel_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.importsource (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.propertyvalue ADD CONSTRAINT fk_source FOREIGN KEY (source_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.template ADD CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.template ADD CONSTRAINT fk_outputchannel FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.source ADD CONSTRAINT fk_matchproperty FOREIGN KEY (matchproperty_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.outputchannel ADD CONSTRAINT fk_catalog FOREIGN KEY (catalog_id) REFERENCES catalog.catalog (id) DEFERRABLE INITIALLY DEFERRED;
 
@@ -426,27 +429,19 @@ ALTER TABLE catalog.outputchannel_excludedproperties ADD CONSTRAINT fk_outputcha
 ALTER TABLE catalog.outputchannel_excludeditems ADD CONSTRAINT fk_item FOREIGN KEY (excludeditems_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.outputchannel_excludeditems ADD CONSTRAINT fk_outputchannel FOREIGN KEY (outputchannel_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_exchange FOREIGN KEY (exchange_id) REFERENCES catalog.exchange (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_underlying FOREIGN KEY (underlying_id) REFERENCES catalog.underlying (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.option ADD CONSTRAINT fk_optionchain FOREIGN KEY (optionchain_id) REFERENCES catalog.optionchain (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.optionid ADD CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES catalog.optionidtype (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.optionid ADD CONSTRAINT fk_option FOREIGN KEY (option_id) REFERENCES catalog.option (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.party ADD CONSTRAINT fk_address FOREIGN KEY (address_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_shippingaddress FOREIGN KEY (shippingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.party ADD CONSTRAINT fk_billingaddress FOREIGN KEY (billingaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENCES catalog.party (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.importsource ADD CONSTRAINT fk_importdefinition FOREIGN KEY (importdefinition_id) REFERENCES catalog.importdefinition (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
@@ -458,9 +453,8 @@ ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id)
 ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.berth ADD CONSTRAINT fk_description2 FOREIGN KEY (description2_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_catalog FOREIGN KEY (catalog_id) REFERENCES catalog.catalog (id) DEFERRABLE INITIALLY DEFERRED;
@@ -471,17 +465,6 @@ ALTER TABLE catalog.catalog_languages ADD CONSTRAINT fk_catalog FOREIGN KEY (cat
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_item FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 
-
--- Insert initial content in orderstatus
-INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
-INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
-INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
-INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
-INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
-INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
-INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
-INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
-INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
 
 -- Insert initial content in propertytype
 INSERT INTO catalog.propertytype (id) VALUES ('String');
@@ -509,4 +492,15 @@ INSERT INTO catalog.propertytype (id) VALUES ('Volume');
 INSERT INTO catalog.propertytype (id) VALUES ('Velocity');
 INSERT INTO catalog.propertytype (id) VALUES ('Acceleration');
 INSERT INTO catalog.propertytype (id) VALUES ('Item');
+
+-- Insert initial content in orderstatus
+INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
+INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
+INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
+INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
+INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
+INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
+INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
+INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
+INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
 
