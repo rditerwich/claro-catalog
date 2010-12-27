@@ -101,7 +101,7 @@ public class ItemPropertyValues extends Composite {
 			
 			// Remove redundant properties
 			int oldRowCount = groupPanelWidgets.panel.getRowCount();
-			groupPanelWidgets.panel.resizeRows(propertyKeys.size());  // TODO Rethink this for more values per property ?? (inputsources, outputchannels, etc). 
+			groupPanelWidgets.panel.resizeRows(propertyKeys.size());  
 			for (int j = oldRowCount - 1; j >= propertyKeys.size(); j--) {
 				groupPanelWidgets.valueWidgets.remove(j);
 			}
