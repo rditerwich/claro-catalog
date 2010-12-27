@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import claro.catalog.data.PropertyData;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
@@ -25,15 +26,11 @@ import easyenterprise.lib.util.SMap;
 
 
 public class ItemDetails extends Composite {
-	private static int NAME_COLUMN = 0;
-	private static int TYPE_COLUMN = 1;
-	private static int VALUE_COLUMN = 2;
-	private static int LANG_COLUMNS = 3;
-	private static int NR_FIXED_COLS = 3;
-
+	
+	private Label productPrice;
 	private Image productImage;
+	
 	private ItemPropertyValues propertyValues;
-	private SMap<PropertyInfo, PropertyData> values;
 	
 	public ItemDetails() {
 		initWidget(new FlowPanel() {{
@@ -42,7 +39,6 @@ public class ItemDetails extends Composite {
 			// Title
 			add(new TextBox() {{
 				Util.add(this, Styles.itemName);
-//				HasTextBinding.bind(this, itemBinding.name());
 			}});
 			
 			// Image, Price, RelatedInfo
@@ -50,11 +46,9 @@ public class ItemDetails extends Composite {
 			    add(productImage = new Image() {{
 			    	setSize("150px", "150px");
 			    }});
-			    add(new Label() {{
+			    add(productPrice = new Label() {{
 			    	Util.add(this, Styles.productprice);
 			    	setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
-			    	
-//			    	HasTextBinding.bind(this, itemBinding.price());
 			    }});
 			    add(new FlowPanel() {{
 			    	add(new Anchor(Util.i18n.containedProducts(0)));
@@ -63,7 +57,10 @@ public class ItemDetails extends Composite {
 			
 			// Properties
 			add(new Label(Util.i18n.properties()));
-			add(propertyValues = new ItemPropertyValues());			
+			add(propertyValues = new ItemPropertyValues());		
+			
+			// TODO Add a popup panel at the bottom with property definitions (+ values??).
+			// TODO add a popup panel at the bottom with property groups?
 		}});
 	}
 	
@@ -73,9 +70,7 @@ public class ItemDetails extends Composite {
 	 * @param item
 	 * @param values
 	 */
-	public void setItemData(Long itemId, SMap<PropertyInfo, PropertyData> values) {
-		this.values = values;
-		
+	public void setItemData(Long itemId, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
 		propertyValues.setItemData(itemId, values);
 	}
 	

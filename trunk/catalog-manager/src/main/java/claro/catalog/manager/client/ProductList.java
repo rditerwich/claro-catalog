@@ -1,10 +1,12 @@
 package claro.catalog.manager.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyData;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
@@ -33,6 +35,7 @@ abstract public class ProductList extends MasterDetail {
 	private boolean initialized;
 
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
+	private List<RowWidgets> tableWidgets = new ArrayList<ProductList.RowWidgets>();
 
 	private String language;
 
@@ -43,6 +46,7 @@ abstract public class ProductList extends MasterDetail {
 	private PropertyInfo artNoProperty;
 	private PropertyInfo imageProperty;
 	private PropertyInfo smallImageProperty;
+	private ItemDetails details;
 
 
 	public ProductList(int headerSize, int footerSize) {
@@ -75,8 +79,17 @@ abstract public class ProductList extends MasterDetail {
 		render(); // TODO More delicate rerender?
 	}
 	
-	public void updateProduct(Long itemId, SMap<PropertyInfo, SMap<String, Object>> newValues) {
-		// TODO  Do we need this?
+	public void updateProduct(Long itemId, SMap<PropertyInfo, SMap<String, Object>> newValues, boolean setChangedStyle) {
+		// Update product list:
+		products = products.add(itemId, newValues);
+		int itemRow = products.getKeys().indexOf(itemId);
+		
+		Table productTable = getMaster();
+		if (setChangedStyle) {
+			Styles.remove(productTable.getRowFormatter(), itemRow, Styles.itemRowChanged);
+		}
+		
+		rebind(itemRow, itemId);
 	}
 	
 	private void initializeMainPanel() {
@@ -103,88 +116,136 @@ abstract public class ProductList extends MasterDetail {
 			return;
 		}
 		
+		List<Long> productKeys = products.getKeys();
+
 		Table productTable = getMaster();
 		
-		productTable.clear();  // TODO Do more efficiently
-		List<Long> productKeys = products.getKeys();
-		productTable.resizeRows(1 + productKeys.size());
-		int i = 0;
-		for (Long productId : productKeys) {
+		// Delete/Create widgets as necessary:
+		int oldRowCount = productTable.getRowCount();
+		
+		// Delete old rows:
+		// TODO What if selected row is deleted?  maybe close detail?
+		
+		productTable.resizeRows(productKeys.size());
+		for (int i = tableWidgets.size() - 1; i >= productKeys.size(); i--) {
+			tableWidgets.remove(i);
+		}
+		
+		// Create new Rows
+		for (int i = oldRowCount; i < productKeys.size(); i++) {
+			final RowWidgets rowWidgets = new RowWidgets();
+			tableWidgets.add(rowWidgets);
 			final int row = i;
-			SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
 			
-			// image
-			Object image = properties.getOrEmpty(smallImageProperty).tryGet(language, null);
-			if (image == null) {
-				image = properties.getOrEmpty(imageProperty).tryGet(language, null);
-			}
-			if (image instanceof MediaValue) {
-				final MediaValue value = (MediaValue)image;
-				
-				productTable.setWidget(i, IMAGE_COL, new MediaWidget(false) {{
-					setData(value.propertyValueId, value.mimeType, value.filename);
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							rowSelected(row);
-						}
-					});
-				}});
-			}
+			// Image
+			productTable.setWidget(i, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false) {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						rowSelected(row);
+					}
+				});
+			}});
 			
-			// product
-			final Object productName = properties.getOrEmpty(nameProperty).tryGet(language, null);
-			final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(language, null);
-			final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(language, null);
-			final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(language, null);
+			// Product
 			productTable.setWidget(i, PRODUCT_COL, new VerticalPanel() {{
 				Styles.add(this, Styles.product);
 				// .title -> name
-				add(new InlineLabel(productName instanceof String ? productName.toString() : "") {{
+				add(rowWidgets.productNameLabel = new InlineLabel() {{
 					Util.add(this, Styles.productname);
 				}});
 				// .subtitle -> variant
-				add(new InlineLabel(productVariant instanceof String ? productVariant.toString() : "") {{
+				add(rowWidgets.productVariantLabel = new InlineLabel() {{
 					Util.add(this, Styles.productvariant);
 				}});
 				
 				// .body -> artnr
-				add(new InlineLabel(productNr instanceof String ?  "Art. nr. " + productNr.toString() : ""));
+				add(rowWidgets.productNrLabel = new InlineLabel());
 				// .body -> description
-				add(new InlineLabel(productDescription instanceof String ? productDescription.toString() : ""));
+				add(rowWidgets.productDescriptionLabel = new InlineLabel());
 			}});
 			
-			// price
-			final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
-			// TODO Use locale in the following format??
-			if (price instanceof MoneyValue) {
-				MoneyValue priceMoney = (MoneyValue) price;
-				productTable.setWidget(i, PRICE_COL, new Label(NumberFormat.getCurrencyFormat(priceMoney.currency).format(priceMoney.value)) {{
-					Styles.add(this, Styles.productprice);
-				}});
-			}
+			// Price
+			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
+				Styles.add(this, Styles.productprice);
+			}});
+		}
+		
+
+		// (Re) bind widgets:
+		
+		
+		int i = 0;
+		for (Long productId : productKeys) {
+			Styles.remove(productTable.getRowFormatter(), i, Styles.itemRowChanged);
+
+			rebind(i, productId);
 			
 			i++;
 		}
 	}
+
+	private void rebind(int i, Long productId) {
+		RowWidgets rowWidgets = tableWidgets.get(i);
+		
+		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
+		
+		// image
+		Object image = properties.getOrEmpty(smallImageProperty).tryGet(language, null);
+		if (image == null) {
+			image = properties.getOrEmpty(imageProperty).tryGet(language, null);
+		}
+		if (image instanceof MediaValue) {
+			final MediaValue value = (MediaValue)image;
+			rowWidgets.imageWidget.setData(value.propertyValueId, value.mimeType, value.filename);
+			
+		} else {
+			rowWidgets.imageWidget.setData(null, null, null);  // Clear any previous images.
+		}
+		
+		// product
+		final Object productName = properties.getOrEmpty(nameProperty).tryGet(language, null);
+		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "");
+		
+		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(language, null);
+		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");
+		
+		final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(language, null);
+		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
+		
+		final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(language, null);
+		rowWidgets.productDescriptionLabel.setText(productDescription instanceof String ? productDescription.toString() : "");
+		
+		// price
+		final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
+		// TODO Use locale in the following format??
+		if (price instanceof MoneyValue) {
+			MoneyValue priceMoney = (MoneyValue) price;
+			rowWidgets.priceLabel.setText(NumberFormat.getCurrencyFormat(priceMoney.currency).format(priceMoney.value));
+		} else {
+			rowWidgets.priceLabel.setText("");
+		}
+	}
 	
-	public void setSelectedProduct(Long productId, SMap<PropertyInfo, PropertyData> propertyValues) {
+	public void setSelectedProduct(Long productId, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
 		int row = products.getKeys().indexOf(productId);
 
-		LayoutPanel detailPanel = getDetail();
-		detailPanel.clear();
-		
-		detailPanel.add(new Anchor("Close") {{
-			addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					closeDetail();
-				}
-			});
-		}});
-		
-		ItemDetails details = new ItemDetails();
+		if (details == null) {
+			LayoutPanel detailPanel = getDetail();
+			detailPanel.clear();
+			
+			detailPanel.add(new Anchor("Close") {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						closeDetail();
+					}
+				});
+			}});
+			
+			details = new ItemDetails();
+			detailPanel.add(details);
+		}
+
 		details.setItemData(productId, propertyValues);
-		detailPanel.add(details);
-		
 		openDetail(row);
 	}
 	
@@ -194,5 +255,15 @@ abstract public class ProductList extends MasterDetail {
 		StatusMessage.get().show(Util.i18n.loadingProductDetails());
 
 		productSelected(products.getKeys().get(row));
+	}
+	
+	private class RowWidgets {
+		public Label priceLabel;
+		public MediaWidget imageWidget;
+		public Label productNameLabel;
+		public Label productVariantLabel;
+		public Label productNrLabel;
+		public Label productDescriptionLabel;
+		
 	}
 }

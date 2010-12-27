@@ -13,11 +13,13 @@ import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 
 public class CatalogModel {
 
 	public final Catalog catalog;
+	public final PropertyGroup generalPropertyGroup;
 	public final PropertyModel nameProperty;
 	public final PropertyModel variantProperty;
 	public final PropertyModel articleNumberProperty;
@@ -40,15 +42,16 @@ public class CatalogModel {
 	public CatalogModel(Long id) {
 		this.catalog = findOrCreateCatalog(id);
 		ItemModel root = findOrCreateRootCategory();
-		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String);
-		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String);
-		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String);
-		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String);
-		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media);
-		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media);
-		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money);
-		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String);
-		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String);
+		this.generalPropertyGroup = root.findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
+		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup);
+		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
+		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
+		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String, generalPropertyGroup);
+		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media, generalPropertyGroup);
+		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media, generalPropertyGroup);
+		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
+		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
+		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
   }
 	
 	public Catalog getCatalog() {

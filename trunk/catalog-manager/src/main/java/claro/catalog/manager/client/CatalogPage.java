@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -99,6 +100,7 @@ public class CatalogPage extends Page {
 					addItem("Option5");
 					addItem("Option6");
 				}});
+				setWidget(0, 6, new Anchor(Util.i18n.addCategoryFilter()));
 			}});
 			getMasterHeader().add(filterLabel = new HTML() {{
 				setVisible(false); 
@@ -109,7 +111,6 @@ public class CatalogPage extends Page {
 		}
 		
 			protected void productSelected(final Long productId) {
-				// retrieve data
 				updateProductSelection(productId);
 			}
 		});

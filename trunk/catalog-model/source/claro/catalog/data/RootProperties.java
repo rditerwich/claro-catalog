@@ -10,4 +10,7 @@ public interface RootProperties {
 	String PRICE = "Price";
 	String SUPPLIER = "Supplier";
 	String SUPPLIER_ARTICLENUMBER = "SupplierArticleNumber";
+	
+	// General property group
+	String GENERALGROUP = "General";
 }

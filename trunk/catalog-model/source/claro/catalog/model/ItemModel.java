@@ -1,6 +1,7 @@
 package claro.catalog.model;
 
 import static com.google.common.base.Objects.equal;
+import static claro.catalog.model.CatalogModelUtil.find;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 
@@ -219,12 +221,53 @@ public class ItemModel {
 		return null;
 	}
 	
-	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type) {
+	/**
+	 * TODO Make this PropertyGroupModel based?
+	 * @param name Name of the propertygroup (label)
+	 * @param language Language of label to look (use null for default name)
+	 * @param extent look in parent items?
+	 * @return Property model or null.
+	 */
+	public PropertyGroup findPropertyGroup(String propertyLabel, String language, boolean extent) {
+		PropertyGroup result = findPropertyGroup(getEntity(), propertyLabel, language);
+		
+		// Look in parent extent?
+		if (result == null && extent) {
+			for (ItemModel parent : getParentExtent()) {
+				result = findPropertyGroup(parent.getEntity(), propertyLabel, language);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return result;
+	}
+
+	private PropertyGroup findPropertyGroup(Item item, String propertyLabel, String language) {
+		for (PropertyGroup group : item.getPropertyGroups()) {
+			if (find(group.getLabels(), propertyLabel, language) != null) {
+				return group;
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group) {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
 			property = createProperty(SMap.create(language, propertyLabel), type);
 		}
 		return property;
+	}
+	
+	public PropertyGroup findOrCreatePropertyGroup(String propertyGroupLabel, String language) {
+		PropertyGroup propertyGroup = findPropertyGroup(propertyGroupLabel, language, false);
+		if (propertyGroup == null) {
+			propertyGroup = createPropertyGroup(SMap.create(language, propertyGroupLabel));
+		}
+		return propertyGroup;
 	}
 	
 	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type) {
@@ -247,6 +290,27 @@ public class ItemModel {
 			catalog.invalidate(this);
 			catalog.invalidate(childExtent);
 			return PropertyModel.createRoot(property.getId(), false, this);
+		}
+	}
+
+	public PropertyGroup createPropertyGroup(SMap<String, String> initialLabels) {
+		synchronized (catalog) {
+			PropertyGroup propertyGroup = new PropertyGroup();
+			for (String lanuage : initialLabels.getKeys()) {
+				Label label = new Label();
+				label.setLanguage(lanuage);
+				label.setLabel(initialLabels.get(lanuage));
+				label.setPropertyGroup(propertyGroup);
+				propertyGroup.getLabels().add(label);
+			}
+			CatalogAccess.getDao().getEntityManager().persist(propertyGroup);
+			assert propertyGroup.getId() != null;
+			getEntity().getPropertyGroups().add(propertyGroup);
+			propertyGroup.setItem(getEntity());
+//				catalog.invalidate(this);
+//				catalog.invalidate(childExtent);
+//				return PropertyModel.createRoot(propertyGroup.getId(), false, this);
+			return propertyGroup;
 		}
 	}
 	
