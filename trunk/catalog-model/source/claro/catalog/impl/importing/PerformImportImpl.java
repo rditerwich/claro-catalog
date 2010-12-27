@@ -2,6 +2,7 @@ package claro.catalog.impl.importing;
 
 import static easyenterprise.lib.util.CollectionUtil.unique;
 import static easyenterprise.lib.util.MathUtil.orZero;
+import static easyenterprise.lib.util.ObjectUtil.orElse;
 import static java.lang.Math.max;
 
 import java.io.BufferedReader;
@@ -37,6 +38,7 @@ import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.sexpr.DefaultContext;
 import easyenterprise.lib.sexpr.SExpr;
 import easyenterprise.lib.sexpr.SExprParser;
+import easyenterprise.lib.util.ObjectUtil;
 
 @SuppressWarnings("serial")
 public class PerformImportImpl extends PerformImport implements CommandImpl<Result>{
@@ -154,6 +156,17 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			context.variables.put(nameValue.getKey(), nameValue.getValue());
 			context.variables.put("" + index++, nameValue.getValue());
 		}
+
+		// evaluate properties
+		Map<Property, String> propertyValues = new HashMap<Property, String>();
+		for (ImportProperty ip : unique(importDefinition.getProperties())) {
+			SExpr expr = exprParser.parse(ip.getExpression());
+			String value = expr.evaluate(exprContext);
+			propertyValues.put(ip.getProperty(), value);
+		}
+
+		// determine match value
+		String matchValue = orElse(propertyValues.get(importDefinition.getMatchProperty()), "");
 		
 		// find categories for this line
 		Set<Category> categories = new HashSet<Category>();
@@ -166,13 +179,6 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			categoryIds.add(category.getId());
 		}
 		
-		// evaluate properties
-		Map<Property, String> propertyValues = new HashMap<Property, String>();
-		for (ImportProperty ip : unique(importDefinition.getProperties())) {
-			SExpr expr = exprParser.parse(ip.getExpression());
-			String value = expr.evaluate(exprContext);
-			propertyValues.put(ip.getProperty(), value);
-		}
 		
 		// find existing products in existing categories
 		FindItems findItems = new FindItems();

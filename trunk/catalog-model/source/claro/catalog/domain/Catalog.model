@@ -236,13 +236,6 @@ Package {
                     upper = {}
                     opposite = catalog:EnumValue/attributes:property
                 }
-//                Attribute {
-//                    name = propertyValues
-//                    type = catalog:PropertyValue
-//                    lower = 0
-//                    upper = {}
-//                    opposite = catalog:PropertyValue/attributes:property
-//                }
             }
         }
         Class {
