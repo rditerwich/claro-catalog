@@ -25,14 +25,14 @@ import com.google.gwt.user.client.ui.Widget;
 import easyenterprise.lib.util.SMap;
 
 
-public class ItemDetails extends Composite {
+abstract public class ItemDetails extends Composite {
 	
 	private Label productPrice;
 	private Image productImage;
 	
 	private ItemPropertyValues propertyValues;
 	
-	public ItemDetails() {
+	public ItemDetails(final String uiLanguage, final String language, final OutputChannel outputChannel) {
 		initWidget(new FlowPanel() {{
 //			add(new Trail());
 
@@ -57,12 +57,30 @@ public class ItemDetails extends Composite {
 			
 			// Properties
 			add(new Label(Util.i18n.properties()));
-			add(propertyValues = new ItemPropertyValues());		
+			add(propertyValues = new ItemPropertyValues(uiLanguage, language, outputChannel) {
+				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+					ItemDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
+				}
+			});		
 			
 			// TODO Add a popup panel at the bottom with property definitions (+ values??).
 			// TODO add a popup panel at the bottom with property groups?
 		}});
 	}
+	
+	
+	public void setUiLanguage(String uiLanguage) {
+		propertyValues.setUiLanguage(uiLanguage);
+	}
+	
+	public void setLanguage(String language) {
+		propertyValues.setLanguage(language);
+	}
+	
+	public void setOutputChannel(OutputChannel outputChannel) {
+		propertyValues.setOutputChannel(outputChannel);
+	}
+
 	
 	/**
 	 * set the item data and (re)render.
@@ -74,5 +92,6 @@ public class ItemDetails extends Composite {
 		propertyValues.setItemData(itemId, values);
 	}
 	
+	abstract protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
 
 }

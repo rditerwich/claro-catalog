@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.widgets.Table;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -83,7 +84,11 @@ public class MasterDetailTestPage extends Page {
 									});
 								}});
 								add(new Label("Details for " + masterData.get(row) + "..."));
-								add(new ItemDetails());
+								add(new ItemDetails(null, null, null) {
+									protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+									}
+									
+								});
 							}});
 
 							openDetail(row);

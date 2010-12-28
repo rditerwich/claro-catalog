@@ -20,15 +20,15 @@ public class PropertyStringConverter {
    * ISO 4217 currency code.
    * See http://en.wikipedia.org/wiki/ISO_4217.
 	 */
-	private String defaultCurrency;
+	private static String defaultCurrency;
 	
-	private Locale locale = Locale.getDefault();
+	private static Locale locale = Locale.getDefault();
 	
 	public String getDefaultCurrency() {
 		return defaultCurrency;
 	}
 	
-	public String toString(PropertyType type, Object value) {
+	public static String toString(PropertyType type, Object value) {
 		switch (type) {
 		case Media: 
 			MediaValue mediaValue = (MediaValue) value;
@@ -37,7 +37,7 @@ public class PropertyStringConverter {
 			MoneyValue moneyValue = (MoneyValue) value;
 			String currencyCode = ObjectUtil.orElse(moneyValue.currency, defaultCurrency);
 			Currency currency = Currency.getInstance(currencyCode);
-			NumberFormat format = NumberFormat.getInstance(locale);
+			NumberFormat format = NumberFormat.getInstance(locale); 
 			format.setCurrency(currency);
 			return format.format(moneyValue.value);
 		default: return value.toString();

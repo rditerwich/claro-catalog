@@ -12,6 +12,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.catalog.manager.client.widgets.Table;
+import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -240,8 +241,13 @@ abstract public class ProductList extends MasterDetail {
 					}
 				});
 			}});
-			
-			details = new ItemDetails();
+			String uiLanguage = null; // TODO.
+			OutputChannel outputChannel = null; // TODO
+			details = new ItemDetails(language, uiLanguage, outputChannel) {
+				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+					// TODO Implement.
+				}
+			};
 			detailPanel.add(details);
 		}
 
