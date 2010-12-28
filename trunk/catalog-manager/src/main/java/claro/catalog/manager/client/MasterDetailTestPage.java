@@ -87,7 +87,11 @@ public class MasterDetailTestPage extends Page {
 								add(new ItemDetails(null, null, null) {
 									protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 									}
-									
+									protected void propertyValueRemoved(
+											Long itemId,
+											PropertyInfo propertyInfo,
+											String language) {
+									}
 								});
 							}});
 

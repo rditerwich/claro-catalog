@@ -247,6 +247,10 @@ abstract public class ProductList extends MasterDetail {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					// TODO Implement.
 				}
+				protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+					// TODO Auto-generated method stub
+					
+				}
 			};
 			detailPanel.add(details);
 		}

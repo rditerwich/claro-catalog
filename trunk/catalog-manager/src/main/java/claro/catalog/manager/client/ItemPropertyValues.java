@@ -94,6 +94,8 @@ abstract public class ItemPropertyValues extends Composite {
 	 * @param value
 	 */
 	protected abstract void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
+
+	protected abstract void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language);
 	
 	private void render() {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
@@ -147,7 +149,15 @@ abstract public class ItemPropertyValues extends Composite {
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid() {{
 					// Real value is added in the bind fase...
-					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(Util.i18n.clearValue())); // TODO Put an image here instead. TODO add clear handler, and removePV abstract method.
+					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(Util.i18n.clearValue()) {{
+							final Button me = this;
+							addClickHandler(new ClickHandler() {
+								public void onClick(ClickEvent event) {
+									clearValue(me);
+								}
+							});
+						}
+					}); // TODO Put an image here instead. TODO add clear handler, and removePV abstract method.
 				}});
 				
 				
@@ -174,6 +184,7 @@ abstract public class ItemPropertyValues extends Composite {
 				// Remember binding
 				if (valueWidget != null) {
 					propertyByValueWidget.put(valueWidget, property);
+					propertyByValueWidget.put(propertyValueWidgets.clearValueButton, property);
 				}
 				
 				j++;
@@ -218,7 +229,7 @@ abstract public class ItemPropertyValues extends Composite {
 			// TODO Maybe changelistener to remove derived?
 			Styles.remove(propertyValueWidgets.valueParentWidget, Styles.derived);
 		}
-		propertyValueWidgets.clearValueButton.setVisible(isDerived);
+		propertyValueWidgets.clearValueButton.setEnabled(isDerived);
 		return widget;
 	}
 
@@ -232,16 +243,14 @@ abstract public class ItemPropertyValues extends Composite {
 			if (oldWidget instanceof CheckBox) {
 				result = oldWidget;
 			} else {
-				result = new CheckBox() {
-					private final CheckBox me = this;
-					{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								valueChanged(me, getValue());
-							}
-						});
-					}
-				};
+				result = new CheckBox() {{
+					final CheckBox me = this;
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							valueChanged(me, getValue());
+						}
+					});
+				}};
 			}
 			break;
 		case Media:
@@ -255,14 +264,13 @@ abstract public class ItemPropertyValues extends Composite {
 			if (oldWidget instanceof TextBox) {
 				result = oldWidget;
 			} else {
-				result = new TextBox() {
-					private TextBox me = this; 
-					{
-						addChangeHandler(new ChangeHandler() {
-							public void onChange(ChangeEvent event) {
-								valueChanged(me, getText());
-							}
-						});
+				result = new TextBox() {{
+					final TextBox me = this; 
+					addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							valueChanged(me, getText());
+						}
+					});
 				}};
 			}
 		}
@@ -293,6 +301,10 @@ abstract public class ItemPropertyValues extends Composite {
 
 	private void valueChanged(Widget widget, Object newValue) {
 		propertyValueSet(itemId, propertyByValueWidget.get(widget), language, newValue);
+	}
+	
+	private void clearValue(Button eraseButton) {
+		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
 	}
 	
 	private class GroupPanelWidgets {

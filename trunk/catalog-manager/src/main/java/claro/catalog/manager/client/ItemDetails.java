@@ -61,6 +61,9 @@ abstract public class ItemDetails extends Composite {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					ItemDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 				}
+				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
+					ItemDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
+				}
 			});		
 			
 			// TODO Add a popup panel at the bottom with property definitions (+ values??).
@@ -93,5 +96,7 @@ abstract public class ItemDetails extends Composite {
 	}
 	
 	abstract protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
+
+	abstract protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language);
 
 }
