@@ -1,10 +1,11 @@
 package claro.catalog.manager.client;
 
+import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import claro.catalog.data.MediaValue;
-import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ProductList extends MasterDetail {
@@ -221,7 +223,7 @@ abstract public class ProductList extends MasterDetail {
 		final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
 		if (price != null) {
 			// TODO Use locale in the following format??
-			rowWidgets.priceLabel.setText(PropertyStringConverter.toString(priceProperty.type, price));
+			rowWidgets.priceLabel.setText(propertyStringConverter.toString(priceProperty.type, price));
 		} else {
 			rowWidgets.priceLabel.setText("");
 		}

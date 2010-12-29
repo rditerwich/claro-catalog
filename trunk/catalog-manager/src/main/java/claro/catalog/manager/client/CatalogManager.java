@@ -1,6 +1,8 @@
 package claro.catalog.manager.client;
 
 
+import claro.catalog.util.PropertyStringConverter;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -14,9 +16,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 
@@ -31,7 +31,8 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 //	private final OrderPresenter orders = new OrderPresenter();
 //	private final SettingsPresenter settings = new SettingsPresenter();
 
-
+	public static PropertyStringConverter propertyStringConverter = new PropertyStringConverter();
+	
 	@Override
 	public void onModuleLoad() {
 		EventBus eventBus = new SimpleEventBus();

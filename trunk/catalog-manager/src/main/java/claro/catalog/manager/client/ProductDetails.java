@@ -1,5 +1,7 @@
 package claro.catalog.manager.client;
 
+import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -161,7 +163,7 @@ abstract public class ProductDetails extends Composite {
 		final Object price = getValue(priceProperty, properties);
 		if (price != null) {
 			// TODO Use locale in the following format??
-			productPrice.setText(PropertyStringConverter.toString(priceProperty.type, price));
+			productPrice.setText(propertyStringConverter.toString(priceProperty.type, price));
 		} else {
 			productPrice.setText("");
 		}

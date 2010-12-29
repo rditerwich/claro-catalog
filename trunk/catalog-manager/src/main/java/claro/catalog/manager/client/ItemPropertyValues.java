@@ -1,5 +1,7 @@
 package claro.catalog.manager.client;
 
+import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -295,7 +297,7 @@ abstract public class ItemPropertyValues extends Composite {
 			mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
 		default:
 			TextBox textBox = (TextBox) widget;
-			textBox.setText(PropertyStringConverter.toString(property.type, value));
+			textBox.setText(propertyStringConverter.toString(property.type, value));
 		}
 	}
 
