@@ -12,6 +12,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.catalog.manager.client.widgets.Table;
+import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,7 +48,7 @@ abstract public class ProductList extends MasterDetail {
 	private PropertyInfo artNoProperty;
 	private PropertyInfo imageProperty;
 	private PropertyInfo smallImageProperty;
-	private ItemDetails details;
+	private ProductDetails details;
 
 
 	public ProductList(int headerSize, int footerSize) {
@@ -218,16 +219,15 @@ abstract public class ProductList extends MasterDetail {
 		
 		// price
 		final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
-		// TODO Use locale in the following format??
-		if (price instanceof MoneyValue) {
-			MoneyValue priceMoney = (MoneyValue) price;
-			rowWidgets.priceLabel.setText(NumberFormat.getCurrencyFormat(priceMoney.currency).format(priceMoney.value));
+		if (price != null) {
+			// TODO Use locale in the following format??
+			rowWidgets.priceLabel.setText(PropertyStringConverter.toString(priceProperty.type, price));
 		} else {
 			rowWidgets.priceLabel.setText("");
 		}
 	}
 	
-	public void setSelectedProduct(Long productId, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
+	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
 		int row = products.getKeys().indexOf(productId);
 
 		if (details == null) {
@@ -243,19 +243,25 @@ abstract public class ProductList extends MasterDetail {
 			}});
 			String uiLanguage = null; // TODO.
 			OutputChannel outputChannel = null; // TODO
-			details = new ItemDetails(language, uiLanguage, outputChannel) {
+			details = new ProductDetails(language, uiLanguage, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+					// Call Server method
+					// Queueing?
+					// Use result of server command to update both product and list.
 					// TODO Implement.
 				}
 				protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
 					// TODO Auto-generated method stub
 					
 				}
+				protected void categoryRemoved(Long itemId, Long categoryId) {
+					// TODO Auto-generated method stub
+				}
 			};
 			detailPanel.add(details);
 		}
 
-		details.setItemData(productId, propertyValues);
+		details.setItemData(productId, categories, propertyValues);
 		openDetail(row);
 	}
 	

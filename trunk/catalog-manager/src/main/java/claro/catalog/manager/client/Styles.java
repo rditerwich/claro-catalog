@@ -33,7 +33,8 @@ public enum Styles {
 	erasePanel, 
 	selectionPanel, 
 	masterdetailtest, 
-	itemRowChanged;
+	itemRowChanged, 
+	productDetailsTitle;
 	
 	public static void add(UIObject uiObject, Styles style) {
 		uiObject.addStyleName(style.toString());

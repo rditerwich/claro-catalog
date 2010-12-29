@@ -169,7 +169,7 @@ public class CatalogPage extends Page {
 			.setItem(selectedItem.getId());
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
 			public void onSuccess(ItemDetailsCommandResult result) {
-				filteredProductList.setSelectedProduct(productId, result.propertyData);
+				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);
 			}
 		});
 		
