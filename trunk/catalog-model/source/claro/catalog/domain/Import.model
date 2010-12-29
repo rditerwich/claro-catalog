@@ -38,6 +38,11 @@ Package {
                     lower = 0
                 }
                 Attribute {
+                    name = defaultCurrency
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
                     name = outputChannelExpression
                     type = primitive:String
                     lower = 0

@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -208,8 +207,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// string converter
 		PropertyStringConverter stringConverter = new PropertyStringConverter();
-		if (language != null) {
-			stringConverter.setLocale(new Locale(language));
+		if (importDefinition.getDefaultCurrency() != null) {
+			stringConverter.setDefaultCurrency(importDefinition.getDefaultCurrency());
 		}
 		
 		// find categories for this record

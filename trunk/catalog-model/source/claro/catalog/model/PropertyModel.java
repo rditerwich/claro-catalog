@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import claro.catalog.data.MediaValue;
-import claro.catalog.data.MoneyValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.Item;
@@ -25,6 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 /**
@@ -276,8 +276,8 @@ public abstract class PropertyModel {
 			}
 			break;
 		case Money:
-			if (value instanceof MoneyValue) {
-				MoneyValue moneyValue = (MoneyValue) value;
+			if (value instanceof Money) {
+				Money moneyValue = (Money) value;
 				propertyValue.setMoneyValue(moneyValue.value);
 				propertyValue.setMoneyCurrency(moneyValue.currency);
 			} else {
@@ -297,7 +297,7 @@ public abstract class PropertyModel {
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
 		case Media: return new MediaValue(value.getId(), value.getMimeType(), value.getStringValue());
-		case Money: return new MoneyValue(value.getMoneyValue(), value.getMoneyCurrency());
+		case Money: return new Money(value.getMoneyValue(), value.getMoneyCurrency());
 		default: return value.getStringValue();
 		}
 	}

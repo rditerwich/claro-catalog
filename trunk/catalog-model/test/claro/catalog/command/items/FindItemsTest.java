@@ -11,12 +11,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import claro.catalog.command.items.FindItems.ResultType;
-import claro.catalog.data.MoneyValue;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.Tuple;
 
 public class FindItemsTest extends CatalogTestBase {
@@ -74,37 +74,37 @@ public class FindItemsTest extends CatalogTestBase {
 					addProduct(entityManager, model, printers, "HP Deskjet 540 B&W", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART123123123"),
 							Tuple.create(model.variantProperty, "HP Deskjet 540 Color"),
-							Tuple.create(model.priceProperty, new MoneyValue(300.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(300.00, "EUR")),
 					});
 					
 					addProduct(entityManager, model, printers, "HP Deskjet 888 ", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART123123123"),
 							Tuple.create(model.variantProperty, "HP Deskjet 888 Color"),
-							Tuple.create(model.priceProperty, new MoneyValue(300.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(300.00, "EUR")),
 					});
 					
 					addProduct(entityManager, model, printers, "Canon Bla", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART111222333"),
 							Tuple.create(model.variantProperty, "Canon Bla2"),
-							Tuple.create(model.priceProperty, new MoneyValue(200.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(200.00, "EUR")),
 					});
 					
 					addProduct(entityManager, model, ink, "HP CYM ", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART123123111"),
 							Tuple.create(model.variantProperty, "HP CYM XL"),
-							Tuple.create(model.priceProperty, new MoneyValue(60.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(60.00, "EUR")),
 					});
 					
 					addProduct(entityManager, model, ink, "Canon Cyan", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART111222444"),
 							Tuple.create(model.variantProperty, "Canon Cyan XL"),
-							Tuple.create(model.priceProperty, new MoneyValue(20.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(20.00, "EUR")),
 					});
 					
 					addProduct(entityManager, model, ink, "Canon Magenta", new Tuple[] { 
 							Tuple.create(model.articleNumberProperty, "ART111222555"),
 							Tuple.create(model.variantProperty, "Canon Megenta XL"),
-							Tuple.create(model.priceProperty, new MoneyValue(20.00, "EUR")),
+							Tuple.create(model.priceProperty, new Money(20.00, "EUR")),
 					});
 					
 				} catch (SQLException e) {

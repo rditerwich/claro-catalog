@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
   <inherits name='easyenterprise.ee-lib'/>
-  <source path='catalog/catalog/util'/>
+  <source path='catalog/util'/>
   <source path='catalog/command'/>
   <source path='catalog/data'/>
-  <source path='jpa'/>
+  <source path='jpa'>
+  	<exclude name="**/*_.java"/>
+  </source>
 </module>

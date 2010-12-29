@@ -14,6 +14,7 @@ public class ImportDefinition extends Source implements Serializable {
     private String name;
     private String importUrlExpression;
     private String languageExpression;
+    private String defaultCurrency;
     private String outputChannelExpression;
     private Property matchProperty;
     private Integer sequenceNr;
@@ -42,6 +43,14 @@ public class ImportDefinition extends Source implements Serializable {
 
     public void setLanguageExpression(String value) {
         this.languageExpression = value;
+    }
+
+    public String getDefaultCurrency() {
+        return defaultCurrency;
+    }
+
+    public void setDefaultCurrency(String value) {
+        this.defaultCurrency = value;
     }
 
     public String getOutputChannelExpression() {

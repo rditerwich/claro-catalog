@@ -1,28 +1,17 @@
 package claro.catalog.util;
 
-import java.net.URLConnection;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import claro.catalog.data.MediaValue;
-import claro.catalog.data.MoneyValue;
 import claro.jpa.catalog.PropertyType;
-import easyenterprise.lib.util.ObjectUtil;
+import easyenterprise.lib.util.Money;
 
 public class PropertyStringConverter {
 
-	public static final Map<String, Currency> currencyMap = createCurrencyMap();
-	
 	/**
    * ISO 4217 currency code.
    * See http://en.wikipedia.org/wiki/ISO_4217.
 	 */
-	private static String defaultCurrency;
+	private String defaultCurrency;
 	
-	private static Locale locale = Locale.getDefault();
 	
 	/**
 	 * When null, the currency of the locale is used.
@@ -36,26 +25,14 @@ public class PropertyStringConverter {
 		this.defaultCurrency = defaultCurrency;
 	}
 	
-  public Locale getLocale() {
-		return locale;
-	}
-  
-  public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-	
-	public static String toString(PropertyType type, Object value) {
+	public String toString(PropertyType type, Object value) {
 		switch (type) {
 		case Media: 
 			MediaValue mediaValue = (MediaValue) value;
 			return mediaValue.mimeType + ":" + mediaValue.propertyValueId + ":" + mediaValue.filename;
 		case Money: 
-			MoneyValue moneyValue = (MoneyValue) value;
-			String currencyCode = ObjectUtil.orElse(moneyValue.currency, defaultCurrency);
-			Currency currency = Currency.getInstance(currencyCode);
-			NumberFormat format = NumberFormat.getInstance(locale); 
-			format.setCurrency(currency);
-			return format.format(moneyValue.value);
+			Money moneyValue = (Money) value;
+			return moneyValue.value.toString();
 		default: return value.toString();
 		}
 	}
@@ -92,47 +69,9 @@ public class PropertyStringConverter {
 			}
 			return new MediaValue(id, mimetype, fileName);
 		case Money: 
-			// parse currency symbol
-			String symbol = "";
-			for (int i = 0; i < value.length(); i++) {
-				if (Character.isDigit(i) || Character.isWhitespace(i)) {
-					symbol = value.substring(0, i).toUpperCase();
-					value = value.substring(i).trim();
-					break;
-				}
-			}
-			Currency currency = currencyMap.get(symbol);
-			String currencyCode = currency != null ? currency.getCurrencyCode() : defaultCurrency;
-			if (currencyCode == null && locale != null) {
-				currency = Currency.getInstance(locale);
-				if (currency != null) {
-					currencyCode = currency.getCurrencyCode();
-				}
-			}
-			return new MoneyValue(Double.parseDouble(value), currencyCode);
+			return Money.parse(value, defaultCurrency);
 		default: 
 			throw new Exception("invalid string value:" + value);
 		}
-	}
-	
-	public static String mimetype(String fileName) {
-		return URLConnection.getFileNameMap().getContentTypeFor(fileName);
-	}
-	
-	private static Map<String, Currency> createCurrencyMap() {
-		Map<String, Currency> result = new HashMap<String, Currency>();
-		for (Locale locale : Locale.getAvailableLocales()) {
-			try {
-				Currency currency = Currency.getInstance(locale);
-				if (currency != null) {
-					result.put(currency.getCurrencyCode(), currency);
-					for (Locale locale2 : Locale.getAvailableLocales()) {
-						result.put(currency.getSymbol(locale2), currency);
-					}
-				}
-			} catch (Exception e) {
-			}
-		}
-		return result;
 	}
 }

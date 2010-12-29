@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.Test;
 
 import claro.catalog.CatalogDao;
-import claro.catalog.data.MoneyValue;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
@@ -23,6 +22,7 @@ import claro.jpa.catalog.StagingArea;
 
 import com.google.common.base.Objects;
 
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.Paging;
 import easyenterprise.lib.util.Tuple;
 
