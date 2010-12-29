@@ -154,29 +154,33 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	private List<ItemModel> filterItems(Set<ItemModel> candidates) {
 		List<ItemModel> result = new ArrayList<ItemModel>();
 		
-		// Split of filter:
-		String[] filterCriteria = filter.toLowerCase().split(" ");
-		List<String> simpleCriteria = new ArrayList<String>();
-		List<PropertyCriterium> propertyCriteria = new ArrayList<PropertyCriterium>();
-		for (String criterium : filterCriteria) {
-			String[] splitCriterium = criterium.split(":");
-			if (splitCriterium.length == 2) {
-				if (splitCriterium[1] != null && splitCriterium[1].trim().length() > 0) {
-					propertyCriteria.add(new PropertyCriterium(splitCriterium[0], splitCriterium[1]));
-				}
-			} else {
-				if (criterium != null && criterium.trim().length() > 0) {
-					simpleCriteria.add(criterium);
+		if (filter != null) {
+			// Split of filter:
+			String[] filterCriteria = filter.toLowerCase().split(" ");
+			List<String> simpleCriteria = new ArrayList<String>();
+			List<PropertyCriterium> propertyCriteria = new ArrayList<PropertyCriterium>();
+			for (String criterium : filterCriteria) {
+				String[] splitCriterium = criterium.split(":");
+				if (splitCriterium.length == 2) {
+					if (splitCriterium[1] != null && splitCriterium[1].trim().length() > 0) {
+						propertyCriteria.add(new PropertyCriterium(splitCriterium[0], splitCriterium[1]));
+					}
+				} else {
+					if (criterium != null && criterium.trim().length() > 0) {
+						simpleCriteria.add(criterium);
+					}
 				}
 			}
-		}
-		
-		// For each item, obtain model, and filter.
-		for (ItemModel itemModel : candidates) {
-			// add unfiltered items
-			if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language)) {
-				result.add(itemModel);
+			
+			// For each item, obtain model, and filter.
+			for (ItemModel itemModel : candidates) {
+				// add unfiltered items
+				if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language)) {
+					result.add(itemModel);
+				}
 			}
+		} else {
+			result.addAll(candidates);
 		}
 		
 		return result;

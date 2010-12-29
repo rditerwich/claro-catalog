@@ -1,6 +1,7 @@
 package claro.catalog.manager.client.i18n;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface I18NCatalog extends Messages {
 
@@ -175,7 +176,9 @@ public interface I18NCatalog extends Messages {
 //	
 //	String down();
 //
+	String addCategoriesLink();
 	String addCategoryFilter();
+	String addCategoryProductDetailsTooltip(String productName);
 	String clearValue();
 	String containedProducts(int nr);
 	String failureRetryingMessage(String action, int retryNr);
@@ -185,13 +188,17 @@ public interface I18NCatalog extends Messages {
 	String internalFailureMessage();
 	String loadingProducts();
 	String loadingProductDetails();
+	String newProduct();
+	String noProductsFound();
 	String price();
 	String product();
+	String removeCategoryFilterTooltip(String categoryName);
+	String removeCategoryProductDetailsTooltip(String categoryName);
+
 
 	
 
 
-	String noProductsFound();
 	String loadingImportSources();
 	String importSource();
 

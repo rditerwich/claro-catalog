@@ -9,11 +9,15 @@ import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.catalog.Item;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -23,6 +27,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.util.SMap;
 
 public class CatalogPage extends Page {
 
@@ -31,11 +36,13 @@ public class CatalogPage extends Page {
 	private Label noProductsFoundLabel;
 
 	private Item selectedItem;
+	private SMap<Long, SMap<String, String>> filterCategories = SMap.empty();
+	
 	private boolean initialized;
 	protected HTML filterLabel;
 	
-	private long currentCatalogId;
-	private long currentOuputChannel;
+	private Long currentCatalogId;
+	private Long currentOuputChannel;
 	private String currentLanguage;
 	private String filterString;
 
@@ -69,46 +76,52 @@ public class CatalogPage extends Page {
 
 		initialized = true;
 		
-		mainPanel.add(filteredProductList = new ProductList(50, 0) {{
+		mainPanel.add(filteredProductList = new ProductList(90, 0) {{
 			// search panel
-			getMasterHeader().add(new Grid(2, 6){{
-				StyleUtil.add(this, CatalogManager.Styles.filterpanel);
-				setWidget(0, 0, new ListBox() {{
-					addItem("Default");
-					addItem("English");
-					addItem("French");
-					addItem("  Shop");
-					addItem("    English");
-					addItem("    French");
-				}});
-				setWidget(0, 1, new TextBox() {{
-					addChangeHandler(new ChangeHandler() {
-						public void onChange(ChangeEvent event) {
-							filterString = getText();
-							updateFilterLabel();
-							updateProductList();
+			getMasterHeader().add(new DockLayoutPanel(Unit.PX) {{
+				addSouth(new FlowPanel() {{
+					add(filterLabel = new HTML() {{
+						setVisible(false); 
+					}});
+					add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+						setVisible(false);
+					}});
+				}}, 30);
+				add(new Grid(2, 3) {{
+					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
+					setWidget(0, 0, new ListBox() {{
+						addItem("Default");
+						addItem("English");
+						addItem("French");
+						addItem("  Shop");
+						addItem("    English");
+						addItem("    French");
+					}});
+					setWidget(0, 1, new TextBox() {{
+						addChangeHandler(new ChangeHandler() {
+							public void onChange(ChangeEvent event) {
+								filterString = getText();
+								updateFilterLabel();
+								updateProductList();
+							}
+						});
+					}});
+					setWidget(0, 2, new CategoriesWidget() {{
+							setData(filterCategories, currentLanguage, true, true, false);
+						}
+						protected String getAddCategoryTooltip() {
+							return messages.addCategoryFilter();
+						}
+						protected String getRemoveCategoryTooltip(String categoryName) {
+							return messages.removeCategoryFilterTooltip(categoryName);
+						}
+						// TODO add.
+						protected void removeCategory(Long categoryId) {
+							// TODO update filtercats.
 						}
 					});
+					setWidget(1, 0, new Button(messages.newProduct()));
 				}});
-				setWidget(0, 2, new Label("Filter1")); // TODO i18n
-				setWidget(0, 3, new ListBox() {{
-					addItem("Option1");
-					addItem("Option2");
-					addItem("Option3");
-				}});
-				setWidget(0, 4, new Label("Filter2")); // TODO i18n
-				setWidget(0, 5, new ListBox() {{
-					addItem("Option4");
-					addItem("Option5");
-					addItem("Option6");
-				}});
-				setWidget(0, 6, new Anchor(messages.addCategoryFilter()));
-			}});
-			getMasterHeader().add(filterLabel = new HTML() {{
-				setVisible(false); 
-			}}); 
-			getMasterHeader().add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-				setVisible(false);
 			}});
 		}
 		
@@ -139,6 +152,7 @@ public class CatalogPage extends Page {
 		cmd.outputChannelId = currentOuputChannel;
 		cmd.language = currentLanguage;
 		cmd.filter = constructFilterString();
+		cmd.categoryIds = filterCategories.getKeys();
 		// TODO set more command pars.
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {

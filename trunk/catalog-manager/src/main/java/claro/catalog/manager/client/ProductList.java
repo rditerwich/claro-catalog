@@ -79,7 +79,7 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		
 		setHeader(getMasterTable(), language);
 		
-		render(); // TODO More delicate rerender?
+		render(); 
 	}
 	
 	public void updateProduct(Long itemId, SMap<PropertyInfo, SMap<String, Object>> newValues, boolean setChangedStyle) {

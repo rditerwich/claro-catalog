@@ -35,7 +35,7 @@ import easyenterprise.lib.util.SMap;
 abstract public class ProductDetails extends Composite implements Globals {
 	
 	private TextBox productNameBox;
-	private FlowPanel categoryPanel;
+	private CategoriesWidget categoryPanel;
 	private Label productPrice;
 	private Image productImage;
 	
@@ -69,7 +69,17 @@ abstract public class ProductDetails extends Composite implements Globals {
 				add(productNameBox = new TextBox() {{
 					StyleUtil.add(this, CatalogManager.Styles.itemName);
 				}});
-				add(categoryPanel = new FlowPanel());
+				add(categoryPanel = new CategoriesWidget() {
+					protected String getAddCategoryTooltip() {
+						return messages.addCategoryProductDetailsTooltip(productNameBox.getText());  // TODO This is a little dirty??
+					}
+					protected String getRemoveCategoryTooltip(String categoryName) {
+						return messages.removeCategoryProductDetailsTooltip(categoryName);
+					}
+					protected void removeCategory(Long categoryId) {
+						categoryRemoved(itemId, categoryId);
+					}
+				});
 			}});
 			
 			// Image, Price, RelatedInfo
@@ -169,24 +179,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			productPrice.setText("");
 		}
 
-		List<Long> categoryKeys = categories.getKeys();
-
-		categoryPanel.clear();
-		for (Long categoryId : categoryKeys) {
-			final Long catId = categoryId;
-			final String categoryName = categories.getOrEmpty(categoryId).tryGet(language, null);
-			categoryPanel.add(new Grid(1, 2) {{
-				setWidget(0, 0, new Label(categoryName));
-				setWidget(0, 1, new Anchor("X"){{
-					// TODO set title/tooltip.
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							categoryRemoved(itemId, catId);
-						}
-					});
-				}});
-			}});
-		}
+		categoryPanel.setData(categories, language, true, true, false);
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
