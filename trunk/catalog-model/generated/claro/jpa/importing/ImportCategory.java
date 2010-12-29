@@ -8,7 +8,7 @@ import java.lang.String;
 @SuppressWarnings("serial")
 public class ImportCategory implements Serializable {
     private Long id;
-    private ImportDefinition importDefinition;
+    private ImportSource importSource;
     private String categoryExpression;
 
     public Long getId() {
@@ -19,12 +19,12 @@ public class ImportCategory implements Serializable {
         this.id = value;
     }
 
-    public ImportDefinition getImportDefinition() {
-        return importDefinition;
+    public ImportSource getImportSource() {
+        return importSource;
     }
 
-    public void setImportDefinition(ImportDefinition value) {
-        this.importDefinition = value;
+    public void setImportSource(ImportSource value) {
+        this.importSource = value;
     }
 
     public String getCategoryExpression() {

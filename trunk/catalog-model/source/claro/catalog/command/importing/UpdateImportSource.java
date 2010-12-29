@@ -5,25 +5,27 @@ import static easyenterprise.lib.util.CollectionUtil.isEmpty;
 
 import java.util.List;
 
-import claro.catalog.command.importing.UpdateImportDefinition.Result;
+import claro.catalog.command.importing.UpdateImportSource.Result;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportDefinition;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 
-public class UpdateImportDefinition implements Command<Result> {
+public class UpdateImportSource implements Command<Result> {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Don't update import definition instance. Only use {@link #importDefinition}
+	 * Don't update import definition instance. Only use {@link #ImportSource}
 	 * to find nested import-categories or import-properties, or to store the id
 	 * for removing import-categories or import-properties.
 	 */
-	public boolean skipImportDefinition;
+	public boolean skipImportSource;
 	
 	/**
-	 * Remove the entire import definition. The field {@link #skipImportDefinition}
+	 * Remove the entire import definition. The field {@link #skipImportSource}
 	 * should be set to false, {@link #importCategoriesToBeRemoved} and
 	 * {@link #importPropertiesToBeRemoved} should be empty.
 	 */
@@ -32,23 +34,24 @@ public class UpdateImportDefinition implements Command<Result> {
 	/**
 	 * Only basic fields will be stored, no recursion
 	 */
-	public ImportDefinition importDefinition;
+	public ImportSource ImportSource;
 	
 	public List<ImportCategory> importCategoriesToBeRemoved;
 	
 	public List<ImportProperty> importPropertiesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
-		validate (importDefinition != null);
-		if (remove) validate(!skipImportDefinition);
+		validate (ImportSource != null);
+		if (remove) validate(!skipImportSource);
 		if (remove) validate(isEmpty(importCategoriesToBeRemoved));
 		if (remove) validate(isEmpty(importPropertiesToBeRemoved));
-		if (skipImportDefinition) validate(importDefinition.getId() != null);
-		if (!isEmpty(importCategoriesToBeRemoved)) validate(importDefinition.getId() != null);
-		if (!isEmpty(importPropertiesToBeRemoved)) validate(importDefinition.getId() != null);
+		if (skipImportSource) validate(ImportSource.getId() != null);
+		if (!isEmpty(importCategoriesToBeRemoved)) validate(ImportSource.getId() != null);
+		if (!isEmpty(importPropertiesToBeRemoved)) validate(ImportSource.getId() != null);
 	}
 	
 	public static class Result implements CommandResult {
-		public ImportDefinition importDefinition;
+		private static final long serialVersionUID = 1L;
+		public ImportSource ImportSource;
 	}
 }

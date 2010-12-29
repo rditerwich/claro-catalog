@@ -1,20 +1,24 @@
 package claro.catalog;
 
+import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.servlet.ServletConfig;
 
+import claro.jpa.catalog.Catalog;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandException;
+import easyenterprise.lib.command.CommandExecutor;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandServer;
-import easyenterprise.lib.command.CommandExecutor;
 import easyenterprise.lib.command.RegisteredCommands;
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.util.DBScript;
 
 public class CatalogServer implements CommandExecutor {
 
@@ -26,16 +30,18 @@ public class CatalogServer implements CommandExecutor {
 
 	private final CatalogModelService catalogModelService;
 	
-	public CatalogServer(ServletConfig config) {
+	public CatalogServer(ServletConfig config) throws SQLException {
 		this(collectProperties(config));
 	}
 
-	public CatalogServer(Map<String, String> properties) {
+	public CatalogServer(Map<String, String> properties) throws SQLException {
 		entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", properties);
 		CommandServer server = new CommandServer(registeredCommands);
 		catalogModelService = new CatalogModelService(server);
 		executor = new JpaService(catalogModelService, entityManagerFactory);
+		createDatabase();
 	}
+	
 	
 	@Override
 	public <T extends CommandResult, C extends Command<T>> T execute(C command) throws CommandException {
@@ -44,6 +50,19 @@ public class CatalogServer implements CommandExecutor {
 	
 	public CatalogModelService getCatalogModelService() {
 		return catalogModelService;
+	}
+	
+	protected void createDatabase() throws SQLException {
+		EntityManager em = entityManagerFactory.createEntityManager();
+		try {
+			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
+			script = new DBScript(Catalog.class.getResourceAsStream("/CreateSchema.sql"));
+			script.execute(em);
+		} catch (Throwable e) {
+			throw new SQLException("Couldn't create catalog schema. Did you forget to create the catalog database?", e);
+		} finally {
+			em.close();
+		}
 	}
 	
 	private static Map<String, String> collectProperties(ServletConfig config) {

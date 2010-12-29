@@ -6,14 +6,14 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import claro.catalog.command.importing.UpdateImportDefinition.Result;
+import claro.catalog.command.importing.UpdateImportSource.Result;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProperty;
-import claro.jpa.importing.TabularImportDefinition;
+import claro.jpa.importing.TabularImportSource;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.sexpr.Constant;
 
@@ -27,7 +27,7 @@ public class PerformImportTest extends CatalogTestBase {
 		CatalogModel model = getCatalogModel();
 		
 		// create an import definition
-		TabularImportDefinition importDef = new TabularImportDefinition();
+		TabularImportSource importDef = new TabularImportSource();
 		importDef.setMatchProperty(model.articleNumberProperty.getEntity());
 		
 		importDef.setName("Import Test Products");
@@ -53,15 +53,15 @@ public class PerformImportTest extends CatalogTestBase {
 		importDef.getCategories().add(importCat);
 
 		// create an import definition
-		UpdateImportDefinition update = new UpdateImportDefinition();
-		update.importDefinition = importDef;
+		UpdateImportSource update = new UpdateImportSource();
+		update.ImportSource = importDef;
 		Result updateResult = executeCommand(update);
 		
 		
 		// perform update
 		PerformImport performImport = new PerformImport();
 		performImport.catalogId = TEST_CATALOG_ID;
-		performImport.importDefinitionId = updateResult.importDefinition.getId();
+		performImport.ImportSourceId = updateResult.ImportSource.getId();
 		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
 		System.out.println("FIRST RUN:");
 		PerformImport.Result result = executeCommand(performImport);

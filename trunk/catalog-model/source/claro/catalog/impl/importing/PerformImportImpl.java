@@ -37,9 +37,9 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportProperty;
-import claro.jpa.importing.TabularImportDefinition;
+import claro.jpa.importing.TabularImportSource;
 
 import com.google.common.base.Function;
 
@@ -58,7 +58,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 	private CatalogModel model;
 	private CategoryCache cache;
 	
-	private ImportDefinition importDefinition;
+	private ImportSource ImportSource;
 	private Property matchProperty;
 	private String matchPropertyLabel;
 	private SExpr languageExpression;
@@ -83,33 +83,33 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			try {
 				
 				// fetch import definition
-				importDefinition = dao.getImportDefinitionById(importDefinitionId);
+				ImportSource = dao.getImportSourceById(ImportSourceId);
 				
 				// match propeprty
-				matchProperty = checkMatchProperty(importDefinition);
+				matchProperty = checkMatchProperty(ImportSource);
 				matchPropertyLabel = propertyLabel(matchProperty, "");
 				
 				// expresions
 				SExprParser exprParser = new SExprParser();
-				languageExpression = exprParser.parse(orElse(importDefinition.getLanguageExpression(), ""));
-				outputChannelExpression = exprParser.parse(orElse(importDefinition.getOutputChannelExpression(), ""));
-				propertyValueExpressions = parsePropertyValueExpressions(importDefinition, exprParser);
-				categoryExpressions = parseCategoryExpressions(importDefinition, exprParser);
+				languageExpression = exprParser.parse(orElse(ImportSource.getLanguageExpression(), ""));
+				outputChannelExpression = exprParser.parse(orElse(ImportSource.getOutputChannelExpression(), ""));
+				propertyValueExpressions = parsePropertyValueExpressions(ImportSource, exprParser);
+				categoryExpressions = parseCategoryExpressions(ImportSource, exprParser);
 				
 				// expression context
 				DefaultContext exprContext = new DefaultContext();
 				
 				// get url
-				SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : importDefinition.getImportUrlExpression());
+				SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : ImportSource.getImportUrlExpression());
 				URL url = new URL(importUrlExpression.evaluate(exprContext));
 				
 				// increase sequence number
-				Integer sequence = orZero(importDefinition.getSequenceNr()) + 1;
-				importDefinition.setSequenceNr(sequence);
+				Integer sequence = orZero(ImportSource.getSequenceNr()) + 1;
+				ImportSource.setSequenceNr(sequence);
 				exprContext.setVariable("sequence", sequence.toString());
 				
-				if (importDefinition instanceof TabularImportDefinition) {
-					importTabularData((TabularImportDefinition) importDefinition, url, exprContext);
+				if (ImportSource instanceof TabularImportSource) {
+					importTabularData((TabularImportSource) ImportSource, url, exprContext);
 				}
 				result.success = true;
 				return result;
@@ -125,10 +125,10 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		}
 	}
 
-	private void importTabularData(TabularImportDefinition importDefinition, URL url, DefaultContext exprContext) throws Exception {
+	private void importTabularData(TabularImportSource ImportSource, URL url, DefaultContext exprContext) throws Exception {
 		
 		// separator chars
-		String separators = importDefinition.getSeparatorChars();
+		String separators = ImportSource.getSeparatorChars();
 		if (separators == null) {
 			separators = ",;\t";
 		}
@@ -136,12 +136,12 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		Map<String, String> nameValues = new HashMap<String, String>();
 		
 		// determine structure of import file
-		Charset charset = Charset.forName(importDefinition.getCharset() != null ? importDefinition.getCharset() : "UTF-8");
+		Charset charset = Charset.forName(ImportSource.getCharset() != null ? ImportSource.getCharset() : "UTF-8");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), charset));
 		log.println("Opened import file: " + url);
 		try {
 			List<String> headerFields = Collections.emptyList();
-			if (importDefinition.getHeaderLine()) {
+			if (ImportSource.getHeaderLine()) {
 				String line = reader.readLine();
 				if (line == null) throw new PerformImportException("Missing header-line in file " + url);
 				headerFields = parseLine(line, separators);
@@ -207,8 +207,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// string converter
 		PropertyStringConverter stringConverter = new PropertyStringConverter();
-		if (importDefinition.getDefaultCurrency() != null) {
-			stringConverter.setDefaultCurrency(importDefinition.getDefaultCurrency());
+		if (ImportSource.getDefaultCurrency() != null) {
+			stringConverter.setDefaultCurrency(ImportSource.getDefaultCurrency());
 		}
 		
 		// find categories for this record
@@ -244,7 +244,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				Product product = (Product) item.getEntity();
 				if (!visited.contains(product)) {
 					visited.add(product);
-					PropertyModel property = item.findProperty(importDefinition.getMatchProperty().getId(), true);
+					PropertyModel property = item.findProperty(ImportSource.getMatchProperty().getId(), true);
 					if (property != null) { 
 						Object typedValue = property.getValues(null, outputChannel).get(language);
 						if (typedValue != null) {
@@ -316,35 +316,35 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		return "";
 	}
 
-	private static Property checkMatchProperty(ImportDefinition importDefinition) throws Exception {
-		if (importDefinition.getMatchProperty() == null) {
+	private static Property checkMatchProperty(ImportSource ImportSource) throws Exception {
+		if (ImportSource.getMatchProperty() == null) {
 			throw new Exception("No match property specified");
 		}
 		boolean found = false;
-		for (ImportProperty ip : importDefinition.getProperties()) {
-			if (ip.getProperty().equals(importDefinition.getMatchProperty())) {
+		for (ImportProperty ip : ImportSource.getProperties()) {
+			if (ip.getProperty().equals(ImportSource.getMatchProperty())) {
 				found = true;
 				break;
 			}
 		}
 		if (!found) {
-			throw new Exception("No rule definined for match property: " + propertyLabel(importDefinition.getMatchProperty(), null));
+			throw new Exception("No rule definined for match property: " + propertyLabel(ImportSource.getMatchProperty(), null));
 		}
-		return importDefinition.getMatchProperty();
+		return ImportSource.getMatchProperty();
 	}
 
-	private static Map<Property, SExpr> parsePropertyValueExpressions(ImportDefinition importDefinition, SExprParser exprParser) throws SExprParseException {
+	private static Map<Property, SExpr> parsePropertyValueExpressions(ImportSource ImportSource, SExprParser exprParser) throws SExprParseException {
 		Map<Property, SExpr> propertyValueExpressions = new HashMap<Property, SExpr>();
-		for (ImportProperty ip : unique(importDefinition.getProperties())) {
+		for (ImportProperty ip : unique(ImportSource.getProperties())) {
 			SExpr expr = exprParser.parse(orElse(ip.getValueExpression(), ""));
 			propertyValueExpressions.put(ip.getProperty(), expr);
 		}
 		return propertyValueExpressions;
 	}
 	
-	private static List<SExpr> parseCategoryExpressions(ImportDefinition importDefinition, SExprParser exprParser) throws SExprParseException {
+	private static List<SExpr> parseCategoryExpressions(ImportSource ImportSource, SExprParser exprParser) throws SExprParseException {
 		List<SExpr> expressions = new ArrayList<SExpr>();
-		for (ImportCategory ic : unique(importDefinition.getCategories())) {
+		for (ImportCategory ic : unique(ImportSource.getCategories())) {
 			SExpr expr = exprParser.parse(orElse(ic.getCategoryExpression(), ""));
 			expressions.add(expr);
 		}

@@ -4,19 +4,19 @@ import static easyenterprise.lib.command.CommandValidationException.validate;
 
 import java.util.List;
 
-import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.Paging;
 
-public class GetImportDefinitions implements Command<GetImportDefinitions.Result> {
+public class GetImportSources implements Command<GetImportSources.Result> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public Long importDefinitionId = null;
+	public Long ImportSourceId = null;
 	
-	public String importDefinitionName = null;
+	public String ImportSourceName = null;
 	
 	public Paging paging = Paging.NO_PAGING;
 	
@@ -25,12 +25,13 @@ public class GetImportDefinitions implements Command<GetImportDefinitions.Result
 	public boolean includeDefinitionDetails = false;
 	
 	public void checkValid() throws CommandValidationException {
-		if (importDefinitionId != null) validate(paging.equals(Paging.NO_PAGING));
-		if (!paging.equals(Paging.NO_PAGING)) validate(importDefinitionId == null);
-		validate(importDefinitionId == null || importDefinitionName == null);
+		if (ImportSourceId != null) validate(paging.equals(Paging.NO_PAGING));
+		if (!paging.equals(Paging.NO_PAGING)) validate(ImportSourceId == null);
+		validate(ImportSourceId == null || ImportSourceName == null);
 	}
 	
 	public static class Result implements CommandResult {
-		public List<ImportDefinition> importDefinitions;
+		private static final long serialVersionUID = 1L;
+		public List<ImportSource> ImportSources;
 	}
 }

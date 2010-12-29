@@ -6,7 +6,7 @@ import java.lang.Override;
 import java.lang.String;
 
 @SuppressWarnings("serial")
-public class TabularImportDefinition extends ImportDefinition implements Serializable {
+public class TabularImportSource extends ImportSource implements Serializable {
     private Boolean headerLine;
     private String charset;
     private String separatorChars;
@@ -37,9 +37,9 @@ public class TabularImportDefinition extends ImportDefinition implements Seriali
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof TabularImportDefinition) {
-            TabularImportDefinition otherTabularImportDefinition = (TabularImportDefinition) other;
-            return super.equals(otherTabularImportDefinition);
+        if (other instanceof TabularImportSource) {
+            TabularImportSource otherTabularImportSource = (TabularImportSource) other;
+            return super.equals(otherTabularImportSource);
         }
         return false;
     }

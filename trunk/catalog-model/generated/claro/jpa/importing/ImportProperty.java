@@ -9,7 +9,7 @@ import claro.jpa.catalog.Property;
 @SuppressWarnings("serial")
 public class ImportProperty implements Serializable {
     private Long id;
-    private ImportDefinition importDefinition;
+    private ImportSource importSource;
     private Property property;
     private String valueExpression;
 
@@ -21,12 +21,12 @@ public class ImportProperty implements Serializable {
         this.id = value;
     }
 
-    public ImportDefinition getImportDefinition() {
-        return importDefinition;
+    public ImportSource getImportSource() {
+        return importSource;
     }
 
-    public void setImportDefinition(ImportDefinition value) {
-        this.importDefinition = value;
+    public void setImportSource(ImportSource value) {
+        this.importSource = value;
     }
 
     public Property getProperty() {

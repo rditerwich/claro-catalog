@@ -2,9 +2,9 @@ package claro.catalog.impl.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import claro.catalog.CatalogDao;
-import claro.catalog.command.importing.UpdateImportDefinition;
+import claro.catalog.command.importing.UpdateImportSource;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportProperty;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
@@ -12,7 +12,9 @@ import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 
-public class UpdateImportDefinitionImpl extends UpdateImportDefinition implements CommandImpl<UpdateImportDefinition.Result> {
+public class UpdateImportSourceImpl extends UpdateImportSource implements CommandImpl<UpdateImportSource.Result> {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public Result execute() throws CommandException {
@@ -20,28 +22,28 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 		validateCommand(dao);
 		Result result = new Result();
 		if (remove) {
-			dao.getEntityManager().remove(importDefinition);
+			dao.getEntityManager().remove(ImportSource);
 		} else {
-			if (skipImportDefinition) {
-				result.importDefinition = new ImportDefinition();
-				result.importDefinition.setId(importDefinition.getId());
+			if (skipImportSource) {
+				result.ImportSource = new ImportSource();
+				result.ImportSource.setId(ImportSource.getId());
 			} else {
-				if (importDefinition.getId() == null) {
-//					dao.getEntityManager().persist(importDefinition);
-//					dao.getEntityManager().merge(importDefinition);
+				if (ImportSource.getId() == null) {
+//					dao.getEntityManager().persist(ImportSource);
+//					dao.getEntityManager().merge(ImportSource);
 				}  
-				result.importDefinition = 
-					dao.getEntityManager().merge(importDefinition);
+				result.ImportSource = 
+					dao.getEntityManager().merge(ImportSource);
 //				dao.getEntityManager().flush();
 			}
-			for (ImportCategory cat : CollectionUtil.notNull(importDefinition.getCategories())) {
-				cat.setImportDefinition(importDefinition);
-				result.importDefinition.getCategories().add(
+			for (ImportCategory cat : CollectionUtil.notNull(ImportSource.getCategories())) {
+				cat.setImportSource(ImportSource);
+				result.ImportSource.getCategories().add(
 					dao.getEntityManager().merge(cat));
 			}
-			for (ImportProperty prop : CollectionUtil.notNull(importDefinition.getProperties())) {
-				prop.setImportDefinition(importDefinition);
-				result.importDefinition.getProperties().add(
+			for (ImportProperty prop : CollectionUtil.notNull(ImportSource.getProperties())) {
+				prop.setImportSource(ImportSource);
+				result.ImportSource.getProperties().add(
 					dao.getEntityManager().merge(prop));
 			}
 			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
@@ -61,11 +63,11 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 			validate(cat.getId() != null);
 		}
 		// all categories should belong to the current import definition
-		for (ImportCategory cat : CollectionUtil.concat(importDefinition.getCategories(), importCategoriesToBeRemoved)) {
+		for (ImportCategory cat : CollectionUtil.concat(ImportSource.getCategories(), importCategoriesToBeRemoved)) {
 			if (cat.getId() != null) {
 				ImportCategory existing = dao.getEntityManager().find(ImportCategory.class, cat.getId());
 				if (existing != null) {
-					validate(existing.getImportDefinition().equals(importDefinition));
+					validate(existing.getImportSource().equals(ImportSource));
 				}
 			}
 		}
@@ -74,11 +76,11 @@ public class UpdateImportDefinitionImpl extends UpdateImportDefinition implement
 			validate(prop.getId() != null);
 		}
 		// all properties should belong to the current import definition
-		for (ImportProperty prop : CollectionUtil.concat(importDefinition.getProperties(), importPropertiesToBeRemoved)) {
+		for (ImportProperty prop : CollectionUtil.concat(ImportSource.getProperties(), importPropertiesToBeRemoved)) {
 			if (prop.getId() != null) {
 				ImportProperty existing = dao.getEntityManager().find(ImportProperty.class, prop.getId());
 				if (existing != null) {
-					validate(existing.getImportDefinition().equals(importDefinition));
+					validate(existing.getImportSource().equals(ImportSource));
 				}
 			}
 		}

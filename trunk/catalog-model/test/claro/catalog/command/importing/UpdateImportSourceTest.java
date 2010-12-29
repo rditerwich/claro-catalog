@@ -11,30 +11,30 @@ import org.junit.Test;
 
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.command.CommandException;
 
-public class UpdateImportDefinitionTest extends CatalogTestBase {
+public class UpdateImportSourceTest extends CatalogTestBase {
 
 	@Test
 	public void test() throws IOException, SQLException, CommandException {
 		ensureDatabaseCreated();
-		UpdateImportDefinition update = new UpdateImportDefinition();
-		update.importDefinition = new ImportDefinition();
-		update.importDefinition.setName("my-import");
-		update.importDefinition.setImportUrlExpression("file:///test");
-		update.importDefinition.setPriority(0);
+		UpdateImportSource update = new UpdateImportSource();
+		update.ImportSource = new ImportSource();
+		update.ImportSource.setName("my-import");
+		update.ImportSource.setImportUrlExpression("file:///test");
+		update.ImportSource.setPriority(0);
 		ImportCategory importCategory = new ImportCategory();
 		importCategory.setCategoryExpression("Wines");
-		update.importDefinition.getCategories().add(importCategory);
-		assertNull(update.importDefinition.getId());
+		update.ImportSource.getCategories().add(importCategory);
+		assertNull(update.ImportSource.getId());
 		assertNull(importCategory.getId());
-		ImportDefinition def = executeCommand(update).importDefinition;
+		ImportSource def = executeCommand(update).ImportSource;
 		assertNotNull(def.getId());
 		assertNotNull(first(def.getCategories()).getId());
 		
-		GetImportDefinitions query = new GetImportDefinitions();
-		query.importDefinitionName = "my-imp";
-		GetImportDefinitions.Result importDefinitions = executeCommand(query);
+		GetImportSources query = new GetImportSources();
+		query.ImportSourceName = "my-imp";
+		GetImportSources.Result ImportSources = executeCommand(query);
 	}
 }

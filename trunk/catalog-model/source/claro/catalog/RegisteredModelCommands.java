@@ -1,9 +1,9 @@
 package claro.catalog;
 
 import claro.catalog.impl.RootPropertiesCommandImpl;
-import claro.catalog.impl.importing.GetImportDefinitionsImpl;
+import claro.catalog.impl.importing.GetImportSourcesImpl;
 import claro.catalog.impl.importing.PerformImportImpl;
-import claro.catalog.impl.importing.UpdateImportDefinitionImpl;
+import claro.catalog.impl.importing.UpdateImportSourceImpl;
 import claro.catalog.impl.items.FindItemsImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
 import easyenterprise.lib.command.RegisteredCommands;
@@ -13,8 +13,8 @@ public class RegisteredModelCommands extends RegisteredCommands {
 		register(ItemDetailsCommandImpl.class);
 		register(FindItemsImpl.class);
 		register(RootPropertiesCommandImpl.class);
-		register(GetImportDefinitionsImpl.class);
-		register(UpdateImportDefinitionImpl.class);
+		register(GetImportSourcesImpl.class);
+		register(UpdateImportSourceImpl.class);
 		register(PerformImportImpl.class);
 	}
 }

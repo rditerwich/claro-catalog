@@ -19,7 +19,7 @@ Package {
     name = Importing
     types = {
         Class {
-            name = ImportDefinition
+            name = ImportSource
             superClass = catalog:Source
             attributes = {
                 Attribute {
@@ -65,7 +65,7 @@ Package {
                     lower = 0
                     upper = {}
                     isComposite = true
-                    opposite = importing:ImportCategory/attributes:importDefinition
+                    opposite = importing:ImportCategory/attributes:ImportSource
                 }
                 Attribute {
                     name = properties
@@ -73,13 +73,13 @@ Package {
                     lower = 0
                     upper = {}
                     isComposite = true
-                    opposite = importing:ImportProperty/attributes:importDefinition
+                    opposite = importing:ImportProperty/attributes:ImportSource
                 }
             }
         }
         Class {
-            name = TabularImportDefinition
-            superClass = importing:ImportDefinition
+            name = TabularImportSource
+            superClass = importing:ImportSource
             attributes = {
                 Attribute {
                     name = headerLine
@@ -103,9 +103,9 @@ Package {
             name = ImportCategory
             attributes = {
                 Attribute {
-                    name = importDefinition
-                    type = importing:ImportDefinition
-                    opposite = importing:ImportDefinition/attributes:categories
+                    name = ImportSource
+                    type = importing:ImportSource
+                    opposite = importing:ImportSource/attributes:categories
                 }
                 Attribute {
                     name = categoryExpression
@@ -117,9 +117,9 @@ Package {
             name = ImportProperty
             attributes = {
                 Attribute {
-                    name = importDefinition
-                    type = importing:ImportDefinition
-                    opposite = importing:ImportDefinition/attributes:properties
+                    name = ImportSource
+                    type = importing:ImportSource
+                    opposite = importing:ImportSource/attributes:properties
                 }
                 Attribute {
                     name = property

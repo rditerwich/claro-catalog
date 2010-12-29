@@ -1,16 +1,16 @@
 package claro.jpa.importing;
 
-import claro.jpa.importing.ImportDefinition;
+import claro.jpa.importing.ImportSource;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated("EclipseLink-2.1.1.v20100817-r8050 @ Tue Dec 28 13:44:08 CET 2010")
+@Generated(value="EclipseLink-2.2.0.v20101224-r8754", date="2010-12-29T16:49:28")
 @StaticMetamodel(ImportCategory.class)
 public class ImportCategory_ { 
 
     public static volatile SingularAttribute<ImportCategory, Long> id;
-    public static volatile SingularAttribute<ImportCategory, ImportDefinition> importDefinition;
     public static volatile SingularAttribute<ImportCategory, String> categoryExpression;
+    public static volatile SingularAttribute<ImportCategory, ImportSource> importSource;
 
 }

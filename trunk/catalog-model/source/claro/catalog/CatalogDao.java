@@ -29,8 +29,8 @@ import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.StagingArea;
-import claro.jpa.importing.ImportDefinition;
-import claro.jpa.importing.ImportDefinition_;
+import claro.jpa.importing.ImportSource;
+import claro.jpa.importing.ImportSource_;
 
 import com.google.common.base.Objects;
 
@@ -211,13 +211,13 @@ public class CatalogDao {
 		return entityManager.find(OutputChannel.class, outputChannelId);
 	}
 
-	public List<ImportDefinition> getImportDefinitions(Paging paging) {
+	public List<ImportSource> getImportSources(Paging paging) {
 		CriteriaBuilder cb = getCriteriaBuilder();
-		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
-		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
-		c.select(importDefinition);
+		CriteriaQuery<ImportSource> c = cb.createQuery(ImportSource.class);
+		Root<ImportSource> ImportSource = c.from(ImportSource.class);
+		c.select(ImportSource);
 		
-		TypedQuery<ImportDefinition> query = entityManager.createQuery(c);
+		TypedQuery<ImportSource> query = entityManager.createQuery(c);
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
@@ -225,27 +225,27 @@ public class CatalogDao {
 		return query.getResultList();
 	}
 	
-	public ImportDefinition getImportDefinitionById(Long id) {
+	public ImportSource getImportSourceById(Long id) {
 		CriteriaBuilder cb = getCriteriaBuilder();
-		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
+		CriteriaQuery<ImportSource> c = cb.createQuery(ImportSource.class);
 		Parameter<Long> idParam = cb.parameter(Long.class);
-		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
-		Path<Long> idAttr = importDefinition.get(ImportDefinition_.id);
-		c.select(importDefinition).where(cb.equal(idAttr, idParam));
+		Root<ImportSource> ImportSource = c.from(ImportSource.class);
+		Path<Long> idAttr = ImportSource.get(ImportSource_.id);
+		c.select(ImportSource).where(cb.equal(idAttr, idParam));
 		
-		TypedQuery<ImportDefinition> query = entityManager.createQuery(c).setParameter(idParam, id);
+		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(idParam, id);
 		return query.getSingleResult();
 	}
 	
-	public List<ImportDefinition> getImportDefinitionsByName(String name, Paging paging) {
+	public List<ImportSource> getImportSourcesByName(String name, Paging paging) {
 		CriteriaBuilder cb = getCriteriaBuilder();
-		CriteriaQuery<ImportDefinition> c = cb.createQuery(ImportDefinition.class);
+		CriteriaQuery<ImportSource> c = cb.createQuery(ImportSource.class);
 		ParameterExpression<String> nameParam = cb.parameter(String.class);
-		Root<ImportDefinition> importDefinition = c.from(ImportDefinition.class);
-		Path<String> nameAttr = importDefinition.get(ImportDefinition_.name);
-		c.select(importDefinition).where(cb.like(nameAttr, nameParam));
+		Root<ImportSource> ImportSource = c.from(ImportSource.class);
+		Path<String> nameAttr = ImportSource.get(ImportSource_.name);
+		c.select(ImportSource).where(cb.like(nameAttr, nameParam));
 
-		TypedQuery<ImportDefinition> query = entityManager.createQuery(c).setParameter(nameParam, "%" + name + "%");
+		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(nameParam, "%" + name + "%");
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());

@@ -10,7 +10,7 @@ import claro.jpa.catalog.Property;
 import claro.jpa.catalog.Source;
 
 @SuppressWarnings("serial")
-public class ImportDefinition extends Source implements Serializable {
+public class ImportSource extends Source implements Serializable {
     private String name;
     private String importUrlExpression;
     private String languageExpression;
@@ -101,9 +101,9 @@ public class ImportDefinition extends Source implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (other instanceof ImportDefinition) {
-            ImportDefinition otherImportDefinition = (ImportDefinition) other;
-            return super.equals(otherImportDefinition);
+        if (other instanceof ImportSource) {
+            ImportSource otherImportSource = (ImportSource) other;
+            return super.equals(otherImportSource);
         }
         return false;
     }
