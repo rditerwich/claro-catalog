@@ -192,6 +192,8 @@ public interface I18NCatalog extends Messages {
 
 
 	String noProductsFound();
+	String loadingImportSources();
+	String importSource();
 
 
 }

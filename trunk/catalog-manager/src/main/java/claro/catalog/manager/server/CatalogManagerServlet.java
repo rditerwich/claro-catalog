@@ -1,5 +1,7 @@
 package claro.catalog.manager.server;
 
+import java.sql.SQLException;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
@@ -23,7 +25,11 @@ public class CatalogManagerServlet extends RemoteServiceServlet implements GwtCo
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		org.eclipse.persistence.Version.getVersion();
-		server = new CatalogServer(config);
+		try {
+			server = new CatalogServer(config);
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		}
 	}
 	
 	@Override

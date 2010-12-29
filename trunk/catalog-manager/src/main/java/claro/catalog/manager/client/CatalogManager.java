@@ -1,6 +1,7 @@
 package claro.catalog.manager.client;
 
 
+import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.util.PropertyStringConverter;
 
 import com.google.gwt.core.client.GWT;

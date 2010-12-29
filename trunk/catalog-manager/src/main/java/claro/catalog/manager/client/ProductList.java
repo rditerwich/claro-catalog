@@ -77,7 +77,7 @@ abstract public class ProductList extends MasterDetail implements Globals {
 	public void switchLanguage(String newLanguage) {
 		language = newLanguage;
 		
-		setHeader(getMaster(), language);
+		setHeader(getMasterTable(), language);
 		
 		render(); // TODO More delicate rerender?
 	}
@@ -87,7 +87,7 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		products = products.add(itemId, newValues);
 		int itemRow = products.getKeys().indexOf(itemId);
 		
-		Table productTable = getMaster();
+		Table productTable = getMasterTable();
 		if (setChangedStyle) {
 			StyleUtil.remove(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
 		}
@@ -102,8 +102,8 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		
 		initialized = true;
 
-		getMaster().resizeColumns(NR_COLS);
-		ProductList.this.setHeader(getMaster(), language);
+		getMasterTable().resizeColumns(NR_COLS);
+		ProductList.this.setHeader(getMasterTable(), language);
 	}
 	
 	private void setHeader(Table productTable, String language) {
@@ -121,7 +121,7 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		
 		List<Long> productKeys = products.getKeys();
 
-		Table productTable = getMaster();
+		Table productTable = getMasterTable();
 		
 		// Delete/Create widgets as necessary:
 		int oldRowCount = productTable.getRowCount();

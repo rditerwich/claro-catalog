@@ -51,7 +51,7 @@ public class MasterDetailTestPage extends Page {
 			masterData.add("bladibladibladibla" + i);
 		}
 		mainPanel.add(m = new MasterDetail(50, 50) {{
-			final Table masterTable = getMaster();
+			final Table masterTable = getMasterTable();
 			masterTable.resizeColumns(5);
 			masterTable.resizeHeaderRows(1);
 			masterTable.setHeaderText(0, 0, "col1");
