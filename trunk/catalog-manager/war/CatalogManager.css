@@ -106,12 +106,12 @@ table.catalogheader {
 
 /** master detail styles */
 
-.detailPanel { background-color: #FFF3DF; border: 2px solid #9c0000; }
-#.detailPanel { border: 2px solid #9c0000; }
-.erasePanel { border-left: 2px solid #FFF3DF;}
-.selectionPanel { border: 2px solid #9c0000;}
-.masterDetail table td { padding: 0px; margin: 0px;}
-.masterselection td { background-color: #FFF3DF; padding: 0px;}
+.ee-MasterDetailDetailPanel { background-color: #FFF3DF; border: 2px solid #9c0000; }
+#.ee-MasterDetailDetailPanel { border: 2px solid #9c0000; }
+.ee-MasterDetailErasePanel { border-left: 2px solid #FFF3DF;}
+.ee-MasterDetailSelectionPanel { border: 2px solid #9c0000;}
+.ee-MasterDetail table td { padding: 0px; margin: 0px;}
+.ee-MasterDetailSelection td { background-color: #FFF3DF; padding: 0px;}
 
 /** catalogpage styles */
 

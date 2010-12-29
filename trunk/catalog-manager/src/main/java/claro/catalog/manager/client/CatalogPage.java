@@ -1,5 +1,6 @@
 package claro.catalog.manager.client;
 
+
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
 import claro.catalog.command.items.FindItems;
@@ -21,6 +22,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.gwt.client.StyleUtil;
 
 public class CatalogPage extends Page {
 
@@ -70,7 +72,7 @@ public class CatalogPage extends Page {
 		mainPanel.add(filteredProductList = new ProductList(50, 0) {{
 			// search panel
 			getMasterHeader().add(new Grid(2, 6){{
-				Styles.add(this, Styles.filterpanel);
+				StyleUtil.add(this, CatalogManager.Styles.filterpanel);
 				setWidget(0, 0, new ListBox() {{
 					addItem("Default");
 					addItem("English");
@@ -100,12 +102,12 @@ public class CatalogPage extends Page {
 					addItem("Option5");
 					addItem("Option6");
 				}});
-				setWidget(0, 6, new Anchor(Util.i18n.addCategoryFilter()));
+				setWidget(0, 6, new Anchor(messages.addCategoryFilter()));
 			}});
 			getMasterHeader().add(filterLabel = new HTML() {{
 				setVisible(false); 
 			}}); 
-			getMasterHeader().add(noProductsFoundLabel = new Label(Util.i18n.noProductsFound()) {{
+			getMasterHeader().add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
 				setVisible(false);
 			}});
 		}
@@ -139,7 +141,7 @@ public class CatalogPage extends Page {
 		cmd.filter = constructFilterString();
 		// TODO set more command pars.
 
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(Util.i18n.loadingProducts()) {
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
 				updateFilterLabel();
 				noProductsFoundLabel.setVisible(result.items.isEmpty());
@@ -156,7 +158,7 @@ public class CatalogPage extends Page {
 	private void updateFilterLabel() {
 		String actualFilter = constructFilterString();
 		if (actualFilter != null && !actualFilter.trim().equals("")) {
-			filterLabel.setHTML(Util.i18n.filterMessage(actualFilter)); 
+			filterLabel.setHTML(messages.filterMessage(actualFilter)); 
 			filterLabel.setVisible(true);
 		} else {
 			filterLabel.setVisible(false);

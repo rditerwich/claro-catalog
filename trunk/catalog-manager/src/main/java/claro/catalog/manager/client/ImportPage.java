@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
-import easyenterprise.lib.gwt.ui.SExprEditor;
+import easyenterprise.lib.gwt.client.widgets.SExprEditor;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
 

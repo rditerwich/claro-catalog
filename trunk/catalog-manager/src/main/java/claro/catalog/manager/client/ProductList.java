@@ -12,23 +12,22 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
-import claro.catalog.manager.client.widgets.Table;
-import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import easyenterprise.lib.util.Money;
+import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.MasterDetail;
+import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.SMap;
 
-abstract public class ProductList extends MasterDetail {
+abstract public class ProductList extends MasterDetail implements Globals {
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
@@ -90,7 +89,7 @@ abstract public class ProductList extends MasterDetail {
 		
 		Table productTable = getMaster();
 		if (setChangedStyle) {
-			Styles.remove(productTable.getRowFormatter(), itemRow, Styles.itemRowChanged);
+			StyleUtil.remove(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
 		}
 		
 		rebind(itemRow, itemId);
@@ -108,8 +107,8 @@ abstract public class ProductList extends MasterDetail {
 	}
 	
 	private void setHeader(Table productTable, String language) {
-		productTable.setHeaderText(0, 1, Util.i18n.product());
-		productTable.setHeaderText(0, 2, Util.i18n.price());
+		productTable.setHeaderText(0, 1, messages.product());
+		productTable.setHeaderText(0, 2, messages.price());
 	}
 	
 	public void render() {
@@ -152,14 +151,14 @@ abstract public class ProductList extends MasterDetail {
 			
 			// Product
 			productTable.setWidget(i, PRODUCT_COL, new VerticalPanel() {{
-				Styles.add(this, Styles.product);
+				StyleUtil.add(this, CatalogManager.Styles.product);
 				// .title -> name
 				add(rowWidgets.productNameLabel = new InlineLabel() {{
-					Util.add(this, Styles.productname);
+					StyleUtil.add(this, CatalogManager.Styles.productname);
 				}});
 				// .subtitle -> variant
 				add(rowWidgets.productVariantLabel = new InlineLabel() {{
-					Util.add(this, Styles.productvariant);
+					StyleUtil.add(this, CatalogManager.Styles.productvariant);
 				}});
 				
 				// .body -> artnr
@@ -170,7 +169,7 @@ abstract public class ProductList extends MasterDetail {
 			
 			// Price
 			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
-				Styles.add(this, Styles.productprice);
+				StyleUtil.add(this, CatalogManager.Styles.productprice);
 			}});
 		}
 		
@@ -180,7 +179,7 @@ abstract public class ProductList extends MasterDetail {
 		
 		int i = 0;
 		for (Long productId : productKeys) {
-			Styles.remove(productTable.getRowFormatter(), i, Styles.itemRowChanged);
+			StyleUtil.remove(productTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
 
 			rebind(i, productId);
 			
@@ -270,7 +269,7 @@ abstract public class ProductList extends MasterDetail {
 	abstract protected void productSelected(Long productId);
 	
 	private void rowSelected(int row) {
-		StatusMessage.get().show(Util.i18n.loadingProductDetails());
+		StatusMessage.get().show(messages.loadingProductDetails());
 
 		productSelected(products.getKeys().get(row));
 	}

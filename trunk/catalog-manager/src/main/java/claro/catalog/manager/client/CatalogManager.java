@@ -18,7 +18,39 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
+import easyenterprise.lib.gwt.client.Style;
+import easyenterprise.lib.gwt.client.StyleUtil;
+
 public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
+
+	public enum Styles implements Style {
+		button1,
+		button2,
+		button3,
+		button4,
+		button5,
+		catalogheader,
+		choices, 
+		derived,
+		itemoverallactions, 
+		itempanel,
+		properties, 
+		footer, 
+		legal, 
+		links, 
+		headerimage, 
+		productprice, 
+		productname, 
+		product, 
+		productpanel, 
+		itemName, 
+		catalogresultspanel, 
+		filterpanel, 
+		productvariant, 
+		masterdetailtest, 
+		itemRowChanged, 
+		productDetailsTitle
+	}
 
 //	private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
 
@@ -42,10 +74,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 		RootLayoutPanel.get().add(new DockLayoutPanel(Unit.PX) {{
 			// header
 			addNorth(new HorizontalPanel() {{
-				Styles.add(this, Styles.catalogheader);
+				StyleUtil.add(this, Styles.catalogheader);
 				getElement().getStyle().setHeight(100, Unit.PC);
 				add(new Image(rb.logo()) {{
-					Util.add(this, Styles.headerimage);
+					StyleUtil.add(this, Styles.headerimage);
 				}});
 //			topPanel.add(choices);
 				
@@ -53,12 +85,12 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 
 			// footer
 			addSouth(new HorizontalPanel() {{
-				Styles.add(this, Styles.footer);
+				StyleUtil.add(this, Styles.footer);
 				
 				// PoweredBy
 				Label poweredBy;
 				add(poweredBy = new Label("Powered By AgileXS") {{
-					Util.add(this, Styles.legal);
+					StyleUtil.add(this, Styles.legal);
 					
 				}});
 				setCellVerticalAlignment(poweredBy, HorizontalPanel.ALIGN_MIDDLE);
@@ -66,7 +98,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				// Links
 				HorizontalPanel links;
 				add(links = new HorizontalPanel() {{
-					Styles.add(this, Styles.links);
+					StyleUtil.add(this, Styles.links);
 					
 					add(new Anchor("Privacy Policy"));
 					add(new Label("|"));

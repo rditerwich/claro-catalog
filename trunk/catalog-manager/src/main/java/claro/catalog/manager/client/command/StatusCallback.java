@@ -1,11 +1,11 @@
 package claro.catalog.manager.client.command;
 
-import claro.catalog.manager.client.Util;
+import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.gwt.RetryingCallback;
 
-public abstract class StatusCallback<T extends CommandResult> implements RetryingCallback<T> {
+public abstract class StatusCallback<T extends CommandResult> implements RetryingCallback<T>, Globals {
 	private final String action;
 	public StatusCallback() {
 		this(null);
@@ -15,11 +15,11 @@ public abstract class StatusCallback<T extends CommandResult> implements Retryin
 		
 	}
 	public void failedAttempt(int attemptNr, Throwable caught) {
-		String message = action != null? Util.i18n.failureRetryingMessage(action, attemptNr) : Util.i18n.internalFailureRetryingMessage(attemptNr);
+		String message = action != null? messages.failureRetryingMessage(action, attemptNr) : messages.internalFailureRetryingMessage(attemptNr);
 		StatusMessage.get().showError(message, caught);
 	}
 	public void onFailure(Throwable caught) {
-		String message = action != null? Util.i18n.failureMessage(action) : Util.i18n.internalFailureMessage();
+		String message = action != null? messages.failureMessage(action) : messages.internalFailureMessage();
 		StatusMessage.get().showError(message, caught);
 	}
 }

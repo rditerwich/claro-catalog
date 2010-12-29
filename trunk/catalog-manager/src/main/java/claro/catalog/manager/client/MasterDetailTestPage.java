@@ -1,13 +1,10 @@
 package claro.catalog.manager.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import claro.catalog.data.PropertyInfo;
-import claro.catalog.manager.client.widgets.Table;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
@@ -16,6 +13,10 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+
+import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.MasterDetail;
+import easyenterprise.lib.gwt.client.widgets.Table;
 
 public class MasterDetailTestPage extends Page {
 
@@ -74,7 +75,7 @@ public class MasterDetailTestPage extends Page {
 							getDetail().clear();
 							
 							getDetail().add(new FlowPanel() {{
-								Styles.add(this, Styles.masterdetailtest);
+								StyleUtil.add(this, CatalogManager.Styles.masterdetailtest);
 								add(new Anchor("Close") {{
 									addClickHandler(new ClickHandler() {
 										public void onClick(ClickEvent event) {

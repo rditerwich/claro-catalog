@@ -1,6 +1,6 @@
 package claro.catalog.manager.client.widgets;
 
-import claro.catalog.manager.client.Util;
+import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.i18n.I18NCatalog;
 
 import com.google.common.base.Preconditions;
@@ -21,9 +21,7 @@ import com.google.gwt.user.client.ui.Image;
  * the widget will display the UploadWidget which enables the user to upload
  * files to the server.
  */
-public class MediaWidget extends Composite implements HasClickHandlers {
-
-	private final static I18NCatalog i18n = Util.i18n;
+public class MediaWidget extends Composite implements HasClickHandlers, Globals {
 
 	private Image image;
 	private Anchor a;
@@ -57,7 +55,7 @@ public class MediaWidget extends Composite implements HasClickHandlers {
 						@Override
 						public void onSubmitComplete(SubmitCompleteEvent event) {
 							up.hide();
-							StatusMessage.get().show(i18n.fileUploaded(event.getResults()));
+							StatusMessage.get().show(messages.fileUploaded(event.getResults()));
 						}
 					});
 				}});

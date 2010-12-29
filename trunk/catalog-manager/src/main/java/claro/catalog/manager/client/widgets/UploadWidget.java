@@ -1,34 +1,24 @@
 package claro.catalog.manager.client.widgets;
 
-import static claro.catalog.manager.client.Util.i18n;
-
-import java.util.HashMap;
-
-
-import claro.catalog.manager.client.Util;
-import claro.catalog.manager.client.Styles;
+import claro.catalog.manager.client.Globals;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SubmitButton;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
-public class UploadWidget extends Composite {
+public class UploadWidget extends Composite implements Globals {
 
 	private final Anchor uploadLink;
 	private final PopupPanel popup = new PopupPanel(true, true);
@@ -42,7 +32,7 @@ public class UploadWidget extends Composite {
 
 
 	public UploadWidget() {
-		initWidget(uploadLink = new Anchor(i18n.upload()){{
+		initWidget(uploadLink = new Anchor(messages.upload()){{
 			addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -54,10 +44,10 @@ public class UploadWidget extends Composite {
 		formPanel.add(new FlowPanel() {{
 			add(new HTML("Browse a file and press upload file to confirm."));
 			add(new FileUpload() {{
-				setName(i18n.upload()); // Without this uploads don't work.
+				setName(messages.upload()); // Without this uploads don't work.
 			}});
 			add(new SimplePanel() {{
-				add(new SubmitButton(i18n.uploadFile()));
+				add(new SubmitButton(messages.uploadFile()));
 			}});
 			add(itemId = new InputHidden("itemId"));
 			add(pvId = new InputHidden("propertyValueId"));

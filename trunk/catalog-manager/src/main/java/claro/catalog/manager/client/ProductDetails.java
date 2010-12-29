@@ -28,10 +28,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
 
-abstract public class ProductDetails extends Composite {
+abstract public class ProductDetails extends Composite implements Globals {
 	
 	private TextBox productNameBox;
 	private FlowPanel categoryPanel;
@@ -64,9 +65,9 @@ abstract public class ProductDetails extends Composite {
 
 			// Title
 			add(new FlowPanel(){{
-				Styles.add(this, Styles.productDetailsTitle);
+				StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
 				add(productNameBox = new TextBox() {{
-					Styles.add(this, Styles.itemName);
+					StyleUtil.add(this, CatalogManager.Styles.itemName);
 				}});
 				add(categoryPanel = new FlowPanel());
 			}});
@@ -77,16 +78,16 @@ abstract public class ProductDetails extends Composite {
 			    	setSize("150px", "150px");
 			    }});
 			    add(productPrice = new Label() {{
-			    	Util.add(this, Styles.productprice);
+			    	StyleUtil.add(this, CatalogManager.Styles.productprice);
 			    	setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 			    }});
 			    add(new FlowPanel() {{
-			    	add(new Anchor(Util.i18n.containedProducts(0)));
+			    	add(new Anchor(messages.containedProducts(0)));
 			    }});
 			}});
 			
 			// Properties
-			add(new Label(Util.i18n.properties()));
+			add(new Label(messages.properties()));
 			add(propertyValues = new ItemPropertyValues(uiLanguage, language, outputChannel) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);

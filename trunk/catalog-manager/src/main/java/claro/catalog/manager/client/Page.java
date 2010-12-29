@@ -5,7 +5,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Composite;
 
 
-public abstract class Page extends Composite {
+public abstract class Page extends Composite implements Globals {
 	private final PlaceController placeController;
 
 	public abstract Place getPlace();

@@ -12,7 +12,6 @@ import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -29,9 +28,10 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
-abstract public class ItemPropertyValues extends Composite {
+abstract public class ItemPropertyValues extends Composite implements Globals {
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
 	private static int VALUE_COLUMN = 2;
@@ -151,7 +151,7 @@ abstract public class ItemPropertyValues extends Composite {
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid() {{
 					// Real value is added in the bind fase...
-					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(Util.i18n.clearValue()) {{
+					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(messages.clearValue()) {{
 							final Button me = this;
 							addClickHandler(new ClickHandler() {
 								public void onClick(ClickEvent event) {
@@ -226,10 +226,10 @@ abstract public class ItemPropertyValues extends Composite {
 		setValue(widget, value, property);
 		
 		if (isDerived) {
-			Styles.add(propertyValueWidgets.valueParentWidget, Styles.derived);
+			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
 		} else {
 			// TODO Maybe changelistener to remove derived?
-			Styles.remove(propertyValueWidgets.valueParentWidget, Styles.derived);
+			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
 		}
 		propertyValueWidgets.clearValueButton.setEnabled(isDerived);
 		return widget;
