@@ -22,10 +22,10 @@ public class UpdateImportDefinitionTest extends CatalogTestBase {
 		UpdateImportDefinition update = new UpdateImportDefinition();
 		update.importDefinition = new ImportDefinition();
 		update.importDefinition.setName("my-import");
-		update.importDefinition.setImportUrl("file:///test");
+		update.importDefinition.setImportUrlExpression("file:///test");
 		update.importDefinition.setPriority(0);
 		ImportCategory importCategory = new ImportCategory();
-		importCategory.setExpression("Wines");
+		importCategory.setCategoryExpression("Wines");
 		update.importDefinition.getCategories().add(importCategory);
 		assertNull(update.importDefinition.getId());
 		assertNull(importCategory.getId());

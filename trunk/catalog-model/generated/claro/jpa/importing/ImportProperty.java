@@ -11,7 +11,7 @@ public class ImportProperty implements Serializable {
     private Long id;
     private ImportDefinition importDefinition;
     private Property property;
-    private String expression;
+    private String valueExpression;
 
     public Long getId() {
         return id;
@@ -37,12 +37,12 @@ public class ImportProperty implements Serializable {
         this.property = value;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getValueExpression() {
+        return valueExpression;
     }
 
-    public void setExpression(String value) {
-        this.expression = value;
+    public void setValueExpression(String value) {
+        this.valueExpression = value;
     }
 
     @Override

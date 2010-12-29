@@ -9,7 +9,7 @@ import java.lang.String;
 public class ImportCategory implements Serializable {
     private Long id;
     private ImportDefinition importDefinition;
-    private String expression;
+    private String categoryExpression;
 
     public Long getId() {
         return id;
@@ -27,12 +27,12 @@ public class ImportCategory implements Serializable {
         this.importDefinition = value;
     }
 
-    public String getExpression() {
-        return expression;
+    public String getCategoryExpression() {
+        return categoryExpression;
     }
 
-    public void setExpression(String value) {
-        this.expression = value;
+    public void setCategoryExpression(String value) {
+        this.categoryExpression = value;
     }
 
     @Override

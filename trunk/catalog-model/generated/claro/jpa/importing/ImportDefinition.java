@@ -12,7 +12,9 @@ import claro.jpa.catalog.Source;
 @SuppressWarnings("serial")
 public class ImportDefinition extends Source implements Serializable {
     private String name;
-    private String importUrl;
+    private String importUrlExpression;
+    private String languageExpression;
+    private String outputChannelExpression;
     private Property matchProperty;
     private Integer sequenceNr;
     private Collection<ImportCategory> categories;
@@ -26,12 +28,28 @@ public class ImportDefinition extends Source implements Serializable {
         this.name = value;
     }
 
-    public String getImportUrl() {
-        return importUrl;
+    public String getImportUrlExpression() {
+        return importUrlExpression;
     }
 
-    public void setImportUrl(String value) {
-        this.importUrl = value;
+    public void setImportUrlExpression(String value) {
+        this.importUrlExpression = value;
+    }
+
+    public String getLanguageExpression() {
+        return languageExpression;
+    }
+
+    public void setLanguageExpression(String value) {
+        this.languageExpression = value;
+    }
+
+    public String getOutputChannelExpression() {
+        return outputChannelExpression;
+    }
+
+    public void setOutputChannelExpression(String value) {
+        this.outputChannelExpression = value;
     }
 
     public Property getMatchProperty() {

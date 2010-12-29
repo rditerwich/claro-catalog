@@ -110,7 +110,7 @@ public abstract class PropertyModel {
 			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(stagingArea, outputChannel, itemEntity, propertyEntity, language);
+			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
 				
 				// Are we changing anything?
@@ -139,6 +139,21 @@ public abstract class PropertyModel {
 				
 				CatalogAccess.getDao().getEntityManager().persist(propertyValue);
 				
+				// Item has changed:
+				item.invalidateChildExtent(true);
+			}
+		}
+	}
+	
+	public void removeValue(StagingArea stagingArea, OutputChannel outputChannel, String language) {
+		synchronized(getItem().catalog) {
+
+			// Do we have a property value already?
+			Item itemEntity = item.getEntity();
+			Property propertyEntity = getEntity();
+			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
+			if (propertyValue != null) {
+				CatalogAccess.getEntityManager().remove(propertyValue);
 				// Item has changed:
 				item.invalidateChildExtent(true);
 			}

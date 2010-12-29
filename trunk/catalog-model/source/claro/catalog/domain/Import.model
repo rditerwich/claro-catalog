@@ -28,7 +28,17 @@ Package {
                 }
                 @comment "Expression for import url"
                 Attribute {
-                    name = importUrl
+                    name = importUrlExpression
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = languageExpression
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = outputChannelExpression
                     type = primitive:String
                     lower = 0
                 }
@@ -93,7 +103,7 @@ Package {
                     opposite = importing:ImportDefinition/attributes:categories
                 }
                 Attribute {
-                    name = expression
+                    name = categoryExpression
                     type = primitive:String
                 }
             }
@@ -111,7 +121,7 @@ Package {
                     type = catalog:Property
                 }
                 Attribute {
-                    name = expression
+                    name = valueExpression
                     type = primitive:String
                 }
             }

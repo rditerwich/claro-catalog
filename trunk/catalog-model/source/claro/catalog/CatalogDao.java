@@ -8,9 +8,11 @@ import javax.persistence.Parameter;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import claro.catalog.data.RootProperties;
@@ -73,30 +75,30 @@ public class CatalogDao {
 		return entityManager.find(Property.class, id);
 	}
 
-	public PropertyValue getPropertyValue(StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language) {
+	public PropertyValue getPropertyValue(Item item, Property property, StagingArea stagingArea, OutputChannel outputChannel, String language) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
 		
-		ParameterExpression<StagingArea> stagingParam = cb.parameter(StagingArea.class);
-		ParameterExpression<OutputChannel> outputChannelParam = cb.parameter(OutputChannel.class);
 		ParameterExpression<Item> itemParam = cb.parameter(Item.class);
 		ParameterExpression<Property> propertyParam = cb.parameter(Property.class);
-		ParameterExpression<String> languageParam = cb.parameter(String.class);
+		ParameterExpression<StagingArea> stagingParam = stagingArea != null ? cb.parameter(StagingArea.class) : null;
+		ParameterExpression<OutputChannel> outputChannelParam = outputChannel != null ? cb.parameter(OutputChannel.class) : null;
+		ParameterExpression<String> languageParam = language != null ? cb.parameter(String.class) : null;
 		
 		Root<PropertyValue> root = c.from(PropertyValue.class);
 		c.select(root).where(
-				cb.equal(root.get(PropertyValue_.stagingArea), stagingParam),
-				cb.equal(root.get(PropertyValue_.outputChannel), outputChannelParam),
 				cb.equal(root.get(PropertyValue_.item), itemParam),
 				cb.equal(root.get(PropertyValue_.property), propertyParam),
-				cb.equal(root.get(PropertyValue_.language), languageParam));
+				equalOrNull(cb, root.get(PropertyValue_.stagingArea), stagingParam),
+				equalOrNull(cb, root.get(PropertyValue_.outputChannel), outputChannelParam),
+				equalOrNull(cb, root.get(PropertyValue_.language), languageParam));
 		
-		TypedQuery<PropertyValue> query = entityManager.createQuery(c).
-			setParameter(stagingParam, stagingArea).
-			setParameter(outputChannelParam, outputChannel).
-			setParameter(itemParam, item).
-			setParameter(propertyParam, property).
-			setParameter(languageParam, language);
+		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
+		setParameter(query, itemParam, item);
+		setParameter(query, propertyParam, property);
+		if (stagingArea != null) setParameter(query, stagingParam, stagingArea);
+		if (outputChannel != null) setParameter(query, outputChannelParam, outputChannel);
+		if (language != null) setParameter(query, languageParam, language);
 
 		return CollectionUtil.firstOrNull(query.getResultList());
 	}
@@ -254,4 +256,17 @@ public class CatalogDao {
 	public StagingArea getStagingArea(Long stagingAreaId) {
 		return entityManager.find(StagingArea.class, stagingAreaId);
 	}
+	
+	private static <T> Predicate equalOrNull(CriteriaBuilder cb, Expression<?> property, T value) {
+		return value == null ? 
+				cb.isNull(property) :
+				cb.equal(property, value);
+	}
+	
+	private static <T> void setParameter(TypedQuery<?> query, ParameterExpression<T> parameter, T value) {
+		if (value != null) {
+			query.setParameter(parameter, value);
+		}
+	}
+
 }

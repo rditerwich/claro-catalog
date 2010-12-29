@@ -13,6 +13,7 @@ import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 
@@ -107,6 +108,14 @@ public class CatalogModel {
 	  }
 	  return root;
   }	
+	
+	public ItemModel createProduct() {
+		Product product = new Product();
+		product.setCatalog(catalog);
+		catalog.getItems().add(product);
+		CatalogAccess.getDao().getEntityManager().persist(product);
+		return getItem(product.getId());
+	}
 	
 	public ItemModel createCategory() {
 		Category category = new Category();

@@ -28,14 +28,17 @@ public class PerformImportTest extends CatalogTestBase {
 		
 		// create an import definition
 		TabularImportDefinition importDef = new TabularImportDefinition();
+		importDef.setMatchProperty(model.articleNumberProperty.getEntity());
+		
 		importDef.setName("Import Test Products");
 		importDef.setHeaderLine(true);
 		ImportProperty propDef = new ImportProperty();
 		propDef.setProperty(model.articleNumberProperty.getEntity());
-		propDef.setExpression("#Klantartikelnummer");
+		propDef.setValueExpression("#Klantartikelnummer");
 		importDef.getProperties().add(propDef);
+		propDef = new ImportProperty();
 		propDef.setProperty(model.descriptionProperty.getEntity());
-		propDef.setExpression("#omschrijving");
+		propDef.setValueExpression("#omschrijving");
 		importDef.getProperties().add(propDef);
 		
 		// create a category
@@ -46,7 +49,7 @@ public class PerformImportTest extends CatalogTestBase {
 		property.setValue(null, null, null, categoryName);
 		
 		ImportCategory importCat = new ImportCategory();
-		importCat.setExpression(Constant.constant(categoryName));
+		importCat.setCategoryExpression(Constant.constant(categoryName));
 		importDef.getCategories().add(importCat);
 
 		// create an import definition
@@ -60,6 +63,11 @@ public class PerformImportTest extends CatalogTestBase {
 		performImport.catalogId = TEST_CATALOG_ID;
 		performImport.importDefinitionId = updateResult.importDefinition.getId();
 		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
-		executeCommand(performImport);
+		System.out.println("FIRST RUN:");
+		PerformImport.Result result = executeCommand(performImport);
+		System.out.println(result.log);
+		System.out.println("SECOND RUN:");
+		result = executeCommand(performImport);
+		System.out.println(result.log);
 	}
 }

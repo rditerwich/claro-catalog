@@ -21,6 +21,8 @@ Package {
             name = Job
             attributes = {
                 Attribute {
+                    name = name
+                    type = primitive:String
                 }
             }
         }

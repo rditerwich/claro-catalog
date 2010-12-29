@@ -89,9 +89,19 @@ public class CatalogTestBase {
 		return server;
   }
 	
-	protected static <T extends CommandResult> T executeCommand(Command<T> command) throws CommandException, SQLException {
+	protected static <T extends CommandResult> T executeCommand(Command<T> command) throws SQLException, CommandException {
 		JpaService.commit();
-		return getServer().execute(command);
+		try {
+			T result = getServer().execute(command);
+			JpaService.commit();
+			return result;
+		} catch (SQLException e) {
+			JpaService.rollback();
+			throw e;
+		} catch (CommandException e) {
+			JpaService.rollback();
+			throw e;
+		}
 	}
 	
 	protected CatalogDao getCatalogDao() throws SQLException {

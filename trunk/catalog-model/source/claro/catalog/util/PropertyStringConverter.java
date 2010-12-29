@@ -24,8 +24,24 @@ public class PropertyStringConverter {
 	
 	private static Locale locale = Locale.getDefault();
 	
+	/**
+	 * When null, the currency of the locale is used.
+	 * @return
+	 */
 	public String getDefaultCurrency() {
 		return defaultCurrency;
+	}
+	
+	public void setDefaultCurrency(String defaultCurrency) {
+		this.defaultCurrency = defaultCurrency;
+	}
+	
+  public Locale getLocale() {
+		return locale;
+	}
+  
+  public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 	
 	public static String toString(PropertyType type, Object value) {
@@ -50,7 +66,7 @@ public class PropertyStringConverter {
 	 * @param value
 	 * @return Typed value, never null.
 	 */
-	public static Object fromString(PropertyType type, String value) throws Exception {
+	public Object fromString(PropertyType type, String value) throws Exception {
 		switch (type) {
 		case String:
 			return value;
@@ -86,7 +102,14 @@ public class PropertyStringConverter {
 				}
 			}
 			Currency currency = currencyMap.get(symbol);
-			return new MoneyValue(Double.parseDouble(value), currency.getCurrencyCode());
+			String currencyCode = currency != null ? currency.getCurrencyCode() : defaultCurrency;
+			if (currencyCode == null && locale != null) {
+				currency = Currency.getInstance(locale);
+				if (currency != null) {
+					currencyCode = currency.getCurrencyCode();
+				}
+			}
+			return new MoneyValue(Double.parseDouble(value), currencyCode);
 		default: 
 			throw new Exception("invalid string value:" + value);
 		}
@@ -99,10 +122,15 @@ public class PropertyStringConverter {
 	private static Map<String, Currency> createCurrencyMap() {
 		Map<String, Currency> result = new HashMap<String, Currency>();
 		for (Locale locale : Locale.getAvailableLocales()) {
-			Currency currency = Currency.getInstance(locale);
-			result.put(currency.getCurrencyCode(), currency);
-			for (Locale locale2 : Locale.getAvailableLocales()) {
-				result.put(currency.getSymbol(locale2), currency);
+			try {
+				Currency currency = Currency.getInstance(locale);
+				if (currency != null) {
+					result.put(currency.getCurrencyCode(), currency);
+					for (Locale locale2 : Locale.getAvailableLocales()) {
+						result.put(currency.getSymbol(locale2), currency);
+					}
+				}
+			} catch (Exception e) {
 			}
 		}
 		return result;
