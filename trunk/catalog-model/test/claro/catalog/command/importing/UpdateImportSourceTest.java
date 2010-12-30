@@ -20,14 +20,14 @@ public class UpdateImportSourceTest extends CatalogTestBase {
 	public void test() throws IOException, SQLException, CommandException {
 		ensureDatabaseCreated();
 		UpdateImportSource update = new UpdateImportSource();
-		update.ImportSource = new ImportSource();
-		update.ImportSource.setName("my-import");
-		update.ImportSource.setImportUrlExpression("file:///test");
-		update.ImportSource.setPriority(0);
+		update.importSource = new ImportSource();
+		update.importSource.setName("my-import");
+		update.importSource.setImportUrlExpression("file:///test");
+		update.importSource.setPriority(0);
 		ImportCategory importCategory = new ImportCategory();
 		importCategory.setCategoryExpression("Wines");
-		update.ImportSource.getCategories().add(importCategory);
-		assertNull(update.ImportSource.getId());
+		update.importSource.getCategories().add(importCategory);
+		assertNull(update.importSource.getId());
 		assertNull(importCategory.getId());
 		ImportSource def = executeCommand(update).ImportSource;
 		assertNotNull(def.getId());

@@ -18,6 +18,8 @@ public class ImportSource extends Source implements Serializable {
     private String outputChannelExpression;
     private Property matchProperty;
     private Integer sequenceNr;
+    private Integer status;
+    private String weather;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
 
@@ -75,6 +77,22 @@ public class ImportSource extends Source implements Serializable {
 
     public void setSequenceNr(Integer value) {
         this.sequenceNr = value;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer value) {
+        this.status = value;
+    }
+
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String value) {
+        this.weather = value;
     }
 
     public Collection<ImportCategory> getCategories() {

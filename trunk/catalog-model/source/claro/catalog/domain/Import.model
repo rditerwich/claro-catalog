@@ -59,6 +59,18 @@ Package {
                     type = primitive:Integer
                     lower = 0
                 }
+                @comment "0: failed"
+                Attribute {
+                    name = status
+                    type = primitive:Integer
+                    lower = 0
+                }
+                @comment "0:failed, first:last build"
+                Attribute {
+                    name = weather
+                    type = primitive:String
+                    lower = 0
+                }
                 Attribute {
                     name = categories
                     type = importing:ImportCategory

@@ -21,6 +21,12 @@
             <basic name="sequenceNr">
                 <column name="sequencenr" table="source" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
+            <basic name="status">
+                <column name="status" table="source" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="weather">
+                <column name="weather" table="source" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
             <many-to-one name="matchProperty" target-entity="claro.jpa.catalog.Property">
                 <join-column name="matchproperty_id" referenced-column-name="id" table="source" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
@@ -132,6 +138,255 @@
             </many-to-one>
             <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
                 <join-column name="shop_id2" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="Party" class="claro.jpa.party.Party" access="FIELD">
+        <table name="party" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="party_id_seq" sequence-name="catalog.party_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="party" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="party_id_seq"/>
+            </id>
+            <basic name="name" optional="false">
+                <column name="name" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="phoneNumber" optional="false">
+                <column name="phonenumber" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="website">
+                <column name="website" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="billingName">
+                <column name="billingname" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="address" target-entity="claro.jpa.party.Address" optional="false">
+                <join-column name="address_id" referenced-column-name="id" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="shippingAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="shippingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="deliveryAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="deliveryaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="billingAddress" target-entity="claro.jpa.party.Address">
+                <join-column name="billingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="User" class="claro.jpa.party.User" access="FIELD">
+        <table name="user" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="user_id_seq" sequence-name="catalog.user_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="user" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="user_id_seq"/>
+            </id>
+            <basic name="email" optional="false">
+                <column name="email" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="password" optional="false">
+                <column name="password" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="isCatalogUser" optional="false">
+                <column name="iscataloguser" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="party" target-entity="claro.jpa.party.Party" optional="false">
+                <join-column name="party_id" referenced-column-name="id" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="EmailConfirmation" class="claro.jpa.party.EmailConfirmation" access="FIELD">
+        <table name="emailconfirmation" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="emailconfirmation_id_seq" sequence-name="catalog.emailconfirmation_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="emailconfirmation" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="emailconfirmation_id_seq"/>
+            </id>
+            <basic name="email" optional="false">
+                <column name="email" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="confirmationKey" optional="false">
+                <column name="confirmationkey" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="expirationTime" optional="false">
+                <column name="expirationtime" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="Address" class="claro.jpa.party.Address" access="FIELD">
+        <table name="address" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="address_id_seq" sequence-name="catalog.address_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="address" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="address_id_seq"/>
+            </id>
+            <basic name="address1" optional="false">
+                <column name="address1" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="address2">
+                <column name="address2" table="address" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="town" optional="false">
+                <column name="town" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="postalCode" optional="false">
+                <column name="postalcode" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="country" optional="false">
+                <column name="country" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="Exchange" class="claro.jpa.stock.Exchange" access="FIELD">
+        <table name="exchange" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="exchange_id_seq" sequence-name="catalog.exchange_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="exchange" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="exchange_id_seq"/>
+            </id>
+            <basic name="name" optional="false">
+                <column name="name" table="exchange" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="Underlying" class="claro.jpa.stock.Underlying" access="FIELD">
+        <table name="underlying" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="underlying_id_seq" sequence-name="catalog.underlying_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="underlying" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="underlying_id_seq"/>
+            </id>   
+        </attributes>
+    </entity>
+    <entity name="OptionChain" class="claro.jpa.stock.OptionChain" access="FIELD">
+        <table name="optionchain" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="optionchain_id_seq" sequence-name="catalog.optionchain_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="optionchain" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="optionchain_id_seq"/>
+            </id>
+            <basic name="symbol" optional="false">
+                <column name="symbol" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="exchange" target-entity="claro.jpa.stock.Exchange" optional="false">
+                <join-column name="exchange_id" referenced-column-name="id" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="underlying" target-entity="claro.jpa.stock.Underlying" optional="false">
+                <join-column name="underlying_id" referenced-column-name="id" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-many name="options" target-entity="claro.jpa.stock.Option">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </many-to-many>   
+        </attributes>
+    </entity>
+    <entity name="Option" class="claro.jpa.stock.Option" access="FIELD">
+        <table name="option" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <inheritance strategy="SINGLE_TABLE" />
+        <discriminator-value>stock.option</discriminator-value>
+        <discriminator-column name="type" discriminator-type="STRING" />
+        <sequence-generator name="option_id_seq" sequence-name="catalog.option_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="option" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="option_id_seq"/>
+            </id>
+            <basic name="expirationDate" optional="false">
+                <column name="expirationdate" table="option" nullable="false" unique="false" insertable="true" updatable="true"/>
+                <temporal>DATE</temporal>
+            </basic>
+            <basic name="strike" optional="false">
+                <column name="strike" table="option" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-many name="ids" target-entity="claro.jpa.stock.OptionId">
+                <cascade>
+                    <cascade-all />
+                </cascade>
+            </many-to-many>   
+        </attributes>
+    </entity>
+    <entity name="PutOption" class="claro.jpa.stock.PutOption" access="FIELD">
+        <discriminator-value>stock.putoption</discriminator-value>
+               
+    </entity>
+    <entity name="CallOption" class="claro.jpa.stock.CallOption" access="FIELD">
+        <discriminator-value>stock.calloption</discriminator-value>
+               
+    </entity>
+    <entity name="OptionIdType" class="claro.jpa.stock.OptionIdType" access="FIELD">
+        <table name="optionidtype" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="optionidtype_id_seq" sequence-name="catalog.optionidtype_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="optionidtype" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="optionidtype_id_seq"/>
+            </id>
+            <basic name="name" optional="false">
+                <column name="name" table="optionidtype" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
+    <entity name="OptionId" class="claro.jpa.stock.OptionId" access="FIELD">
+        <table name="optionid" schema="catalog">
+            <unique-constraint>
+                <column-name>id2</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="optionid_id2_seq" sequence-name="catalog.optionid_id2_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id2">
+                <column name="id2" table="optionid" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="optionid_id2_seq"/>
+            </id>
+            <basic name="id" optional="false">
+                <column name="id" table="optionid" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="type" target-entity="claro.jpa.stock.OptionIdType" optional="false">
+                <join-column name="type_id" referenced-column-name="id" table="optionid" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>   
         </attributes>
     </entity>
@@ -667,6 +922,49 @@
             </many-to-many>   
         </attributes>
     </entity>
+    <entity name="Berth" class="claro.jpa.directberth.Berth" access="FIELD">
+        <table name="berth" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="berth_id_seq" sequence-name="catalog.berth_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="berth" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="berth_id_seq"/>
+            </id>
+            <basic name="name" optional="false">
+                <column name="name" table="berth" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="description2" target-entity="claro.jpa.directberth.Label2" optional="false">
+                <join-column name="description2_id" referenced-column-name="id" table="berth" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="profile" target-entity="claro.jpa.directberth.Label2">
+                <join-column name="profile_id" referenced-column-name="id" table="berth" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="Label2" class="claro.jpa.directberth.Label2" access="FIELD">
+        <table name="label2" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <sequence-generator name="label2_id_seq" sequence-name="catalog.label2_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="label2" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="label2_id_seq"/>
+            </id>
+            <basic name="language">
+                <column name="language" table="label2" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <basic name="label" optional="false">
+                <column name="label" table="label2" nullable="false" unique="false" insertable="true" updatable="true"/>
+            </basic>   
+        </attributes>
+    </entity>
     <entity name="Order" class="claro.jpa.order.Order" access="FIELD">
         <table name="order" schema="catalog">
             <unique-constraint>
@@ -800,182 +1098,6 @@
             </many-to-one>   
         </attributes>
     </entity>
-    <entity name="Berth" class="claro.jpa.directberth.Berth" access="FIELD">
-        <table name="berth" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="berth_id_seq" sequence-name="catalog.berth_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="berth" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="berth_id_seq"/>
-            </id>
-            <basic name="name" optional="false">
-                <column name="name" table="berth" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="description2" target-entity="claro.jpa.directberth.Label2" optional="false">
-                <join-column name="description2_id" referenced-column-name="id" table="berth" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="profile" target-entity="claro.jpa.directberth.Label2">
-                <join-column name="profile_id" referenced-column-name="id" table="berth" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="Label2" class="claro.jpa.directberth.Label2" access="FIELD">
-        <table name="label2" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="label2_id_seq" sequence-name="catalog.label2_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="label2" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="label2_id_seq"/>
-            </id>
-            <basic name="language">
-                <column name="language" table="label2" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="label" optional="false">
-                <column name="label" table="label2" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
-        </attributes>
-    </entity>
-    <entity name="Exchange" class="claro.jpa.stock.Exchange" access="FIELD">
-        <table name="exchange" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="exchange_id_seq" sequence-name="catalog.exchange_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="exchange" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="exchange_id_seq"/>
-            </id>
-            <basic name="name" optional="false">
-                <column name="name" table="exchange" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
-        </attributes>
-    </entity>
-    <entity name="Underlying" class="claro.jpa.stock.Underlying" access="FIELD">
-        <table name="underlying" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="underlying_id_seq" sequence-name="catalog.underlying_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="underlying" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="underlying_id_seq"/>
-            </id>   
-        </attributes>
-    </entity>
-    <entity name="OptionChain" class="claro.jpa.stock.OptionChain" access="FIELD">
-        <table name="optionchain" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="optionchain_id_seq" sequence-name="catalog.optionchain_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="optionchain" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="optionchain_id_seq"/>
-            </id>
-            <basic name="symbol" optional="false">
-                <column name="symbol" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="exchange" target-entity="claro.jpa.stock.Exchange" optional="false">
-                <join-column name="exchange_id" referenced-column-name="id" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="underlying" target-entity="claro.jpa.stock.Underlying" optional="false">
-                <join-column name="underlying_id" referenced-column-name="id" table="optionchain" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-many name="options" target-entity="claro.jpa.stock.Option">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </many-to-many>   
-        </attributes>
-    </entity>
-    <entity name="Option" class="claro.jpa.stock.Option" access="FIELD">
-        <table name="option" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <inheritance strategy="SINGLE_TABLE" />
-        <discriminator-value>stock.option</discriminator-value>
-        <discriminator-column name="type" discriminator-type="STRING" />
-        <sequence-generator name="option_id_seq" sequence-name="catalog.option_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="option" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="option_id_seq"/>
-            </id>
-            <basic name="expirationDate" optional="false">
-                <column name="expirationdate" table="option" nullable="false" unique="false" insertable="true" updatable="true"/>
-                <temporal>DATE</temporal>
-            </basic>
-            <basic name="strike" optional="false">
-                <column name="strike" table="option" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-many name="ids" target-entity="claro.jpa.stock.OptionId">
-                <cascade>
-                    <cascade-all />
-                </cascade>
-            </many-to-many>   
-        </attributes>
-    </entity>
-    <entity name="PutOption" class="claro.jpa.stock.PutOption" access="FIELD">
-        <discriminator-value>stock.putoption</discriminator-value>
-               
-    </entity>
-    <entity name="CallOption" class="claro.jpa.stock.CallOption" access="FIELD">
-        <discriminator-value>stock.calloption</discriminator-value>
-               
-    </entity>
-    <entity name="OptionIdType" class="claro.jpa.stock.OptionIdType" access="FIELD">
-        <table name="optionidtype" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="optionidtype_id_seq" sequence-name="catalog.optionidtype_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="optionidtype" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="optionidtype_id_seq"/>
-            </id>
-            <basic name="name" optional="false">
-                <column name="name" table="optionidtype" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
-        </attributes>
-    </entity>
-    <entity name="OptionId" class="claro.jpa.stock.OptionId" access="FIELD">
-        <table name="optionid" schema="catalog">
-            <unique-constraint>
-                <column-name>id2</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="optionid_id2_seq" sequence-name="catalog.optionid_id2_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id2">
-                <column name="id2" table="optionid" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="optionid_id2_seq"/>
-            </id>
-            <basic name="id" optional="false">
-                <column name="id" table="optionid" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="type" target-entity="claro.jpa.stock.OptionIdType" optional="false">
-                <join-column name="type_id" referenced-column-name="id" table="optionid" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
     <entity name="Job" class="claro.jpa.jobs.Job" access="FIELD">
         <table name="job" schema="catalog">
             <unique-constraint>
@@ -990,122 +1112,6 @@
             </id>
             <basic name="name" optional="false">
                 <column name="name" table="job" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
-        </attributes>
-    </entity>
-    <entity name="Party" class="claro.jpa.party.Party" access="FIELD">
-        <table name="party" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="party_id_seq" sequence-name="catalog.party_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="party" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="party_id_seq"/>
-            </id>
-            <basic name="name" optional="false">
-                <column name="name" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="phoneNumber" optional="false">
-                <column name="phonenumber" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="website">
-                <column name="website" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="billingName">
-                <column name="billingname" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="address" target-entity="claro.jpa.party.Address" optional="false">
-                <join-column name="address_id" referenced-column-name="id" table="party" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="shippingAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="shippingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="deliveryAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="deliveryaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="billingAddress" target-entity="claro.jpa.party.Address">
-                <join-column name="billingaddress_id" referenced-column-name="id" table="party" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="User" class="claro.jpa.party.User" access="FIELD">
-        <table name="user" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="user_id_seq" sequence-name="catalog.user_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="user" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="user_id_seq"/>
-            </id>
-            <basic name="email" optional="false">
-                <column name="email" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="password" optional="false">
-                <column name="password" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="isCatalogUser" optional="false">
-                <column name="iscataloguser" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="party" target-entity="claro.jpa.party.Party" optional="false">
-                <join-column name="party_id" referenced-column-name="id" table="user" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="EmailConfirmation" class="claro.jpa.party.EmailConfirmation" access="FIELD">
-        <table name="emailconfirmation" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="emailconfirmation_id_seq" sequence-name="catalog.emailconfirmation_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="emailconfirmation" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="emailconfirmation_id_seq"/>
-            </id>
-            <basic name="email" optional="false">
-                <column name="email" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="confirmationKey" optional="false">
-                <column name="confirmationkey" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="expirationTime" optional="false">
-                <column name="expirationtime" table="emailconfirmation" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>   
-        </attributes>
-    </entity>
-    <entity name="Address" class="claro.jpa.party.Address" access="FIELD">
-        <table name="address" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <sequence-generator name="address_id_seq" sequence-name="catalog.address_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="address" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="address_id_seq"/>
-            </id>
-            <basic name="address1" optional="false">
-                <column name="address1" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="address2">
-                <column name="address2" table="address" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="town" optional="false">
-                <column name="town" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="postalCode" optional="false">
-                <column name="postalcode" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <basic name="country" optional="false">
-                <column name="country" table="address" nullable="false" unique="false" insertable="true" updatable="true"/>
             </basic>   
         </attributes>
     </entity>

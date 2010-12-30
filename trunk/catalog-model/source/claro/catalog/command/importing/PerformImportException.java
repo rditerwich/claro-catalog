@@ -1,4 +1,4 @@
-package claro.catalog.impl.importing;
+package claro.catalog.command.importing;
 
 import easyenterprise.lib.command.CommandException;
 

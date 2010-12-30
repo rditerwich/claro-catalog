@@ -54,7 +54,7 @@ public class PerformImportTest extends CatalogTestBase {
 
 		// create an import definition
 		UpdateImportSource update = new UpdateImportSource();
-		update.ImportSource = importDef;
+		update.importSource = importDef;
 		Result updateResult = executeCommand(update);
 		
 		

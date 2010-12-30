@@ -26,6 +26,7 @@ import java.util.Set;
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.importing.PerformImport;
+import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;

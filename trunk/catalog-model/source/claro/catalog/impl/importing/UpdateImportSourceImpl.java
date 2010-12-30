@@ -22,27 +22,27 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 		validateCommand(dao);
 		Result result = new Result();
 		if (remove) {
-			dao.getEntityManager().remove(ImportSource);
+			dao.getEntityManager().remove(importSource);
 		} else {
 			if (skipImportSource) {
 				result.ImportSource = new ImportSource();
-				result.ImportSource.setId(ImportSource.getId());
+				result.ImportSource.setId(importSource.getId());
 			} else {
-				if (ImportSource.getId() == null) {
+				if (importSource.getId() == null) {
 //					dao.getEntityManager().persist(ImportSource);
 //					dao.getEntityManager().merge(ImportSource);
 				}  
 				result.ImportSource = 
-					dao.getEntityManager().merge(ImportSource);
+					dao.getEntityManager().merge(importSource);
 //				dao.getEntityManager().flush();
 			}
-			for (ImportCategory cat : CollectionUtil.notNull(ImportSource.getCategories())) {
-				cat.setImportSource(ImportSource);
+			for (ImportCategory cat : CollectionUtil.notNull(importSource.getCategories())) {
+				cat.setImportSource(importSource);
 				result.ImportSource.getCategories().add(
 					dao.getEntityManager().merge(cat));
 			}
-			for (ImportProperty prop : CollectionUtil.notNull(ImportSource.getProperties())) {
-				prop.setImportSource(ImportSource);
+			for (ImportProperty prop : CollectionUtil.notNull(importSource.getProperties())) {
+				prop.setImportSource(importSource);
 				result.ImportSource.getProperties().add(
 					dao.getEntityManager().merge(prop));
 			}
@@ -63,11 +63,11 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 			validate(cat.getId() != null);
 		}
 		// all categories should belong to the current import definition
-		for (ImportCategory cat : CollectionUtil.concat(ImportSource.getCategories(), importCategoriesToBeRemoved)) {
+		for (ImportCategory cat : CollectionUtil.concat(importSource.getCategories(), importCategoriesToBeRemoved)) {
 			if (cat.getId() != null) {
 				ImportCategory existing = dao.getEntityManager().find(ImportCategory.class, cat.getId());
 				if (existing != null) {
-					validate(existing.getImportSource().equals(ImportSource));
+					validate(existing.getImportSource().equals(importSource));
 				}
 			}
 		}
@@ -76,11 +76,11 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 			validate(prop.getId() != null);
 		}
 		// all properties should belong to the current import definition
-		for (ImportProperty prop : CollectionUtil.concat(ImportSource.getProperties(), importPropertiesToBeRemoved)) {
+		for (ImportProperty prop : CollectionUtil.concat(importSource.getProperties(), importPropertiesToBeRemoved)) {
 			if (prop.getId() != null) {
 				ImportProperty existing = dao.getEntityManager().find(ImportProperty.class, prop.getId());
 				if (existing != null) {
-					validate(existing.getImportSource().equals(ImportSource));
+					validate(existing.getImportSource().equals(importSource));
 				}
 			}
 		}

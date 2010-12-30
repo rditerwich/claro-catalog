@@ -18,7 +18,7 @@ public class UpdateImportSource implements Command<Result> {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Don't update import definition instance. Only use {@link #ImportSource}
+	 * Don't update import definition instance. Only use {@link #importSource}
 	 * to find nested import-categories or import-properties, or to store the id
 	 * for removing import-categories or import-properties.
 	 */
@@ -34,20 +34,20 @@ public class UpdateImportSource implements Command<Result> {
 	/**
 	 * Only basic fields will be stored, no recursion
 	 */
-	public ImportSource ImportSource;
+	public ImportSource importSource;
 	
 	public List<ImportCategory> importCategoriesToBeRemoved;
 	
 	public List<ImportProperty> importPropertiesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
-		validate (ImportSource != null);
+		validate (importSource != null);
 		if (remove) validate(!skipImportSource);
 		if (remove) validate(isEmpty(importCategoriesToBeRemoved));
 		if (remove) validate(isEmpty(importPropertiesToBeRemoved));
-		if (skipImportSource) validate(ImportSource.getId() != null);
-		if (!isEmpty(importCategoriesToBeRemoved)) validate(ImportSource.getId() != null);
-		if (!isEmpty(importPropertiesToBeRemoved)) validate(ImportSource.getId() != null);
+		if (skipImportSource) validate(importSource.getId() != null);
+		if (!isEmpty(importCategoriesToBeRemoved)) validate(importSource.getId() != null);
+		if (!isEmpty(importPropertiesToBeRemoved)) validate(importSource.getId() != null);
 	}
 	
 	public static class Result implements CommandResult {
