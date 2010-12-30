@@ -201,6 +201,8 @@ public interface I18NCatalog extends Messages {
 
 	String loadingImportSources();
 	String importSource();
+	String newImportSource();
+	String creatingImportSource();
 
 
 }
