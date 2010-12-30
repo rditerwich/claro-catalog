@@ -14,12 +14,21 @@ import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.StyleUtil;
@@ -27,7 +36,7 @@ import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.SMap;
 
-abstract public class ProductList extends MasterDetail implements Globals {
+abstract public class ProductMasterDetail extends MasterDetail implements Globals {
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
@@ -35,12 +44,15 @@ abstract public class ProductList extends MasterDetail implements Globals {
 	private static final int NR_COLS = 3;
 
 	
+	
 	private boolean initialized;
 
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
-	private List<RowWidgets> tableWidgets = new ArrayList<ProductList.RowWidgets>();
-
+	private SMap<Long, SMap<String, String>> filterCategories = SMap.empty();
 	private String language;
+	private String filterString;
+
+
 
 	private PropertyInfo nameProperty;
 	private PropertyInfo variantProperty;
@@ -49,11 +61,18 @@ abstract public class ProductList extends MasterDetail implements Globals {
 	private PropertyInfo artNoProperty;
 	private PropertyInfo imageProperty;
 	private PropertyInfo smallImageProperty;
+	
+	
+	// Widgets
+	private List<RowWidgets> tableWidgets = new ArrayList<ProductMasterDetail.RowWidgets>();
+
+	private Label noProductsFoundLabel;
+	protected HTML filterLabel;
 	private ProductDetails details;
 
 
-	public ProductList(int headerSize, int footerSize) {
-		super(headerSize, footerSize);
+	public ProductMasterDetail() {
+		super(90, 0);
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
@@ -74,13 +93,23 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		render();
 	}
 	
-	public void switchLanguage(String newLanguage) {
+	public void setLanguage(String newLanguage) {
 		language = newLanguage;
-		
-		setHeader(getMasterTable(), language);
 		
 		render(); 
 	}
+	
+	
+	public SMap<Long, SMap<String, String>> getFilterCategories() {
+		return filterCategories;
+	}
+	
+	public String getFilter() {
+		// TODO add drop down filter options:
+		return filterString;
+	}
+	
+
 	
 	public void updateProduct(Long itemId, SMap<PropertyInfo, SMap<String, Object>> newValues, boolean setChangedStyle) {
 		// Update product list:
@@ -95,29 +124,17 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		rebind(itemRow, itemId);
 	}
 	
-	private void initializeMainPanel() {
-		if (initialized) {
-			return;
-		}
-		
-		initialized = true;
-
-		getMasterTable().resizeColumns(NR_COLS);
-		ProductList.this.setHeader(getMasterTable(), language);
-	}
-	
-	private void setHeader(Table productTable, String language) {
-		productTable.setHeaderText(0, 1, messages.product());
-		productTable.setHeaderText(0, 2, messages.price());
-	}
-	
 	public void render() {
-		initializeMainPanel();
 		
 		// Make sure we have the root properties:
 		if (nameProperty == null) {
 			return;
 		}
+		
+		noProductsFoundLabel.setVisible(products.isEmpty());
+		updateFilterLabel();
+
+
 		
 		List<Long> productKeys = products.getKeys();
 
@@ -155,6 +172,11 @@ abstract public class ProductList extends MasterDetail implements Globals {
 				// .title -> name
 				add(rowWidgets.productNameLabel = new InlineLabel() {{
 					StyleUtil.add(this, CatalogManager.Styles.productname);
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							rowSelected(row);
+						}
+					});
 				}});
 				// .subtitle -> variant
 				add(rowWidgets.productVariantLabel = new InlineLabel() {{
@@ -266,8 +288,80 @@ abstract public class ProductList extends MasterDetail implements Globals {
 		openDetail(row);
 	}
 	
+	abstract protected void updateProductList();
+	
 	abstract protected void productSelected(Long productId);
 	
+	
+	@Override
+	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
+		Table productTable = getMasterTable();
+
+		productTable.resizeColumns(NR_COLS);
+		productTable.setHeaderText(0, 1, messages.product());
+		productTable.setHeaderText(0, 2, messages.price());
+		
+		// search panel
+		getMasterHeader().add(new DockLayoutPanel(Unit.PX) {{
+			addSouth(new FlowPanel() {{
+				add(filterLabel = new HTML() {{
+					setVisible(false); 
+				}});
+				add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+					setVisible(false);
+				}});
+			}}, 30);
+			add(new Grid(2, 3) {{
+				StyleUtil.add(this, CatalogManager.Styles.filterpanel);
+				setWidget(0, 0, new ListBox() {{
+					addItem("Default");
+					addItem("English");
+					addItem("French");
+					addItem("\tShop");
+					addItem("\t\tEnglish");
+					addItem("\t\tFrench");
+				}});
+				setWidget(0, 1, new TextBox() {{
+					addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							filterString = getText();
+							updateFilterLabel();
+							updateProductList();
+						}
+					});
+				}});
+				setWidget(0, 2, new CategoriesWidget(false) {{
+						setData(filterCategories, language);
+					}
+					protected String getAddCategoryTooltip() {
+						return messages.addCategoryFilter();
+					}
+					protected String getRemoveCategoryTooltip(String categoryName) {
+						return messages.removeCategoryFilterTooltip(categoryName);
+					}
+					// TODO add.
+					protected void removeCategory(Long categoryId) {
+						// TODO update filtercats.
+					}
+				});
+				setWidget(1, 0, new Anchor(messages.newProduct()));
+			}});
+		}});
+	}
+
+	private void updateFilterLabel() {
+		String actualFilter = getFilter();
+		if (actualFilter != null && !actualFilter.trim().equals("")) {
+			filterLabel.setHTML(messages.filterMessage(actualFilter)); 
+			filterLabel.setVisible(true);
+		} else {
+			filterLabel.setVisible(false);
+		}
+	}
+
+
+	
+
 	private void rowSelected(int row) {
 		StatusMessage.get().show(messages.loadingProductDetails());
 

@@ -179,7 +179,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			productPrice.setText("");
 		}
 
-		categoryPanel.setData(categories, language, true, true, false);
+		categoryPanel.setData(categories, language);
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {

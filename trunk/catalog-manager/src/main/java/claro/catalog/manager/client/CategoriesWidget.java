@@ -22,21 +22,27 @@ public class CategoriesWidget extends Composite implements Globals {
 	enum Styles implements Style { mouseOverStyle, categoryStyle }
 	
 	private FlowPanel mainPanel;
+	private final boolean canSelect;
 
 	public CategoriesWidget() {
+		this(true);
+	}
+	
+	public CategoriesWidget(boolean canSelect) {
+		this.canSelect = canSelect;
 		initWidget(mainPanel = new FlowPanel() {{
 			StyleUtil.add(this, Styles.categoryStyle);
 		}});
 	}
 	
-	public void setData(SMap<Long, SMap<String, String>> categories, String language, final boolean canRemove, final boolean canAdd, final boolean canSelect) {
+	public void setData(SMap<Long, SMap<String, String>> categories, String language) {
 		
 		List<Long> categoryKeys = categories.getKeys();
 		mainPanel.clear();
 		for (Long categoryId : categoryKeys) {
 			final Long catId = categoryId;
 			final String categoryName = categories.getOrEmpty(categoryId).tryGet(language, null);
-			mainPanel.add(new Grid(1, canRemove ? 2 : 1) {{
+			mainPanel.add(new Grid(1, 2) {{
 				setWidget(0, 0, new Anchor(categoryName) {{
 					setTitle(getCategoryTooltip(categoryName));
 					if (canSelect) {
@@ -48,26 +54,22 @@ public class CategoriesWidget extends Composite implements Globals {
 						});
 					}
 				}});
-				if (canRemove) {
-					setWidget(0, 1, new Anchor("X") {{
-						addHoverStyles(this);
-						setTitle(getRemoveCategoryTooltip(categoryName));
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								removeCategory(catId);
-							}
-						});
-					}});
-				}
+				setWidget(0, 1, new Anchor("X") {{
+					addHoverStyles(this);
+					setTitle(getRemoveCategoryTooltip(categoryName));
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							removeCategory(catId);
+						}
+					});
+				}});
 			}});
 		}
-		if (canAdd) {
-			mainPanel.add(new Anchor(categoryKeys.isEmpty() ? messages.addCategoriesLink() : "+") {{ // TODO Use image instead?
-				addHoverStyles(this);
-				// TODO add click handler
-				// TODO add show on mouse over.
-			}});
-		}
+		mainPanel.add(new Anchor(categoryKeys.isEmpty() ? messages.addCategoriesLink() : "+") {{ // TODO Use image instead?
+			addHoverStyles(this);
+			// TODO add click handler
+			// TODO add show on mouse over.
+		}});
 	}
 	
 	protected String getCategoryTooltip(String categoryName) {

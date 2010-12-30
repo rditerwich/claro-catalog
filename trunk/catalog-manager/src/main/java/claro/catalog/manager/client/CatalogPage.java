@@ -32,19 +32,15 @@ import easyenterprise.lib.util.SMap;
 public class CatalogPage extends Page {
 
 	private LayoutPanel mainPanel;
-	ProductList filteredProductList;
-	private Label noProductsFoundLabel;
+	private ProductMasterDetail filteredProductList;
 
 	private Item selectedItem;
-	private SMap<Long, SMap<String, String>> filterCategories = SMap.empty();
 	
 	private boolean initialized;
-	protected HTML filterLabel;
 	
 	private Long currentCatalogId;
 	private Long currentOuputChannel;
 	private String currentLanguage;
-	private String filterString;
 
 	
 	
@@ -76,62 +72,20 @@ public class CatalogPage extends Page {
 
 		initialized = true;
 		
-		mainPanel.add(filteredProductList = new ProductList(90, 0) {{
-			// search panel
-			getMasterHeader().add(new DockLayoutPanel(Unit.PX) {{
-				addSouth(new FlowPanel() {{
-					add(filterLabel = new HTML() {{
-						setVisible(false); 
-					}});
-					add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-						setVisible(false);
-					}});
-				}}, 30);
-				add(new Grid(2, 3) {{
-					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
-					setWidget(0, 0, new ListBox() {{
-						addItem("Default");
-						addItem("English");
-						addItem("French");
-						addItem("  Shop");
-						addItem("    English");
-						addItem("    French");
-					}});
-					setWidget(0, 1, new TextBox() {{
-						addChangeHandler(new ChangeHandler() {
-							public void onChange(ChangeEvent event) {
-								filterString = getText();
-								updateFilterLabel();
-								updateProductList();
-							}
-						});
-					}});
-					setWidget(0, 2, new CategoriesWidget() {{
-							setData(filterCategories, currentLanguage, true, true, false);
-						}
-						protected String getAddCategoryTooltip() {
-							return messages.addCategoryFilter();
-						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
-							return messages.removeCategoryFilterTooltip(categoryName);
-						}
-						// TODO add.
-						protected void removeCategory(Long categoryId) {
-							// TODO update filtercats.
-						}
-					});
-					setWidget(1, 0, new Button(messages.newProduct()));
-				}});
-			}});
-		}
-		
+		mainPanel.add(filteredProductList = new ProductMasterDetail() {
 			protected void productSelected(final Long productId) {
 				updateProductSelection(productId);
+			}
+			protected void updateProductList() {
+				CatalogPage.this.updateProductList();
 			}
 		});
 		
 		// Read Root properties
 		updateProductListRootProperties();		
+		
+		// TODO update PL categories
+		// TODO update OuputChannels and Languages. 
 		
 		// TODO Listen to language selection??
 	}
@@ -149,34 +103,18 @@ public class CatalogPage extends Page {
 	private void updateProductList() {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = currentCatalogId;
+		
 		cmd.outputChannelId = currentOuputChannel;
 		cmd.language = currentLanguage;
-		cmd.filter = constructFilterString();
-		cmd.categoryIds = filterCategories.getKeys();
+		cmd.filter = filteredProductList.getFilter();
+		cmd.categoryIds = filteredProductList.getFilterCategories().getKeys();
 		// TODO set more command pars.
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
-				updateFilterLabel();
-				noProductsFoundLabel.setVisible(result.items.isEmpty());
 				filteredProductList.setProducts(result.items);
 			}
 		});
-	}
-
-	private String constructFilterString() {
-		// TODO add drop down filter options:
-		return filterString;
-	}
-	
-	private void updateFilterLabel() {
-		String actualFilter = constructFilterString();
-		if (actualFilter != null && !actualFilter.trim().equals("")) {
-			filterLabel.setHTML(messages.filterMessage(actualFilter)); 
-			filterLabel.setVisible(true);
-		} else {
-			filterLabel.setVisible(false);
-		}
 	}
 
 	private void updateProductSelection(final Long productId) {
