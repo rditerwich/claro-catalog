@@ -80,7 +80,7 @@ public class MasterDetailTestPage extends Page {
 									addClickHandler(new ClickHandler() {
 										public void onClick(ClickEvent event) {
 											System.out.println("Closing Row: " + row);
-											closeDetail();
+											closeDetail(true);
 										}
 									});
 								}});

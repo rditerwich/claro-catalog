@@ -7,10 +7,4 @@ public interface ResourceBundle extends ClientBundle {
   @Source("CatalogXS.png")
   ImageResource logo();
 
-  @Source("bin_closed.png")
-  ImageResource deleteImage();
-
-  @Source("application_form_edit.png")
-  ImageResource editImage();
-  
 }

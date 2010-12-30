@@ -130,7 +130,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 						((Page)(getWidget(event.getSelectedItem()))).show();
 					}
 				});
-				selectTab(0);
+				selectTab(1);
 			}});
 		}});
 	}

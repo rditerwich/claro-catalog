@@ -238,7 +238,7 @@ abstract public class ProductList extends MasterDetail implements Globals {
 			detailPanel.add(new Anchor("Close") {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						closeDetail();
+						closeDetail(true);
 					}
 				});
 			}});

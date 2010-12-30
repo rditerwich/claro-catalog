@@ -11,7 +11,6 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
-import easyenterprise.lib.command.gwt.RetryingCallback;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
 
