@@ -67,7 +67,7 @@ Package {
                 }
                 @comment "0:failed, first:last build"
                 Attribute {
-                    name = weather
+                    name = health
                     type = primitive:String
                     lower = 0
                 }

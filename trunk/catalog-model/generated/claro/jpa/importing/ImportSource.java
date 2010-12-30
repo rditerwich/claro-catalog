@@ -19,7 +19,7 @@ public class ImportSource extends Source implements Serializable {
     private Property matchProperty;
     private Integer sequenceNr;
     private Integer status;
-    private String weather;
+    private String health;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
 
@@ -87,12 +87,12 @@ public class ImportSource extends Source implements Serializable {
         this.status = value;
     }
 
-    public String getWeather() {
-        return weather;
+    public String getHealth() {
+        return health;
     }
 
-    public void setWeather(String value) {
-        this.weather = value;
+    public void setHealth(String value) {
+        this.health = value;
     }
 
     public Collection<ImportCategory> getCategories() {
