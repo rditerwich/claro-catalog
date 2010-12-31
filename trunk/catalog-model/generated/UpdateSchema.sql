@@ -599,106 +599,6 @@ ALTER TABLE catalog.address ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
-CREATE TABLE catalog.berth();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD COLUMN name VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN name TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN name SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD COLUMN description2_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN description2_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN description2_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD COLUMN profile_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN profile_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ALTER COLUMN profile_id DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.label2();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ADD COLUMN language VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN language TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN language DROP NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ADD COLUMN label VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN label TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN label SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.label2 ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
 CREATE TABLE catalog.exchange();
 COMMIT;
 
@@ -963,283 +863,103 @@ ALTER TABLE catalog.optionid ADD PRIMARY KEY (id2);
 COMMIT;
 
 BEGIN;
-CREATE TABLE catalog.frequency();
+CREATE TABLE catalog.berth();
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.frequency ADD COLUMN id VARCHAR;
+ALTER TABLE catalog.berth ADD COLUMN name VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.frequency ALTER COLUMN id TYPE VARCHAR;
+ALTER TABLE catalog.berth ALTER COLUMN name TYPE VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.frequency ALTER COLUMN id SET NOT NULL;
+ALTER TABLE catalog.berth ALTER COLUMN name SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.frequency ADD PRIMARY KEY (id);
+ALTER TABLE catalog.berth ADD COLUMN id SERIAL;
 COMMIT;
 
 BEGIN;
-CREATE TABLE catalog.job();
+ALTER TABLE catalog.berth ALTER COLUMN id TYPE SERIAL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN name VARCHAR;
+ALTER TABLE catalog.berth ALTER COLUMN id SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN name TYPE VARCHAR;
+ALTER TABLE catalog.berth ADD COLUMN description2_id INTEGER;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN name SET NOT NULL;
+ALTER TABLE catalog.berth ALTER COLUMN description2_id TYPE INTEGER;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN firstrun TIMESTAMP;
+ALTER TABLE catalog.berth ALTER COLUMN description2_id SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN firstrun TYPE TIMESTAMP;
+ALTER TABLE catalog.berth ADD COLUMN profile_id INTEGER;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN firstrun DROP NOT NULL;
+ALTER TABLE catalog.berth ALTER COLUMN profile_id TYPE INTEGER;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN runfrequency_id VARCHAR;
+ALTER TABLE catalog.berth ALTER COLUMN profile_id DROP NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN runfrequency_id TYPE VARCHAR;
+ALTER TABLE catalog.berth ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN runfrequency_id SET NOT NULL;
+CREATE TABLE catalog.label2();
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN health INTEGER;
+ALTER TABLE catalog.label2 ADD COLUMN language VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN health TYPE INTEGER;
+ALTER TABLE catalog.label2 ALTER COLUMN language TYPE VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN health DROP NOT NULL;
+ALTER TABLE catalog.label2 ALTER COLUMN language DROP NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN lastsuccess BOOLEAN;
+ALTER TABLE catalog.label2 ADD COLUMN label VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN lastsuccess TYPE BOOLEAN;
+ALTER TABLE catalog.label2 ALTER COLUMN label TYPE VARCHAR;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN lastsuccess DROP NOT NULL;
+ALTER TABLE catalog.label2 ALTER COLUMN label SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD COLUMN id SERIAL;
+ALTER TABLE catalog.label2 ADD COLUMN id SERIAL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN id TYPE SERIAL;
+ALTER TABLE catalog.label2 ALTER COLUMN id TYPE SERIAL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ALTER COLUMN id SET NOT NULL;
+ALTER TABLE catalog.label2 ALTER COLUMN id SET NOT NULL;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.jobresult();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN job_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN job_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN job_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN success BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN success TYPE BOOLEAN;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN success SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN starttime TIMESTAMP;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN starttime TYPE TIMESTAMP;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN starttime SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN endtime TIMESTAMP;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN endtime TYPE TIMESTAMP;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN endtime SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN log VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN log TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN log SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.jobresult ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.importcategory();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ADD COLUMN categoryexpression VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN categoryexpression TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN categoryexpression SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ADD COLUMN importsource_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN importsource_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ALTER COLUMN importsource_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ADD PRIMARY KEY (id);
-COMMIT;
-
-BEGIN;
-CREATE TABLE catalog.importproperty();
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD COLUMN valueexpression VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN valueexpression TYPE VARCHAR;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN valueexpression SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD COLUMN id SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN id TYPE SERIAL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD COLUMN importsource_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN importsource_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN importsource_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD COLUMN property_id INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN property_id TYPE INTEGER;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ALTER COLUMN property_id SET NOT NULL;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD PRIMARY KEY (id);
+ALTER TABLE catalog.label2 ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
@@ -2715,6 +2435,286 @@ ALTER TABLE catalog.orderhistory ADD PRIMARY KEY (id);
 COMMIT;
 
 BEGIN;
+CREATE TABLE catalog.frequency();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.frequency ADD COLUMN id VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.frequency ALTER COLUMN id TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.frequency ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.frequency ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.job();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN name VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN name TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN name SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN firstrun TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN firstrun TYPE TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN firstrun DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN runfrequency_id VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN runfrequency_id TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN runfrequency_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN health INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN health TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN health DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN lastsuccess BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN lastsuccess TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN lastsuccess DROP NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.job ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.jobresult();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN job_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN job_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN job_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN success BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN success TYPE BOOLEAN;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN success SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN starttime TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN starttime TYPE TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN starttime SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN endtime TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN endtime TYPE TIMESTAMP;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN endtime SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN log VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN log TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN log SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.importcategory();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ADD COLUMN importsource_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN importsource_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN importsource_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ADD COLUMN categoryexpression VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN categoryexpression TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN categoryexpression SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
+CREATE TABLE catalog.importproperty();
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD COLUMN importsource_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN importsource_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN importsource_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD COLUMN property_id INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN property_id TYPE INTEGER;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN property_id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD COLUMN valueexpression VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN valueexpression TYPE VARCHAR;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN valueexpression SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD COLUMN id SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN id TYPE SERIAL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ALTER COLUMN id SET NOT NULL;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD PRIMARY KEY (id);
+COMMIT;
+
+BEGIN;
 CREATE TABLE catalog.promotion_templates();
 COMMIT;
 
@@ -2879,14 +2879,6 @@ ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENC
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.berth ADD CONSTRAINT fk_description2 FOREIGN KEY (description2_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
 ALTER TABLE catalog.optionchain ADD CONSTRAINT fk_exchange FOREIGN KEY (exchange_id) REFERENCES catalog.exchange (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
@@ -2907,23 +2899,11 @@ ALTER TABLE catalog.optionid ADD CONSTRAINT fk_option FOREIGN KEY (option_id) RE
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.job ADD CONSTRAINT fk_frequency FOREIGN KEY (runfrequency_id) REFERENCES catalog.frequency (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.berth ADD CONSTRAINT fk_description2 FOREIGN KEY (description2_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
 BEGIN;
-ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES catalog.job (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
-COMMIT;
-
-BEGIN;
-ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
 BEGIN;
@@ -3083,6 +3063,26 @@ ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) 
 COMMIT;
 
 BEGIN;
+ALTER TABLE catalog.job ADD CONSTRAINT fk_frequency FOREIGN KEY (runfrequency_id) REFERENCES catalog.frequency (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES catalog.job (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
+ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
+COMMIT;
+
+BEGIN;
 ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
@@ -3114,26 +3114,6 @@ BEGIN;
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_item FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 COMMIT;
 
-
--- Update initial content in frequency
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('hourly');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('daily');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('weekDays');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('weekly');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('monthly');
-COMMIT;
-BEGIN;
-INSERT INTO catalog.frequency (id) VALUES ('yearly');
-COMMIT;
 
 -- Update initial content in propertytype
 BEGIN;
@@ -3239,5 +3219,28 @@ INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
 COMMIT;
 BEGIN;
 INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
+COMMIT;
+
+-- Update initial content in frequency
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('never');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('hourly');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('daily');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('weekDays');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('weekly');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('monthly');
+COMMIT;
+BEGIN;
+INSERT INTO catalog.frequency (id) VALUES ('yearly');
 COMMIT;
 

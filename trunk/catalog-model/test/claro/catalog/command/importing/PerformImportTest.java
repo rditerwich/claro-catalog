@@ -61,15 +61,15 @@ public class PerformImportTest extends CatalogTestBase {
 		// perform update
 		PerformImport performImport = new PerformImport();
 		performImport.catalogId = TEST_CATALOG_ID;
-		performImport.ImportSourceId = updateResult.ImportSource.getId();
+		performImport.importSourceId = updateResult.importSource.getId();
 		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
 		performImport.generateJobResult = true;
 		
 		System.out.println("FIRST RUN:");
 		PerformImport.Result result = executeCommand(performImport);
-		System.out.println(result.log);
+		System.out.println(result.jobResult.getLog());
 		System.out.println("SECOND RUN:");
 		result = executeCommand(performImport);
-		System.out.println(result.log);
+		System.out.println(result.jobResult.getLog());
 	}
 }

@@ -29,7 +29,7 @@ public class UpdateImportSourceTest extends CatalogTestBase {
 		update.importSource.getCategories().add(importCategory);
 		assertNull(update.importSource.getId());
 		assertNull(importCategory.getId());
-		ImportSource def = executeCommand(update).ImportSource;
+		ImportSource def = executeCommand(update).importSource;
 		assertNotNull(def.getId());
 		assertNotNull(first(def.getCategories()).getId());
 		

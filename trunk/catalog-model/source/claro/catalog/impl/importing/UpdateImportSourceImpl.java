@@ -6,6 +6,8 @@ import claro.catalog.command.importing.UpdateImportSource;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.jobs.Frequency;
+import claro.jpa.jobs.Job;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
@@ -25,26 +27,33 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 			dao.getEntityManager().remove(importSource);
 		} else {
 			if (skipImportSource) {
-				result.ImportSource = new ImportSource();
-				result.ImportSource.setId(importSource.getId());
+				result.importSource = new ImportSource();
+				result.importSource.setId(importSource.getId());
 			} else {
 				if (importSource.getId() == null) {
 //					dao.getEntityManager().persist(ImportSource);
 //					dao.getEntityManager().merge(ImportSource);
 				}  
-				result.ImportSource = 
+				result.importSource = 
 					dao.getEntityManager().merge(importSource);
 //				dao.getEntityManager().flush();
 			}
 			for (ImportCategory cat : CollectionUtil.notNull(importSource.getCategories())) {
 				cat.setImportSource(importSource);
-				result.ImportSource.getCategories().add(
+				result.importSource.getCategories().add(
 					dao.getEntityManager().merge(cat));
 			}
 			for (ImportProperty prop : CollectionUtil.notNull(importSource.getProperties())) {
 				prop.setImportSource(importSource);
-				result.ImportSource.getProperties().add(
+				result.importSource.getProperties().add(
 					dao.getEntityManager().merge(prop));
+			}
+			if (result.importSource.getJob() == null) {
+				Job job = new Job();
+				job.setName(result.importSource.getName());
+				job.setRunFrequency(Frequency.never);
+				dao.getEntityManager().persist(job);
+				result.importSource.setJob(job);
 			}
 			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
 				dao.getEntityManager().remove(cat);

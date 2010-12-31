@@ -7,6 +7,8 @@ import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class Job implements Serializable {
@@ -16,6 +18,7 @@ public class Job implements Serializable {
     private Frequency runFrequency;
     private Integer health;
     private Boolean lastSuccess;
+    private Collection<JobResult> results;
 
     public Long getId() {
         return id;
@@ -63,6 +66,17 @@ public class Job implements Serializable {
 
     public void setLastSuccess(Boolean value) {
         this.lastSuccess = value;
+    }
+
+    public Collection<JobResult> getResults() {
+        if (results == null) {
+            results = new ArrayList<JobResult>();
+        }
+        return results;
+    }
+
+    public void setResults(Collection<JobResult> value) {
+        this.results = value;
     }
 
     @Override

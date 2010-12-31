@@ -43,6 +43,14 @@ Package {
                     type = primitive:Boolean
                     lower = 0
                 }
+                Attribute {
+                    name = results
+                    type = jobs:JobResult
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = jobs:JobResult/attributes:job
+                }
             }
         }
         Class {
@@ -51,6 +59,7 @@ Package {
                 Attribute {
                     name = job
                     type = jobs:Job
+                    opposite = jobs:Job/attributes:results
                 }
                 Attribute {
                     name = success
@@ -73,6 +82,9 @@ Package {
         Enumeration {
             name = Frequency
             literals = {
+                Literal {
+                    name = never
+                }
                 Literal {
                     name = hourly
                 }

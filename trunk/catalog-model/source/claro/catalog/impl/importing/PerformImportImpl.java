@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +27,8 @@ import java.util.Set;
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.importing.PerformImport;
-import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.command.importing.PerformImport.Result;
+import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
@@ -38,9 +39,11 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.TabularImportSource;
+import claro.jpa.jobs.Job;
+import claro.jpa.jobs.JobResult;
 
 import com.google.common.base.Function;
 
@@ -59,7 +62,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 	private CatalogModel model;
 	private CategoryCache cache;
 	
-	private ImportSource ImportSource;
+	private ImportSource importSource;
 	private Property matchProperty;
 	private String matchPropertyLabel;
 	private SExpr languageExpression;
@@ -76,7 +79,11 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		this.cache = new CategoryCache();
 		
 		Result result = new Result();
-		result.success = false;
+		result.jobResult = new JobResult();
+		result.jobResult.setSuccess(false);
+		result.jobResult.setStartTime(new Timestamp(System.currentTimeMillis()));
+		result.jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
+		result.jobResult.setLog("");
 		
 		StringWriter stringWriter = new StringWriter();
 		log = new PrintWriter(stringWriter);
@@ -84,35 +91,45 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			try {
 				
 				// fetch import definition
-				ImportSource = dao.getImportSourceById(ImportSourceId);
+				importSource = dao.getImportSourceById(importSourceId);
+				
+				if (generateJobResult) {
+					if (importSource.getJob() == null) {
+						importSource.setJob(new Job());
+						importSource.getJob().setName(importSource.getName());
+						dao.getEntityManager().persist(importSource.getJob());
+					}
+					result.jobResult.setJob(importSource.getJob());
+					importSource.getJob().getResults().add(result.jobResult);
+				}
 				
 				// match propeprty
-				matchProperty = checkMatchProperty(ImportSource);
+				matchProperty = checkMatchProperty(importSource);
 				matchPropertyLabel = propertyLabel(matchProperty, "");
 				
 				// expresions
 				SExprParser exprParser = new SExprParser();
-				languageExpression = exprParser.parse(orElse(ImportSource.getLanguageExpression(), ""));
-				outputChannelExpression = exprParser.parse(orElse(ImportSource.getOutputChannelExpression(), ""));
-				propertyValueExpressions = parsePropertyValueExpressions(ImportSource, exprParser);
-				categoryExpressions = parseCategoryExpressions(ImportSource, exprParser);
+				languageExpression = exprParser.parse(orElse(importSource.getLanguageExpression(), ""));
+				outputChannelExpression = exprParser.parse(orElse(importSource.getOutputChannelExpression(), ""));
+				propertyValueExpressions = parsePropertyValueExpressions(importSource, exprParser);
+				categoryExpressions = parseCategoryExpressions(importSource, exprParser);
 				
 				// expression context
 				DefaultContext exprContext = new DefaultContext();
 				
 				// get url
-				SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : ImportSource.getImportUrlExpression());
+				SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : importSource.getImportUrlExpression());
 				URL url = new URL(importUrlExpression.evaluate(exprContext));
 				
 				// increase sequence number
-				Integer sequence = orZero(ImportSource.getSequenceNr()) + 1;
-				ImportSource.setSequenceNr(sequence);
+				Integer sequence = orZero(importSource.getSequenceNr()) + 1;
+				importSource.setSequenceNr(sequence);
 				exprContext.setVariable("sequence", sequence.toString());
 				
-				if (ImportSource instanceof TabularImportSource) {
-					importTabularData((TabularImportSource) ImportSource, url, exprContext);
+				if (importSource instanceof TabularImportSource) {
+					importTabularData((TabularImportSource) importSource, url, exprContext);
 				}
-				result.success = true;
+				result.jobResult.setSuccess(true);
 				return result;
 			} catch (CommandException e) {
 				e.printStackTrace(log);
@@ -122,7 +139,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				throw new CommandException(e);
 			}
 		} finally {
-			result.log = stringWriter.getBuffer().toString();
+			result.jobResult.setLog(stringWriter.getBuffer().toString());
+			result.jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
 		}
 	}
 
@@ -208,8 +226,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// string converter
 		PropertyStringConverter stringConverter = new PropertyStringConverter();
-		if (ImportSource.getDefaultCurrency() != null) {
-			stringConverter.setDefaultCurrency(ImportSource.getDefaultCurrency());
+		if (importSource.getDefaultCurrency() != null) {
+			stringConverter.setDefaultCurrency(importSource.getDefaultCurrency());
 		}
 		
 		// find categories for this record
@@ -245,7 +263,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				Product product = (Product) item.getEntity();
 				if (!visited.contains(product)) {
 					visited.add(product);
-					PropertyModel property = item.findProperty(ImportSource.getMatchProperty().getId(), true);
+					PropertyModel property = item.findProperty(importSource.getMatchProperty().getId(), true);
 					if (property != null) { 
 						Object typedValue = property.getValues(null, outputChannel).get(language);
 						if (typedValue != null) {

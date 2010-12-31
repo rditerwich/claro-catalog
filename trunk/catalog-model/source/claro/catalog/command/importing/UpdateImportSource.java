@@ -52,6 +52,6 @@ public class UpdateImportSource implements Command<Result> {
 	
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
-		public ImportSource ImportSource;
+		public ImportSource importSource;
 	}
 }
