@@ -63,6 +63,8 @@ public class PerformImportTest extends CatalogTestBase {
 		performImport.catalogId = TEST_CATALOG_ID;
 		performImport.ImportSourceId = updateResult.ImportSource.getId();
 		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
+		performImport.generateJobResult = true;
+		
 		System.out.println("FIRST RUN:");
 		PerformImport.Result result = executeCommand(performImport);
 		System.out.println(result.log);

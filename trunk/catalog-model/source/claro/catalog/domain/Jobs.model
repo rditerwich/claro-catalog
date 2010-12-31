@@ -11,7 +11,7 @@ import Metaphor.PIM.Domain.Parameter
 
 path primitive = /packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog = /packages:Claro/packages:Domain/packages:Catalog/types
-path jobs = /packages:Claro/packages:Domain/packages:Shop/types
+path jobs = /packages:Claro/packages:Domain/packages:Jobs/types
 path party = /packages:Claro/packages:Domain/packages:Party/types
 
 Package {
@@ -23,6 +23,73 @@ Package {
                 Attribute {
                     name = name
                     type = primitive:String
+                }
+                Attribute {
+                    name = firstRun
+                    type = primitive:Timestamp
+                    lower = 0
+                }
+                Attribute {
+                    name = runFrequency
+                    type = jobs:Frequency
+                }
+                Attribute {
+                    name = health
+                    type = primitive:Integer
+                    lower = 0
+                }
+                Attribute {
+                    name = lastSuccess
+                    type = primitive:Boolean
+                    lower = 0
+                }
+            }
+        }
+        Class {
+            name = JobResult
+            attributes = {
+                Attribute {
+                    name = job
+                    type = jobs:Job
+                }
+                Attribute {
+                    name = success
+                    type = primitive:Boolean
+                }
+                Attribute {
+                    name = startTime
+                    type = primitive:Timestamp
+                }
+                Attribute {
+                    name = endTime
+                    type = primitive:Timestamp
+                }
+                Attribute {
+                    name = log
+                    type = primitive:String
+                }
+            }
+        }
+        Enumeration {
+            name = Frequency
+            literals = {
+                Literal {
+                    name = hourly
+                }
+                Literal {
+                    name = daily
+                }
+                Literal {
+                    name = weekDays
+                }
+                Literal {
+                    name = weekly
+                }
+                Literal {
+                    name = monthly
+                }
+                Literal {
+                    name = yearly
                 }
             }
         }

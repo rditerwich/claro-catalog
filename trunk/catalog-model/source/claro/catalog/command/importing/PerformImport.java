@@ -28,7 +28,9 @@ public class PerformImport implements Command<PerformImport.Result> {
 	 */
 	public boolean replaceExistingData = false;
 	
-	public boolean dryRun;
+	public boolean generateJobResult = false;
+	
+	public boolean dryRun = false;
 	
 	public void checkValid() throws CommandValidationException {
 		validate(catalogId != null, "no catalog specified");

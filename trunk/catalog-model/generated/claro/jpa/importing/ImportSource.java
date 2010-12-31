@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.Source;
+import claro.jpa.jobs.Job;
 
 @SuppressWarnings("serial")
 public class ImportSource extends Source implements Serializable {
@@ -22,6 +23,7 @@ public class ImportSource extends Source implements Serializable {
     private String health;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
+    private Job job;
 
     public String getName() {
         return name;
@@ -115,6 +117,14 @@ public class ImportSource extends Source implements Serializable {
 
     public void setProperties(Collection<ImportProperty> value) {
         this.properties = value;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job value) {
+        this.job = value;
     }
 
     @Override

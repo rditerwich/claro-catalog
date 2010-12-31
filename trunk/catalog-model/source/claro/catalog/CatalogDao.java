@@ -86,19 +86,31 @@ public class CatalogDao {
 		ParameterExpression<String> languageParam = language != null ? cb.parameter(String.class) : null;
 		
 		Root<PropertyValue> root = c.from(PropertyValue.class);
+		Expression<?> property1 = root.get(PropertyValue_.stagingArea);
+		Expression<?> property2 = root.get(PropertyValue_.outputChannel);
+		Expression<?> property3 = root.get(PropertyValue_.language);
 		c.select(root).where(
 				cb.equal(root.get(PropertyValue_.item), itemParam),
 				cb.equal(root.get(PropertyValue_.property), propertyParam),
-				equalOrNull(cb, root.get(PropertyValue_.stagingArea), stagingParam),
-				equalOrNull(cb, root.get(PropertyValue_.outputChannel), outputChannelParam),
-				equalOrNull(cb, root.get(PropertyValue_.language), languageParam));
+				stagingParam == null ? 
+					cb.isNull(property1) :
+					cb.equal(property1, stagingParam),
+				outputChannelParam == null ? 
+					cb.isNull(property2) :
+					cb.equal(property2, outputChannelParam),
+				languageParam == null ? 
+					cb.isNull(property3) :
+					cb.equal(property3, languageParam));
 		
 		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
-		setParameter(query, itemParam, item);
-		setParameter(query, propertyParam, property);
-		if (stagingArea != null) setParameter(query, stagingParam, stagingArea);
-		if (outputChannel != null) setParameter(query, outputChannelParam, outputChannel);
-		if (language != null) setParameter(query, languageParam, language);
+		query.setParameter(itemParam, item);
+		query.setParameter(propertyParam, property);
+		if (stagingArea != null)
+				query.setParameter(stagingParam, stagingArea);
+		if (outputChannel != null)
+				query.setParameter(outputChannelParam, outputChannel);
+		if (language != null)
+				query.setParameter(languageParam, language);
 
 		return CollectionUtil.firstOrNull(query.getResultList());
 	}
@@ -255,18 +267,6 @@ public class CatalogDao {
 
 	public StagingArea getStagingArea(Long stagingAreaId) {
 		return entityManager.find(StagingArea.class, stagingAreaId);
-	}
-	
-	private static <T> Predicate equalOrNull(CriteriaBuilder cb, Expression<?> property, T value) {
-		return value == null ? 
-				cb.isNull(property) :
-				cb.equal(property, value);
-	}
-	
-	private static <T> void setParameter(TypedQuery<?> query, ParameterExpression<T> parameter, T value) {
-		if (value != null) {
-			query.setParameter(parameter, value);
-		}
 	}
 
 }
