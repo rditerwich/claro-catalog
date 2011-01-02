@@ -14,7 +14,7 @@ public class GetImportSources implements Command<GetImportSources.Result> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public Long ImportSourceId = null;
+	public Long importSourceId = null;
 	
 	public String ImportSourceName = null;
 	
@@ -25,13 +25,13 @@ public class GetImportSources implements Command<GetImportSources.Result> {
 	public boolean includeDefinitionDetails = false;
 	
 	public void checkValid() throws CommandValidationException {
-		if (ImportSourceId != null) validate(paging.equals(Paging.NO_PAGING));
-		if (!paging.equals(Paging.NO_PAGING)) validate(ImportSourceId == null);
-		validate(ImportSourceId == null || ImportSourceName == null);
+		if (importSourceId != null) validate(paging.equals(Paging.NO_PAGING));
+		if (!paging.equals(Paging.NO_PAGING)) validate(importSourceId == null);
+		validate(importSourceId == null || ImportSourceName == null);
 	}
 	
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
-		public List<ImportSource> ImportSources;
+		public List<ImportSource> importSources;
 	}
 }

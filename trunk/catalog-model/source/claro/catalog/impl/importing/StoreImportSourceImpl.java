@@ -2,22 +2,26 @@ package claro.catalog.impl.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import claro.catalog.CatalogDao;
-import claro.catalog.command.importing.UpdateImportSource;
+import claro.catalog.command.importing.StoreImportSource;
 import claro.jpa.importing.ImportCategory;
-import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Frequency;
 import claro.jpa.jobs.Job;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Cloner;
+import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 
-public class UpdateImportSourceImpl extends UpdateImportSource implements CommandImpl<UpdateImportSource.Result> {
+public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
 
 	private static final long serialVersionUID = 1L;
-
+	private static View view = new BasicView("matchProperty", "categories", "properties", "job");
+	
 	@Override
 	public Result execute() throws CommandException {
 		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
@@ -48,13 +52,7 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 				result.importSource.getProperties().add(
 					dao.getEntityManager().merge(prop));
 			}
-			if (result.importSource.getJob() == null) {
-				Job job = new Job();
-				job.setName(result.importSource.getName());
-				job.setRunFrequency(Frequency.never);
-				dao.getEntityManager().persist(job);
-				result.importSource.setJob(job);
-			}
+			fillinJob(result.importSource, dao);
 			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
 				dao.getEntityManager().remove(cat);
 			}
@@ -62,7 +60,23 @@ public class UpdateImportSourceImpl extends UpdateImportSource implements Comman
 				dao.getEntityManager().remove(prop);
 			}
 		}
+		result.importSource = Cloner.clone(result.importSource, view);
 		return result;
+	}
+	
+	private void fillinJob(ImportSource importSoure, CatalogDao dao) {
+		Job job = importSource.getJob();
+		if (job == null) {
+			job = new Job();
+			dao.getEntityManager().persist(job);
+			importSource.setJob(job);
+		}
+		if (job.getName() == null) {
+			job.setName(importSoure.getName());
+		}
+		if (job.getRunFrequency() == null) {
+			job.setRunFrequency(Frequency.never);
+		}
 	}
 	
 	private void validateCommand(CatalogDao dao) throws CommandValidationException {

@@ -16,7 +16,7 @@ public class Job implements Serializable {
     private String name;
     private Timestamp firstRun;
     private Frequency runFrequency;
-    private Integer health;
+    private Integer healthPerc;
     private Boolean lastSuccess;
     private Collection<JobResult> results;
 
@@ -52,12 +52,12 @@ public class Job implements Serializable {
         this.runFrequency = value;
     }
 
-    public Integer getHealth() {
-        return health;
+    public Integer getHealthPerc() {
+        return healthPerc;
     }
 
-    public void setHealth(Integer value) {
-        this.health = value;
+    public void setHealthPerc(Integer value) {
+        this.healthPerc = value;
     }
 
     public Boolean getLastSuccess() {

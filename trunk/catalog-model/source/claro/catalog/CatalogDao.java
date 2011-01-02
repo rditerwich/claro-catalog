@@ -12,8 +12,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
@@ -31,6 +31,9 @@ import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportSource_;
+import claro.jpa.jobs.Job;
+import claro.jpa.jobs.JobResult;
+import claro.jpa.jobs.JobResult_;
 
 import com.google.common.base.Objects;
 
@@ -226,8 +229,8 @@ public class CatalogDao {
 	public List<ImportSource> getImportSources(Paging paging) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<ImportSource> c = cb.createQuery(ImportSource.class);
-		Root<ImportSource> ImportSource = c.from(ImportSource.class);
-		c.select(ImportSource);
+		Root<ImportSource> importSource = c.from(ImportSource.class);
+		c.select(importSource);
 		
 		TypedQuery<ImportSource> query = entityManager.createQuery(c);
 		if (paging.shouldPage()) {
@@ -269,4 +272,15 @@ public class CatalogDao {
 		return entityManager.find(StagingArea.class, stagingAreaId);
 	}
 
+	public List<JobResult> getLastJobResults(Job job, int count) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<JobResult> c = cb.createQuery(JobResult.class);
+		ParameterExpression<Job> jobParam = cb.parameter(Job.class);
+		Root<JobResult> root = c.from(JobResult.class);
+		c.where(cb.equal(root.get(JobResult_.job), job));
+		c.orderBy(cb.desc(root.get(JobResult_.endTime)));
+		TypedQuery<JobResult> query = entityManager.createQuery(c);//.setParameter(jobParam, job);
+		query.setMaxResults(count);
+		return query.getResultList();
+	}
 }

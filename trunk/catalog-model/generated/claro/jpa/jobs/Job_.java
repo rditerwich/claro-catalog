@@ -8,7 +8,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2010-12-31T10:56:05")
+@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2010-12-31T12:33:30")
 @StaticMetamodel(Job.class)
 public class Job_ { 
 
@@ -18,6 +18,6 @@ public class Job_ {
     public static volatile CollectionAttribute<Job, JobResult> results;
     public static volatile SingularAttribute<Job, String> name;
     public static volatile SingularAttribute<Job, Timestamp> firstRun;
-    public static volatile SingularAttribute<Job, Integer> health;
+    public static volatile SingularAttribute<Job, Integer> healthPerc;
 
 }

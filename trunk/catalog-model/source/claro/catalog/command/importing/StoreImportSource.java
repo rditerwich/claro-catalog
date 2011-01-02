@@ -5,15 +5,17 @@ import static easyenterprise.lib.util.CollectionUtil.isEmpty;
 
 import java.util.List;
 
-import claro.catalog.command.importing.UpdateImportSource.Result;
+import claro.catalog.command.importing.StoreImportSource.Result;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportSource;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 
-public class UpdateImportSource implements Command<Result> {
+public class StoreImportSource implements Command<Result> {
 
 	private static final long serialVersionUID = 1L;
 

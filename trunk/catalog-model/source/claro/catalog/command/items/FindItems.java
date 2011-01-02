@@ -6,6 +6,7 @@ import java.util.Map;
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
+import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.Paging;
 import easyenterprise.lib.util.SMap;
 
@@ -31,6 +32,9 @@ public class FindItems implements Command<FindItems.Result> {
 	public List<Long> orderByIds;
 	
 	public Paging paging = Paging.NO_PAGING;
+	
+	public void checkValid() throws CommandValidationException {
+	}
 	
 	public class Result implements CommandResult {
 

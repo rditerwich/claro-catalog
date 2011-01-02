@@ -14,12 +14,12 @@ import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.command.CommandException;
 
-public class UpdateImportSourceTest extends CatalogTestBase {
+public class StoreImportSourceTest extends CatalogTestBase {
 
 	@Test
 	public void test() throws IOException, SQLException, CommandException {
 		ensureDatabaseCreated();
-		UpdateImportSource update = new UpdateImportSource();
+		StoreImportSource update = new StoreImportSource();
 		update.importSource = new ImportSource();
 		update.importSource.setName("my-import");
 		update.importSource.setImportUrlExpression("file:///test");

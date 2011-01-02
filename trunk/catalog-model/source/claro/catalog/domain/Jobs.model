@@ -34,7 +34,7 @@ Package {
                     type = jobs:Frequency
                 }
                 Attribute {
-                    name = health
+                    name = healthPerc
                     type = primitive:Integer
                     lower = 0
                 }

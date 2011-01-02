@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import claro.catalog.command.importing.UpdateImportSource.Result;
+import claro.catalog.command.importing.StoreImportSource.Result;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
@@ -53,7 +53,7 @@ public class PerformImportTest extends CatalogTestBase {
 		importDef.getCategories().add(importCat);
 
 		// create an import definition
-		UpdateImportSource update = new UpdateImportSource();
+		StoreImportSource update = new StoreImportSource();
 		update.importSource = importDef;
 		Result updateResult = executeCommand(update);
 		

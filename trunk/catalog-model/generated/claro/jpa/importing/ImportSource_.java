@@ -10,13 +10,12 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2010-12-31T10:56:05")
+@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2010-12-31T12:33:30")
 @StaticMetamodel(ImportSource.class)
 public class ImportSource_ extends Source_ {
 
     public static volatile SingularAttribute<ImportSource, String> outputChannelExpression;
     public static volatile SingularAttribute<ImportSource, String> importUrlExpression;
-    public static volatile SingularAttribute<ImportSource, Integer> status;
     public static volatile SingularAttribute<ImportSource, String> defaultCurrency;
     public static volatile SingularAttribute<ImportSource, String> languageExpression;
     public static volatile SingularAttribute<ImportSource, String> name;
@@ -24,7 +23,6 @@ public class ImportSource_ extends Source_ {
     public static volatile SingularAttribute<ImportSource, Job> job;
     public static volatile CollectionAttribute<ImportSource, ImportCategory> categories;
     public static volatile CollectionAttribute<ImportSource, ImportProperty> properties;
-    public static volatile SingularAttribute<ImportSource, String> health;
     public static volatile SingularAttribute<ImportSource, Integer> sequenceNr;
 
 }

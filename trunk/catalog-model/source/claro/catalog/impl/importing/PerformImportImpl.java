@@ -78,12 +78,11 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		this.model = CatalogModelService.getCatalogModel(catalogId);
 		this.cache = new CategoryCache();
 		
-		Result result = new Result();
-		result.jobResult = new JobResult();
-		result.jobResult.setSuccess(false);
-		result.jobResult.setStartTime(new Timestamp(System.currentTimeMillis()));
-		result.jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
-		result.jobResult.setLog("");
+		JobResult jobResult = new JobResult();
+		jobResult.setSuccess(false);
+		jobResult.setStartTime(new Timestamp(System.currentTimeMillis()));
+		jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
+		jobResult.setLog("");
 		
 		StringWriter stringWriter = new StringWriter();
 		log = new PrintWriter(stringWriter);
@@ -99,8 +98,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 						importSource.getJob().setName(importSource.getName());
 						dao.getEntityManager().persist(importSource.getJob());
 					}
-					result.jobResult.setJob(importSource.getJob());
-					importSource.getJob().getResults().add(result.jobResult);
+					jobResult.setJob(importSource.getJob());
+					importSource.getJob().getResults().add(jobResult);
 				}
 				
 				// match propeprty
@@ -129,7 +128,9 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				if (importSource instanceof TabularImportSource) {
 					importTabularData((TabularImportSource) importSource, url, exprContext);
 				}
-				result.jobResult.setSuccess(true);
+				jobResult.setSuccess(true);
+				Result result = new Result();
+				result.jobResult = jobResult;
 				return result;
 			} catch (CommandException e) {
 				e.printStackTrace(log);
@@ -139,8 +140,20 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				throw new CommandException(e);
 			}
 		} finally {
-			result.jobResult.setLog(stringWriter.getBuffer().toString());
-			result.jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
+			jobResult.setLog(stringWriter.getBuffer().toString());
+			jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
+			if (generateJobResult) {
+				jobResult.getJob().setLastSuccess(jobResult.getSuccess());
+				List<JobResult> results = dao.getLastJobResults(jobResult.getJob(), 5);
+				int successCount = 0;
+				for (JobResult result : results) {
+					if (result.getSuccess()) {
+						successCount++;
+					}
+				}
+				jobResult.getJob().setHealthPerc(successCount * 100 / results.size() / 5);
+				System.out.println(results);
+			}
 		}
 	}
 

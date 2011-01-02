@@ -1,6 +1,7 @@
 package claro.catalog.command.items;
 
 import easyenterprise.lib.command.Command;
+import easyenterprise.lib.command.CommandValidationException;
 
 public class ItemDetailsCommand implements Command<ItemDetailsCommandResult>{
 
@@ -11,6 +12,9 @@ public class ItemDetailsCommand implements Command<ItemDetailsCommandResult>{
 	private Long item;
 	private Long outputChannel;
 	private Long stagingArea;
+	
+	public void checkValid() throws CommandValidationException {
+	}
 	
 	public Long getCatalogId() {
 		return catalogId;

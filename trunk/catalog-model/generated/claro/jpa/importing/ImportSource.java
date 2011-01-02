@@ -19,8 +19,6 @@ public class ImportSource extends Source implements Serializable {
     private String outputChannelExpression;
     private Property matchProperty;
     private Integer sequenceNr;
-    private Integer status;
-    private String health;
     private Collection<ImportCategory> categories;
     private Collection<ImportProperty> properties;
     private Job job;
@@ -79,22 +77,6 @@ public class ImportSource extends Source implements Serializable {
 
     public void setSequenceNr(Integer value) {
         this.sequenceNr = value;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer value) {
-        this.status = value;
-    }
-
-    public String getHealth() {
-        return health;
-    }
-
-    public void setHealth(String value) {
-        this.health = value;
     }
 
     public Collection<ImportCategory> getCategories() {
