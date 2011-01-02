@@ -66,6 +66,9 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 
 	public static PropertyStringConverter propertyStringConverter = new PropertyStringConverter();
 	
+	public static Page currentPage;
+	
+	
 	@Override
 	public void onModuleLoad() {
 		EventBus eventBus = new SimpleEventBus();
@@ -118,6 +121,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				add(new ImportPage(placeController), "Import");
 				
 				add(new MasterDetailTestPage(placeController), "MasterDetail");
+				add(new TearupTabsTestPage(placeController), "TabTest");
 //		tabPanel.add(catalog.getView(), i18n.catalog());
 //		tabPanel.add(taxonomies.getView(), i18n.taxonomy());
 //		tabPanel.add(navigation.getView(), i18n.navigation());
@@ -127,10 +131,13 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				addSelectionHandler(new SelectionHandler<Integer>() {
 					@Override
 					public void onSelection(SelectionEvent<Integer> event) {
-						((Page)(getWidget(event.getSelectedItem()))).show();
+						currentPage = (Page)(getWidget(event.getSelectedItem()));
+						currentPage.onResize();
+						currentPage.show();
+						RootLayoutPanel.get().animate(1);
 					}
 				});
-				selectTab(1);
+				selectTab(3);
 			}});
 		}});
 	}

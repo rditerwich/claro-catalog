@@ -106,13 +106,17 @@ table.catalogheader {
 
 /** master detail styles */
 
-.ee-MasterDetailDetailPanel { background-color: #FFF3DF; border: 2px solid #9c0000; margin-top: 8px; }
+.ee-MasterDetailDetailPanel { background-color: #FFF3DF; border: 2px solid #9c0000; margin-top: 12px; margin-bottom: 12px; margin-right: 12px; }
 #.ee-MasterDetailDetailPanel { border: 2px solid #9c0000; }
 .ee-MasterDetailErasePanel { border-left: 2px solid #FFF3DF;}
 .ee-MasterDetailSelectionPanel { border: 2px solid #9c0000;}
 .ee-MasterDetail table td { padding: 0px; margin: 0px;}
 .ee-MasterDetailSelection td { background-color: #FFF3DF; padding: 0px;}
 
+.ee-TearUpTabs-Tab { background-color: #eeadfe; text-align: center; font-weight: bold; vertical-align: center; }
+.ee-TearUpTabs-MainPanel { padding: 12px; }
+.ee-TearUpTabs-Panel { background-color: #FFedfe; border: 2px solid #eeadfe }
+	
 /** catalogpage styles */
 
 .masterdetailtest { padding: 5px;}

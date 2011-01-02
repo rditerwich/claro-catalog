@@ -47,7 +47,7 @@ public class MasterDetailTestPage extends Page {
 		
 		MasterDetail m;
 		final List<String> masterData = new ArrayList<String>();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			masterData.add("bladibladibladibla" + i);
 		}
 		mainPanel.add(m = new MasterDetail(50, 50) {{

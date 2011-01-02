@@ -203,6 +203,14 @@ public interface I18NCatalog extends Messages {
 	String importSource();
 	String newImportSource();
 	String creatingImportSource();
+	
+	String name();
+	String lastStatus();
+	String success();
+	String failed();
+	String notRun();
+	String log();
+	String importUrl();
 
 
 }

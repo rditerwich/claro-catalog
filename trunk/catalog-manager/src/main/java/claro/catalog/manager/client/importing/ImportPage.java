@@ -1,7 +1,8 @@
 package claro.catalog.manager.client.importing;
 
+import static easyenterprise.lib.util.CollectionUtil.firstOrNull;
 import claro.catalog.command.importing.GetImportSources;
-import claro.catalog.command.importing.UpdateImportSource;
+import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.importing.ImportSource;
@@ -13,13 +14,14 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
+import easyenterprise.lib.util.CollectionUtil;
 
 public class ImportPage extends Page {
 
 	private final LayoutPanel mainPanel;
 	private boolean initialized;
 	private DefaultContext context = new DefaultContext();
-	private ImportMasterPanel masterPanel;
+	private ImportMasterDetail masterDetail;
 
 	public ImportPage(PlaceController placeController) {
 		super(placeController);
@@ -43,18 +45,21 @@ public class ImportPage extends Page {
 		if (initialized) return;
 		initialized = true;
 		
-		mainPanel.add(masterPanel = new ImportMasterPanel(100, 100) {
-			protected ImportSource updateImportSource(ImportSource importSource) {
-				return ImportPage.this.updateImportSource(importSource);
+		mainPanel.add(masterDetail = new ImportMasterDetail(100, 100) {
+			protected void updateImportSource(ImportSource importSource) {
+				ImportPage.this.updateImportSource(importSource);
+			}
+			protected void storeImportSource(ImportSource importSource) {
+				ImportPage.this.storeImportSource(importSource);
 			}
 		});
 	}
 	
 	protected void createImportSource() {
-		UpdateImportSource command = new UpdateImportSource();
+		StoreImportSource command = new StoreImportSource();
 		command.importSource = new ImportSource();
-		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<UpdateImportSource.Result>(messages.creatingImportSource()) {
-			public void onSuccess(UpdateImportSource.Result result) {
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>(messages.creatingImportSource()) {
+			public void onSuccess(StoreImportSource.Result result) {
 			}
 		});
 	}
@@ -63,14 +68,31 @@ public class ImportPage extends Page {
 		GetImportSources command = new GetImportSources();
 		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>(messages.loadingImportSources()) {
 			public void onSuccess(GetImportSources.Result result) {
-				masterPanel.setImportSources(result.ImportSources);
+				masterDetail.setImportSources(result.importSources);
 				System.out.println("yes");
 			}
 		});
 	}
 		
-	protected ImportSource updateImportSource(ImportSource importSource) {
-		return importSource;
+	protected void updateImportSource(final ImportSource importSource) {
+		GetImportSources command = new GetImportSources();
+		command.importSourceId = importSource.getId();
+		command.includeDefinitionDetails = true;
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>() {
+			public void onSuccess(GetImportSources.Result result) {
+				masterDetail.importSourceChanged(importSource, firstOrNull(result.importSources));
+			}
+		});
+	}
+	
+	protected void storeImportSource(final ImportSource importSource) {
+		StoreImportSource command = new StoreImportSource();
+		command.importSource = importSource;
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>() {
+			public void onSuccess(StoreImportSource.Result result) {
+				masterDetail.importSourceChanged(importSource, result.importSource);
+			}
+		});
 	}
 }
 

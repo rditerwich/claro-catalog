@@ -1,14 +1,14 @@
 package claro.catalog.manager.client.importing;
 
-import static easyenterprise.lib.util.ObjectUtil.orElse;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.importing.ImportSource;
+import claro.jpa.jobs.Job;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -20,9 +20,9 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.Table;
-import easyenterprise.lib.util.ObjectUtil;
+import easyenterprise.lib.gwt.client.widgets.TearUpTabs;
 
-public abstract class ImportMasterPanel extends MasterDetail implements Globals {
+public abstract class ImportMasterDetail extends MasterDetail implements Globals {
 
 	private static final int NAME_COL = 0;
 	private static final int STATUS_COL = 1;
@@ -31,7 +31,7 @@ public abstract class ImportMasterPanel extends MasterDetail implements Globals 
 	private static final int NR_COLS = 3;
 	
 	private class RowWidgets {
-		public Label name;
+		public Anchor name;
 		public MediaWidget status;
 		public Image health;
 		public Label lastRun;
@@ -41,8 +41,10 @@ public abstract class ImportMasterPanel extends MasterDetail implements Globals 
 	private ImportSource currentImportSource = null;
 	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
-
-	public ImportMasterPanel(int headerSize, int footerSize) {
+	private ImportSourceMainPanel importSourceMainPanel;
+	private TearUpTabs tabs;
+	
+	public ImportMasterDetail(int headerSize, int footerSize) {
 		super(headerSize, footerSize);
 	}
 
@@ -59,75 +61,21 @@ public abstract class ImportMasterPanel extends MasterDetail implements Globals 
 		}
 		renderTable();
 	}
-
-	private void renderTable() {
-		Table masterTable = getMasterTable();
-		masterTable.resizeRows(importSources.size());
-		
-		// Delete old rows:
-		// TODO What if selected row is deleted?  maybe close detail?
-		while (tableWidgets.size() > importSources.size()) {
-			tableWidgets.remove(tableWidgets.size() - 1);
+	
+	public void importSourceChanged(ImportSource original, ImportSource importSource) {
+		int row = importSources.indexOf(original);
+		if (row >= 0) {
+			importSources.set(row, importSource);
+			renderTable();
 		}
-		
-		// Create new Rows
-		while (tableWidgets.size() < importSources.size()) {
-			final int row = tableWidgets.size();
-			final RowWidgets rowWidgets = new RowWidgets();
-			tableWidgets.add(rowWidgets);
-			
-			// Image
-			masterTable.setWidget(row, NAME_COL, rowWidgets.name = new Label());
-			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new MediaWidget(false) {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						rowSelected(row);
-					}
-				});
-			}});
-			masterTable.setWidget(row, WEATHER_COL, rowWidgets.health = new Image());
-		}
-		
-		// render all rows
-		for (int row = 0; row < importSources.size(); row++) {
-			renderRow(row);
+		if (currentImportSource == original) {
+			currentImportSource = importSource;
+			importSourceMainPanel.setImportSource(currentImportSource);
 		}
 	}
 	
-	private void renderRow(int row) {
-		ImportSource importSource = importSources.get(row);
-		RowWidgets rowWidgets = tableWidgets.get(row);
-		rowWidgets.name.setText(importSource.getName());
-		
-		// health
-		String healthString = orElse(importSource.getHealth(), "");
-		int healthCount = Math.min(5, healthString.length()); 
-		int health = 0;
-		if (healthCount > 0) {
-			for (int i = 0; i < healthCount; i++) {
-				if (healthString.charAt(i) != '0') health += 1;
-			}
-			health = health * 5 / healthCount;
-		}
-		switch (health) {
-		case 0: rowWidgets.health.setResource(images.health0()); break;
-		case 1: rowWidgets.health.setResource(images.health1()); break;
-		case 2: rowWidgets.health.setResource(images.health2()); break;
-		case 3: rowWidgets.health.setResource(images.health3()); break;
-		case 4: rowWidgets.health.setResource(images.health4()); break;
-		default: rowWidgets.health.setResource(images.health0()); break;
-		}
-		
-	}
-	
-	private void rowSelected(int row) {
-		ImportSource importSource = importSources.get(row);
-		if (importSource.getId() != null) {
-			updateImportSource(importSource);
-		}
-	}
-	
-	protected abstract ImportSource updateImportSource(ImportSource importSource);
+	protected abstract void updateImportSource(ImportSource importSource);
+	protected abstract void storeImportSource(ImportSource importSource);
 
 	@Override
 	final protected void masterPanelCreated(DockLayoutPanel masterPanel) {
@@ -150,19 +98,104 @@ public abstract class ImportMasterPanel extends MasterDetail implements Globals 
 
 	@Override
 	final protected void detailPanelCreated(LayoutPanel detailPanel) {
-		detailPanel.add(new Anchor("Close") {{
-			addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					closeDetail(true);
-				}
-			});
+		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
+			addNorth(new Anchor("Close") {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						tabs.hideTab();
+						closeDetail(true);
+					}
+				});
+			}}, 50);
+			add(tabs = new TearUpTabs(30, 5) {{
+				setMainWidget(importSourceMainPanel = new ImportSourceMainPanel() {
+					protected void importSourceChanged() {
+						storeImportSource(currentImportSource);
+					}
+				});
+				addTab(new Label(messages.log()), 50, new ImportLogPanel());
+				addTab(new Label(messages.log()), 50, new ImportLogPanel());
+			}});
 		}});
 	}
 
+
+	private void renderTable() {
+		Table masterTable = getMasterTable();
+		masterTable.resizeRows(importSources.size());
+		
+		// Delete old rows:
+		while (tableWidgets.size() > importSources.size()) {
+			tableWidgets.remove(tableWidgets.size() - 1);
+		}
+		
+		// Create new Rows
+		while (tableWidgets.size() < importSources.size()) {
+			final int row = tableWidgets.size();
+			final RowWidgets rowWidgets = new RowWidgets();
+			tableWidgets.add(rowWidgets);
+			
+			final ClickHandler selectRowClickHandler = new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					selectRow(row);
+				}
+			};
+			
+			// Image
+			masterTable.setWidget(row, NAME_COL, rowWidgets.name = new Anchor() {{
+				addClickHandler(selectRowClickHandler);
+			}});
+			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new MediaWidget(false) {{
+				addClickHandler(selectRowClickHandler);
+			}});
+			masterTable.setWidget(row, WEATHER_COL, rowWidgets.health = new Image() {{
+				addClickHandler(selectRowClickHandler);
+				setTitle("Shows how many imports were succesful in recent history.");
+			}});
+			
+		}
+		
+		// render all rows
+		for (int row = 0; row < importSources.size(); row++) {
+			renderRow(row);
+		}
+	}
+	
+	private void renderRow(int row) {
+		ImportSource importSource = importSources.get(row);
+		RowWidgets rowWidgets = tableWidgets.get(row);
+		rowWidgets.name.setText(importSource.getName());
+		
+		// health
+		int health = 0;
+		if (importSource.getJob() != null && importSource.getJob().getHealthPerc() != null) {
+			health = importSource.getJob().getHealthPerc() / 20;
+		}
+		switch (health) {
+		case 0: rowWidgets.health.setResource(images.health0()); break;
+		case 1: rowWidgets.health.setResource(images.health1()); break;
+		case 2: rowWidgets.health.setResource(images.health2()); break;
+		case 3: rowWidgets.health.setResource(images.health3()); break;
+		case 4: rowWidgets.health.setResource(images.health4()); break;
+		default: rowWidgets.health.setResource(images.health0()); break;
+		}
+		
+	}
+
+	private void selectRow(int row) {
+		openDetail(row);
+		currentImportSource = importSources.get(row);
+		importSourceMainPanel.setImportSource(currentImportSource);
+		if (currentImportSource.getId() != null) {
+			updateImportSource(currentImportSource);
+		}
+	}
+	
 	final protected void createImportSource() {
 			ImportSource importSource = new ImportSource();
+			importSource.setJob(new Job());
 			importSources.add(0, importSource);
 			renderTable();
-			openDetail(0);
+			selectRow(0);
 	}
 }
