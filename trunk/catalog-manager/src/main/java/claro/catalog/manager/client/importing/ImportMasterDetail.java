@@ -112,6 +112,9 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					protected void importSourceChanged() {
 						storeImportSource(currentImportSource);
 					}
+					protected void showLastRunLog() {
+						tabs.showTab(1);
+					};
 				});
 				addTab(new Label(messages.log()), 50, new ImportLogPanel());
 				addTab(new Label(messages.log()), 50, new ImportLogPanel());

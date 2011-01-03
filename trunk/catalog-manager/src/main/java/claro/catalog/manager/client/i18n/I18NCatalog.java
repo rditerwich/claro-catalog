@@ -211,6 +211,7 @@ public interface I18NCatalog extends Messages {
 	String notRun();
 	String log();
 	String importUrl();
+	String showLog();
 
 
 }
