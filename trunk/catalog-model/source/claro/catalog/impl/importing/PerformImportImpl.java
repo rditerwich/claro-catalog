@@ -1,5 +1,6 @@
 package claro.catalog.impl.importing;
 
+import static claro.catalog.model.CatalogModelUtil.propertyLabel;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Iterables.concat;
@@ -30,11 +31,11 @@ import claro.catalog.command.importing.PerformImport;
 import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.model.CatalogModel;
+import claro.catalog.model.CatalogModelUtil;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.Category;
-import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
@@ -104,7 +105,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				
 				// match propeprty
 				matchProperty = checkMatchProperty(importSource);
-				matchPropertyLabel = propertyLabel(matchProperty, "");
+				matchPropertyLabel = propertyLabel(matchProperty, null, "");
 				
 				// expresions
 				SExprParser exprParser = new SExprParser();
@@ -321,7 +322,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				}
 			}
 			if (property == null) {
-				throw new Exception("Property not found: " + propertyLabel(value.getKey(), null));
+				throw new Exception("Property not found: " + propertyLabel(value.getKey(), null, ""));
 			}
 			// remove value
 			if (value.getValue().trim().equals("")) {
@@ -339,15 +340,6 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		}
 	}
 	
-	private static String propertyLabel(Property matchProperty, String string) throws SExprParseException {
-		for (Label label : matchProperty.getLabels()) {
-			if (label.getLanguage() == null) {
-				return label.getLabel();
-			}
-		}
-		return "";
-	}
-
 	private static Property checkMatchProperty(ImportSource ImportSource) throws Exception {
 		if (ImportSource.getMatchProperty() == null) {
 			throw new Exception("No match property specified");
@@ -360,7 +352,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			}
 		}
 		if (!found) {
-			throw new Exception("No rule definined for match property: " + propertyLabel(ImportSource.getMatchProperty(), null));
+			throw new Exception("No rule definined for match property: " + propertyLabel(ImportSource.getMatchProperty(), null, ""));
 		}
 		return ImportSource.getMatchProperty();
 	}

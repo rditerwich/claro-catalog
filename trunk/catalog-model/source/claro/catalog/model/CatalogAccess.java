@@ -18,12 +18,8 @@ public class CatalogAccess {
 		this.dao = dao;
 	}
 
-	static CatalogDao getDao() {
-		return getInstance().dao;
-	}
-
 	public static EntityManager getEntityManager() {
-		return getDao().getEntityManager();
+		return CatalogDao.get().getEntityManager();
 	}
 	
 	static Queue<ItemModel> getInvalidItems() {

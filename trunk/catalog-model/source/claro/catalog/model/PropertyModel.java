@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import claro.catalog.CatalogDao;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
@@ -24,6 +25,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
+import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
@@ -101,7 +103,7 @@ public abstract class PropertyModel {
 	}
 
 	public Property getEntity() {
-		return CatalogAccess.getDao().getProperty(getPropertyId());
+		return CatalogDao.get().getProperty(getPropertyId());
 	}
 	
 	public void setValue(StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
@@ -110,7 +112,7 @@ public abstract class PropertyModel {
 			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
+			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
 				
 				// Are we changing anything?
@@ -137,7 +139,7 @@ public abstract class PropertyModel {
 				// Set the actual value.
 				setTypedValue(propertyValue, value);
 				
-				CatalogAccess.getDao().getEntityManager().persist(propertyValue);
+				JpaService.getEntityManager().persist(propertyValue);
 				
 				// Item has changed:
 				item.invalidateChildExtent(true);
@@ -151,7 +153,7 @@ public abstract class PropertyModel {
 			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = CatalogAccess.getDao().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
+			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
 				CatalogAccess.getEntityManager().remove(propertyValue);
 				// Item has changed:

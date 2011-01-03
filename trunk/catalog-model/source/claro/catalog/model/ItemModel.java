@@ -1,7 +1,7 @@
 package claro.catalog.model;
 
-import static com.google.common.base.Objects.equal;
 import static claro.catalog.model.CatalogModelUtil.find;
+import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import claro.jpa.catalog.PropertyValue;
 
 import com.google.common.collect.ImmutableSet;
 
+import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.SMap;
 
 public class ItemModel {
@@ -82,7 +83,7 @@ public class ItemModel {
 		for (ItemModel parent : parents) {
 			items.add(parent.getEntity());
 		}
-		CatalogDao dao = CatalogAccess.getDao();
+		CatalogDao dao = CatalogDao.get();
 		if (dao.setItemParents(getEntity(), items)) {
 			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
 			invalidItems.addAll(getChildExtent());
@@ -97,7 +98,7 @@ public class ItemModel {
 	}
 
 	public Item getEntity() {
-	  return CatalogAccess.getDao().getItem(itemId);
+	  return CatalogDao.get().getItem(itemId);
   }
 	
 	/**
@@ -283,7 +284,7 @@ public class ItemModel {
 				label.setProperty(property);
 				property.getLabels().add(label);
 			}
-			CatalogAccess.getDao().getEntityManager().persist(property);
+			JpaService.getEntityManager().persist(property);
 			assert property.getId() != null;
 			getEntity().getProperties().add(property);
 			property.setItem(getEntity());
@@ -303,7 +304,7 @@ public class ItemModel {
 				label.setPropertyGroup(propertyGroup);
 				propertyGroup.getLabels().add(label);
 			}
-			CatalogAccess.getDao().getEntityManager().persist(propertyGroup);
+			JpaService.getEntityManager().persist(propertyGroup);
 			assert propertyGroup.getId() != null;
 			getEntity().getPropertyGroups().add(propertyGroup);
 			propertyGroup.setItem(getEntity());

@@ -16,6 +16,7 @@ import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
+import easyenterprise.lib.command.jpa.JpaService;
 
 public class CatalogModel {
 
@@ -66,7 +67,7 @@ public class CatalogModel {
 	public synchronized ItemModel getItem(Long id) throws ItemNotFoundException {
 		ItemModel itemData = items.get(id);
 		if (itemData == null) {
-			Item item = CatalogAccess.getDao().getItem(id);
+			Item item = CatalogDao.get().getItem(id);
 			if (item != null) {
 				itemData = new ItemModel(this, id);
 				items.put(id, itemData);
@@ -113,7 +114,7 @@ public class CatalogModel {
 		Product product = new Product();
 		product.setCatalog(catalog);
 		catalog.getItems().add(product);
-		CatalogAccess.getDao().getEntityManager().persist(product);
+		JpaService.getEntityManager().persist(product);
 		return getItem(product.getId());
 	}
 	
@@ -121,7 +122,7 @@ public class CatalogModel {
 		Category category = new Category();
 		category.setCatalog(catalog);
 		catalog.getItems().add(category);
-		CatalogAccess.getDao().getEntityManager().persist(category);
+		JpaService.getEntityManager().persist(category);
 		return getItem(category.getId());
 	}
 	

@@ -1,12 +1,10 @@
 package claro.catalog.impl.items;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindItems;
 import claro.catalog.data.PropertyInfo;
@@ -28,22 +26,17 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 
 	private static final long serialVersionUID = 1L;
 	
-	private CatalogDao dao;
-	
 	// Parameter entities
 	private StagingArea stagingArea;
 	private OutputChannel outputChannel;
 	private CatalogModel catalogModel;
 	private List<Property> orderBy;
 	private List<Category> categories;
-	
-	
 
 	@Override
 	public FindItems.Result execute() throws CommandException {
 		FindItems.Result result = new FindItems.Result();
 		
-		this.dao = new CatalogDao(JpaService.getEntityManager());
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
 
 		// Initialize parameter entities:

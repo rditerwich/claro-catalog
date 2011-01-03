@@ -13,7 +13,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
 
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
@@ -37,6 +36,7 @@ import claro.jpa.jobs.JobResult_;
 
 import com.google.common.base.Objects;
 
+import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Paging;
 
@@ -44,6 +44,10 @@ public class CatalogDao {
 
 	private final EntityManager entityManager;
 
+	public static CatalogDao get() {
+		return new CatalogDao(JpaService.getEntityManager());
+	}
+	
 	public CatalogDao(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
