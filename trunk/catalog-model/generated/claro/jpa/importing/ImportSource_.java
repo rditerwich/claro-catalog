@@ -10,7 +10,7 @@ import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2010-12-31T12:33:30")
+@Generated(value="EclipseLink-2.2.0.v20101231-r8757", date="2011-01-03T16:23:23")
 @StaticMetamodel(ImportSource.class)
 public class ImportSource_ extends Source_ {
 

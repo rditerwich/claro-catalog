@@ -1,6 +1,6 @@
 package claro.catalog.model;
 
-import static claro.catalog.model.CatalogModelUtil.find;
+import static claro.catalog.util.CatalogModelUtil.find;
 import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;

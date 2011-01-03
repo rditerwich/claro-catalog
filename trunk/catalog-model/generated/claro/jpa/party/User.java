@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String password;
     private Party party;
     private Boolean isCatalogUser;
+    private String uiLanguage;
 
     public Long getId() {
         return id;
@@ -52,6 +53,14 @@ public class User implements Serializable {
 
     public void setIsCatalogUser(Boolean value) {
         this.isCatalogUser = value;
+    }
+
+    public String getUiLanguage() {
+        return uiLanguage;
+    }
+
+    public void setUiLanguage(String value) {
+        this.uiLanguage = value;
     }
 
     @Override

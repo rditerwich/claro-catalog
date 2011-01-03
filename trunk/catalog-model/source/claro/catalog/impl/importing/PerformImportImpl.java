@@ -1,6 +1,6 @@
 package claro.catalog.impl.importing;
 
-import static claro.catalog.model.CatalogModelUtil.propertyLabel;
+import static claro.catalog.util.CatalogModelUtil.propertyLabel;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Iterables.concat;
@@ -31,9 +31,9 @@ import claro.catalog.command.importing.PerformImport;
 import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.model.CatalogModel;
-import claro.catalog.model.CatalogModelUtil;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.catalog.util.CatalogModelUtil;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.OutputChannel;

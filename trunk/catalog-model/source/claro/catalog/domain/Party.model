@@ -79,6 +79,10 @@ Package {
                    name = isCatalogUser
                    type = primitive:Boolean
                }
+               Attribute {
+                   name = uiLanguage
+                   type = primitive:String
+               }
            }
        }
        Class {

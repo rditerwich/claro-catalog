@@ -36,7 +36,7 @@ public class FindItems implements Command<FindItems.Result> {
 	public void checkValid() throws CommandValidationException {
 	}
 	
-	public class Result implements CommandResult {
+	public static class Result implements CommandResult {
 
 		private static final long serialVersionUID = 1L;
 
