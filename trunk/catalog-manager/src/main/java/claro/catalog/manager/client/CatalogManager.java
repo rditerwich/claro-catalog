@@ -3,6 +3,7 @@ package claro.catalog.manager.client;
 
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.util.PropertyStringConverter;
+import claro.jpa.party.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -68,6 +69,18 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 	
 	public static Page currentPage;
 	
+	private static User currentUser;
+	
+	public static Long getCurrentCatalogId() {
+		return -1l;
+	}
+	
+	public static String getUiLanguage() {
+		if (currentUser != null) {
+			return currentUser.getUiLanguage();
+		}
+		return null;
+	}
 	
 	@Override
 	public void onModuleLoad() {

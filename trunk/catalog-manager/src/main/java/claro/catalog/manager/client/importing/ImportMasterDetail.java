@@ -42,6 +42,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
 	private ImportSourceMainPanel importSourceMainPanel;
+	private ImportSourcePropertyMappingsPanel propertyMappingsPanel;
 	private TearUpTabs tabs;
 	
 	public ImportMasterDetail(int headerSize, int footerSize) {
@@ -71,6 +72,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		if (currentImportSource == original) {
 			currentImportSource = importSource;
 			importSourceMainPanel.setImportSource(currentImportSource);
+			propertyMappingsPanel.setImportSource(currentImportSource);
 		}
 	}
 	
@@ -116,7 +118,11 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 						tabs.showTab(1);
 					};
 				});
-				addTab(new Label(messages.log()), 50, new ImportLogPanel());
+				addTab(new Label(messages.propertyMappings()), 80, propertyMappingsPanel = new ImportSourcePropertyMappingsPanel() {
+					protected void importSourceChanged() {
+						storeImportSource(currentImportSource);
+					}
+				});
 				addTab(new Label(messages.log()), 50, new ImportLogPanel());
 			}});
 		}});
