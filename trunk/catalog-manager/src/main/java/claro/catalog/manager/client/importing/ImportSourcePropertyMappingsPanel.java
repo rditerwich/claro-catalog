@@ -127,7 +127,11 @@ public abstract class ImportSourcePropertyMappingsPanel extends Composite implem
 							listBox.setSelectedIndex(listBox.getItemCount() - 1);
 						}
 					}
-					((SExprEditor) propertyGrid.getWidget(row, 1)).setExpression(orElse(importProperty.getValueExpression(), ""));
+					SExprEditor editor = (SExprEditor) propertyGrid.getWidget(row, 1);
+					String expr = orElse(importProperty.getValueExpression(), "");
+					if (!editor.getExpression().equals(expr)) {
+						editor.setExpression(expr);
+					}
 					row++;
 				}
 			}
