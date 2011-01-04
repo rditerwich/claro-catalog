@@ -64,19 +64,22 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		return result;
 	}
 	
-	private void fillinJob(ImportSource importSoure, CatalogDao dao) {
+	private static void fillinJob(ImportSource importSource, CatalogDao dao) {
 		Job job = importSource.getJob();
 		if (job == null) {
 			job = new Job();
-			dao.getEntityManager().persist(job);
 			importSource.setJob(job);
 		}
 		if (job.getName() == null) {
-			job.setName(importSoure.getName());
+			job.setName(importSource.getName());
 		}
 		if (job.getRunFrequency() == null) {
 			job.setRunFrequency(Frequency.never);
 		}
+		if (!dao.getEntityManager().contains(job)) {
+			dao.getEntityManager().persist(job);
+		}
+		
 	}
 	
 	private void validateCommand(CatalogDao dao) throws CommandValidationException {

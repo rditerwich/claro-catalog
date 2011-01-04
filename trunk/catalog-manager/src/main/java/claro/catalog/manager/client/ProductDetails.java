@@ -2,37 +2,28 @@ package claro.catalog.manager.client;
 
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
-import claro.catalog.util.PropertyStringConverter;
-import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.Property;
-import claro.jpa.catalog.PropertyValue;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
 
 abstract public class ProductDetails extends Composite implements Globals {
+	private enum Styles implements Style { productdetails }
 	
 	private TextBox productNameBox;
 	private CategoriesWidget categoryPanel;
@@ -67,7 +58,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			add(new FlowPanel(){{
 				StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
 				add(productNameBox = new TextBox() {{
-					StyleUtil.add(this, CatalogManager.Styles.itemName);
+					StyleUtil.add(this, ProductMasterDetail.Styles.productname);
 				}});
 				add(categoryPanel = new CategoriesWidget() {
 					protected String getAddCategoryTooltip() {
@@ -88,7 +79,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			    	setSize("150px", "150px");
 			    }});
 			    add(productPrice = new Label() {{
-			    	StyleUtil.add(this, CatalogManager.Styles.productprice);
+			    	StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
 			    	setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 			    }});
 			    add(new FlowPanel() {{

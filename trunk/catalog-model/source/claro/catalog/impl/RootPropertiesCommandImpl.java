@@ -25,8 +25,11 @@ public class RootPropertiesCommandImpl extends RootPropertiesCommand implements 
 
 		// Fill result
 		result.rootProperties = SMap.empty();
+		int i = 0;
 		for (PropertyModel property : rootItem.getProperties()) {
-			result.rootProperties.add(property.getPropertyInfo().labels.get(), property.getPropertyInfo());
+			if (i++ <= 100) {
+				result.rootProperties = result.rootProperties.add(property.getPropertyInfo().labels.get(), property.getPropertyInfo());
+			}
 		}
 		
 		return result;

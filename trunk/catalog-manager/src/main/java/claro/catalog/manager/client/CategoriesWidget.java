@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 
@@ -23,6 +24,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 	private FlowPanel mainPanel;
 	private final boolean canSelect;
+	private DecoratedPopupPanel addCategoryPanel;
 
 	public CategoriesWidget() {
 		this(true);
@@ -65,6 +67,9 @@ public class CategoriesWidget extends Composite implements Globals {
 				}});
 			}});
 		}
+		addCategoryPanel = new DecoratedPopupPanel(true) {{
+//			setWidget(addCategoryPanel);
+		}};
 		mainPanel.add(new Anchor(categoryKeys.isEmpty() ? messages.addCategoriesLink() : "+") {{ // TODO Use image instead?
 			addHoverStyles(this);
 			// TODO add click handler

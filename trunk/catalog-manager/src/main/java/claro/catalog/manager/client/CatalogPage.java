@@ -4,6 +4,7 @@ package claro.catalog.manager.client;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
 import claro.catalog.command.items.FindItems;
+import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.manager.client.command.StatusCallback;
@@ -103,9 +104,11 @@ public class CatalogPage extends Page {
 	private void updateProductList() {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = currentCatalogId;
+		cmd.resultType = ResultType.products;
 		
 		cmd.outputChannelId = currentOuputChannel;
 		cmd.language = currentLanguage;
+		
 		cmd.filter = filteredProductList.getFilter();
 		cmd.categoryIds = filteredProductList.getFilterCategories().getKeys();
 		// TODO set more command pars.

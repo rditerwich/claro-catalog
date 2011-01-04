@@ -26,8 +26,8 @@ import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
 
-	public static final String TEST_DATABASE_NAME = "catalog-test";
-	public static final Long TEST_CATALOG_ID = -99l;
+	public static final String TEST_DATABASE_NAME = "catalog";
+	public static final Long TEST_CATALOG_ID = -1l;
 	
 	private static Connection connection;
 	private static CatalogServer server;
@@ -109,7 +109,7 @@ public class CatalogTestBase {
 	}
 	
 	protected CatalogModel getCatalogModel() throws SQLException {
-		getServer(); // Ensure that the server is intialized.
+		getServer(); // Ensure that the server is initialized.
 		return CatalogModelService.getCatalogModel(TEST_CATALOG_ID);
 	}
 	

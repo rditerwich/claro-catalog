@@ -58,7 +58,8 @@ public class FindItemsTest extends CatalogTestBase {
 	
 	@Before
 	@SuppressWarnings("unchecked")
-	public void setupItems() {
+	public void setupItems() throws Exception {
+		ensureDatabaseCreated();
 		JpaService.runInTransaction(new Runnable() {
 			
 			public void run() {

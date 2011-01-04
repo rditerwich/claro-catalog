@@ -16,7 +16,9 @@ import claro.jpa.catalog.StagingArea;
 @SuppressWarnings("serial")
 class EffectiveValueHelper extends TreeMap<Source, List<PropertyValue>> {
 	
-	private static final Object undefined = new Object();
+	private static final Object undefined = new Object() {
+		
+	};
 
 	Set<String> languages = new HashSet<String>();
 	

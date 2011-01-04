@@ -88,11 +88,11 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		result.items = SMap.empty();
 		for (ItemModel candidate : productCandidates) {
 			SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
-			result.items = result.items.add(candidate.getItemId(), propertyValues);
 			Set<PropertyModel> properties = candidate.getPropertyExtent();
 			for (PropertyModel property : properties) {
-				propertyValues.add(property.getPropertyInfo(), property.getEffectiveValues(stagingArea, outputChannel));
+				propertyValues = propertyValues.add(property.getPropertyInfo(), property.getEffectiveValues(stagingArea, outputChannel));
 			}
+			result.items = result.items.add(candidate.getItemId(), propertyValues);
 		}
 		
 		return result;
@@ -101,6 +101,8 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 
 	public List<ItemModel> findItems() {
 		Set<ItemModel> candidates = findCategoryItems(categories);
+		
+		candidates = filterByClass(candidates);
 		
 		List<ItemModel> result = filterItems(candidates);
 		
@@ -116,9 +118,29 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	
 	
 	
+	private Set<ItemModel> filterByClass(Set<ItemModel> candidates) {
+		
+		// No filtering necessary if all items are requested:
+		if (resultType == ResultType.items) {
+			return candidates;
+		}
+		
+		Set<ItemModel> result = new LinkedHashSet<ItemModel>();
+
+		Class<? extends Item> resultClass = resultClass();
+		for (ItemModel item : candidates) {
+			if (item.getItemClass().equals(resultClass)) {
+				result.add(item);
+			}
+		}
+		
+		return result;
+	}
+
+
 	private Set<ItemModel> findCategoryItems(List<Category> categories) {
 		Set<ItemModel> result = new LinkedHashSet<ItemModel>();
-		if (categories == null) {
+		if (categories == null || categories.isEmpty()) {
 			return catalogModel.getRootItem().getChildExtent();
 		}
 
@@ -136,7 +158,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		return result;
 	}
 	
-	private Class<? extends Item> itemClass() {
+	private Class<? extends Item> resultClass() {
 		switch (resultType) {
 		case catagories: return Category.class;
 		case products: return Product.class;
@@ -168,7 +190,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 			// For each item, obtain model, and filter.
 			for (ItemModel itemModel : candidates) {
 				// add unfiltered items
-				if (acceptItem(itemModel, simpleCriteria, propertyCriteria, stagingArea, outputChannel, uiLanguage, language)) {
+				if (acceptItem(itemModel, simpleCriteria, propertyCriteria)) {
 					result.add(itemModel);
 				}
 			}
@@ -180,7 +202,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	}
 	
 	
-	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria, StagingArea stagingArea, OutputChannel outputChannel, String uiLanguage, String language) {
+	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria) {
 		List<String> unsatisfiedSimpleCriteria = new ArrayList<String>(simpleCriteria);
 		List<PropertyCriterium> unsatisfiedPropertyCriteria = new ArrayList<PropertyCriterium>(propertyCriteria);
 		for (PropertyModel propertyModel : item.getPropertyExtent()) {

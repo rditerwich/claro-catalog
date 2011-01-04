@@ -30,6 +30,7 @@ public class ItemModel {
 
 	final CatalogModel catalog;
 	final Long itemId;
+	private Class<? extends Item> itemClass;
 	private Set<ItemModel> parents;
 	private Set<ItemModel> parentExtent;
 	private Set<ItemModel> children;
@@ -45,6 +46,15 @@ public class ItemModel {
 
 	public Long getItemId() {
 		return itemId;
+	}
+	
+	public Class<? extends Item> getItemClass() {
+		synchronized (catalog) {
+			if (this.itemClass == null) {
+				this.itemClass = getEntity().getClass();
+			}
+			return this.itemClass;
+		}
 	}
 
 	/**

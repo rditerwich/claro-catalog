@@ -116,13 +116,56 @@ table.catalogheader {
 .ee-TearUpTabs-Tab { background-color: #eeadfe; text-align: center; font-weight: bold; vertical-align: center; }
 .ee-TearUpTabs-MainPanel { padding: 12px; }
 .ee-TearUpTabs-Panel { background-color: #FFedfe; border: 2px solid #eeadfe }
+
+/** EE Table styles */
+.ee-table-table {
+  border-spacing:0;
+	border: 1px solid #7F7F7F;
+	border-collapse:collapse;
+}
+.ee-table-table th {
+  border:none;
+  border-right: 1px solid #CBCBCB;
+  margin:0;
+  padding: 4px;
+	background: url("images/hborder.png") repeat-x 0px -989px;
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.ee-table-table .ee-table-first td {
+  border-top: 1px solid #7F7F7F;
+}
+
+.ee-table-table td {
+  border:none;
+  border-right: 1px solid #CBCBCB;
+  margin:0;
+  padding: 4px;
+}
+
+.ee-table-table .ee-table-odd {
+	background-color: #FFF3DF;
+}
+
+.ee-table-table .ee-table-even {
+	background-color: white;
+}
+
 	
 /** catalogpage styles */
+
+.productMasterDetail { margin: 20px; }
+
+.productMasterDetail table.ee-table-table { width: 100%; }
+.productMasterDetail table.ee-table-table table.product { width: 100%; }
 
 .masterdetailtest { padding: 5px;}
 
 table.filterpanel { margin-left: 20px; vertical-align: middle; }
 table.filterpanel input.gwt-TextBox { margin-right: 40px; }
+
+
 
 
 /** Move used styles above this line */
@@ -289,39 +332,6 @@ button.button1, button.button2, button.button3, button.button4, button.button5 {
   background-color: #d86403;
 }
 
-.cxs-table {
-  border-spacing:0;
-	border: 1px solid #7F7F7F;
-	border-collapse:collapse;
-}
-.cxs-table th {
-  border:none;
-  border-right: 1px solid #CBCBCB;
-  margin:0;
-  padding: 4px;
-	background: url("images/hborder.png") repeat-x 0px -989px;
-  font-weight: normal;
-  font-size: 13px;
-}
-
-.cxs-table .cxs-first td {
-  border-top: 1px solid #7F7F7F;
-}
-
-.cxs-table td {
-  border:none;
-  border-right: 1px solid #CBCBCB;
-  margin:0;
-  padding: 4px;
-}
-
-.cxs-table .cxs-odd {
-	background-color: #FFF3DF;
-}
-
-.cxs-table .cxs-even {
-	background-color: white;
-}
 
 /**
  * SExpr

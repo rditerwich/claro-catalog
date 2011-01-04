@@ -3,6 +3,7 @@ package claro.catalog.manager.client;
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import claro.catalog.data.MediaValue;
@@ -31,12 +32,14 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ProductMasterDetail extends MasterDetail implements Globals {
+	enum Styles implements Style { productMasterDetail, productprice, productname, product, productpanel }
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
@@ -72,7 +75,9 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 
 
 	public ProductMasterDetail() {
-		super(90, 0);
+		super(80, 0);
+		StyleUtil.add(this, Styles.productMasterDetail);
+		
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
@@ -131,14 +136,16 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			return;
 		}
 		
-		noProductsFoundLabel.setVisible(products.isEmpty());
+		
+		Table productTable = getMasterTable();
+		
+		noProductsFoundLabel.setVisible(products == null || products.isEmpty());
 		updateFilterLabel();
 
 
 		
-		List<Long> productKeys = products.getKeys();
+		List<Long> productKeys = products != null ? products.getKeys() : Collections.<Long>emptyList();
 
-		Table productTable = getMasterTable();
 		
 		// Delete/Create widgets as necessary:
 		int oldRowCount = productTable.getRowCount();
@@ -168,10 +175,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			
 			// Product
 			productTable.setWidget(i, PRODUCT_COL, new VerticalPanel() {{
-				StyleUtil.add(this, CatalogManager.Styles.product);
+				StyleUtil.add(this, Styles.product);
 				// .title -> name
 				add(rowWidgets.productNameLabel = new InlineLabel() {{
-					StyleUtil.add(this, CatalogManager.Styles.productname);
+					StyleUtil.add(this, Styles.productname);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							rowSelected(row);
@@ -191,7 +198,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			
 			// Price
 			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
-				StyleUtil.add(this, CatalogManager.Styles.productprice);
+				StyleUtil.add(this, Styles.productprice);
 			}});
 		}
 		
@@ -302,15 +309,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		productTable.setHeaderText(0, 2, messages.price());
 		
 		// search panel
-		getMasterHeader().add(new DockLayoutPanel(Unit.PX) {{
-			addSouth(new FlowPanel() {{
-				add(filterLabel = new HTML() {{
-					setVisible(false); 
-				}});
-				add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-					setVisible(false);
-				}});
-			}}, 30);
+		getMasterHeader().add(new VerticalPanel() {{
 			add(new Grid(2, 3) {{
 				StyleUtil.add(this, CatalogManager.Styles.filterpanel);
 				setWidget(0, 0, new ListBox() {{
@@ -345,6 +344,14 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 					}
 				});
 				setWidget(1, 0, new Anchor(messages.newProduct()));
+			}});
+			add(new FlowPanel() {{
+				add(filterLabel = new HTML() {{
+					setVisible(false); 
+				}});
+				add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+					setVisible(false);
+				}});
 			}});
 		}});
 	}
