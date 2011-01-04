@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.sexpr.BuiltinFunctions;
 import easyenterprise.lib.sexpr.DefaultContext;
-import easyenterprise.lib.util.CollectionUtil;
 
 public class ImportPage extends Page {
 
@@ -49,15 +48,14 @@ public class ImportPage extends Page {
 			protected void updateImportSource(ImportSource importSource) {
 				ImportPage.this.updateImportSource(importSource);
 			}
-			protected void storeImportSource(ImportSource importSource) {
-				ImportPage.this.storeImportSource(importSource);
+			protected void storeImportSource(StoreImportSource command) {
+				ImportPage.this.storeImportSource(command);
 			}
 		});
 	}
 	
 	protected void createImportSource() {
-		StoreImportSource command = new StoreImportSource();
-		command.importSource = new ImportSource();
+		StoreImportSource command = new StoreImportSource(new ImportSource());
 		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>(messages.creatingImportSource()) {
 			public void onSuccess(StoreImportSource.Result result) {
 			}
@@ -85,9 +83,8 @@ public class ImportPage extends Page {
 		});
 	}
 	
-	protected void storeImportSource(final ImportSource importSource) {
-		StoreImportSource command = new StoreImportSource();
-		command.importSource = importSource;
+	protected void storeImportSource(final StoreImportSource command) {
+		final ImportSource importSource = command.importSource;
 		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>() {
 			public void onSuccess(StoreImportSource.Result result) {
 				masterDetail.importSourceChanged(importSource, result.importSource);

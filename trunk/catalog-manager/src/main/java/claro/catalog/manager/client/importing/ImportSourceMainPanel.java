@@ -1,5 +1,8 @@
 package claro.catalog.manager.client.importing;
 
+import claro.catalog.command.importing.PerformImport;
+import claro.catalog.command.importing.StoreImportSource;
+import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.jpa.importing.ImportSource;
 
@@ -17,6 +20,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.widgets.SExprEditor;
 import easyenterprise.lib.util.ObjectUtil;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.SingleUploader;
 
 public abstract class ImportSourceMainPanel extends Composite implements Globals {
 
@@ -29,7 +35,7 @@ public abstract class ImportSourceMainPanel extends Composite implements Globals
 	
 	public ImportSourceMainPanel() {
 		initWidget(panel = new VerticalPanel() {{
-			add(new Grid(3, 2) {{
+			add(new Grid(4, 2) {{
 				setWidget(0, 0, new Label(messages.importSource()));
 				setWidget(0, 1, nameTextBox = new TextBox());
 				setWidget(1, 0, new Label(messages.lastStatus()));
@@ -45,6 +51,19 @@ public abstract class ImportSourceMainPanel extends Composite implements Globals
 				}});
 				setWidget(2, 0, new Label(messages.importUrl()));
 				setWidget(2, 1, importUrlEditor = new SExprEditor());
+				setWidget(3, 1, new SingleUploader() {{
+//					setServletPath(getServletPath() + "?importFile=")
+					addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+						public void onFinish(IUploader uploader) {
+							if (uploader.getStatus() == Status.SUCCESS) {
+								PerformImport performImport = new PerformImport();
+								performImport.catalogId = CatalogManager.getCurrentCatalogId();
+								performImport.generateJobResult = true;
+								performImport.uploadFieldName = uploader.getServerInfo().field;
+							}
+						}
+					});
+				}});
 			}});
 		}});
 		
@@ -52,7 +71,7 @@ public abstract class ImportSourceMainPanel extends Composite implements Globals
 			public void onValueChange(ValueChangeEvent<String> event) {
 				importSource.setName(nameTextBox.getText());
 				importSource.setImportUrlExpression(importUrlEditor.getExpression());
-				importSourceChanged();
+				storeImportSource(new StoreImportSource(importSource));
 			}
 		};
 		nameTextBox.addValueChangeHandler(changeHandler);
@@ -68,7 +87,7 @@ public abstract class ImportSourceMainPanel extends Composite implements Globals
 		importUrlEditor.setExpression(ObjectUtil.orElse(importSource.getImportUrlExpression(), ""));
 	}
 	
-	protected abstract void importSourceChanged();
+	protected abstract void storeImportSource(StoreImportSource command);
 	protected abstract void showLastRunLog();
 	
 }

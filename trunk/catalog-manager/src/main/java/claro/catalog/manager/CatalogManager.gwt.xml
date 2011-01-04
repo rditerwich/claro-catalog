@@ -8,7 +8,6 @@
   <inherits name="com.google.gwt.user.datepicker.DatePicker"/>
   <inherits name="com.google.gwt.user.ImageBundle"/>
   
-
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
@@ -19,6 +18,7 @@
   <!-- Other module inherits                                      -->
   <inherits name='claro.claro-model'/>
   <inherits name='easyenterprise.ee-lib'/>
+
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='claro.catalog.manager.client.CatalogManager'/>

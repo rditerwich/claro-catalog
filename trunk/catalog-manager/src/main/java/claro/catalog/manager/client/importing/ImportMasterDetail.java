@@ -1,8 +1,11 @@
 package claro.catalog.manager.client.importing;
 
+import static com.google.common.base.Objects.equal;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.importing.ImportSource;
@@ -69,7 +72,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 			importSources.set(row, importSource);
 			renderTable();
 		}
-		if (currentImportSource == original) {
+		if (currentImportSource != null && equal(currentImportSource.getId(), importSource.getId())) {
 			currentImportSource = importSource;
 			importSourceMainPanel.setImportSource(currentImportSource);
 			propertyMappingsPanel.setImportSource(currentImportSource);
@@ -77,7 +80,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	}
 	
 	protected abstract void updateImportSource(ImportSource importSource);
-	protected abstract void storeImportSource(ImportSource importSource);
+	protected abstract void storeImportSource(StoreImportSource command);
 
 	@Override
 	final protected void masterPanelCreated(DockLayoutPanel masterPanel) {
@@ -111,16 +114,16 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 			}}, 50);
 			add(tabs = new TearUpTabs(30, 5) {{
 				setMainWidget(importSourceMainPanel = new ImportSourceMainPanel() {
-					protected void importSourceChanged() {
-						storeImportSource(currentImportSource);
+					protected void storeImportSource(StoreImportSource command) {
+						ImportMasterDetail.this.storeImportSource(command);
 					}
 					protected void showLastRunLog() {
 						tabs.showTab(1);
 					};
 				});
 				addTab(new Label(messages.propertyMappings()), 80, propertyMappingsPanel = new ImportSourcePropertyMappingsPanel() {
-					protected void importSourceChanged() {
-						storeImportSource(currentImportSource);
+					protected void storeImportSource(StoreImportSource command) {
+						ImportMasterDetail.this.storeImportSource(command);
 					}
 				});
 				addTab(new Label(messages.log()), 50, new ImportLogPanel());

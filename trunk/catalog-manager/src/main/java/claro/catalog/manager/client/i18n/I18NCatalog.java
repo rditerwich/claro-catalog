@@ -214,6 +214,9 @@ public interface I18NCatalog extends Messages {
 	String showLog();
 	SafeHtml addPropertyMapping();
 	String propertyMappings();
+	String property();
+	String expression();
+	String selectProperty();
 
 
 }

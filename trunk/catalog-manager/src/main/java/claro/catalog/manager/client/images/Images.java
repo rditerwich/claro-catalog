@@ -24,5 +24,8 @@ public interface Images extends ClientBundle {
 
   @Source("application_form_edit.png")
   ImageResource editImage();
+
+  @Source("bin_closed.png")
+	ImageResource removeImmediately();
   
 }
