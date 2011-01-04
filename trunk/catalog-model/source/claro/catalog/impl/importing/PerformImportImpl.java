@@ -9,6 +9,7 @@ import static easyenterprise.lib.util.MathUtil.orZero;
 import static easyenterprise.lib.util.ObjectUtil.orElse;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,6 +26,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.importing.PerformImport;
@@ -33,7 +38,6 @@ import claro.catalog.command.importing.PerformImportException;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
-import claro.catalog.util.CatalogModelUtil;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.OutputChannel;
@@ -55,6 +59,7 @@ import easyenterprise.lib.sexpr.DefaultContext;
 import easyenterprise.lib.sexpr.SExpr;
 import easyenterprise.lib.sexpr.SExprParseException;
 import easyenterprise.lib.sexpr.SExprParser;
+import gwtupload.server.UploadServlet;
 
 @SuppressWarnings("serial")
 public class PerformImportImpl extends PerformImport implements CommandImpl<Result>{
@@ -116,10 +121,25 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				
 				// expression context
 				DefaultContext exprContext = new DefaultContext();
+
 				
+				// get file from session
+				InputStream is = null;
+				if (uploadFieldName != null) {
+					System.out.println("Uploaded file field: ");
+					HttpServletRequest request = UploadServlet.getThreadLocalRequest();
+					List<FileItem> fileItems = UploadServlet.getSessionFileItems(request);
+					FileItem fileItem = UploadServlet.findItemByFieldName(fileItems, uploadFieldName);
+					if (fileItem != null) {
+						is = fileItem.getInputStream();
+					}
+				}
 				// get url
-				SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : importSource.getImportUrlExpression());
-				URL url = new URL(importUrlExpression.evaluate(exprContext));
+				if (is == null) {
+					SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : importSource.getImportUrlExpression());
+					URL url = new URL(importUrlExpression.evaluate(exprContext));
+					is = url.openStream();
+				}
 				
 				// increase sequence number
 				Integer sequence = orZero(importSource.getSequenceNr()) + 1;
@@ -127,7 +147,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				exprContext.setVariable("sequence", sequence.toString());
 				
 				if (importSource instanceof TabularImportSource) {
-					importTabularData((TabularImportSource) importSource, url, exprContext);
+					importTabularData((TabularImportSource) importSource, is, exprContext);
 				}
 				jobResult.setSuccess(true);
 				Result result = new Result();
@@ -158,7 +178,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		}
 	}
 
-	private void importTabularData(TabularImportSource ImportSource, URL url, DefaultContext exprContext) throws Exception {
+	private void importTabularData(TabularImportSource ImportSource, InputStream is, DefaultContext exprContext) throws Exception {
 		
 		// separator chars
 		String separators = ImportSource.getSeparatorChars();
@@ -170,13 +190,13 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// determine structure of import file
 		Charset charset = Charset.forName(ImportSource.getCharset() != null ? ImportSource.getCharset() : "UTF-8");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), charset));
-		log.println("Opened import file: " + url);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, charset));
+		log.println("Opened import file: " + is);
 		try {
 			List<String> headerFields = Collections.emptyList();
 			if (ImportSource.getHeaderLine()) {
 				String line = reader.readLine();
-				if (line == null) throw new PerformImportException("Missing header-line in file " + url);
+				if (line == null) throw new PerformImportException("Missing header-line in file " + is);
 				headerFields = parseLine(line, separators);
 			}
 			log.println("Read header: " + headerFields);

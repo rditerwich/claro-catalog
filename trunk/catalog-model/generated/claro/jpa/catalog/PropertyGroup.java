@@ -10,8 +10,7 @@ import java.util.Collection;
 public class PropertyGroup implements Serializable {
     private Long id;
     private Collection<Label> labels;
-    private Item item;
-    private Collection<Property> properties;
+    private Catalog catalog;
 
     public Long getId() {
         return id;
@@ -32,23 +31,12 @@ public class PropertyGroup implements Serializable {
         this.labels = value;
     }
 
-    public Item getItem() {
-        return item;
+    public Catalog getCatalog() {
+        return catalog;
     }
 
-    public void setItem(Item value) {
-        this.item = value;
-    }
-
-    public Collection<Property> getProperties() {
-        if (properties == null) {
-            properties = new ArrayList<Property>();
-        }
-        return properties;
-    }
-
-    public void setProperties(Collection<Property> value) {
-        this.properties = value;
+    public void setCatalog(Catalog value) {
+        this.catalog = value;
     }
 
     @Override

@@ -1,7 +1,10 @@
 package claro.catalog.impl.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
-import claro.catalog.CatalogDao;
+import static easyenterprise.lib.util.CollectionUtil.notNull;
+
+import javax.persistence.EntityManager;
+
 import claro.catalog.command.importing.StoreImportSource;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProperty;
@@ -20,51 +23,50 @@ import easyenterprise.lib.util.CollectionUtil;
 public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
 
 	private static final long serialVersionUID = 1L;
-	private static View view = new BasicView("matchProperty", "categories", "properties", "job");
+	private static View view = new BasicView("matchProperty", "categories/category", "properties/property", "job");
 	
 	@Override
 	public Result execute() throws CommandException {
-		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
-		validateCommand(dao);
+		EntityManager em = JpaService.getEntityManager();
+		validateCommand(em);
 		Result result = new Result();
 		if (remove) {
-			dao.getEntityManager().remove(importSource);
+			em.remove(importSource);
 		} else {
 			if (skipImportSource) {
-				result.importSource = new ImportSource();
-				result.importSource.setId(importSource.getId());
+				for (ImportCategory cat : CollectionUtil.notNull(importSource.getCategories())) {
+						em.merge(cat);
+				}
+				for (ImportProperty prop : notNull(importSource.getProperties())) {
+						em.merge(prop);
+				}
+				result.importSource = em.find(ImportSource.class, importSource.getId());
 			} else {
-				if (importSource.getId() == null) {
-//					dao.getEntityManager().persist(ImportSource);
-//					dao.getEntityManager().merge(ImportSource);
-				}  
-				result.importSource = 
-					dao.getEntityManager().merge(importSource);
-//				dao.getEntityManager().flush();
+				result.importSource = em.merge(importSource);
+				fillinJob(result.importSource, em);
 			}
-			for (ImportCategory cat : CollectionUtil.notNull(importSource.getCategories())) {
-				cat.setImportSource(importSource);
-				result.importSource.getCategories().add(
-					dao.getEntityManager().merge(cat));
+			for (ImportCategory cat : CollectionUtil.notNull(result.importSource.getCategories())) {
+				cat.setImportSource(result.importSource);
 			}
-			for (ImportProperty prop : CollectionUtil.notNull(importSource.getProperties())) {
-				prop.setImportSource(importSource);
-				result.importSource.getProperties().add(
-					dao.getEntityManager().merge(prop));
+			for (ImportProperty prop : CollectionUtil.notNull(result.importSource.getProperties())) {
+				prop.setImportSource(result.importSource);
 			}
-			fillinJob(result.importSource, dao);
 			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
-				dao.getEntityManager().remove(cat);
+				if (result.importSource.getCategories().remove(cat)) {
+					em.remove(em.find(ImportCategory.class, cat.getId()));
+				}
 			}
 			for (ImportProperty prop : CollectionUtil.notNull(importPropertiesToBeRemoved)) {
-				dao.getEntityManager().remove(prop);
+				if (result.importSource.getProperties().remove(prop)) {
+					em.remove(em.find(ImportProperty.class, prop.getId()));
+				}
 			}
 		}
 		result.importSource = Cloner.clone(result.importSource, view);
 		return result;
 	}
 	
-	private static void fillinJob(ImportSource importSource, CatalogDao dao) {
+	private static void fillinJob(ImportSource importSource, EntityManager em) {
 		Job job = importSource.getJob();
 		if (job == null) {
 			job = new Job();
@@ -76,13 +78,12 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		if (job.getRunFrequency() == null) {
 			job.setRunFrequency(Frequency.never);
 		}
-		if (!dao.getEntityManager().contains(job)) {
-			dao.getEntityManager().persist(job);
+		if (!em.contains(job)) {
+			em.persist(job);
 		}
-		
 	}
 	
-	private void validateCommand(CatalogDao dao) throws CommandValidationException {
+	private void validateCommand(EntityManager em) throws CommandValidationException {
 		checkValid();
 		// categories to be removed should exist
 		for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
@@ -91,7 +92,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		// all categories should belong to the current import definition
 		for (ImportCategory cat : CollectionUtil.concat(importSource.getCategories(), importCategoriesToBeRemoved)) {
 			if (cat.getId() != null) {
-				ImportCategory existing = dao.getEntityManager().find(ImportCategory.class, cat.getId());
+				ImportCategory existing = em.find(ImportCategory.class, cat.getId());
 				if (existing != null) {
 					validate(existing.getImportSource().equals(importSource));
 				}
@@ -104,7 +105,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		// all properties should belong to the current import definition
 		for (ImportProperty prop : CollectionUtil.concat(importSource.getProperties(), importPropertiesToBeRemoved)) {
 			if (prop.getId() != null) {
-				ImportProperty existing = dao.getEntityManager().find(ImportProperty.class, prop.getId());
+				ImportProperty existing = em.find(ImportProperty.class, prop.getId());
 				if (existing != null) {
 					validate(existing.getImportSource().equals(importSource));
 				}

@@ -255,11 +255,11 @@ public class ItemModel {
 	}
 
 	private PropertyGroup findPropertyGroup(Item item, String propertyLabel, String language) {
-		for (PropertyGroup group : item.getPropertyGroups()) {
-			if (find(group.getLabels(), propertyLabel, language) != null) {
-				return group;
-			}
-		}
+//		for (PropertyGroup group : item.getPropertyGroups()) {
+//			if (find(group.getLabels(), propertyLabel, language) != null) {
+//				return group;
+//			}
+//		}
 		
 		return null;
 	}
@@ -316,8 +316,8 @@ public class ItemModel {
 			}
 			JpaService.getEntityManager().persist(propertyGroup);
 			assert propertyGroup.getId() != null;
-			getEntity().getPropertyGroups().add(propertyGroup);
-			propertyGroup.setItem(getEntity());
+//			getEntity().getPropertyGroups().add(propertyGroup);
+//			propertyGroup.setItem(getEntity());
 //				catalog.invalidate(this);
 //				catalog.invalidate(childExtent);
 //				return PropertyModel.createRoot(propertyGroup.getId(), false, this);

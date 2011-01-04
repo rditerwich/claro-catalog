@@ -19,6 +19,9 @@ public class PerformImport implements Command<PerformImport.Result> {
 	 * data from this url. Optional.
 	 */
 	public String importUrl = null;
+	
+	public String uploadFieldName = null;
+	
 
 	/**
 	 * Overwrite 
@@ -28,10 +31,11 @@ public class PerformImport implements Command<PerformImport.Result> {
 	public boolean generateJobResult = false;
 	
 	public boolean dryRun = false;
-	
+
 	public void checkValid() throws CommandValidationException {
 		validate(catalogId != null, "no catalog specified");
 		validate(importSourceId != null, "no import definition specified");
+		validate(importUrl == null || uploadFieldName == null);
 	}
 	
 	public static class Result implements CommandResult {

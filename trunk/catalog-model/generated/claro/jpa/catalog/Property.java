@@ -13,7 +13,6 @@ public class Property implements Serializable {
     private Collection<Label> labels;
     private Boolean categoryProperty;
     private Item item;
-    private Collection<PropertyGroup> propertyGroups;
     private PropertyType type;
     private Boolean isMany;
     private Collection<EnumValue> enumValues;
@@ -51,17 +50,6 @@ public class Property implements Serializable {
 
     public void setItem(Item value) {
         this.item = value;
-    }
-
-    public Collection<PropertyGroup> getPropertyGroups() {
-        if (propertyGroups == null) {
-            propertyGroups = new ArrayList<PropertyGroup>();
-        }
-        return propertyGroups;
-    }
-
-    public void setPropertyGroups(Collection<PropertyGroup> value) {
-        this.propertyGroups = value;
     }
 
     public PropertyType getType() {

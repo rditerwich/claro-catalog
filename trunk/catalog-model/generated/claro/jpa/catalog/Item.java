@@ -12,7 +12,6 @@ public class Item implements Serializable {
     private Catalog catalog;
     private Collection<ParentChild> parents;
     private Collection<ParentChild> children;
-    private Collection<PropertyGroup> propertyGroups;
     private Collection<Property> properties;
     private Collection<PropertyValue> propertyValues;
     private Collection<Template> templates;
@@ -53,17 +52,6 @@ public class Item implements Serializable {
 
     public void setChildren(Collection<ParentChild> value) {
         this.children = value;
-    }
-
-    public Collection<PropertyGroup> getPropertyGroups() {
-        if (propertyGroups == null) {
-            propertyGroups = new ArrayList<PropertyGroup>();
-        }
-        return propertyGroups;
-    }
-
-    public void setPropertyGroups(Collection<PropertyGroup> value) {
-        this.propertyGroups = value;
     }
 
     public Collection<Property> getProperties() {

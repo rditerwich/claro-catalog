@@ -14,7 +14,7 @@ import easyenterprise.lib.command.jpa.JpaService;
 public class GetImportSourcesImpl extends GetImportSources implements CommandImpl<GetImportSources.Result>{
 
 	private static final long serialVersionUID = 1L;
-	private static View view = new BasicView("matchProperty", "categories", "properties", "job");
+	private static View view = new BasicView("matchProperty", "categories", "properties/property", "job");
 
 	@Override
 	public Result execute() throws CommandException {

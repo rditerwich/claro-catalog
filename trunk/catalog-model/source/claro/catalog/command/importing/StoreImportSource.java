@@ -9,8 +9,6 @@ import claro.catalog.command.importing.StoreImportSource.Result;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportSource;
-import easyenterprise.lib.cloner.BasicView;
-import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
@@ -19,6 +17,13 @@ public class StoreImportSource implements Command<Result> {
 
 	private static final long serialVersionUID = 1L;
 
+	protected StoreImportSource() {
+	}
+	
+	public StoreImportSource(ImportSource importSource) {
+		this.importSource = importSource;
+	}
+	
 	/**
 	 * Don't update import definition instance. Only use {@link #importSource}
 	 * to find nested import-categories or import-properties, or to store the id

@@ -1,6 +1,7 @@
 root /packages:Claro/packages:Domain/packages
 
 import Metaphor.PIM.Archetypes.CrmArchetype
+import Metaphor.PIM.Domain.AnyType
 import Metaphor.PIM.Domain.Attribute
 import Metaphor.PIM.Domain.Class
 import Metaphor.PIM.Domain.Enumeration
@@ -58,6 +59,14 @@ Package {
                     lower = 0
                     upper = {}
                 }
+                Attribute {
+                    name = propertyGroups
+                    type = catalog:PropertyGroup
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = catalog:PropertyGroup/attributes:catalog
+                }
             }
         }
         @comment "An item without properties is not an item"
@@ -82,14 +91,6 @@ Package {
                     lower = 0
                     upper = {}
                     opposite = catalog:ParentChild/attributes:parent
-                }
-                Attribute {
-                    name = propertyGroups
-                    type = catalog:PropertyGroup
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                    opposite = catalog:PropertyGroup/attributes:item
                 }
                 /**
                  * Defines the properties that a product in the child-extent
@@ -149,6 +150,14 @@ Package {
                     type = primitive:Boolean
                     default = true
                 }
+                Attribute {
+                    name = propertyGroupAssignments
+                    type = catalog:PropertyGroupAssignment
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = catalog:PropertyGroupAssignment/attributes:category
+                }
             }
         }
         
@@ -164,16 +173,27 @@ Package {
                     opposite = catalog:Label/attributes:propertyGroup
                 }
                 Attribute {
-                    name = item
-                    type = catalog:Item
-                    opposite = catalog:Item/attributes:propertyGroups
+                    name = catalog
+                    type = catalog:Catalog
+                    opposite = catalog:Catalog/attributes:propertyGroups
+                }
+            }
+        }
+        Class {
+            name = PropertyGroupAssignment
+            attributes = {
+                Attribute {
+                    name = propertyGroup
+                    type = catalog:PropertyGroup
                 }
                 Attribute {
-                    name = properties
+                    name = property
                     type = catalog:Property
-                    lower = 0
-                    upper = {}
-                    opposite = catalog:Property/attributes:propertyGroups
+                }
+                Attribute {
+                    name = category
+                    type = catalog:Category
+                    opposite = catalog:Category/attributes:propertyGroupAssignments
                 }
             }
         }
@@ -212,13 +232,6 @@ Package {
                     type = catalog:Item
                     lower = 0
                     opposite = catalog:Item/attributes:properties
-                }
-                Attribute {
-                    name = propertyGroups
-                    type = catalog:PropertyGroup
-                    lower = 0
-                    upper = {}
-                    opposite = catalog:PropertyGroup/attributes:properties
                 }
                 Attribute {
                     name = type
