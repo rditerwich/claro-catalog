@@ -26,8 +26,8 @@ import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
 
-	public static final String TEST_DATABASE_NAME = "catalog";
-	public static final Long TEST_CATALOG_ID = -1l;
+	public static final String TEST_DATABASE_NAME = "catalog-test";
+	public static final Long TEST_CATALOG_ID = -99l;
 	
 	private static Connection connection;
 	private static CatalogServer server;
