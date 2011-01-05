@@ -71,7 +71,7 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 		}
 		
 		// Add item
-		result.categories = result.categories.add(item.getItemId(), getLabels(item));
+		result.categories = result.categories.add(item.getItemId(), ItemUtil.getNameLabels(item, catalogModel, outputChannel, stagingArea));
 		
 		// set and traverse children
 		for (ItemModel child : item.getChildren()) {
@@ -81,20 +81,4 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 		}
 	}
 
-	private SMap<String, String> getLabels(ItemModel item) {
-		SMap<String, String> result = SMap.empty();
-		
-		// Lookup name property
-		PropertyModel nameProperty = item.findProperty(catalogModel.nameProperty.getPropertyId(), true);
-		
-		// get the name value for each language
-		if (nameProperty != null) {
-			SMap<String,Object> values = nameProperty.getValues(stagingArea, outputChannel);
-			for (String language : values.getKeys()) {
-				result = result.add(language, (String) values.get(language));
-			}
-		}
-		
-		return result;
-	}
 }
