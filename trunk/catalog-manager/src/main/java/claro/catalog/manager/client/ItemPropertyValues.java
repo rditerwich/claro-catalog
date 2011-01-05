@@ -46,22 +46,14 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	private Long itemId;
 	private String language;
-	private String uiLanguage;
 	private OutputChannel outputChannel;
 	
-	public ItemPropertyValues(String uiLanguage, String language, OutputChannel outputChannel) {
+	public ItemPropertyValues(String language, OutputChannel outputChannel) {
 		this.language = language;
-		this.uiLanguage = uiLanguage;
 		this.outputChannel = outputChannel;
 		
 		propertyGroupPanel = new TabLayoutPanel(20, Unit.PX);
 		initWidget(propertyGroupPanel);
-	}
-	
-	public void setUiLanguage(String uiLanguage) {
-		this.uiLanguage = uiLanguage;
-		
-		render();
 	}
 	
 	public void setLanguage(String language) {
@@ -103,7 +95,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
 		// Remove extraneous property groups.
 		int oldPanelCount = propertyGroupPanel.getWidgetCount();
-		for (int i = oldPanelCount; i >= propertyGroups.size(); i--) {
+		for (int i = oldPanelCount - 1; i >= propertyGroups.size(); i--) {
 			groupPanels.remove(i);
 			propertyGroupPanel.remove(i);
 		}
@@ -123,7 +115,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		for (PropertyGroupInfo propertyGroup : propertyGroups) {
 			
 			// TabPanel tab text:
-			propertyGroupPanel.setTabText(i, propertyGroup.labels.tryGet(uiLanguage, null));
+			propertyGroupPanel.setTabText(i, propertyGroup.labels.tryGet(CatalogManager.getUiLanguage(), null));
 
 			// TabPanel tab content:
 			
@@ -175,7 +167,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				PropertyData propertyData = properties.get(property);
 				
 				// Set name
-				propertyValueWidgets.nameWidget.setText(property.labels.tryGet(uiLanguage, null));
+				propertyValueWidgets.nameWidget.setText(property.labels.tryGet(CatalogManager.getUiLanguage(), null));
 				
 				// set type
 				propertyValueWidgets.typeWidget.setText(property.type.name()); // TODO How about i18n??

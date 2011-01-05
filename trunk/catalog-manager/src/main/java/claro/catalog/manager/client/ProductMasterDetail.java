@@ -48,12 +48,13 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 
 	
 	
-	private boolean initialized;
-
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
 	private SMap<Long, SMap<String, String>> filterCategories = SMap.empty();
 	private String language;
 	private String filterString;
+	
+
+	private OutputChannel outputChannel;
 
 
 
@@ -260,39 +261,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
 		int row = products.getKeys().indexOf(productId);
 
-		if (details == null) {
-			LayoutPanel detailPanel = getDetail();
-			detailPanel.clear();
-			
-			detailPanel.add(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						closeDetail(true);
-					}
-				});
-			}});
-			String uiLanguage = null; // TODO.
-			OutputChannel outputChannel = null; // TODO
-			details = new ProductDetails(language, uiLanguage, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
-				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-					// Call Server method
-					// Queueing?
-					// Use result of server command to update both product and list.
-					// TODO Implement.
-				}
-				protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
-					// TODO Auto-generated method stub
-					
-				}
-				protected void categoryRemoved(Long itemId, Long categoryId) {
-					// TODO Auto-generated method stub
-				}
-			};
-			detailPanel.add(details);
-		}
+		openDetail(row);
 
 		details.setItemData(productId, categories, propertyValues);
-		openDetail(row);
+		
 	}
 	
 	abstract protected void updateProductList();
@@ -353,6 +325,34 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 					setVisible(false);
 				}});
 			}});
+		}});
+	}
+	
+	@Override
+	protected void detailPanelCreated(LayoutPanel detailPanel) {
+		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
+			addNorth(new Anchor("Close") {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						closeDetail(true);
+					}
+				});
+			}}, 50);
+			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
+				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+					// Call Server method
+					// Queueing?
+					// Use result of server command to update both product and list.
+					// TODO Implement.
+				}
+				protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+					// TODO Auto-generated method stub
+					
+				}
+				protected void categoryRemoved(Long itemId, Long categoryId) {
+					// TODO Auto-generated method stub
+				}
+			});
 		}});
 	}
 

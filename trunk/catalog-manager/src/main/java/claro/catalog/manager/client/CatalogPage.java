@@ -123,7 +123,7 @@ public class CatalogPage extends Page {
 	private void updateProductSelection(final Long productId) {
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd .setCatalogId(currentCatalogId)
-			.setItem(selectedItem.getId());
+			.setItem(productId);
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
 			public void onSuccess(ItemDetailsCommandResult result) {
 				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);

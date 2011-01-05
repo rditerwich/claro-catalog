@@ -31,7 +31,6 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private Image productImage;
 	
 	private ItemPropertyValues propertyValues;
-	private String uiLanguage;
 	private String language;
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> categories;
@@ -42,8 +41,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private final PropertyInfo imageProperty;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	
-	public ProductDetails(final String uiLanguage, final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
-		this.uiLanguage = uiLanguage;
+	public ProductDetails(final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.language = language;
 		this.outputChannel = outputChannel;
 		this.nameProperty = nameProperty;
@@ -89,7 +87,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			
 			// Properties
 			add(new Label(messages.properties()));
-			add(propertyValues = new ItemPropertyValues(uiLanguage, language, outputChannel) {
+			add(propertyValues = new ItemPropertyValues(language, outputChannel) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 				}
@@ -102,14 +100,6 @@ abstract public class ProductDetails extends Composite implements Globals {
 			// TODO add a popup panel at the bottom with property groups?
 			// TODO add a popup panel with dangling properties.
 		}});
-	}
-	
-	
-	public void setUiLanguage(String uiLanguage) {
-		this.uiLanguage = uiLanguage;
-		propertyValues.setUiLanguage(uiLanguage);
-		
-		render();
 	}
 	
 	public void setLanguage(String language) {

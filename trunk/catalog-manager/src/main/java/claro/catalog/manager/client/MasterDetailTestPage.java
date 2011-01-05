@@ -85,7 +85,7 @@ public class MasterDetailTestPage extends Page {
 									});
 								}});
 								add(new Label("Details for " + masterData.get(row) + "..."));
-								add(new ProductDetails(null, null, null, null, null, null, null) {
+								add(new ProductDetails(null, null, null, null, null, null) {
 									protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 									}
 									protected void propertyValueRemoved(

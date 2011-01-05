@@ -2,18 +2,29 @@ package claro.catalog.manager.client;
 
 import java.util.List;
 
+import claro.catalog.command.items.GetCategoryTree;
+import claro.catalog.manager.client.command.StatusCallback;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
@@ -23,8 +34,11 @@ public class CategoriesWidget extends Composite implements Globals {
 	enum Styles implements Style { mouseOverStyle, categoryStyle }
 	
 	private FlowPanel mainPanel;
-	private final boolean canSelect;
 	private DecoratedPopupPanel addCategoryPanel;
+	
+
+	private final boolean canSelect;
+	
 
 	public CategoriesWidget() {
 		this(true);
@@ -67,12 +81,30 @@ public class CategoriesWidget extends Composite implements Globals {
 				}});
 			}});
 		}
-		addCategoryPanel = new DecoratedPopupPanel(true) {{
-//			setWidget(addCategoryPanel);
-		}};
 		mainPanel.add(new Anchor(categoryKeys.isEmpty() ? messages.addCategoriesLink() : "+") {{ // TODO Use image instead?
 			addHoverStyles(this);
-			// TODO add click handler
+			addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					if (addCategoryPanel == null) {
+						addCategoryPanel = new DecoratedPopupPanel(true) {{
+							setWidget(new ScrollPanel(new Label(messages.loading())));
+						}};
+					}
+
+					// Update tree
+					GetCategoryTree c = new GetCategoryTree();
+					c.catalogId = CatalogManager.getCurrentCatalogId();
+					c.outputChannelId = null; // TODO ???
+					GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
+						public void onSuccess(GetCategoryTree.Result result) {
+							// TODO Only create tree if data changed??
+							((ScrollPanel)addCategoryPanel.getWidget()).setWidget(createTree(result.root, result.categories, result.children));
+						}
+					});
+					
+					addCategoryPanel.showRelativeTo((Widget) event.getSource());
+				}
+			});
 			// TODO add show on mouse over.
 		}});
 	}
@@ -95,6 +127,37 @@ public class CategoriesWidget extends Composite implements Globals {
 
 	protected void removeCategory(Long categoryId) {
 		
+	}
+	
+	// TODO create filtered selection tree?
+	private Tree createTree(final Long root, final SMap<Long, SMap<String, String>> categories, final SMap<Long, Long> children) {
+		Tree result = new Tree();
+		
+		result.addItem(new TreeItem(messages.categoryTreeRootName()) {{
+			setUserObject(root);
+			addItem(""); // Add uninitialized marker.
+		}});
+
+		result.addOpenHandler(new OpenHandler<TreeItem>() {
+			public void onOpen(OpenEvent<TreeItem> event) {
+				// Are the children uninitialized?
+				TreeItem target = event.getTarget();
+				if (target.getChildCount() == 1 && target.getChild(0).getUserObject() == null) {
+					target.removeItem(target.getChild(0));
+					// Get child categories:
+					List<Long> childCategories = children.getAll((Long) target.getUserObject());
+					for (final Long child : childCategories) {
+						String categoryName = categories.getOrEmpty(child).tryGet(CatalogManager.getUiLanguage(), null);
+						target.addItem(new TreeItem(categoryName) {{
+							setUserObject(child);
+							addItem(""); // uninitialized marker.
+						}});
+					}
+				}
+			}
+		});
+		
+		return result;
 	}
 	
 	private void addHoverStyles(final Anchor anchor) {
