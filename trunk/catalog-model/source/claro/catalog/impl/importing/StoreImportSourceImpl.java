@@ -23,7 +23,7 @@ import easyenterprise.lib.util.CollectionUtil;
 public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
 
 	private static final long serialVersionUID = 1L;
-	private static View view = new BasicView("matchProperty", "categories/category", "properties/property", "job");
+	private static View view = new BasicView("matchProperty", "categories/categoryExpression", "properties/property", "job");
 	
 	@Override
 	public Result execute() throws CommandException {

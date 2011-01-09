@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -167,39 +168,37 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			
 			// Image
 			productTable.setWidget(i, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false) {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						rowSelected(row);
-					}
-				});
+				addRowSelectionListener(this, row);
 			}});
 			
 			// Product
 			productTable.setWidget(i, PRODUCT_COL, new VerticalPanel() {{
 				StyleUtil.add(this, Styles.product);
 				// .title -> name
-				add(rowWidgets.productNameLabel = new InlineLabel() {{
+				add(rowWidgets.productNameLabel = new Anchor() {{
 					StyleUtil.add(this, Styles.productname);
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							rowSelected(row);
-						}
-					});
+					addRowSelectionListener(this, row);
 				}});
 				// .subtitle -> variant
 				add(rowWidgets.productVariantLabel = new InlineLabel() {{
 					StyleUtil.add(this, CatalogManager.Styles.productvariant);
+					addRowSelectionListener(this, row);
 				}});
 				
 				// .body -> artnr
-				add(rowWidgets.productNrLabel = new InlineLabel());
+				add(rowWidgets.productNrLabel = new InlineLabel() {{
+					addRowSelectionListener(this, row);
+				}});
 				// .body -> description
-				add(rowWidgets.productDescriptionLabel = new InlineLabel());
+				add(rowWidgets.productDescriptionLabel = new InlineLabel() {{
+					addRowSelectionListener(this, row);
+				}});
 			}});
 			
 			// Price
 			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
 				StyleUtil.add(this, Styles.productprice);
+				addRowSelectionListener(this, row);
 			}});
 		}
 		
@@ -370,15 +369,22 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 
 	private void rowSelected(int row) {
-		StatusMessage.get().show(messages.loadingProductDetails());
 
 		productSelected(products.getKeys().get(row));
 	}
 	
+	private void addRowSelectionListener(HasClickHandlers widget, final int row) {
+		widget.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				rowSelected(row);
+			}
+		});
+	}
+
 	private class RowWidgets {
 		public Label priceLabel;
 		public MediaWidget imageWidget;
-		public Label productNameLabel;
+		public Anchor productNameLabel;
 		public Label productVariantLabel;
 		public Label productNrLabel;
 		public Label productDescriptionLabel;

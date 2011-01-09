@@ -64,11 +64,14 @@ table.catalogheader {
 .mainTabPanel  .gwt-TabLayoutPanelTabs {
    background: url(images/homepage04.gif) repeat-x left top;
 }
-.mainTabPanel .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-style: solid;
+.mainTabPanel div.gwt-TabLayoutPanelContent {
+  border: none;
+  border-color: none;
+  border-width: 0px;
+  overflow: auto;
+  padding: 0px;  
 /*  border-color: #d86403;
   border-style: solid;
-  border-width: 3px 2px 2px;
   overflow: hidden;
   padding: 6px;*/
 }
@@ -77,6 +80,9 @@ table.catalogheader {
     height: 47px;
     padding: 0px 4px 0px 0px;
 	cursor: pointer;
+	margin: 0px;
+	font-weight: normal;
+	background: none;
 	/*	
   margin-left: 6px;
   padding: 3px 6px 3px 6px;
@@ -158,12 +164,96 @@ table.catalogheader {
 .productMasterDetail { margin: 20px; }
 
 .productMasterDetail table.ee-table-table { width: 100%; }
-.productMasterDetail table.ee-table-table table.product { width: 100%; }
+.productMasterDetail table.ee-table-table table.product { width: 100%; cursor: pointer;}
+.productMasterDetail table.ee-table-table table.product td { border: none;}
 
-.masterdetailtest { padding: 5px;}
+
 
 table.filterpanel { margin-left: 20px; vertical-align: middle; }
 table.filterpanel input.gwt-TextBox { margin-right: 40px; }
+
+
+
+.productDetails .productname {
+	font-size: medium;
+}
+
+.productDetails .gwt-TabBarItem {
+}
+
+.productDetails  .gwt-TabLayoutPanelTabs {
+	background: none;
+	background-color: #FFF3DF;
+	border-bottom: 1px solid black;
+	
+}
+.productDetails .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+	border: none;
+}
+.productDetails .gwt-TabLayoutPanelTabs .gwt-TabLayoutPanelTab {
+    float: left;
+    padding: 0px 4px 0px 0px;
+	cursor: pointer;
+}
+.productDetails .gwt-TabLayoutPanelTabs .gwt-TabLayoutPanelTabInner {
+	display: block;
+    float: left;
+    width: auto;
+    height: 20px;
+    padding: 17px 8px 0px 8px;
+    text-decoration: none;
+    font-weight: normal;
+    color: #434242;
+}
+
+.productDetails .gwt-TabLayoutPanelTabs .gwt-TabLayoutPanelTab-selected {
+	cursor: default;
+	background: none;
+}
+
+.productDetails input.derived { 
+	color: blue;
+}
+
+
+/** Categories component */
+.categoryStyle {
+	margin-left: 10px;
+}
+.categoryStyle table {
+	border-spacing: 0px;
+}
+.categoryStyle td {
+	border-collapse: collapse;
+}
+.categoryStyle a {
+	font-size: x-small;
+	text-decoration: none;
+	color: #5A6986;
+	background-color: #DEE5F2;
+	padding-bottom: 1px;
+	padding-left: 4px;
+	padding-right : 4px;
+}
+.categoryStyle a.mouseOverStyle {
+	color: #DEE5F2;
+	background-color: #5A6986;
+}
+
+.categoryStyle a.categoryName {
+	border-right: 1px solid black;
+	padding-right: 6px;
+}
+
+.categoryStyle a.categoryAdd {
+	margin-left: 10px;
+}
+.categoryStyle td {
+	background-color: light-gray;
+}
+
+.masterdetailtest { padding: 5px;}
+
 
 
 
@@ -194,9 +284,6 @@ table.choices select {
 	margin-left: 200px;
 }
 
-.productname {
-	font-weight: bold;
-}
 .itempanel .productprice {
     font-size: 20px;
     margin-left: 20px;

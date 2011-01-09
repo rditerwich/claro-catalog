@@ -49,6 +49,10 @@ public class StatusMessage {
 	public void show(String message) {
 		show(message, DEFAULT_TIMEOUT);
 	}
+	
+	public void hide() {
+		status.hide();
+	}
 
 	/**
 	 * Displays message for the duration of given seconds.

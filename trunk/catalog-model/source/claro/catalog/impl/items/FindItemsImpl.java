@@ -3,10 +3,12 @@ package claro.catalog.impl.items;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindItems;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
@@ -88,9 +90,8 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		result.items = SMap.empty();
 		for (ItemModel candidate : productCandidates) {
 			SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
-			Set<PropertyModel> properties = candidate.getPropertyExtent();
-			for (PropertyModel property : properties) {
-				propertyValues = propertyValues.add(property.getPropertyInfo(), property.getEffectiveValues(stagingArea, outputChannel));
+			for (Entry<PropertyGroupInfo, PropertyModel> property : candidate.getPropertyExtent()) {
+				propertyValues = propertyValues.add(property.getValue().getPropertyInfo(), property.getValue().getEffectiveValues(stagingArea, outputChannel));
 			}
 			result.items = result.items.add(candidate.getItemId(), propertyValues);
 		}
@@ -205,10 +206,10 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	private boolean acceptItem(ItemModel item, List<String> simpleCriteria, List<PropertyCriterium> propertyCriteria) {
 		List<String> unsatisfiedSimpleCriteria = new ArrayList<String>(simpleCriteria);
 		List<PropertyCriterium> unsatisfiedPropertyCriteria = new ArrayList<PropertyCriterium>(propertyCriteria);
-		for (PropertyModel propertyModel : item.getPropertyExtent()) {
+		for (Entry<PropertyGroupInfo, PropertyModel> property : item.getPropertyExtent()) {
 			
 			// Obtain value for property:
-			SMap<String, Object> effectiveValues = propertyModel.getEffectiveValues(stagingArea, outputChannel);
+			SMap<String, Object> effectiveValues = property.getValue().getEffectiveValues(stagingArea, outputChannel);
 			Object objectValue = effectiveValues.tryGet(language, null);
 			if (objectValue != null) {
 				String value = objectValue.toString().toLowerCase();
@@ -221,7 +222,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 				}
 				
 				// try property criteria:
-				String propertyLabel = propertyModel.getPropertyInfo().labels.tryGet(uiLanguage, null);
+				String propertyLabel = property.getValue().getPropertyInfo().labels.tryGet(uiLanguage, null);
 				if (propertyLabel != null) {
 					String lowerPropertyLabel = propertyLabel.toLowerCase();
 					for (PropertyCriterium criterium : new ArrayList<PropertyCriterium>(unsatisfiedPropertyCriteria)) {

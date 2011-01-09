@@ -31,7 +31,7 @@ import easyenterprise.lib.util.SMap;
 
 public class CategoriesWidget extends Composite implements Globals {
 	
-	enum Styles implements Style { mouseOverStyle, categoryStyle }
+	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd }
 	
 	private FlowPanel mainPanel;
 	private DecoratedPopupPanel addCategoryPanel;
@@ -53,13 +53,16 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 	public void setData(SMap<Long, SMap<String, String>> categories, String language) {
 		
-		List<Long> categoryKeys = categories.getKeys();
+		final List<Long> categoryKeys = categories.getKeys();
 		mainPanel.clear();
+		int i = 0;
 		for (Long categoryId : categoryKeys) {
+			final boolean lastCategory = i++ == categoryKeys.size() - 1;
 			final Long catId = categoryId;
 			final String categoryName = categories.getOrEmpty(categoryId).tryGet(language, null);
-			mainPanel.add(new Grid(1, 2) {{
+			mainPanel.add(new Grid(1, lastCategory ? 3 : 2) {{
 				setWidget(0, 0, new Anchor(categoryName) {{
+					StyleUtil.add(this, Styles.categoryName);
 					setTitle(getCategoryTooltip(categoryName));
 					if (canSelect) {
 						addHoverStyles(this);
@@ -79,9 +82,19 @@ public class CategoriesWidget extends Composite implements Globals {
 						}
 					});
 				}});
+				if (lastCategory) {
+					setWidget(0, 2, createAddAnchor("+"));
+				}
 			}});
 		}
-		mainPanel.add(new Anchor(categoryKeys.isEmpty() ? messages.addCategoriesLink() : "+") {{ // TODO Use image instead?
+		if (categoryKeys.isEmpty()) {
+			mainPanel.add(createAddAnchor(messages.addCategoriesLink()));
+		}
+	}
+
+	private Anchor createAddAnchor(String addCategoryText) {
+		return new Anchor(addCategoryText) {{ // TODO Use image instead?
+			StyleUtil.add(this, Styles.categoryAdd);
 			addHoverStyles(this);
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
@@ -106,7 +119,7 @@ public class CategoriesWidget extends Composite implements Globals {
 				}
 			});
 			// TODO add show on mouse over.
-		}});
+		}};
 	}
 	
 	protected String getCategoryTooltip(String categoryName) {

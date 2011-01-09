@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -52,7 +53,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		this.language = language;
 		this.outputChannel = outputChannel;
 		
-		propertyGroupPanel = new TabLayoutPanel(20, Unit.PX);
+		propertyGroupPanel = new TabLayoutPanel(30, Unit.PX);
 		initWidget(propertyGroupPanel);
 	}
 	
@@ -104,7 +105,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		for (int i = oldPanelCount; i < propertyGroups.size(); i++) {
 			GroupPanelWidgets propertyGroupWidgets = new GroupPanelWidgets();
 			
-			propertyGroupPanel.add(propertyGroupWidgets.panel = new Grid(0, NR_FIXED_COLS));
+			propertyGroupPanel.add(new ScrollPanel(propertyGroupWidgets.panel = new Grid(0, NR_FIXED_COLS)));
 			
 			groupPanels.add(propertyGroupWidgets);
 			
@@ -141,7 +142,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				groupPanelWidgets.panel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new Label());
 
 				// Value + Clear button
-				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid() {{
+				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
 					// Real value is added in the bind fase...
 					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(messages.clearValue()) {{
 							final Button me = this;

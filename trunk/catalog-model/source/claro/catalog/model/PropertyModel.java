@@ -6,10 +6,12 @@ import static com.google.common.base.Objects.equal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.data.MediaValue;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.Item;
@@ -245,10 +247,10 @@ public abstract class PropertyModel {
 		}
 	}
 
-	public static Set<Property> getEntities(Collection<PropertyModel> properties) {
+	public static Set<Property> getEntities(SMap<PropertyGroupInfo, PropertyModel> properties) {
 		Set<Property> result = new LinkedHashSet<Property>();
-		for (PropertyModel property : properties) {
-			result.add(property.getEntity());
+		for (Entry<PropertyGroupInfo, PropertyModel> property : properties) {
+			result.add(property.getValue().getEntity());
 		}
 		return result;
 	}

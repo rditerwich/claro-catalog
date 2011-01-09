@@ -126,7 +126,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 			add(new TabLayoutPanel(50, Unit.PX) {{
 				this.addStyleName("mainTabPanel");
 				
-				add(new CatalogPage(placeController), "Details");
+				add(new CatalogPage(placeController), "Catalog");
 				add(new ImportPage(placeController), "Import");
 				
 				add(new MasterDetailTestPage(placeController), "MasterDetail");
@@ -146,7 +146,8 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 						RootLayoutPanel.get().animate(1);
 					}
 				});
-				selectTab(3);
+				selectTab(1); // Weird: I cannot select page 0 before selecting another one...
+				selectTab(0);
 			}});
 		}});
 	}

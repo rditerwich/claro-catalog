@@ -4,14 +4,18 @@ import static claro.catalog.manager.client.CatalogManager.propertyStringConverte
 
 import java.util.Map.Entry;
 
+import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
-import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -23,12 +27,12 @@ import easyenterprise.lib.util.SMap;
 
 
 abstract public class ProductDetails extends Composite implements Globals {
-	private enum Styles implements Style { productdetails }
+	private enum Styles implements Style { productDetails }
 	
-	private TextBox productNameBox;
+	private Label productNameBox;
 	private CategoriesWidget categoryPanel;
 	private Label productPrice;
-	private Image productImage;
+	private MediaWidget productImage;
 	
 	private ItemPropertyValues propertyValues;
 	private String language;
@@ -49,44 +53,44 @@ abstract public class ProductDetails extends Composite implements Globals {
 		this.priceProperty = priceProperty;
 		this.imageProperty = imageProperty;
 		
-		initWidget(new FlowPanel() {{
+		initWidget(new DockLayoutPanel(Unit.PX) {{
+			StyleUtil.add(this, Styles.productDetails);
+			
+			addNorth(new FlowPanel() {{
 //			add(new Trail());
-
-			// Title
-			add(new FlowPanel(){{
-				StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
-				add(productNameBox = new TextBox() {{
-					StyleUtil.add(this, ProductMasterDetail.Styles.productname);
+				
+				// Title
+				add(new Grid(1, 2) {{
+					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
+					setWidget(0, 0, productNameBox = new Label() {{
+						StyleUtil.add(this, ProductMasterDetail.Styles.productname);
+					}});
+					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
+						protected String getAddCategoryTooltip() {
+							return messages.addCategoryProductDetailsTooltip(productNameBox.getText());  // TODO This is a little dirty??
+						}
+						protected String getRemoveCategoryTooltip(String categoryName) {
+							return messages.removeCategoryProductDetailsTooltip(categoryName);
+						}
+						protected void removeCategory(Long categoryId) {
+							categoryRemoved(itemId, categoryId);
+						}
+					});
 				}});
-				add(categoryPanel = new CategoriesWidget() {
-					protected String getAddCategoryTooltip() {
-						return messages.addCategoryProductDetailsTooltip(productNameBox.getText());  // TODO This is a little dirty??
-					}
-					protected String getRemoveCategoryTooltip(String categoryName) {
-						return messages.removeCategoryProductDetailsTooltip(categoryName);
-					}
-					protected void removeCategory(Long categoryId) {
-						categoryRemoved(itemId, categoryId);
-					}
-				});
-			}});
-			
-			// Image, Price, RelatedInfo
-			add(new HorizontalPanel(){{
-			    add(productImage = new Image() {{
-			    	setSize("150px", "150px");
-			    }});
-			    add(productPrice = new Label() {{
-			    	StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
-			    	setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
-			    }});
-			    add(new FlowPanel() {{
-			    	add(new Anchor(messages.containedProducts(0)));
-			    }});
-			}});
-			
-			// Properties
-			add(new Label(messages.properties()));
+				
+				// Image, Price
+				add(new HorizontalPanel(){{
+					add(productImage = new MediaWidget(false));
+					add(productPrice = new Label() {{
+						StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
+						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
+					}});
+				}});
+				
+				// Properties
+				add(new Label(messages.properties()));
+				
+			}}, 200);
 			add(propertyValues = new ItemPropertyValues(language, outputChannel) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
@@ -151,6 +155,16 @@ abstract public class ProductDetails extends Composite implements Globals {
 //		final Object productNr = getValue(artNoProperty, properties);
 //		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
 		
+		final Object productImageData = getValue(imageProperty, properties);
+		if (productImageData instanceof MediaValue) {
+			MediaValue productImageMediaValue = (MediaValue) productImageData;
+			
+			productImage.setData(productImageMediaValue.propertyValueId, productImageMediaValue.mimeType, productImageMediaValue.filename);
+		} else {
+			productImage.setData(null, null, null);
+			
+		}
+		
 		// price
 		final Object price = getValue(priceProperty, properties);
 		if (price != null) {
@@ -192,7 +206,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		
 		for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : values) {
 			for (Entry<PropertyInfo, PropertyData> propertyData : group.getValue()) {
-				result.add(propertyData.getKey(), propertyData.getValue());
+				result = result.add(propertyData.getKey(), propertyData.getValue());
 			}
 		}
 		

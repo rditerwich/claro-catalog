@@ -10,14 +10,19 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.data.PropertyGroupInfo;
+import claro.catalog.data.PropertyInfo;
+import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyGroup;
+import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 
@@ -35,8 +40,8 @@ public class ItemModel {
 	private Set<ItemModel> parentExtent;
 	private Set<ItemModel> children;
 	private Set<ItemModel> childExtent;
-	private Set<PropertyModel> properties;
-	private Set<PropertyModel> propertyExtent;
+	private SMap<PropertyGroupInfo, PropertyModel> properties;
+	private SMap<PropertyGroupInfo, PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
 	
 	ItemModel(CatalogModel catalog, Long id) {
@@ -116,26 +121,34 @@ public class ItemModel {
 	 * The returned set is ordered (linked hash set) according to inheritance rules.
 	 * @return
 	 */
+	
 	public Set<ItemModel> getParentExtent() {
 		synchronized (catalog) {
 			if (parentExtent == null) {
 				LinkedHashSet<ItemModel> parentExtent = new LinkedHashSet<ItemModel>();
-
-				getParentExtent(this, parentExtent);
+				LinkedHashSet<ItemModel> seen = new LinkedHashSet<ItemModel>();
+				ArrayList<ItemModel> queue = new ArrayList<ItemModel>();
+				queue.add(this);
+				seen.add(this);
 				
+				ItemModel item;
+				while (queue.size() > 0) {
+					item = queue.remove(0);
+					
+					for (ItemModel parent : item.getParents()) {
+						if (seen.add(parent)) {
+							parentExtent.add(parent);
+							queue.add(parent);
+						}
+					}
+					
+				}
 				this.parentExtent = ImmutableSet.copyOf(parentExtent);
 			}
 			return parentExtent;
 		}
 	}
-	
-	private void getParentExtent(ItemModel item, LinkedHashSet<ItemModel> parentExtent) {
-		for (ItemModel parent : item.getParents()) {
-			if (parentExtent.add(parent)) {
-				getParentExtent(parent, parentExtent);
-			}
-		}
-	}
+
 	
 	/**
 	 * Returns the children of this item.
@@ -156,6 +169,7 @@ public class ItemModel {
 			return children;
 		}
 	}
+	
 	/**
 	 * Returns the children of this item, in order (linked hash map).
 	 * @return
@@ -163,30 +177,57 @@ public class ItemModel {
 	public Set<ItemModel> getChildExtent() {
 		synchronized (catalog) {
 			if (childExtent == null) {
-				LinkedHashSet<ItemModel> children = new LinkedHashSet<ItemModel>();
-				getChildExtent(this, children);
-				childExtent = ImmutableSet.copyOf(children);
+				LinkedHashSet<ItemModel> childExtent = new LinkedHashSet<ItemModel>();
+				LinkedHashSet<ItemModel> seen = new LinkedHashSet<ItemModel>();
+				ArrayList<ItemModel> queue = new ArrayList<ItemModel>();
+				queue.add(this);
+				seen.add(this);
+				
+				ItemModel item;
+				while (queue.size() > 0) {
+					item = queue.remove(0);
+					
+					for (ItemModel child : item.getChildren()) {
+						if (seen.add(child)) {
+							childExtent.add(child);
+							queue.add(child);
+						}
+					}
+					
+				}
+				this.childExtent = ImmutableSet.copyOf(childExtent);
 			}
 			return childExtent;
 		}
-  }
-	
-	private void getChildExtent(ItemModel item, LinkedHashSet<ItemModel> childExtent) {
-		for (ItemModel child : item.getChildren()) {
-			if (childExtent.add(child)) {
-				getChildExtent(child, childExtent);
-			}
-		}
 	}
 	
-	public Set<PropertyModel> getProperties() {
+	public PropertyGroupInfo findGroup(Property property) {
+		PropertyGroup group = null;
+		for (ItemModel item : getParentExtent()) {
+			if (item.getItemClass().equals(Category.class)) {
+				Category category = (Category) item.getEntity();
+				for (PropertyGroupAssignment groupAssignment : category.getPropertyGroupAssignments()) {
+					if (groupAssignment.getProperty().equals(property)) {
+						group = groupAssignment.getPropertyGroup();
+					}
+				}
+			}
+		}
+		if (group == null) {
+			group = catalog.generalPropertyGroup;
+		}
+		
+		return catalog.findOrCreatePropertyGroupInfo(group);
+	}
+	
+	public SMap<PropertyGroupInfo, PropertyModel> getProperties() {
 		synchronized (catalog) {
 			if (properties == null) {
-				HashSet<PropertyModel> props = new HashSet<PropertyModel>();
+				properties = SMap.empty();
 				for (Property property : getEntity().getProperties()) {
-					props.add(PropertyModel.createRoot(property.getId(), false, this));
+					PropertyModel propertyRoot = PropertyModel.createRoot(property.getId(), false, this);
+					properties = properties.add(findGroup(property), propertyRoot);
 				}
-				properties = ImmutableSet.copyOf(props);
 			}
 			return properties;
 		}		
@@ -199,9 +240,9 @@ public class ItemModel {
 	 * @return Property model or null.
 	 */
 	public PropertyModel findProperty(Long propertyId, boolean extent) {
-		for (PropertyModel property : extent ? getPropertyExtent() : getProperties()) {
-			if (equal(propertyId, property.getPropertyId())) {
-				return property;
+		for (Entry<PropertyGroupInfo, PropertyModel> property : extent ? getPropertyExtent() : getProperties()) {
+			if (equal(propertyId, property.getValue().getPropertyId())) {
+				return property.getValue();
 			}
 		}
 		return null;
@@ -224,64 +265,23 @@ public class ItemModel {
 	 * @return Property model or null.
 	 */
 	public PropertyModel findProperty(String propertyLabel, String language, boolean extent) {
-		for (PropertyModel property : extent ? getPropertyExtent() : getProperties()) {
-			if (equal(propertyLabel, property.getPropertyInfo().labels.get(language))) {
-				return property;
+		for (Entry<PropertyGroupInfo, PropertyModel> property : extent ? getPropertyExtent() : getProperties()) {
+			if (equal(propertyLabel, property.getValue().getPropertyInfo().labels.get(language))) {
+				return property.getValue();
 			}
 		}
 		return null;
 	}
-	
-	/**
-	 * TODO Make this PropertyGroupModel based?
-	 * @param name Name of the propertygroup (label)
-	 * @param language Language of label to look (use null for default name)
-	 * @param extent look in parent items?
-	 * @return Property model or null.
-	 */
-	public PropertyGroup findPropertyGroup(String propertyLabel, String language, boolean extent) {
-		PropertyGroup result = findPropertyGroup(getEntity(), propertyLabel, language);
-		
-		// Look in parent extent?
-		if (result == null && extent) {
-			for (ItemModel parent : getParentExtent()) {
-				result = findPropertyGroup(parent.getEntity(), propertyLabel, language);
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-		return result;
-	}
-
-	private PropertyGroup findPropertyGroup(Item item, String propertyLabel, String language) {
-//		for (PropertyGroup group : item.getPropertyGroups()) {
-//			if (find(group.getLabels(), propertyLabel, language) != null) {
-//				return group;
-//			}
-//		}
-		
-		return null;
-	}
-	
 	
 	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group) {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
-			property = createProperty(SMap.create(language, propertyLabel), type);
+			property = createProperty(SMap.create(language, propertyLabel), type, group);
 		}
 		return property;
 	}
 	
-	public PropertyGroup findOrCreatePropertyGroup(String propertyGroupLabel, String language) {
-		PropertyGroup propertyGroup = findPropertyGroup(propertyGroupLabel, language, false);
-		if (propertyGroup == null) {
-			propertyGroup = createPropertyGroup(SMap.create(language, propertyGroupLabel));
-		}
-		return propertyGroup;
-	}
-	
-	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type) {
+	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type, PropertyGroup group) {
 		synchronized (catalog) {
 			Property property = new Property();
 			property.setType(type);
@@ -296,46 +296,40 @@ public class ItemModel {
 			}
 			JpaService.getEntityManager().persist(property);
 			assert property.getId() != null;
-			getEntity().getProperties().add(property);
-			property.setItem(getEntity());
+			Item entity = getEntity();
+			entity.getProperties().add(property);
+			property.setItem(entity);
+			if (group != null) {
+				assert entity instanceof Category;
+				Category category = (Category) entity;
+				PropertyGroupAssignment groupAssignment = new PropertyGroupAssignment();
+				groupAssignment.setCategory(category);
+				groupAssignment.setProperty(property);
+				groupAssignment.setPropertyGroup(group);
+				category.getPropertyGroupAssignments().add(groupAssignment);
+				JpaService.getEntityManager().persist(groupAssignment);
+			}
 			catalog.invalidate(this);
 			catalog.invalidate(childExtent);
 			return PropertyModel.createRoot(property.getId(), false, this);
 		}
 	}
 
-	public PropertyGroup createPropertyGroup(SMap<String, String> initialLabels) {
-		synchronized (catalog) {
-			PropertyGroup propertyGroup = new PropertyGroup();
-			for (String lanuage : initialLabels.getKeys()) {
-				Label label = new Label();
-				label.setLanguage(lanuage);
-				label.setLabel(initialLabels.get(lanuage));
-				label.setPropertyGroup(propertyGroup);
-				propertyGroup.getLabels().add(label);
-			}
-			JpaService.getEntityManager().persist(propertyGroup);
-			assert propertyGroup.getId() != null;
-//			getEntity().getPropertyGroups().add(propertyGroup);
-//			propertyGroup.setItem(getEntity());
-//				catalog.invalidate(this);
-//				catalog.invalidate(childExtent);
-//				return PropertyModel.createRoot(propertyGroup.getId(), false, this);
-			return propertyGroup;
-		}
-	}
-	
-	public Set<PropertyModel> getPropertyExtent() {
+	public SMap<PropertyGroupInfo, PropertyModel> getPropertyExtent() {
 		synchronized (catalog) {
 			if (propertyExtent == null) {
-				HashSet<PropertyModel> properties = new HashSet<PropertyModel>();
+				propertyExtent = SMap.empty();
 				for (ItemModel parent : getParentExtent()) {
-					for (PropertyModel root : parent.getProperties()) {
-						properties.add(PropertyModel.create(root, this));
+					for (Entry<PropertyGroupInfo, PropertyModel> property : parent.getProperties()) {
+						PropertyModel propertyRoot = PropertyModel.create(property.getValue(), this);
+						propertyExtent = propertyExtent.add(property.getKey(), propertyRoot);
 					}
 				}
-				properties.addAll(getProperties());
-				propertyExtent = ImmutableSet.copyOf(properties);
+				
+				// Add local properties
+				for (Entry<PropertyGroupInfo, PropertyModel> property : getProperties()) {
+					propertyExtent = propertyExtent.add(property.getKey(), property.getValue());
+				}
 			}
 			return propertyExtent;
 		}		
@@ -380,4 +374,5 @@ public class ItemModel {
 			danglingProperties = null;
 		}		
 	}
+	
 }

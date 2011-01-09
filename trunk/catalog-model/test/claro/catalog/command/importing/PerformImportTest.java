@@ -37,7 +37,7 @@ public class PerformImportTest extends CatalogTestBase {
 		propDef.setValueExpression("#Klantartikelnummer");
 		importDef.getProperties().add(propDef);
 		propDef = new ImportProperty();
-		propDef.setProperty(model.descriptionProperty.getEntity());
+		propDef.setProperty(model.nameProperty.getEntity());
 		propDef.setValueExpression("#omschrijving");
 		importDef.getProperties().add(propDef);
 		

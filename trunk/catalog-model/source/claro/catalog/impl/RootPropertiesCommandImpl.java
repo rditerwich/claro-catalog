@@ -1,8 +1,11 @@
 package claro.catalog.impl;
 
+import java.util.Map.Entry;
+
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.RootPropertiesCommand;
 import claro.catalog.command.RootPropertiesCommandResult;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
@@ -25,11 +28,8 @@ public class RootPropertiesCommandImpl extends RootPropertiesCommand implements 
 
 		// Fill result
 		result.rootProperties = SMap.empty();
-		int i = 0;
-		for (PropertyModel property : rootItem.getProperties()) {
-			if (i++ <= 100) {
-				result.rootProperties = result.rootProperties.add(property.getPropertyInfo().labels.get(), property.getPropertyInfo());
-			}
+		for (Entry<PropertyGroupInfo, PropertyModel> property : rootItem.getProperties()) {
+			result.rootProperties = result.rootProperties.add(property.getValue().getPropertyInfo().labels.get(), property.getValue().getPropertyInfo());
 		}
 		
 		return result;

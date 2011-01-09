@@ -8,6 +8,7 @@ import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.manager.client.command.StatusCallback;
+import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.Item;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -121,11 +122,14 @@ public class CatalogPage extends Page {
 	}
 
 	private void updateProductSelection(final Long productId) {
+		StatusMessage.get().show(messages.loadingProductDetails());
+
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd .setCatalogId(currentCatalogId)
 			.setItem(productId);
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
 			public void onSuccess(ItemDetailsCommandResult result) {
+				StatusMessage.get().hide();
 				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);
 			}
 		});

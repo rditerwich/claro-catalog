@@ -5,18 +5,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.RootProperties;
+import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
@@ -32,6 +37,7 @@ public class CatalogModel {
 	public final PropertyModel supplierProperty;
 	public final PropertyModel supplierArticleNumberProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
+	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
 
 	public static void startOperation(CatalogDao dao) {
 		CatalogAccess.startOperation(dao);
@@ -44,7 +50,7 @@ public class CatalogModel {
 	public CatalogModel(Long id) {
 		this.catalog = findOrCreateCatalog(id);
 		ItemModel root = findOrCreateRootCategory();
-		this.generalPropertyGroup = root.findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
+		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
 		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup);
 		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
 		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
@@ -86,6 +92,20 @@ public class CatalogModel {
 		return result;
 	}
 	
+	public synchronized PropertyGroupInfo findOrCreatePropertyGroupInfo(PropertyGroup group) {
+		PropertyGroupInfo result = propertyGroupInfos.get(group.getId());
+		if (result == null) {
+			result = new PropertyGroupInfo();
+			result.propertyGroupId = group.getId();
+			for (Label label : group.getLabels()) {
+				result.labels = result.labels.add(label.getLanguage(), label.getLabel());
+			}
+			propertyGroupInfos.put(group.getId(), result);
+		}
+		
+		return result;
+	}
+	
 	private Catalog findOrCreateCatalog(Long id) {
 		EntityManager em = CatalogAccess.getEntityManager();
 		Catalog catalog = em.find(Catalog.class, id);
@@ -109,6 +129,38 @@ public class CatalogModel {
 	  }
 	  return root;
   }	
+	
+	private PropertyGroup findOrCreatePropertyGroup(String propertyGroupLabel, String language) {
+		for (PropertyGroup group : catalog.getPropertyGroups()) {
+			if (CatalogModelUtil.find(group.getLabels(), propertyGroupLabel, language) != null) {
+				return group;
+			}
+		}
+		// Not found.  Create it instead
+		return createPropertyGroup(SMap.create(language, propertyGroupLabel));
+	}
+	
+	private PropertyGroup createPropertyGroup(SMap<String, String> initialLabels) {
+		synchronized (catalog) {
+			PropertyGroup propertyGroup = new PropertyGroup();
+			for (String lanuage : initialLabels.getKeys()) {
+				Label label = new Label();
+				label.setLanguage(lanuage);
+				label.setLabel(initialLabels.get(lanuage));
+				label.setPropertyGroup(propertyGroup);
+				propertyGroup.getLabels().add(label);
+			}
+			JpaService.getEntityManager().persist(propertyGroup);
+			assert propertyGroup.getId() != null;
+			catalog.getPropertyGroups().add(propertyGroup);
+			propertyGroup.setCatalog(catalog);
+//				catalog.invalidate(this);
+//				catalog.invalidate(childExtent);
+//				return PropertyModel.createRoot(propertyGroup.getId(), false, this);
+			return propertyGroup;
+		}
+	}
+
 	
 	public ItemModel createProduct() {
 		Product product = new Product();

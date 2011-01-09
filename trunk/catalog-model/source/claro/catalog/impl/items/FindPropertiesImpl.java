@@ -2,9 +2,11 @@ package claro.catalog.impl.items;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindProperties;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
@@ -29,8 +31,8 @@ public class FindPropertiesImpl extends FindProperties implements CommandImpl<Fi
 	
 	private void findProperties(ItemModel item, List<PropertyInfo> properties) {
 		if (item.getEntity() instanceof Category) {
-			for (PropertyModel property : item.getProperties()) {
-				PropertyInfo info = property.getPropertyInfo();
+			for (Entry<PropertyGroupInfo, PropertyModel> property : item.getProperties()) {
+				PropertyInfo info = property.getValue().getPropertyInfo();
 				info.labels = info.labels.add("en", "some english label");
 				properties.add(info);
 			}
