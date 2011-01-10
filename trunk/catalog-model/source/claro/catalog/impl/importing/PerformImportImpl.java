@@ -1,5 +1,6 @@
 package claro.catalog.impl.importing;
 
+
 import static claro.catalog.util.CatalogModelUtil.propertyLabel;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Collections2.transform;
@@ -52,17 +53,22 @@ import claro.jpa.jobs.JobResult;
 
 import com.google.common.base.Function;
 
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Cloner;
+import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.sexpr.DefaultContext;
 import easyenterprise.lib.sexpr.SExpr;
 import easyenterprise.lib.sexpr.SExprParseException;
 import easyenterprise.lib.sexpr.SExprParser;
-import gwtupload.server.UploadServlet;
 
 @SuppressWarnings("serial")
 public class PerformImportImpl extends PerformImport implements CommandImpl<Result>{
+
+	private static View view = new BasicView();
 
 	private CatalogDao dao;
 	private CatalogModel model;
@@ -122,14 +128,10 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				// expression context
 				DefaultContext exprContext = new DefaultContext();
 
-				
 				// get file from session
 				InputStream is = null;
 				if (uploadFieldName != null) {
-					System.out.println("Uploaded file field: ");
-					HttpServletRequest request = UploadServlet.getThreadLocalRequest();
-					List<FileItem> fileItems = UploadServlet.getSessionFileItems(request);
-					FileItem fileItem = UploadServlet.findItemByFieldName(fileItems, uploadFieldName);
+					FileItem fileItem = UploadServlet.getUploadedFile(uploadFieldName);
 					if (fileItem != null) {
 						is = fileItem.getInputStream();
 					}
@@ -151,7 +153,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				}
 				jobResult.setSuccess(true);
 				Result result = new Result();
-				result.jobResult = jobResult;
+				result.jobResult = Cloner.clone(jobResult, view);
 				return result;
 			} catch (CommandException e) {
 				e.printStackTrace(log);
