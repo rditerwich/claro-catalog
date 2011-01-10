@@ -351,9 +351,10 @@ ol li .send {
 
 .productMasterDetail { margin: 20px; }
 
-.productMasterDetail table.ee-table-table { width: 100%; }
-.productMasterDetail table.ee-table-table table.product { width: 100%; cursor: pointer;}
-.productMasterDetail table.ee-table-table table.product td { border: none;}
+.productMasterDetail .cbg-RPContainer { background-color: white; }
+.productMasterDetail table.mainTable { width: 100%; }
+.productMasterDetail table.mainTable table.product { width: 100%; cursor: pointer;}
+.productMasterDetail table.mainTable table.product td { border: none;}
 
 
 

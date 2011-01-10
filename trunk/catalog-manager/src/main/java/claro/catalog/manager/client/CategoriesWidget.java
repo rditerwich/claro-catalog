@@ -119,6 +119,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					addCategoryPanel.showRelativeTo((Widget) event.getSource());
 				}
 			});
+			
 			// TODO add show on mouse over.
 		}};
 	}

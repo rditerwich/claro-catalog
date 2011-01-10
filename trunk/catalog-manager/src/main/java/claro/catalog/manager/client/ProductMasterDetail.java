@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.cobogw.gwt.user.client.ui.RoundedPanel;
+
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
@@ -280,52 +283,65 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		productTable.setHeaderText(0, 2, messages.price());
 		
 		// search panel
-		getMasterHeader().add(new VerticalPanel() {{
-			add(new Grid(2, 3) {{
-				StyleUtil.add(this, CatalogManager.Styles.filterpanel);
-				setWidget(0, 0, new ListBox() {{
-					addItem("Default");
-					addItem("English");
-					addItem("French");
-					addItem("\tShop");
-					addItem("\t\tEnglish");
-					addItem("\t\tFrench");
-				}});
-				setWidget(0, 1, new TextBox() {{
-					addChangeHandler(new ChangeHandler() {
-						public void onChange(ChangeEvent event) {
-							filterString = getText();
-							updateFilterLabel();
-							updateProductList();
+		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
+			
+			add(new VerticalPanel() {{
+				add(new Grid(2, 3) {{
+					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
+					setWidget(0, 0, new ListBox() {{
+						addItem("Default");
+						addItem("English");
+						addItem("French");
+						addItem("\tShop");
+						addItem("\t\tEnglish");
+						addItem("\t\tFrench");
+					}});
+					setWidget(0, 1, new TextBox() {{
+						addChangeHandler(new ChangeHandler() {
+							public void onChange(ChangeEvent event) {
+								filterString = getText();
+								updateFilterLabel();
+								updateProductList();
+							}
+						});
+					}});
+					setWidget(0, 2, new CategoriesWidget(false) {{
+							setData(filterCategories, language);
+						}
+						protected String getAddCategoryTooltip() {
+							return messages.addCategoryFilter();
+						}
+						protected String getRemoveCategoryTooltip(String categoryName) {
+							return messages.removeCategoryFilterTooltip(categoryName);
+						}
+						// TODO add.
+						protected void removeCategory(Long categoryId) {
+							// TODO update filtercats.
 						}
 					});
+					setWidget(1, 0, new Anchor(messages.newProduct()));
 				}});
-				setWidget(0, 2, new CategoriesWidget(false) {{
-						setData(filterCategories, language);
-					}
-					protected String getAddCategoryTooltip() {
-						return messages.addCategoryFilter();
-					}
-					protected String getRemoveCategoryTooltip(String categoryName) {
-						return messages.removeCategoryFilterTooltip(categoryName);
-					}
-					// TODO add.
-					protected void removeCategory(Long categoryId) {
-						// TODO update filtercats.
-					}
-				});
-				setWidget(1, 0, new Anchor(messages.newProduct()));
-			}});
-			add(new FlowPanel() {{
-				add(filterLabel = new HTML() {{
-					setVisible(false); 
+				add(new FlowPanel() {{
+					add(filterLabel = new HTML() {{
+						setVisible(false); 
+					}});
+					add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+						setVisible(false);
+					}});
 				}});
-				add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-					setVisible(false);
-				}});
-			}});
+			}}); 
 		}});
 	}
+	
+	@Override
+	protected final Widget tableCreated(Table table) {
+		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
+		return new RoundedPanel(table, RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
+		}};
+	}
+
 	
 	@Override
 	protected void detailPanelCreated(LayoutPanel detailPanel) {
