@@ -19,20 +19,24 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
+	public enum Styles implements Style { clear }
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
 	private static int VALUE_COLUMN = 2;
@@ -144,15 +148,16 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
 					// Real value is added in the bind fase...
-					setWidget(0, 1, propertyValueWidgets.clearValueButton = new Button(messages.clearValue()) {{
-							final Button me = this;
+					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
+						StyleUtil.add(this, Styles.clear);
+							final Widget me = this;
 							addClickHandler(new ClickHandler() {
 								public void onClick(ClickEvent event) {
 									clearValue(me);
 								}
 							});
 						}
-					}); // TODO Put an image here instead. TODO add clear handler, and removePV abstract method.
+					}); 
 				}});
 				
 				
@@ -179,7 +184,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				// Remember binding
 				if (valueWidget != null) {
 					propertyByValueWidget.put(valueWidget, property);
-					propertyByValueWidget.put(propertyValueWidgets.clearValueButton, property);
+					propertyByValueWidget.put(propertyValueWidgets.clearValueWidget, property);
 				}
 				
 				j++;
@@ -224,7 +229,6 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			// TODO Maybe changelistener to remove derived?
 			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
 		}
-		propertyValueWidgets.clearValueButton.setEnabled(isDerived);
 		return widget;
 	}
 
@@ -298,7 +302,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		propertyValueSet(itemId, propertyByValueWidget.get(widget), language, newValue);
 	}
 	
-	private void clearValue(Button eraseButton) {
+	private void clearValue(Widget eraseButton) {
 		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
 	}
 	
@@ -308,7 +312,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 	
 	private class PropertyValueWidgets {
-		protected Button clearValueButton;
+		protected Widget clearValueWidget;
 		public Label nameWidget;
 		public Label typeWidget;
 		public Grid valueParentWidget;

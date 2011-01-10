@@ -104,7 +104,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				}});
 				add(new MainMenu(pageContainer) {{
 					setStylePrimaryName(GlobalStyles.menu.toString());
-					addPage(new CatalogPage(placeController), "Details");
+					addPage(new CatalogPage(placeController), "Catalog");
 					addPage(new ImportPage(placeController), messages.importMenu());
 					
 					addPage(new MasterDetailTestPage(placeController), "MasterDetail");

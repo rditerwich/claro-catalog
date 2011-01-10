@@ -2,6 +2,7 @@ package claro.catalog.manager.client.images;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.resources.client.ImageResource.ImageOptions;
 
 public interface Images extends ClientBundle {
   @Source("health-0.gif")
@@ -31,4 +32,6 @@ public interface Images extends ClientBundle {
   @Source("help.gif")
 	ImageResource help();
   
+  @Source("closeButtons.png")
+  ImageResource clearImages();
 }

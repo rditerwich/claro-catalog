@@ -403,6 +403,30 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	color: blue;
 }
 
+.productDetails button.clear {
+	background: url(images/closeButton2.png);
+	width: 14px;
+	height: 14px;
+}
+.productDetails img.clear {
+	background:  url(images/closeButton2.png);
+	width: 14px;
+	height: 14px;
+	border: none;
+	
+}
+
+.productDetails img.derived {
+	background: url(images/closeButton1.png);
+	width: 14px;
+	height: 14px;
+}
+
+.productDetails img.clear:hover {
+	background: url(images/closeButton3.png);
+	width: 14px;
+	height: 14px;
+}
 
 /** Categories component */
 .categoryStyle {
