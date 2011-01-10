@@ -36,12 +36,12 @@
 			Put the number of milliseconds to sleep in each block received in the server. 
 			false or 0, means don't use slow uploads -->
 		<param-name>slowUploads</param-name>
-		<param-value>200</param-value>
+		<param-value>0</param-value>
 	</context-param>
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
 		<!-- This is the default servlet, it puts files in session -->
-		<servlet-class>gwtupload.server.UploadServlet</servlet-class>
+		<servlet-class>easyenterprise.lib.gwt.server.UploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>uploadServlet</servlet-name>

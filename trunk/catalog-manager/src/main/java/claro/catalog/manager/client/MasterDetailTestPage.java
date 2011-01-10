@@ -3,6 +3,8 @@ package claro.catalog.manager.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cobogw.gwt.user.client.ui.RoundedPanel;
+
 import claro.catalog.data.PropertyInfo;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,6 +15,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
@@ -50,7 +53,7 @@ public class MasterDetailTestPage extends Page {
 		for (int i = 0; i < 10; i++) {
 			masterData.add("bladibladibladibla" + i);
 		}
-		mainPanel.add(m = new MasterDetail(50, 50) {{
+		mainPanel.add(m = new MasterDetail(50, 0) {{
 			final Table masterTable = getMasterTable();
 			masterTable.resizeColumns(5);
 			masterTable.resizeHeaderRows(1);
@@ -74,29 +77,31 @@ public class MasterDetailTestPage extends Page {
 							System.out.println("Opening Row: " + row);
 							getDetail().clear();
 							
-							getDetail().add(new FlowPanel() {{
-								StyleUtil.add(this, CatalogManager.Styles.masterdetailtest);
-								add(new Anchor("Close") {{
-									addClickHandler(new ClickHandler() {
-										public void onClick(ClickEvent event) {
-											System.out.println("Closing Row: " + row);
-											closeDetail(true);
+							getDetail().add(new RoundedPanel(RoundedPanel.ALL, 4) {{
+								add(new FlowPanel() {{
+									StyleUtil.add(this, CatalogManager.Styles.masterdetailtest);
+									add(new Anchor("Close") {{
+										addClickHandler(new ClickHandler() {
+											public void onClick(ClickEvent event) {
+												System.out.println("Closing Row: " + row);
+												closeDetail(true);
+											}
+										});
+									}});
+									add(new Label("Details for " + masterData.get(row) + "..."));
+									add(new ProductDetails(null, null, null, null, null, null, null) {
+										protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+										}
+										protected void propertyValueRemoved(
+												Long itemId,
+												PropertyInfo propertyInfo,
+												String language) {
+										}
+										protected void categoryRemoved(Long itemId,
+												Long categoryId) {
 										}
 									});
 								}});
-								add(new Label("Details for " + masterData.get(row) + "..."));
-								add(new ProductDetails(null, null, null, null, null, null) {
-									protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-									}
-									protected void propertyValueRemoved(
-											Long itemId,
-											PropertyInfo propertyInfo,
-											String language) {
-									}
-									protected void categoryRemoved(Long itemId,
-											Long categoryId) {
-									}
-								});
 							}});
 
 							openDetail(row);
@@ -109,7 +114,16 @@ public class MasterDetailTestPage extends Page {
 				masterTable.setWidget(row, 4, new Label(master + row));
 			}
 
-		}});
+		}
+		
+		@Override
+			protected Widget tableCreated(Table table) {
+			return new RoundedPanel(table, RoundedPanel.ALL, 4) {{
+//				setBorderColor("white");
+//				getContainerElement().setAttribute("style", "background-color:white");
+			}};
+			}
+		});
 //		int height = m.getHeight();
 //		mainPanel.setHeight(height + "px");
 	}

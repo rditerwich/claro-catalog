@@ -1,6 +1,7 @@
 package claro.catalog.manager.client.importing;
 
 import claro.catalog.command.importing.PerformImport;
+import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
@@ -10,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
@@ -18,6 +20,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.widgets.SExprEditor;
 import easyenterprise.lib.util.ObjectUtil;
 import gwtupload.client.IUploadStatus.Status;
@@ -58,8 +61,19 @@ public abstract class ImportSourceMainPanel extends Composite implements Globals
 							if (uploader.getStatus() == Status.SUCCESS) {
 								PerformImport performImport = new PerformImport();
 								performImport.catalogId = CatalogManager.getCurrentCatalogId();
+								performImport.importSourceId = importSource.getId();
 								performImport.generateJobResult = true;
 								performImport.uploadFieldName = uploader.getServerInfo().field;
+								GwtCommandFacade.execute(performImport, new AsyncCallback<PerformImport.Result>() {
+									public void onFailure(Throwable caught) {
+										System.out.println("FAILED");
+									}
+
+									@Override
+									public void onSuccess(Result result) {
+										System.out.println("SUCCES:" + result.jobResult.getLog());
+									}
+								}); 
 							}
 						}
 					});

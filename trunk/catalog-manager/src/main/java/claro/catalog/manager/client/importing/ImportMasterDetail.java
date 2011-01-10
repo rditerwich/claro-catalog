@@ -5,7 +5,10 @@ import static com.google.common.base.Objects.equal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cobogw.gwt.user.client.ui.RoundedPanel;
+
 import claro.catalog.command.importing.StoreImportSource;
+import claro.catalog.manager.client.GlobalStyles;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.importing.ImportSource;
@@ -20,10 +23,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
+import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.gwt.client.widgets.Table;
-import easyenterprise.lib.gwt.client.widgets.TearUpTabs;
 
 public abstract class ImportMasterDetail extends MasterDetail implements Globals {
 
@@ -45,8 +49,8 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
 	private ImportSourceMainPanel importSourceMainPanel;
-	private ImportSourcePropertyMappingsPanel propertyMappingsPanel;
-	private TearUpTabs tabs;
+	private ImportDefinitionPanel propertyMappingsPanel;
+	private PullUpTabs tabs;
 	
 	public ImportMasterDetail(int headerSize, int footerSize) {
 		super(headerSize, footerSize);
@@ -87,10 +91,10 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		Table table = getMasterTable();
 		table.resizeColumns(NR_COLS);
 		table.setHeaderText(0, 0, messages.importSource());
-		System.out.println("Table created");
 		
 		LayoutPanel header = getMasterHeader();
-		header.add(new FlowPanel() {{
+		header.add(new RoundedPanel( RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
 			add(new Anchor(messages.newImportSource()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
@@ -99,6 +103,14 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 				});
 			}});
 		}});
+	}
+	
+	@Override
+	protected final Widget tableCreated(Table table) {
+		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
+		return new RoundedPanel(table, RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
+		}};
 	}
 
 	@Override
@@ -112,7 +124,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					}
 				});
 			}}, 50);
-			add(tabs = new TearUpTabs(30, 5) {{
+			add(tabs = new PullUpTabs(30, 5) {{
 				setMainWidget(importSourceMainPanel = new ImportSourceMainPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
@@ -121,7 +133,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 						tabs.showTab(1);
 					};
 				});
-				addTab(new Label(messages.propertyMappings()), 80, propertyMappingsPanel = new ImportSourcePropertyMappingsPanel() {
+				addTab(new Label(messages.propertyMappings()), 80, propertyMappingsPanel = new ImportDefinitionPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
 					}
@@ -129,6 +141,8 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 				addTab(new Label(messages.log()), 50, new ImportLogPanel());
 			}});
 		}});
+		//ruud
+tabs.showTab(0);
 	}
 
 

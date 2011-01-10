@@ -18,6 +18,7 @@
   <!-- Other module inherits                                      -->
   <inherits name='claro.claro-model'/>
   <inherits name='easyenterprise.ee-lib'/>
+  <inherits name='org.cobogw.gwt.user.User' />
 
 
   <!-- Specify the app entry point class.                         -->

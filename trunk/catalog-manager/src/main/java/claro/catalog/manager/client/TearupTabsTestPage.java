@@ -1,26 +1,36 @@
 package claro.catalog.manager.client;
 
-import com.google.gwt.dom.client.Style.Unit;
+import claro.catalog.manager.client.widgets.Help;
+
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import easyenterprise.lib.gwt.client.widgets.TearUpTabs;
+import easyenterprise.lib.gwt.client.widgets.SExprEditor;
 
 public class TearupTabsTestPage extends Page {
 
-	private TearUpTabs mainPanel;
+	private VerticalPanel mainPanel;
+	protected SExprEditor expr2;
 
 	public TearupTabsTestPage(PlaceController placeController) {
 		super(placeController);
-		mainPanel = new TearUpTabs(40, 5);
-		mainPanel.addTab(new Label("Details"), 60, new VerticalPanel() {{
-			add(new Label("Some content"));
-		}});
-		mainPanel.addTab(new Label("Log"), 40, new VerticalPanel() {{
-			add(new Label("Some log"));
-		}});
+		mainPanel = new VerticalPanel() {{
+			add(new SExprEditor(){{
+				addValueChangeHandler(new ValueChangeHandler<String>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<String> event) {
+						// TODO Auto-generated method stub
+					System.out.println("ChNAGED");	
+					}
+				});
+			}});
+			add(expr2 = new SExprEditor());
+			add(new Help("HI THERE \"dfdfdf\""));
+		}};
 		initWidget(mainPanel);
 	}
 
@@ -31,6 +41,8 @@ public class TearupTabsTestPage extends Page {
 
 	@Override
 	public void show() {
-		mainPanel.onResize();
+		// TODO Auto-generated method stub
+		
 	}
+
 }

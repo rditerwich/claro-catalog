@@ -18,7 +18,6 @@ import easyenterprise.lib.sexpr.DefaultContext;
 public class ImportPage extends Page {
 
 	private final LayoutPanel mainPanel;
-	private boolean initialized;
 	private DefaultContext context = new DefaultContext();
 	private ImportMasterDetail masterDetail;
 
@@ -36,13 +35,11 @@ public class ImportPage extends Page {
 
 	@Override
 	public void show() {
-		initializeMainPanel();
 		updateImportSources();
 	}
 
-	private void initializeMainPanel() {
-		if (initialized) return;
-		initialized = true;
+	@Override
+	protected void initialize() {
 		
 		mainPanel.add(masterDetail = new ImportMasterDetail(100, 100) {
 			protected void updateImportSource(ImportSource importSource) {

@@ -12,26 +12,32 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 
-public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
+public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Globals {
 
 	public enum Styles implements Style {
+
+		
+		//old:
 		button1,
 		button2,
 		button3,
 		button4,
 		button5,
-		catalogheader,
 		choices, 
 		derived,
 		itemoverallactions, 
@@ -64,7 +70,6 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 	public static PropertyStringConverter propertyStringConverter = new PropertyStringConverter();
 	
 	public static Page currentPage;
-	
 	private static User currentUser;
 	
 	public static Long getCurrentCatalogId() {
@@ -80,6 +85,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		
+		final LayoutPanel pageContainer = new LayoutPanel();
+
+		
 		EventBus eventBus = new SimpleEventBus();
 		final PlaceController placeController = new PlaceController(eventBus);
 		
@@ -87,14 +96,24 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 		RootLayoutPanel.get().add(new DockLayoutPanel(Unit.PX) {{
 			// header
 			addNorth(new HorizontalPanel() {{
-				StyleUtil.add(this, Styles.catalogheader);
+				setStylePrimaryName(GlobalStyles.header.toString());
+				setWidth("100%");
 				getElement().getStyle().setHeight(100, Unit.PC);
 				add(new Image(rb.logo()) {{
 					StyleUtil.add(this, Styles.headerimage);
 				}});
+				add(new MainMenu(pageContainer) {{
+					setStylePrimaryName(GlobalStyles.menu.toString());
+					addPage(new CatalogPage(placeController), "Details");
+					addPage(new ImportPage(placeController), messages.importMenu());
+					
+					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
+					addPage(new TearupTabsTestPage(placeController), "TabTest");
+
+				}});
 //			topPanel.add(choices);
 				
-			}}, 85);
+			}}, 95);
 
 			// footer
 			addSouth(new HorizontalPanel() {{
@@ -122,7 +141,9 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 				setCellVerticalAlignment(links, HorizontalPanel.ALIGN_MIDDLE);
 				
 			}}, 40);
+			add(pageContainer);
 			
+			if (false)
 			add(new TabLayoutPanel(50, Unit.PX) {{
 				this.addStyleName("mainTabPanel");
 				
@@ -143,12 +164,11 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint {
 						currentPage = (Page)(getWidget(event.getSelectedItem()));
 						currentPage.onResize();
 						currentPage.show();
-						RootLayoutPanel.get().animate(1);
 					}
 				});
-				selectTab(1); // Weird: I cannot select page 0 before selecting another one...
 				selectTab(0);
 			}});
 		}});
+		History.fireCurrentHistoryState();
 	}
 }

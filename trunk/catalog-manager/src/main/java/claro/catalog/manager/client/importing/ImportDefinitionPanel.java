@@ -12,6 +12,7 @@ import claro.catalog.command.items.FindProperties;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.Help;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportSource;
@@ -27,7 +28,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -36,14 +39,40 @@ import easyenterprise.lib.gwt.client.widgets.SExprEditor;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.Tuple;
 
-public abstract class ImportSourcePropertyMappingsPanel extends Composite implements Globals {
+public abstract class ImportDefinitionPanel extends Composite implements Globals {
 
 	private Table propertyGrid;
 	private ImportSource importSource;
+	private SExprEditor importUrlEditor;
+	private ListBox matchPropertyListBox;
 	private final List<Tuple<String, Long>> properties = new ArrayList<Tuple<String,Long>>();
+
+	private ValueChangeHandler<String> valueChangeHandler = new ValueChangeHandler<String>() {
+		public void onValueChange(ValueChangeEvent<String> event) {
+			doStore();
+		}
+	};
 	
-	public ImportSourcePropertyMappingsPanel() {
+	protected final ChangeHandler changeHandler = new ChangeHandler() {
+		public void onChange(ChangeEvent event) {
+			doStore();
+		}
+	};
+	
+	public ImportDefinitionPanel() {
 		initWidget(new VerticalPanel() {{
+			add(new Grid(2, 3) {{
+				setWidget(0, 0, new Label(messages.importUrl()));
+				setWidget(0, 1, importUrlEditor = new SExprEditor() {{
+					addValueChangeHandler(valueChangeHandler);
+				}});
+				setWidget(0, 2, new Help(messages.importUrlHelp()));
+				setWidget(1, 0, new Label(messages.matchProperty()));
+				setWidget(1, 1, matchPropertyListBox = new ListBox() {{
+					addChangeHandler(changeHandler);
+				}});
+				setWidget(1, 2, new Help(messages.matchPropertyHelp()));
+			}});
 			add(propertyGrid = new Table(0, 3) {{
 				setHeaderText(0, 0, messages.property());
 				setHeaderText(0, 1, messages.expression());
@@ -68,24 +97,17 @@ public abstract class ImportSourcePropertyMappingsPanel extends Composite implem
 	}
 
 	private void render() {
+		importUrlEditor.setExpression(importSource.getImportUrlExpression());
+		
 		int i = propertyGrid.getRowCount();
 		propertyGrid.resizeRows(importSource.getProperties().size());
 		for (; i < importSource.getProperties().size(); i++) { 
 			final int row = i;
 			propertyGrid.setWidget(row, 0, new ListBox() {{
-				addChangeHandler(new ChangeHandler() {
-					public void onChange(ChangeEvent event) {
-						storeProperties();
-
-					}
-				});
+				addChangeHandler(changeHandler);
 			}});
 			propertyGrid.setWidget(row, 1, new SExprEditor() {{
-				addValueChangeHandler(new ValueChangeHandler<String>() {
-					public void onValueChange(ValueChangeEvent<String> event) {
-						storeProperties();
-					}
-				});
+				addValueChangeHandler(valueChangeHandler);
 			}});
 			propertyGrid.setWidget(row, 2, new Image(images.removeImmediately()) {{
 				addClickHandler(new ClickHandler() {
@@ -111,6 +133,8 @@ public abstract class ImportSourcePropertyMappingsPanel extends Composite implem
 			public void onFailure(Throwable caught) {
 			}
 			public void onSuccess(FindProperties.Result result) {
+				fillPropertyListbox(matchPropertyListBox, importSource.getMatchProperty());
+				
 				int row = 0;
 				properties.clear();
 				for (PropertyInfo info : result.properties) {
@@ -119,14 +143,7 @@ public abstract class ImportSourcePropertyMappingsPanel extends Composite implem
 				sort(properties);
 				for (ImportProperty importProperty : importSource.getProperties()) {
 					ListBox listBox = (ListBox) propertyGrid.getWidget(row, 0);
-					listBox.clear();
-					listBox.setSelectedIndex(0);
-					for (Tuple<String, Long> info : properties) {
-						listBox.addItem(info.getFirst());
-						if (importProperty.getProperty() != null && equal(info.getSecond(), importProperty.getProperty().getId())) {
-							listBox.setSelectedIndex(listBox.getItemCount() - 1);
-						}
-					}
+					fillPropertyListbox(listBox, importProperty.getProperty());
 					SExprEditor editor = (SExprEditor) propertyGrid.getWidget(row, 1);
 					String expr = orElse(importProperty.getValueExpression(), "");
 					if (!editor.getExpression().equals(expr)) {
@@ -142,12 +159,40 @@ public abstract class ImportSourcePropertyMappingsPanel extends Composite implem
 		return Iterables.get(importSource.getProperties(), row);
 	}
 	
-	private void storeProperties() {
+	private void fillPropertyListbox(ListBox listBox, Property currentProperty) {
+		listBox.clear();
+		listBox.setSelectedIndex(0);
+		for (Tuple<String, Long> info : properties) {
+			listBox.addItem(info.getFirst());
+			if (currentProperty != null && equal(info.getSecond(), currentProperty.getId())) {
+				listBox.setSelectedIndex(listBox.getItemCount() - 1);
+			}
+		}
+	}
+
+	private void doStore() {
 		boolean changed = false;
+		
+		System.out.println(importUrlEditor.getExpression());
+		if (!importSource.getImportUrlExpression().equals(importUrlEditor.getExpression())) {
+			changed = true;
+			System.out.println(importUrlEditor.getExpression());
+			importSource.setImportUrlExpression(importUrlEditor.getExpression());
+		}
+		
+		int selectedIndex = matchPropertyListBox.getSelectedIndex();
+		Long propertyId = properties.get(selectedIndex).getSecond();
+		if (importSource.getMatchProperty() == null || !propertyId.equals(importSource.getMatchProperty().getId())) {
+			changed = true;
+			Property property = new Property();
+			property.setId(propertyId);
+			importSource.setMatchProperty(property);
+		}
+		
 		int row = 0;
 		for (ImportProperty importProperty : importSource.getProperties()) {
-			int selectedIndex = ((ListBox) propertyGrid.getWidget(row, 0)).getSelectedIndex();
-			Long propertyId = properties.get(selectedIndex).getSecond();
+			selectedIndex = ((ListBox) propertyGrid.getWidget(row, 0)).getSelectedIndex();
+			propertyId = properties.get(selectedIndex).getSecond();
 			if (!equal(propertyId, importProperty.getId())) {
 				Property property = new Property();
 				property.setId(propertyId);

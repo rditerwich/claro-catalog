@@ -218,6 +218,10 @@ public interface I18NCatalog extends Messages {
 	String property();
 	String expression();
 	String selectProperty();
+	String importUrlHelp();
+	String matchProperty();
+	String matchPropertyHelp();
+	String importMenu();
 
 
 }

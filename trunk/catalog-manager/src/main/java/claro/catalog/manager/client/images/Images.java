@@ -27,5 +27,8 @@ public interface Images extends ClientBundle {
 
   @Source("bin_closed.png")
 	ImageResource removeImmediately();
+
+  @Source("help.gif")
+	ImageResource help();
   
 }
