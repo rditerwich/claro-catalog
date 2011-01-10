@@ -46,6 +46,7 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 
 		
 		result = new Result();
+		result.root = catalogModel.getRootItem().getItemId();
 		result.categories = SMap.empty();
 		result.children = SMap.empty();
 		
@@ -59,10 +60,6 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 	}
 
 	private void addCategory(ItemModel item) {
-		// Is it the right type?
-		if (!item.getItemClass().equals(Category.class)) {
-			return;
-		}
 		
 		// Do we already have it?
 		SMap<String, String> itemLabels = result.categories.get(item.getItemId());
@@ -75,9 +72,12 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 		
 		// set and traverse children
 		for (ItemModel child : item.getChildren()) {
-			result.children = result.children.add(item.getItemId(), child.getItemId());
-			
-			addCategory(child);
+			if (child.getItemClass().equals(Category.class)) {
+
+				result.children = result.children.add(item.getItemId(), child.getItemId());
+				
+				addCategory(child);
+			}
 		}
 	}
 

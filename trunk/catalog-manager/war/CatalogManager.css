@@ -447,7 +447,7 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	padding-left: 4px;
 	padding-right : 4px;
 }
-.categoryStyle a.mouseOverStyle {
+.categoryStyle a:hover {
 	color: #DEE5F2;
 	background-color: #5A6986;
 }
@@ -460,8 +460,19 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 .categoryStyle a.categoryAdd {
 	margin-left: 10px;
 }
-.categoryStyle td {
-	background-color: light-gray;
+
+.categoryTree .gwt-TreeItem {
+	font-size: x-small;
+	text-decoration: none;
+	color: #5A6986;
+	background-color: #DEE5F2;
+	padding-bottom: 1px;
+	padding-left: 4px;
+	padding-right: 6px;
+}
+.categoryTree .gwt-TreeItem:hover {
+	color: #DEE5F2;
+	background-color: #5A6986;
 }
 
 .masterdetailtest { padding: 5px;}

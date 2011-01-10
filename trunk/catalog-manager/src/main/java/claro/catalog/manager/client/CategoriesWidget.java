@@ -31,7 +31,7 @@ import easyenterprise.lib.util.SMap;
 
 public class CategoriesWidget extends Composite implements Globals {
 	
-	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd }
+	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd, categoryTree }
 	
 	private FlowPanel mainPanel;
 	private DecoratedPopupPanel addCategoryPanel;
@@ -100,6 +100,7 @@ public class CategoriesWidget extends Composite implements Globals {
 				public void onClick(ClickEvent event) {
 					if (addCategoryPanel == null) {
 						addCategoryPanel = new DecoratedPopupPanel(true) {{
+							StyleUtil.add(this, Styles.categoryTree);
 							setWidget(new ScrollPanel(new Label(messages.loading())));
 						}};
 					}
@@ -162,6 +163,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					for (final Long child : childCategories) {
 						String categoryName = categories.getOrEmpty(child).tryGet(CatalogManager.getUiLanguage(), null);
 						target.addItem(new TreeItem(categoryName) {{
+							StyleUtil.add(this, Styles.categoryName);
 							setUserObject(child);
 							addItem(""); // uninitialized marker.
 						}});
