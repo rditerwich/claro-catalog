@@ -362,6 +362,9 @@ table.filterpanel { margin-left: 20px; vertical-align: middle; }
 table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 
+.productDetails {
+	margin: 20px;
+}
 
 .productDetails .productname {
 	font-size: medium;
@@ -400,15 +403,14 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	background: none;
 }
 
+.productDetails .gwt-TabPanel {
+	width: 100%;
+}
+
 .productDetails input.derived { 
 	color: blue;
 }
 
-.productDetails button.clear {
-	background: url(images/closeButton2.png);
-	width: 14px;
-	height: 14px;
-}
 .productDetails img.clear {
 	background:  url(images/closeButton2.png);
 	width: 14px;
@@ -443,13 +445,15 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	font-size: x-small;
 	text-decoration: none;
 	color: #5A6986;
-	background-color: #DEE5F2;
+#	background-color: #DEE5F2;
+	background-color: white;
 	padding-bottom: 1px;
 	padding-left: 4px;
 	padding-right : 4px;
 }
 .categoryStyle a:hover {
-	color: #DEE5F2;
+#	color: #DEE5F2;
+	color: white;
 	background-color: #5A6986;
 }
 
@@ -466,13 +470,15 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	font-size: x-small;
 	text-decoration: none;
 	color: #5A6986;
-	background-color: #DEE5F2;
+#	background-color: #DEE5F2;
+	background-color: white;
 	padding-bottom: 1px;
 	padding-left: 4px;
 	padding-right: 6px;
 }
 .categoryTree .gwt-TreeItem:hover {
-	color: #DEE5F2;
+#	color: #DEE5F2;
+	color: white;
 	background-color: #5A6986;
 }
 

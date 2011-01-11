@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -34,7 +35,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd, categoryTree }
 	
 	private FlowPanel mainPanel;
-	private DecoratedPopupPanel addCategoryPanel;
+	private PopupPanel addCategoryPanel;
 	
 
 	private final boolean canSelect;
@@ -99,7 +100,7 @@ public class CategoriesWidget extends Composite implements Globals {
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if (addCategoryPanel == null) {
-						addCategoryPanel = new DecoratedPopupPanel(true) {{
+						addCategoryPanel = new PopupPanel(true) {{
 							StyleUtil.add(this, Styles.categoryTree);
 							setWidget(new ScrollPanel(new Label(messages.loading())));
 						}};

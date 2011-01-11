@@ -26,8 +26,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -42,7 +44,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private static int VALUE_COLUMN = 2;
 	private static int NR_FIXED_COLS = 3;
 
-	private TabLayoutPanel propertyGroupPanel;
+	private TabPanel propertyGroupPanel;
 	private List<GroupPanelWidgets> groupPanels = new ArrayList<GroupPanelWidgets>();
 	private Map<Widget, PropertyInfo> propertyByValueWidget = new HashMap<Widget, PropertyInfo>();
 	
@@ -57,7 +59,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		this.language = language;
 		this.outputChannel = outputChannel;
 		
-		propertyGroupPanel = new TabLayoutPanel(30, Unit.PX);
+		propertyGroupPanel = new TabPanel();
 		initWidget(propertyGroupPanel);
 	}
 	
@@ -109,9 +111,14 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		for (int i = oldPanelCount; i < propertyGroups.size(); i++) {
 			GroupPanelWidgets propertyGroupWidgets = new GroupPanelWidgets();
 			
-			propertyGroupPanel.add(new ScrollPanel(propertyGroupWidgets.panel = new Grid(0, NR_FIXED_COLS)));
+			propertyGroupPanel.add(propertyGroupWidgets.panel = new Grid(0, NR_FIXED_COLS), "");
 			
 			groupPanels.add(propertyGroupWidgets);
+			
+			// If there was no panel, select a default one now.
+			if (oldPanelCount == 0) {
+				propertyGroupPanel.selectTab(0);
+			}
 			
 		}
 		
@@ -120,7 +127,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		for (PropertyGroupInfo propertyGroup : propertyGroups) {
 			
 			// TabPanel tab text:
-			propertyGroupPanel.setTabText(i, propertyGroup.labels.tryGet(CatalogManager.getUiLanguage(), null));
+			propertyGroupPanel.getTabBar().setTabText(i, propertyGroup.labels.tryGet(CatalogManager.getUiLanguage(), null));
 
 			// TabPanel tab content:
 			

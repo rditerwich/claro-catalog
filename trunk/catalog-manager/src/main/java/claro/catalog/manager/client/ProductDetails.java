@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.gwt.client.Style;
@@ -53,10 +54,9 @@ abstract public class ProductDetails extends Composite implements Globals {
 		this.priceProperty = priceProperty;
 		this.imageProperty = imageProperty;
 		
-		initWidget(new DockLayoutPanel(Unit.PX) {{
+		initWidget(new ScrollPanel(new FlowPanel() {{
 			StyleUtil.add(this, Styles.productDetails);
 			
-			addNorth(new FlowPanel() {{
 //			add(new Trail());
 				
 				// Title
@@ -87,23 +87,19 @@ abstract public class ProductDetails extends Composite implements Globals {
 					}});
 				}});
 				
-				// Properties
-				add(new Label(messages.properties()));
-				
-			}}, 200);
-			add(propertyValues = new ItemPropertyValues(language, outputChannel) {
-				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-					ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
-				}
-				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
-					ProductDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
-				}
-			});		
+				add(propertyValues = new ItemPropertyValues(language, outputChannel) {
+					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+						ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
+					}
+					protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
+						ProductDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
+					}
+				});		
+			}}));
 			
 			// TODO Add a popup panel at the bottom with property definitions (+ values??).
 			// TODO add a popup panel at the bottom with property groups?
 			// TODO add a popup panel with dangling properties.
-		}});
 	}
 	
 	public void setLanguage(String language) {

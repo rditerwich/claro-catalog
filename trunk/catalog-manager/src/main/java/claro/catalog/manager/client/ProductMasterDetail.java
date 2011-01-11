@@ -293,9 +293,9 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 						addItem("Default");
 						addItem("English");
 						addItem("French");
-						addItem("\tShop");
-						addItem("\t\tEnglish");
-						addItem("\t\tFrench");
+						addItem("&nbsp;&nbsp;&nbsp;Shop");
+						addItem("English");
+						addItem("French");
 					}});
 					setWidget(0, 1, new TextBox() {{
 						addChangeHandler(new ChangeHandler() {
@@ -352,7 +352,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 						closeDetail(true);
 					}
 				});
-			}}, 50);
+			}}, 40);
 			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					// Call Server method
