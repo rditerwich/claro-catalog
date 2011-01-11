@@ -13,6 +13,8 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -140,6 +142,10 @@ public class CategoriesWidget extends Composite implements Globals {
 	protected void categoryClicked(Long categoryId) {
 		
 	}
+	
+	protected void addCategory(Long categoryId, SMap<String, String> labels) {
+		
+	}
 
 	protected void removeCategory(Long categoryId) {
 		
@@ -170,6 +176,17 @@ public class CategoriesWidget extends Composite implements Globals {
 							addItem(""); // uninitialized marker.
 						}});
 					}
+				}
+			}
+		});
+		
+		result.addSelectionHandler(new SelectionHandler<TreeItem>() {
+			
+			@Override
+			public void onSelection(SelectionEvent<TreeItem> event) {
+				Object categoryId = event.getSelectedItem().getUserObject();
+				if (categoryId != null) {
+					addCategory((Long)categoryId, categories.get((Long)categoryId));
 				}
 			}
 		});

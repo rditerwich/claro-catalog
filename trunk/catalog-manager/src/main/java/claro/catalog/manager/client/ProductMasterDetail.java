@@ -315,7 +315,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 						protected String getRemoveCategoryTooltip(String categoryName) {
 							return messages.removeCategoryFilterTooltip(categoryName);
 						}
-						// TODO add.
+						protected void addCategory(Long categoryId, SMap<String, String> labels) {
+							filterCategories = filterCategories.add(categoryId, labels);
+							setData(filterCategories, language);
+						}
 						protected void removeCategory(Long categoryId) {
 							// TODO update filtercats.
 						}
