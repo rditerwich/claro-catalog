@@ -157,7 +157,7 @@ public abstract class PropertyModel {
 			Property propertyEntity = getEntity();
 			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
-				CatalogAccess.getEntityManager().remove(propertyValue);
+				JpaService.getEntityManager().remove(propertyValue);
 				// Item has changed:
 				item.invalidateChildExtent(true);
 			}

@@ -26,7 +26,7 @@ import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
 
-	public static final String TEST_DATABASE_NAME = "catalog";
+	public static final String TEST_DATABASE_NAME = "catalog-test";
 	public static final Long TEST_CATALOG_ID = -1l;
 	
 	private static Connection connection;
@@ -116,6 +116,7 @@ public class CatalogTestBase {
 	@BeforeClass
 	public static void initializeClass() {
 		server = null;
+		CatalogModelService.clearCatalogModel(TEST_CATALOG_ID);
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties());
 		JpaService.setGlobalEntityManagerFactory(entityManagerFactory);
 	}

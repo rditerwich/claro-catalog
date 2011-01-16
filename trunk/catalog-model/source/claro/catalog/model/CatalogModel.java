@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 
@@ -107,7 +106,7 @@ public class CatalogModel {
 	}
 	
 	private Catalog findOrCreateCatalog(Long id) {
-		EntityManager em = CatalogAccess.getEntityManager();
+		EntityManager em = JpaService.getEntityManager();
 		Catalog catalog = em.find(Catalog.class, id);
 		if (catalog == null) {
 			catalog = new Catalog();

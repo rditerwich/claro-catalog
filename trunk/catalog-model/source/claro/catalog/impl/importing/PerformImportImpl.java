@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 
 import claro.catalog.CatalogDao;
@@ -45,6 +43,7 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.TabularImportSource;
@@ -90,7 +89,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		this.model = CatalogModelService.getCatalogModel(catalogId);
 		this.cache = new CategoryCache();
 		
-		JobResult jobResult = new JobResult();
+		ImportJobResult jobResult = new ImportJobResult();
 		jobResult.setSuccess(false);
 		jobResult.setStartTime(new Timestamp(System.currentTimeMillis()));
 		jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
@@ -103,6 +102,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				
 				// fetch import definition
 				importSource = dao.getImportSourceById(importSourceId);
+				jobResult.setImportSource(importSource);
 				
 				if (generateJobResult) {
 					if (importSource.getJob() == null) {
@@ -134,12 +134,14 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 					FileItem fileItem = UploadServlet.getUploadedFile(uploadFieldName);
 					if (fileItem != null) {
 						is = fileItem.getInputStream();
+						jobResult.setUrl(fileItem.getName());
 					}
 				}
 				// get url
 				if (is == null) {
 					SExpr importUrlExpression = exprParser.parse(importUrl != null ? importUrl : importSource.getImportUrlExpression());
 					URL url = new URL(importUrlExpression.evaluate(exprContext));
+					jobResult.setUrl(url.toString());
 					is = url.openStream();
 				}
 				
@@ -150,19 +152,14 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				
 				if (importSource instanceof TabularImportSource) {
 					importTabularData((TabularImportSource) importSource, is, exprContext);
+				} else {
+					throw new CommandException("Unkown import source type: " + importSource.getClass().getSimpleName());
 				}
 				jobResult.setSuccess(true);
-				Result result = new Result();
-				result.jobResult = Cloner.clone(jobResult, view);
-				return result;
 			} catch (CommandException e) {
-				e.printStackTrace(log);
-				throw e;
-			} catch (Exception e) {
-				e.printStackTrace(log);
-				throw new CommandException(e);
-			}
-		} finally {
+				log.append("ERROR:" + e.getMessage());
+				jobResult.setSuccess(true);
+			} 
 			jobResult.setLog(stringWriter.getBuffer().toString());
 			jobResult.setEndTime(new Timestamp(System.currentTimeMillis()));
 			if (generateJobResult) {
@@ -177,6 +174,14 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 				jobResult.getJob().setHealthPerc(successCount * 100 / results.size() / 5);
 				System.out.println(results);
 			}
+			Result result = new Result();
+			result.jobResult = Cloner.clone(jobResult, view);
+			return result;
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace(log);
+			throw new CommandException(e);
 		}
 	}
 

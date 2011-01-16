@@ -3,8 +3,6 @@ package claro.catalog.model;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import javax.persistence.EntityManager;
-
 import claro.catalog.CatalogDao;
 
 public class CatalogAccess {
@@ -18,10 +16,6 @@ public class CatalogAccess {
 		this.dao = dao;
 	}
 
-	public static EntityManager getEntityManager() {
-		return CatalogDao.get().getEntityManager();
-	}
-	
 	static Queue<ItemModel> getInvalidItems() {
 		return getInstance().invalidItems;
 	}

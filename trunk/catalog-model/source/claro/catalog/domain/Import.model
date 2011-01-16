@@ -83,6 +83,20 @@ Package {
             }
         }
         Class {
+            name = ImportJobResult
+            superClass = jobs:JobResult
+            attributes = {
+                Attribute {
+                    name = importSource
+                    type = importing:ImportSource
+                }
+                Attribute {
+                    name = url
+                    type = primitive:String
+                }
+            }
+        }
+        Class {
             name = TabularImportSource
             superClass = importing:ImportSource
             attributes = {

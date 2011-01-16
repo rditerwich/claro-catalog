@@ -47,6 +47,10 @@ public class CatalogModelService extends CommandWrapper {
 		}
 		return catalogModels.get(catalogId);
 	}
+	
+	public static void clearCatalogModel(Long catalogId) {
+		catalogModels.remove(catalogId);
+	}
 
 	private static CatalogDao createDao() {
 		return new CatalogDao(JpaService.getEntityManager());

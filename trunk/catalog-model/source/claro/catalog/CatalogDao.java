@@ -28,6 +28,8 @@ import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.importing.ImportJobResult;
+import claro.jpa.importing.ImportJobResult_;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.importing.ImportSource_;
 import claro.jpa.jobs.Job;
@@ -254,6 +256,24 @@ public class CatalogDao {
 		
 		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(idParam, id);
 		return query.getSingleResult();
+	}
+	
+	public List<ImportJobResult> getImportSourceHistory(Long importSourceId, Paging paging) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<ImportJobResult> c = cb.createQuery(ImportJobResult.class);
+		Root<ImportJobResult> jobResult = c.from(ImportJobResult.class);
+		Path<ImportSource> importSourceAttr = jobResult.get(ImportJobResult_.importSource);
+		Path<Long> importSourceIdAttr = importSourceAttr.get(ImportSource_.id);
+		c.select(jobResult).
+			where(cb.equal(importSourceIdAttr, importSourceId)).
+		  orderBy(cb.desc(jobResult.get(JobResult_.endTime)));
+		
+		TypedQuery<ImportJobResult> query = entityManager.createQuery(c);
+		if (paging.shouldPage()) {
+			query.setFirstResult(paging.getPageStart());
+			query.setMaxResults(paging.getPageSize());
+		}
+		return query.getResultList();
 	}
 	
 	public List<ImportSource> getImportSourcesByName(String name, Paging paging) {
