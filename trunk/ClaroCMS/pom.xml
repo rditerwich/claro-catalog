@@ -90,7 +90,7 @@
     </dependency>
      <dependency>
       <groupId>claro</groupId>
-      <artifactId>persistence</artifactId>
+      <artifactId>catalog-server</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -112,6 +112,7 @@
         </executions>
         <configuration>
           <scalaVersion>${scala.version}</scalaVersion>
+          <jvmArgs><jvmArg>-Xmx700m</jvmArg></jvmArgs>
         </configuration>
       </plugin>
       <plugin>
