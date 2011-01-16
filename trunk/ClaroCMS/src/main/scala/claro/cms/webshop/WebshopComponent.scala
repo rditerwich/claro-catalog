@@ -1,6 +1,7 @@
 package claro.cms.webshop
 
 import net.liftweb.http.{RequestVar,Req,S,SHtml,LiftRules,RewriteRequest,RewriteResponse,ParsePath,InMemoryResponse,NotFoundResponse}
+import net.liftweb.common.Full
 import claro.cms.{Cms,Component,Template,ResourceLocator,Scope,Paging}
 import scala.xml.{Node,NodeSeq,Text}
 import claro.jpa

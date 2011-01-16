@@ -86,7 +86,7 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
         WebshopModel.currentUserVar.get match {
           case Some(user) => WebshopDao.findUserById(user.getId getOrElse(-1)) match {
             case Some(user) => 
-              val transport = new jpa.shop.Transport
+              val transport = new jpa.order.Transport
               transport.setDesciption("Standard Delivery")
               transport.setDeliveryTime(14)
               transport.setTransportCompany("UPS")
@@ -94,7 +94,7 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
               order.order.setUser(user)
               order.order.setOrderDate(new java.util.Date())
               order.order.setAmountPaid(0d)
-              order.order.setStatus(jpa.shop.OrderStatus.PendingPayment)
+              order.order.setStatus(jpa.order.OrderStatus.PendingPayment)
               order.order.setTransport(transport)
               em.merge(order.order)
               

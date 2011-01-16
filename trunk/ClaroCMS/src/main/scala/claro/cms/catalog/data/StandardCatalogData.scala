@@ -46,7 +46,7 @@ object StandardCatalogData extends Dao {
     CatalogDao.set(product, Properties.synopsis, "De Polar 66 is een echte 'dienstverlener' in de copy-shop branche, huisdrukkerij en ieder die in de steeds groeiende franchisemarkt een betrouwbare snijmachine zoekt. <p>Meer informatie over de Polar 66? Bel met Tetterode, Sales Support Finishing, tel. 020 44 66 999 of vul het contactformulier in, dan nemen wij contact met u op.", "nl")
     CatalogDao.set(product, Properties.price, 18000.00)
     CatalogDao.setImage(product, Properties.image, getClass, "polar66.png")
-    cutters.getChildren.add(product)
+    CatalogDao.addChild(cutters, product)
   }
   val epsonStylusPro4880 = CatalogDao.createCategory("Epson Stylus Pro 4880", "Ontdek de hoogste kwaliteit printen met Epson 8-kleuren UltraChrome K3 inkt met Vivid Magenta-technologie. Breng fotografie, fine art en proefdrukken tot leven met perfecte reproductie, stabiliteit en consistentie van afbeeldingen. Produceer het hoogste niveau in printkwaliteit en betrouwbaarheid met de laatste snufjes van Epson in inkttechnologieen en verbeterde verwerking van afbeeldingen. Creeer keer op keer blijvende fotorealistische afbeeldingen met UltraChrome K3-inkt van Epson met Vivid Magenta-technologie en drie zwarte inkten. Stel nieuwe standaarden op een serie van media met verbeterde gradaties in kleur, vrijwel zonder metamerisme en een minimale glansdifferentiaal. Verbeter daarbij uw productiviteit met hoge snelheden, nieuwe stuurprogramma's en eenvoudige controle.", getClass, "stylus_pro_4880.jpg", machines)
 
@@ -69,18 +69,18 @@ object StandardCatalogData extends Dao {
     val root = CatalogDao.catalog.getRoot
     
     root.getChildren.clear
-    root.getChildren.add(machines)
-    root.getChildren.add(brands)
+    CatalogDao.addChild(root, machines)
+    CatalogDao.addChild(root, brands)
     
-    machines.getChildren.add(cutters)
+    CatalogDao.addChild(machines, cutters)
 
-    brands.getChildren.add(abdick)
-    brands.getChildren.add(agfa)
-    brands.getChildren.add(flintgroup)
-    brands.getChildren.add(presstek)
-    brands.getChildren.add(saphira)
-    brands.getChildren.add(hp)
-    brands.getChildren.add(epson)
+    CatalogDao.addChild(brands, abdick)
+    CatalogDao.addChild(brands, agfa)
+    CatalogDao.addChild(brands, flintgroup)
+    CatalogDao.addChild(brands, presstek)
+    CatalogDao.addChild(brands, saphira)
+    CatalogDao.addChild(brands, hp)
+    CatalogDao.addChild(brands, epson)
     
     adhesiveBinding
     abdickSupplies
@@ -118,13 +118,13 @@ object StandardCatalogData extends Dao {
   
   def adhesiveBinding = {
     val adhesiveBinding = CatalogDao.getOrCreateCategory("Adhesive Binding")
-    postPress.getChildren.add(adhesiveBinding)
+    CatalogDao.addChild(postPress, adhesiveBinding)
   }
   
   def abdickSupplies = {
 //  	val abdickSupplies = CatalogDao.getOrCreateCategory("Abdick Supplies")
-//  	supplies.getChildren.add(abdickSupplies)
-//  	press.getChildren.add(abdickSupplies)
+//  	supplies, abdickSupplies)
+//  	press, abdickSupplies)
   	val p1 = CatalogDao.createProduct("AB Dick Spacer", "", "P-36302", "", 9, getClass, "abdick-spacer.jpg", List(press, spareParts, abdick))
   	val p2 = CatalogDao.createProduct("AB Dick Pressure", "", "P-36793", "", 114.55, getClass, "abdick-pressure.jpg", List(press, spareParts, abdick))
   	val p3 = CatalogDao.createProduct("AB Dick Shield", "", "P-36210", "", 77.62, getClass, "abdick-shield.jpg", List(press, spareParts, abdick))
@@ -133,8 +133,8 @@ object StandardCatalogData extends Dao {
   
   def plaat = {
     val plates = CatalogDao.getOrCreateCategory("Plates")
-    prePress.getChildren.add(plates)
-    supplies.getChildren.add(plates)
+    CatalogDao.addChild(prePress, plates)
+    CatalogDao.addChild(supplies, plates)
     CatalogDao.createProduct("Presstek Anthem Pro", "", "SU18551200", "Presstek has unveiled the Presstek Anthem Pro chemistry-free thermally imaged digital plate. It requires only a water rinse after imaging to prepare it for printing. It does not require gumming, baking, or chemical processing and supports run lengths up to 100,000 impressions. It is compatible with Presstek's Dimension thermal platesetters.", 18.15, getClass, "presstekanthempro.png", List(presstek, plates))
     CatalogDao.createProduct("NYLOFLEX SPRINT DIGITAL FLEXO PLATE", "", "SU18551341", "Flint Group Flexographic Products has launched a digital version of its water washable flexo printing plate nyloflex Sprint. Designed to meet the high quality requirements of the narrow web and the mid web market, nyloflex Sprint Digital offers high resistance against UV-inks and UV-varnishes and a remarkable performance in printing of finest elements, up to 60 L/cm or even higher. Due to the excellent ink transfer characteristics and low dot gain the nyloflex Sprint Digital shows an outstanding performance in halftone printing.", 22.69, getClass, "nyloflex.png", List(flintgroup, plates))
     CatalogDao.createProduct("Anthem Pro", "6Mil Boxed 9-3/8 x 13-3/8", "PCG08831", "", 201.15, getClass, "anthempro.jpg", List(presstek, plates))
@@ -157,21 +157,21 @@ object StandardCatalogData extends Dao {
   }
   
   def inks = {
-	  press.getChildren.add(ink)
-	  supplies.getChildren.add(ink)
+	  CatalogDao.addChild(press, ink)
+	  CatalogDao.addChild(supplies, ink)
 	  val processInkSet = CatalogDao.getOrCreateCategory("Process Ink Sets")
 	  val magneticInks = CatalogDao.getOrCreateCategory("Magnetic Inks")
-	  ink.getChildren.add(blackInk)
-	  ink.getChildren.add(colorInk)
-	  ink.getChildren.add(processInkSet)
-	  ink.getChildren.add(magneticInks)
+	  CatalogDao.addChild(ink, blackInk)
+	  CatalogDao.addChild(ink, colorInk)
+	  CatalogDao.addChild(ink, processInkSet)
+	  CatalogDao.addChild(ink, magneticInks)
 	  CatalogDao.createProduct("Abdick RB900 black CAN", "Abdick RB900 black rubber base CAN", "83-9-104411", "", 9.97, getClass, "abdick-can.jpg", List(abdick, blackInk))
 	  CatalogDao.createProduct("Abdick RB900 black 5LB", "Abdick RB900 black rubber base 5LB CAN", "83-9-104411", "", 48.11, getClass, "abdick-5lb.jpg", List(abdick, blackInk))
 	  CatalogDao.createProduct("Abdick RB900 black CRT", "Abdick RB900 black rubber base Cartiridge", "83-9-104411", "", 9.39, getClass, "abdick-crt.jpg", List(abdick, blackInk))
 	 
 	  val saphiraInks = CatalogDao.getOrCreateCategory("Saphira Inks")
-	  saphira.getChildren.add(saphiraInks)
-	  ink.getChildren.add(saphiraInks)
+	  CatalogDao.addChild(saphira, saphiraInks)
+	  CatalogDao.addChild(ink, saphiraInks)
 	  val saphiraBioMag = CatalogDao.createProduct("Saphira Ink Bio-speed Magenta", "", "SU18364577", "Magenta bio process ink for best results at a high speed", 8.55, getClass, "saphiraBioMag.jpg", List(saphiraInks, colorInk))
 	  CatalogDao.createProduct("Saphira Ink Bio-speed Yellow", "SU18364578", "", "Yellow bio process ink for best results at a high speed", 8.55, getClass, "saphiraBioYellow.jpg", List(saphiraInks, colorInk))
 	  CatalogDao.createProduct("Saphira Ink Bio-speed Blue", "SU18364579", "", "Blue bio process ink for best results at a high speed", 8.55, getClass, "saphiraBioBlue.jpg", List(saphiraInks, colorInk))
@@ -180,8 +180,8 @@ object StandardCatalogData extends Dao {
   
   def epsonproducts = {
 		val epsonInks = CatalogDao.getOrCreateCategory("Epson Inks")
-		ink.getChildren.add(epsonInks)
-		epson.getChildren.add(epsonInks)
+		CatalogDao.addChild(ink, epsonInks)
+		CatalogDao.addChild(epson, epsonInks)
 		CatalogDao.createProduct("Epson 11880", "700 ml Cyan", "3067321", "", 151.80, getClass, "epsonInk.jpg", List(epsonInks, colorInk), supplier = "Epson NL - Amsterdam", supplierArticleNumber = "C13T591200")
 		CatalogDao.createProduct("Epson 11880", "700 ml Light Cyan", "3067324", "", 151.80, getClass, "epsonInk.jpg", List(epsonInks, colorInk), supplier = "Epson NL - Amsterdam", supplierArticleNumber = "C13T591500")
 		CatalogDao.createProduct("Epson 11880", "700 ml Light Light Black", "3067328", "", 151.80, getClass, "epsonInk.jpg", List(epsonInks, colorInk), supplier = "Epson NL - Amsterdam", supplierArticleNumber = "C13T591900")
@@ -264,8 +264,8 @@ object StandardCatalogData extends Dao {
   
   def hpproducts = {
 	  val hpInks = CatalogDao.getOrCreateCategory("Hewlett Packard Inks")
-	  ink.getChildren.add(hpInks)
-	  hp.getChildren.add(hpInks)
+	  CatalogDao.addChild(ink, hpInks)
+	  CatalogDao.addChild(hp, hpInks)
 
 		CatalogDao.createProduct("HP 100 Cartridge", "C4836AE blauw","3040827","",21.73, getClass, "hpink.jpg", List(hpInks, colorInk), supplier= "Five 4 U", supplierArticleNumber = "C4836AE")
 		CatalogDao.createProduct("HP 100 Cartridge", "C4837AE rood","3040828","",20.80, getClass, "hpink.jpg", List(hpInks, colorInk), supplier= "Five 4 U", supplierArticleNumber = "C4837AE")

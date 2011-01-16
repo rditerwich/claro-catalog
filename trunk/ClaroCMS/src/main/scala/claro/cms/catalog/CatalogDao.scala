@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 object CatalogDao extends Dao {
   
-  val dataSource = "claro.jpa.PersistenceUnit"
+  val dataSource = "claro.jpa.catalog"
 
   private object currentCatalog extends ThreadGlobal[Catalog]
 
@@ -32,12 +32,12 @@ object CatalogDao extends Dao {
         " AND v.stringValue = :name", "name" -> name)
   }
 
-  def relationType(name : String) : Option[RelationType] = {
-    querySingle(
-        "SELECT t " +
-        " FROM RelationType t" + 
-        " WHERE t.name = :name", "name" -> name)
-  }
+//  def relationType(name : String) : Option[RelationType] = {
+//    querySingle(
+//        "SELECT t " +
+//        " FROM RelationType t" + 
+//        " WHERE t.name = :name", "name" -> name)
+//  }
   
   def getOrCreateCategory(name : String) : Category = transaction { em =>
     category(name) match {
@@ -50,15 +50,15 @@ object CatalogDao extends Dao {
     }
   }
   
-  def getOrCreateRelationType(name : String) : RelationType = transaction { em =>
-	  relationType(name) match {
-		  case Some(relationType) => relationType
-		  case None => new RelationType useIn { relationType =>
-		  	relationType.setName(name)
-			  em.persist(relationType)
-		  }
-	  }
-  }
+//  def getOrCreateRelationType(name : String) : RelationType = transaction { em =>
+//	  relationType(name) match {
+//		  case Some(relationType) => relationType
+//		  case None => new RelationType useIn { relationType =>
+//		  	relationType.setName(name)
+//			  em.persist(relationType)
+//		  }
+//	  }
+//  }
   
   def product(name : String) : Option[Product] = {
     querySingle(
@@ -97,7 +97,7 @@ object CatalogDao extends Dao {
   		set(product, Properties.supplierArticleNumber, supplierArticleNumber)
   	}
   	setImage(product, Properties.image, imageClass, imageName)
-  	categories foreach (_.getChildren.add(product))
+  	categories foreach (addChild(_, product))
   	em.persist(product)
   	product
   }
@@ -107,31 +107,44 @@ object CatalogDao extends Dao {
   	set(product, Properties.name, name)
   	set(product, Properties.description, description)
   	setImage(product, Properties.image, imageClass, imageName)
-  	categories foreach (_.getChildren.add(product))
+  	categories foreach (addChild(_, product))
   	product
   }
   
+  def addChild(parent : Item, child : Item) = transaction { em =>
+		val parentChild = new ParentChild
+		parentChild.setParent(parent)
+		parentChild.setChild(child)
+		parentChild.setIndex(parent.getChildren.size)
+		parent.getChildren.add(parentChild)
+		child.getParents.add(parentChild)
+		em.persist(parentChild)
+		parent
+	
+  }
+  
   def setRelated(relationType : String, item : Item, relatedItems : Item*) = {
-  	for (relatedItem <- relatedItems) {
-	  	val relation = new Relation
-	  	relation.setItem(item)
-	  	relation.setRelatedTo(relatedItem)
-	  	relation.setRelationType(getOrCreateRelationType(relationType))
-	  	item.getRelations.add(relation)
-  	}
+//  	for (relatedItem <- relatedItems) {
+//	  	val relation = new Relation
+//	  	relation.setItem(item)
+//	  	relation.setRelatedTo(relatedItem)
+//	  	relation.setRelationType(getOrCreateRelationType(relationType))
+//	  	item.getRelations.add(relation)
+//  	}
   }
   
   def catalog(name : String) : Option[Catalog] = querySingle("SELECT c FROM Catalog c WHERE c.name = :name", "name" -> name)
 
   def shop(name : String) : Option[Shop] = querySingle("SELECT s FROM Shop s WHERE s.name = :name", "name" -> name)
   
-  def getOrCreateShop(name : String) : Shop = {
+  def getOrCreateShop(name : String) : Shop = transaction { em =>
     shop(name) match {
       case Some(shop) => shop
       case None => new Shop useIn { shop =>
         shop.setName(name)
         shop.setCatalog(catalog)
-        catalog.getShops.add(shop)
+        catalog.getOutputChannels.add(shop)
+        em.persist(shop)
       }
     }
   }
@@ -163,6 +176,7 @@ object CatalogDao extends Dao {
     item.getProperties.add(property)
     property.setItem(item)
     property.setType(tpe)
+    property.setIsMany(false);
     property.setCategoryProperty(false)
     getOrCreateLabel(property, name)
     em.persist(property)

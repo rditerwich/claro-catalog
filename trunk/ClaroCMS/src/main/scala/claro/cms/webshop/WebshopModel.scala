@@ -143,14 +143,14 @@ trait Item {
 	}
 	
 	val id = item.getId.longValue
-	val parentCategories : Seq[Category] = cacheData.itemParents(item).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-	val parentProducts : Seq[Product] = cacheData.itemParents(item).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
+	val parentCategories : Seq[Category] = item.getParents.toSeq.map(_.getParent).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
+	val parentProducts : Seq[Product] = item.getParents.toSeq.map(_.getParent).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
 	val parents : Seq[Item] = parentCategories ++ parentProducts
 	val parentCategoryExtent : Seq[Category] = cacheData.itemParentExtent(item).toSeq.classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
 	val parentProductExtent : Seq[Product] = cacheData.itemParentExtent(item).toSeq.classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
 	val parentExtent : Seq[Item] = parentCategoryExtent ++ parentProductExtent
-  val childCategories : Seq[Category] = cacheData.itemChildren(item).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-  val childProducts : Seq[Product] = cacheData.itemChildren(item).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
+  val childCategories : Seq[Category] = item.getChildren.toSeq.map(_.getChild).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
+  val childProducts : Seq[Product] = item.getChildren.toSeq.map(_.getChild).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
   val children : Seq[Item] = childCategories ++ childProducts
   val childCategoryExtent : Seq[Category] = cacheData.itemChildExtent(item).toSeq.classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
   val childProductExtent : Seq[Product] = cacheData.itemChildExtent(item).toSeq.classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
@@ -169,11 +169,11 @@ trait Item {
   val propertiesByLocaleName: Map[(Locale, String), Property] =
     properties mapBy (p => (p.locale, p.name))
 	
-	val relatedCategories : Set[Item] = 
-		item.getRelations.map(_.getRelatedTo).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories).toSet
+	val relatedCategories = Set[Item]()
+//		item.getRelations.map(_.getRelatedTo).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories).toSet
 	
-	val relatedProducts : Set[Product] = 
-		item.getRelations.map(_.getRelatedTo).classFilter(classOf[jpa.catalog.Product]).map(mapping.products).toSet
+	val relatedProducts = Set[Product]()
+//		item.getRelations.map(_.getRelatedTo).classFilter(classOf[jpa.catalog.Product]).map(mapping.products).toSet
 	
 	def relatedProducts(categoryName : Option[String]) : Set[Product] = categoryName match {
 		case Some(category) => WebshopModel.shop.categoriesByName.get(category) match {
@@ -326,7 +326,7 @@ class VolumeDiscountPromotion(promotion: jpa.shop.VolumeDiscountPromotion, cache
 
 //FIXME calculate promotion price when calculating new price
 
-class Order(val order: jpa.shop.Order, mapping: Mapping) extends Delegate(order) {
+class Order(val order: jpa.order.Order, mapping: Mapping) extends Delegate(order) {
 
   def productOrders: Seq[ProductOrder] =
     order.getProductOrders map (new ProductOrder(_, this, mapping)) toSeq
@@ -363,7 +363,7 @@ class Order(val order: jpa.shop.Order, mapping: Mapping) extends Delegate(order)
     productOrders.find(_.product.id == product.id) match {
       case Some(productOrder) => productOrder.volume += volume
       case None =>
-        val productOrder = new jpa.shop.ProductOrder
+        val productOrder = new jpa.order.ProductOrder
         productOrder.setProduct(product.delegate)
         productOrder.setVolume(volume)
         product.priceProperty match {
@@ -379,7 +379,7 @@ class Order(val order: jpa.shop.Order, mapping: Mapping) extends Delegate(order)
   }
 }
 
-class ProductOrder(val productOrder: jpa.shop.ProductOrder, val order: Order, mapping: Mapping) extends Delegate(productOrder) {
+class ProductOrder(val productOrder: jpa.order.ProductOrder, val order: Order, mapping: Mapping) extends Delegate(productOrder) {
   val product = mapping.products(productOrder.getProduct)
   def price = productOrder.getPrice.getOrElse(0)
   def totalPrice = price * volume
@@ -390,7 +390,7 @@ class ProductOrder(val productOrder: jpa.shop.ProductOrder, val order: Order, ma
   def remove = {
 
   	val result = order.delegate.getProductOrders.filter(_.getProduct.getId != productOrder.getProduct.getId)
-  	order.delegate.setProductOrders(new java.util.ArrayList[jpa.shop.ProductOrder](result))
+  	order.delegate.setProductOrders(new java.util.ArrayList[jpa.order.ProductOrder](result))
   }
 }
 

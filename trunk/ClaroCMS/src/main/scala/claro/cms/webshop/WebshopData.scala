@@ -6,7 +6,6 @@ import scala.xml.NodeSeq
 import java.util.Locale
 
 import claro.jpa
-import claro.catalog.CatalogUtil._
 import claro.cms.Cms
 import claro.common.util.Conversions._
 
@@ -27,39 +26,10 @@ class WebshopData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.Shop) 
   val templateClassCache = new mutable.HashMap[Tuple2[Class[_], String], NodeSeq]
 
   val excludedItems : Set[jpa.catalog.Item] = 
-    shop.getExcludedItems.toSet
+    shop.getExcludedItems toSet
                                             	   
   val excludedProperties : Set[jpa.catalog.Property] = 
-    shop.getExcludedProperties.toSet
-
-  val items : Set[jpa.catalog.Item] = 
-  	catalog.getItems.filterNot(excludedItems).toSet
-
-  val itemChildren : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-  	Map(items.toSeq.map(item => (item, getChildren(item).filterNot(excludedItems))):_*).
-  		withDefault(_ => Seq.empty)
-      	
-	val itemParents : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-		Map(items.toSeq.map(item => (item, getParents(item).filterNot(excludedItems))):_*).
-			withDefault(_ => Seq.empty)
-  			
-	val itemChildExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-		Map(items.toSeq.map(item => (item, getChildExtent(item, false).filterNot(excludedItems))):_*).
-			withDefault(_ => Seq.empty)
-		
-	val itemParentExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-		Map(items.toSeq.map(item => (item, getParentExtent(item, false).filterNot(excludedItems))):_*).
-			withDefault(_ => Seq.empty)
-
-  val itemProperties : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] =
-    Map(items.toSeq.map(item => (item, item.getProperties.toSeq)):_*).
-      withDefault(_ => Seq.empty)
-
-  val itemPropertyExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] = 
-  	Map(items.toSeq.map(item =>
-      (item, (itemParentExtent(item) ++ Seq(item)).
-          flatMap(itemProperties(_)))):_*).
-          	withDefault(_ => Seq.empty)
+    shop.getExcludedProperties toSet
 
   val promotions : Set[jpa.shop.Promotion] = 
     shop.getPromotions toSet
@@ -101,14 +71,6 @@ class WebshopData (val catalog : jpa.catalog.Catalog, val shop : jpa.shop.Shop) 
     Map(items.toSeq.map(item => (item, item.getProperties.toSeq.filterNot(excludedProperties))):_*).
       withDefault(_ => Seq.empty)
     
-  val itemChildren : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-  	Map(items.toSeq.map(item => (item, item.getChildren.map(_.getChild).toSeq.filterNot(excludedItems))):_*).
-  		withDefault(_ => Seq.empty)
-      	
-	val itemParents : Map[jpa.catalog.Item, Seq[jpa.catalog.Item]] =
-		Map(items.toSeq.map(item => (item, item.getParents.map(_.getParent).toSeq.filterNot(excludedItems))):_*).
-			withDefault(_ => Seq.empty)
-  			
   val itemPropertyExtent : Map[jpa.catalog.Item, Seq[jpa.catalog.Property]] = Map(
     items.toSeq.map(item =>
       (item, (itemParentExtent(item).toSeq ++ Seq(item)).

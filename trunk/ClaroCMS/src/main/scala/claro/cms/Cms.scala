@@ -14,7 +14,7 @@ object Cms {
   val components = RulesSeq[() => Component]
   val logger = Logger("CMS")
 
-  def entityManager = Website.instance.entityManagerFactory("claro.jpa.PersistenceUnit").createEntityManager
+  def entityManager = Website.instance.entityManagerFactory("claro.jpa.catalog").createEntityManager
 
   val debugMode : Boolean = System.getProperties().isSet("claro.cms.debug")
   
