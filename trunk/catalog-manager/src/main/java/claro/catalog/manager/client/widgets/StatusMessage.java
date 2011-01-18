@@ -3,6 +3,7 @@ package claro.catalog.manager.client.widgets;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 
@@ -16,42 +17,37 @@ public class StatusMessage {
 
 	private static final int DEFAULT_TIMEOUT = 15;
 
-	private static StatusMessage instance = new StatusMessage();
+	private static FlowPanel statusPanel = new FlowPanel();
+	private static DecoratedPopupPanel status = new DecoratedPopupPanel(false, false) {{
+		// set animation after initial show+hide
+		setAnimationEnabled(true);
+		setWidget(statusPanel);
+	}};
 
-	public static StatusMessage get() {
-		return instance;
-	}
-
-	private DecoratedPopupPanel status = new DecoratedPopupPanel(false, false);
+	private boolean canceled;
 	private HTML message = new HTML();
-	private final PositionCallback pc = new PositionCallback() {
+	private static final PositionCallback pc = new PositionCallback() {
 		@Override
 		public void setPosition(int offsetWidth, int offsetHeight) {
 			status.setPopupPosition((Window.getClientWidth() - offsetWidth) >> 1, 0);
 		}
 	};
 
-	private StatusMessage() {
-		// status.setStyleName("statusMessage");
-		// Method NOT publicly visible:
-		// status.setAnimationType(AnimationType.ROLL_DOWN);
-		status.add(message);
-		status.hide();
-		// set animation after initial show+hide
-		status.setAnimationEnabled(true);
-	}
-
 	/**
 	 * Displays message for 15 seconds.
 	 * 
 	 * @param message
 	 */
-	public void show(String message) {
-		show(message, DEFAULT_TIMEOUT);
+	public static StatusMessage show(String message) {
+		return show(message, DEFAULT_TIMEOUT);
 	}
 	
-	public void hide() {
-		status.hide();
+	public void cancel() {
+		canceled = true;
+		statusPanel.remove(message);
+		if (status.isShowing() && statusPanel.getWidgetCount() == 0) {
+			status.hide(); 
+		}
 	}
 
 	/**
@@ -60,18 +56,39 @@ public class StatusMessage {
 	 * @param message
 	 * @param durationSeconds
 	 */
-	public void show(String message, int durationSeconds) {
+	public static StatusMessage show(String message, int durationSeconds) {
+		final StatusMessage result = new StatusMessage();
 		new Timer() {
-			@Override
 			public void run() {
-				status.hide();
+				result.cancel();
 			}
 		}.schedule(durationSeconds * 1000);
-		this.message.setHTML(message);
-		status.setPopupPositionAndShow(pc);
+		result.message.setHTML(message);
+		statusPanel.add(result.message);
+		if (!status.isShowing()) {
+			status.setPopupPositionAndShow(pc);
+		}
+		
+		return result;
 	}
 	
-	public  void showError(String message, Throwable cause) {
-		show(message); // TODO show link with panel for details.
+	public static StatusMessage show(final String message, int startDelay, final int durationSeconds) {
+		if (startDelay > 0) {
+			final StatusMessage result = new StatusMessage();
+			new Timer() {
+				public void run() {
+					if (!result.canceled) {
+						show(message, durationSeconds);
+					}
+				}
+			}.schedule(startDelay * 1000);
+			return result;
+		} else {
+			return show(message, durationSeconds);
+		}
+	}
+	
+	public static StatusMessage showError(String message, Throwable cause) {
+		return show(message); // TODO show link with panel for details.
 	}
 }

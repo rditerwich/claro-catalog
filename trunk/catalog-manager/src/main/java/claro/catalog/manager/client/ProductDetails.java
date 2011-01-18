@@ -2,8 +2,10 @@ package claro.catalog.manager.client;
 
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
+import java.util.Collections;
 import java.util.Map.Entry;
 
+import claro.catalog.command.items.StoreProduct;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -24,6 +26,7 @@ import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 
@@ -72,7 +75,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 						protected String getRemoveCategoryTooltip(String categoryName) {
 							return messages.removeCategoryProductDetailsTooltip(categoryName);
 						}
+						@Override
+						protected void addCategory(Long categoryId, SMap<String, String> labels) {
+							super.addCategory(categoryId, labels);
+							categoryAdded(itemId, categoryId);
+						}
 						protected void removeCategory(Long categoryId) {
+							super.removeCategory(categoryId);
 							categoryRemoved(itemId, categoryId);
 						}
 					});
@@ -132,11 +141,66 @@ abstract public class ProductDetails extends Composite implements Globals {
 		render();
 	}
 	
-	abstract protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
-
-	abstract protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language);
+	abstract protected void storeItem(StoreProduct cmd);
 	
-	abstract protected void categoryRemoved(Long itemId, Long categoryId);
+	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+		StoreProduct cmd = new StoreProduct();
+		
+		cmd.productId = itemId;
+		cmd.setValues = SMap.create(propertyInfo, SMap.create(language, value));
+
+		// Always include name if this is a new item.
+		if (itemId == null && !propertyInfo.equals(nameProperty)) {
+			addNamePropertyValue(cmd);
+		}
+		
+		storeItem(cmd);
+	}
+
+	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+		
+		// Only remove values if the item exists:
+		if (itemId != null) {
+			StoreProduct cmd = new StoreProduct();
+
+			cmd.removedValues = SMap.create(propertyInfo, Collections.singletonList(language));
+			
+			storeItem(cmd);
+		}
+	}
+	
+	private void categoryAdded(Long itemId, Long categoryId) {
+		StoreProduct cmd = new StoreProduct();
+		
+		// if the item is new, store all categories, if not only the last one added.
+		if (itemId != null) {
+			cmd.addedCategories = Collections.singletonList(categoryId);
+		} else {
+			cmd.addedCategories = categoryPanel.getCategories().getKeys();
+
+			// Always include name for a new item.
+			addNamePropertyValue(cmd);
+		}
+		
+		storeItem(cmd);
+	}
+
+	private void addNamePropertyValue(StoreProduct cmd) {
+		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
+		Object productName = getValue(nameProperty, properties);
+		cmd.setValues.add(nameProperty, SMap.create(language, productName));
+	}
+	
+	private void categoryRemoved(Long itemId, Long categoryId) {
+		// if the item is new, do not store
+		if (itemId != null) {
+			StoreProduct cmd = new StoreProduct();
+			
+			cmd.removedCategories = Collections.singletonList(categoryId);
+			
+			storeItem(cmd);
+		}
+	}
 	
 	private void render() {
 		
@@ -176,7 +240,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
 		PropertyData data = properties.get(property);
 		if (data != null) {
-			SMap<String, Object> channelValues = data.values.tryGet(outputChannel, null);
+			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(outputChannel, null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(language, null);
 				if (candidate != null) {
@@ -185,7 +249,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			}
 			
 			// Fall back on effective values
-			channelValues = data.effectiveValues.getOrEmpty(null).tryGet(outputChannel, null);
+			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(outputChannel, null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(language, null);
 				if (candidate != null) {

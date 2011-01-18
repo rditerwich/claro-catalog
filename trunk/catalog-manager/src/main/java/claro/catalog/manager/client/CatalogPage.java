@@ -1,43 +1,28 @@
 package claro.catalog.manager.client;
 
 
-import claro.catalog.command.RootPropertiesCommand;
-import claro.catalog.command.RootPropertiesCommandResult;
+import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.FindItems;
 import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.ItemDetailsCommandResult;
+import claro.catalog.command.items.StoreProduct;
+import claro.catalog.command.items.StoreProduct.Result;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.catalog.manager.client.widgets.StatusMessage;
-import claro.jpa.catalog.Item;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
-import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.util.SMap;
 
 public class CatalogPage extends Page {
 
 	private LayoutPanel mainPanel;
 	private ProductMasterDetail filteredProductList;
 
-	private Item selectedItem;
-	
 	private boolean initialized;
 	
 	private Long currentCatalogId;
@@ -81,6 +66,9 @@ public class CatalogPage extends Page {
 			protected void updateProductList() {
 				CatalogPage.this.updateProductList();
 			}
+			protected void storeItem(StoreProduct cmd) {
+				CatalogPage.this.storeItem(cmd);
+			}
 		});
 		
 		// Read Root properties
@@ -93,11 +81,11 @@ public class CatalogPage extends Page {
 	}
 
 	private void updateProductListRootProperties() {
-		RootPropertiesCommand cmd = new RootPropertiesCommand();
+		RootDataCommand cmd = new RootDataCommand();
 		cmd.setCatalogId(-1L);
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<RootPropertiesCommandResult>() {
-			public void onSuccess(RootPropertiesCommandResult result) {
-				filteredProductList.setRootProperties(result.rootProperties);
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<RootDataCommand.Result>() {
+			public void onSuccess(RootDataCommand.Result result) {
+				filteredProductList.setRootProperties(result.rootProperties, result.generalGroup, result.rootCategory, result.rootCategoryLabels);
 			}
 		});
 	}
@@ -122,18 +110,36 @@ public class CatalogPage extends Page {
 	}
 
 	private void updateProductSelection(final Long productId) {
-		StatusMessage.get().show(messages.loadingProductDetails());
+		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
 
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd .setCatalogId(currentCatalogId)
 			.setItem(productId);
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
 			public void onSuccess(ItemDetailsCommandResult result) {
-				StatusMessage.get().hide();
+				loadingMessage.cancel();
 				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);
 			}
 		});
 		
 		// TODO See whether it was cached 
+	}
+	
+	private void storeItem(final StoreProduct cmd) {
+		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
+		
+		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreProduct.Result>() {
+			public void onFailure(Throwable caught) {
+				savingMessage.cancel();
+				StatusMessage.showError(messages.savingProductDetailsFailedStatus(), caught);
+			}
+
+			public void onSuccess(Result result) {
+				savingMessage.cancel();
+				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
+				
+				filteredProductList.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.categories, result.detailValues, true);
+			}
+		});
 	}
 }

@@ -55,7 +55,7 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 						@Override
 						public void onSubmitComplete(SubmitCompleteEvent event) {
 							up.hide();
-							StatusMessage.get().show(messages.fileUploaded(event.getResults()));
+							StatusMessage.show(messages.fileUploaded(event.getResults()));
 						}
 					});
 				}});

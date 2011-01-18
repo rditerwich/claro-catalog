@@ -222,6 +222,10 @@ public interface I18NCatalog extends Messages {
 	String matchProperty();
 	String matchPropertyHelp();
 	String importMenu();
+	String refresh();
+	String savingProductDetailsStatus();
+	String savingProductDetailsFailedStatus();
+	String savingProductDetailsSuccessStatus();
 
 
 }

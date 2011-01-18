@@ -1,18 +1,24 @@
 package claro.catalog.manager.client;
 
 
+import claro.catalog.command.Login;
+import claro.catalog.command.Login.Result;
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.party.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -24,6 +30,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
+import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 
@@ -71,6 +78,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 	
 	public static Page currentPage;
 	private static User currentUser;
+	private Label username;
 	
 	public static Long getCurrentCatalogId() {
 		return -1l;
@@ -102,6 +110,32 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				add(new Image(rb.logo()) {{
 					StyleUtil.add(this, Styles.headerimage);
 				}});
+//				add(username = new Label());
+//				add(new Anchor("Login...") {{
+//					addClickHandler(new ClickHandler() {
+//						public void onClick(ClickEvent event) {
+//							Login loginCommand = new Login();
+////							loginCommand.opendIdName = "reinier.bos@gmail.com";
+//							loginCommand.opendIdName = "https://www.google.com/accounts/o8/id";
+//							GwtCommandFacade.execute(loginCommand, new AsyncCallback<Login.Result>() {
+//								public void onFailure(Throwable caught) {
+//								}
+//
+//								public void onSuccess(Result result) {
+//									username.setText(result.redirectUrl);
+////									Window.open(result.redirectUrl, "_blank", "height=200,width=400,left=100," + "top=100,resizable=no,scrollbars=no,toolbar=no,status=yes");
+//											            // this the most important line in order to make the authentication.
+////											 Here, I am redirecting the user
+//											            // from the client side to the OpenID provider URL with the discovery
+////											 data generated from the
+//											            // RPC call to the servlet.
+//											            Window.Location.assign(result.redirectUrl);
+//
+//								}
+//							});
+//						}
+//					});
+//				}});
 				add(new MainMenu(pageContainer) {{
 					setStylePrimaryName(GlobalStyles.menu.toString());
 					addPage(new CatalogPage(placeController), "Catalog");

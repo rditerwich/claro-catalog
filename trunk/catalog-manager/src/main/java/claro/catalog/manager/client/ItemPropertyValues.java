@@ -35,6 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
@@ -168,7 +169,6 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				}});
 				
 				
-				
 				groupPanelWidgets.valueWidgets.add(propertyValueWidgets);
 			}
 			
@@ -210,22 +210,16 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		// TODO what about overriding values to null?  Use undefined in the code below?
 		// TODO many multiplicity properties.
 		
-		SMap<String, Object> values = propertyData.values.get(outputChannel); // TODO why is there no staging area here?.
+		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(outputChannel); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
 		Object value = values.tryGet(language, null);
 		boolean isDerived = false;
 
 		if (value == null) {
-			SMap<OutputChannel, SMap<String, Object>> effectiveValues = propertyData.effectiveValues.get(); // Use the default staging area.
-			SMap<String, Object> effectiveLanguageValues = effectiveValues.tryGet(outputChannel, null);
+			SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
+			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
 			
 			value = effectiveLanguageValues.tryGet(language, null);
-			if (value == null) {
-				// TODO What to do here?
-				return null;
-			}
-			
-			isDerived = true;
-			value = effectiveLanguageValues.tryGet(language, null);
+			isDerived = true; // TODO This makes no value derived???
 		}
 		
 		setValue(widget, value, property);
@@ -263,7 +257,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			if (oldWidget instanceof MediaWidget) {
 				result = oldWidget;
 			} else {
-				result = new MediaWidget();
+				result = new MediaWidget(false);
 			}
 			break;
 		default:
@@ -295,13 +289,20 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			checkBox.setValue((Boolean) value);
 			break;
 		case Media:
+			// TODO Replace / Simplify Media widget.
 			MediaWidget mediaWidget = (MediaWidget) widget;
-			MediaValue mediaValue = (MediaValue) value;
-			mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);
-			mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
+			if (value instanceof MediaValue) {
+				MediaValue mediaValue = (MediaValue) value;
+//				mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);
+				mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
+			} else {
+//				mediaWidget.setUploadData(itemId, property.propertyId, null, language);
+				mediaWidget.setData(null, null, null);
+			}
+			break;
 		default:
 			TextBox textBox = (TextBox) widget;
-			textBox.setText(propertyStringConverter.toString(property.type, value));
+			textBox.setText(value != null? propertyStringConverter.toString(property.type, value) : null);
 		}
 	}
 

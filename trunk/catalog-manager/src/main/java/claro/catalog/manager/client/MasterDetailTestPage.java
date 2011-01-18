@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
+import claro.catalog.command.items.StoreProduct;
 import claro.catalog.data.PropertyInfo;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -90,15 +91,7 @@ public class MasterDetailTestPage extends Page {
 									}});
 									add(new Label("Details for " + masterData.get(row) + "..."));
 									add(new ProductDetails(null, null, null, null, null, null) {
-										protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-										}
-										protected void propertyValueRemoved(
-												Long itemId,
-												PropertyInfo propertyInfo,
-												String language) {
-										}
-										protected void categoryRemoved(Long itemId,
-												Long categoryId) {
+										protected void storeItem(StoreProduct cmd) {
 										}
 									});
 								}});

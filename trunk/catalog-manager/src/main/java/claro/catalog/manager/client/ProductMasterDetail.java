@@ -4,10 +4,13 @@ import static claro.catalog.manager.client.CatalogManager.propertyStringConverte
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
+import claro.catalog.command.items.StoreProduct;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -52,8 +55,8 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 
 	
 	
+	private List<Long> productKeys = new ArrayList<Long>();
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
-	private SMap<Long, SMap<String, String>> filterCategories = SMap.empty();
 	private String language;
 	private String filterString;
 	
@@ -72,11 +75,19 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	
 	// Widgets
+	private CategoriesWidget filterCategories;
 	private List<RowWidgets> tableWidgets = new ArrayList<ProductMasterDetail.RowWidgets>();
 
 	private Label noProductsFoundLabel;
 	protected HTML filterLabel;
 	private ProductDetails details;
+	
+	private PropertyGroupInfo generalGroup;
+	private Long rootCategory;
+	private SMap<String, String> rootCategoryLabels;
+	
+	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
+	private SMap<Long, SMap<String, String>> newProductCategories;
 
 
 	public ProductMasterDetail() {
@@ -85,7 +96,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 	}
 	
-	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
+	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
+		this.generalGroup = generalGroup;
+		this.rootCategory = rootCategory;
+		this.rootCategoryLabels = rootCategoryLabels;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
@@ -99,6 +113,8 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	public void setProducts(SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products) {
 		this.products = products;
+		this.productKeys.clear();
+		this.productKeys.addAll(products.getKeys());
 		
 		render();
 	}
@@ -111,7 +127,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
-		return filterCategories;
+		if (filterCategories != null) {
+			return filterCategories.getCategories();
+		}
+		return SMap.empty();
 	}
 	
 	public String getFilter() {
@@ -121,17 +140,30 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 
 	
-	public void updateProduct(Long itemId, SMap<PropertyInfo, SMap<String, Object>> newValues, boolean setChangedStyle) {
+	public void updateProduct(Long previousProductId, Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
 		// Update product list:
-		products = products.add(itemId, newValues);
-		int itemRow = products.getKeys().indexOf(itemId);
+		products = products.add(productId, masterValues);
 		
-		Table productTable = getMasterTable();
-		if (setChangedStyle) {
-			StyleUtil.remove(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
+		// Determine row to update
+		int itemRow = productKeys.indexOf(previousProductId);
+		if (itemRow != -1) {
+			// update row
+			productKeys.set(itemRow, productId);
+			
+			Table productTable = getMasterTable();
+			if (setChangedStyle) {
+				StyleUtil.remove(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
+			}
+			
+			rebind(itemRow, productId);
+			
+			// Update details:
+			if (getCurrentRow() == itemRow) {
+				details.setItemData(productId, categories, propertyValues);
+			}
+		} else {
+			productKeys.add(productId);
 		}
-		
-		rebind(itemRow, itemId);
 	}
 	
 	public void render() {
@@ -144,14 +176,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 		Table productTable = getMasterTable();
 		
-		noProductsFoundLabel.setVisible(products == null || products.isEmpty());
+		noProductsFoundLabel.setVisible(productKeys.isEmpty());
 		updateFilterLabel();
 
 
-		
-		List<Long> productKeys = products != null ? products.getKeys() : Collections.<Long>emptyList();
-
-		
 		// Delete/Create widgets as necessary:
 		int oldRowCount = productTable.getRowCount();
 		
@@ -261,7 +289,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	}
 	
 	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
-		int row = products.getKeys().indexOf(productId);
+		int row = productKeys.indexOf(productId);
 
 		openDetail(row);
 
@@ -306,8 +334,8 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 							}
 						});
 					}});
-					setWidget(0, 2, new CategoriesWidget(false) {{
-							setData(filterCategories, language);
+					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
+							setData(SMap.<Long, SMap<String, String>>empty(), language);
 						}
 						protected String getAddCategoryTooltip() {
 							return messages.addCategoryFilter();
@@ -315,15 +343,21 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 						protected String getRemoveCategoryTooltip(String categoryName) {
 							return messages.removeCategoryFilterTooltip(categoryName);
 						}
-						protected void addCategory(Long categoryId, SMap<String, String> labels) {
-							filterCategories = filterCategories.add(categoryId, labels);
-							setData(filterCategories, language);
-						}
-						protected void removeCategory(Long categoryId) {
-							// TODO update filtercats.
-						}
 					});
-					setWidget(1, 0, new Anchor(messages.newProduct()));
+					setWidget(1, 0, new Anchor(messages.newProduct()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								createNewProduct();
+							}
+						});
+					}});
+					setWidget(1, 1, new Anchor(messages.refresh()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								updateProductList();
+							}
+						});
+					}});
 				}});
 				add(new FlowPanel() {{
 					add(filterLabel = new HTML() {{
@@ -357,22 +391,14 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 				});
 			}}, 40);
 			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
-				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-					// Call Server method
-					// Queueing?
-					// Use result of server command to update both product and list.
-					// TODO Implement.
-				}
-				protected void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
-					// TODO Auto-generated method stub
-					
-				}
-				protected void categoryRemoved(Long itemId, Long categoryId) {
-					// TODO Auto-generated method stub
+				protected void storeItem(StoreProduct cmd) {
+					ProductMasterDetail.this.storeItem(cmd);
 				}
 			});
 		}});
 	}
+	
+	abstract protected void storeItem(StoreProduct cmd);
 
 	private void updateFilterLabel() {
 		String actualFilter = getFilter();
@@ -385,11 +411,46 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	}
 
 
-	
+	@SuppressWarnings("serial")
+	private void createNewProduct() {
+		// TODO Maybe replace with server roundtrip???
 
+		newProductCategories = SMap.empty();
+		newProductCategories = newProductCategories.add(rootCategory, rootCategoryLabels);
+		
+		final Object newProductText = messages.newProduct();
+		
+		SMap<PropertyInfo, PropertyData> propertyMap = SMap.empty();
+		propertyMap = propertyMap.add(nameProperty, new PropertyData() {{
+			values = SMap.create(outputChannel, SMap.create(language, newProductText));
+		}});
+		propertyMap = propertyMap.add(variantProperty, new PropertyData());
+		propertyMap = propertyMap.add(descriptionProperty, new PropertyData());
+		propertyMap = propertyMap.add(artNoProperty, new PropertyData());
+		propertyMap = propertyMap.add(imageProperty, new PropertyData());
+		propertyMap = propertyMap.add(smallImageProperty, new PropertyData());
+		
+		if (!productKeys.contains(null)) {
+			// Only add new product once...
+			productKeys.add(0, null);
+		}
+		products = products.add(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
+		
+		render();
+
+		newProductPropertyValues = SMap.create(generalGroup, propertyMap);
+		setSelectedProduct(null, newProductCategories, newProductPropertyValues);
+	}
+	
 	private void rowSelected(int row) {
 
-		productSelected(products.getKeys().get(row));
+		Long productId = productKeys.get(row);
+		if (productId == null) {
+			// New product selected, only update locally.
+			setSelectedProduct(null, newProductCategories, newProductPropertyValues);
+		} else {
+			productSelected(productId);
+		}
 	}
 	
 	private void addRowSelectionListener(HasClickHandlers widget, final int row) {

@@ -41,6 +41,8 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 
 	private final boolean canSelect;
+	private SMap<Long, SMap<String, String>> categories;
+	private String language;
 	
 
 	public CategoriesWidget() {
@@ -56,6 +58,16 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 	public void setData(SMap<Long, SMap<String, String>> categories, String language) {
 		
+		this.categories = categories;
+		this.language = language;
+		render();
+	}
+	
+	public SMap<Long, SMap<String, String>> getCategories() {
+		return categories;
+	}
+	
+	private void render() {
 		final List<Long> categoryKeys = categories.getKeys();
 		mainPanel.clear();
 		int i = 0;
@@ -144,11 +156,19 @@ public class CategoriesWidget extends Composite implements Globals {
 	}
 	
 	protected void addCategory(Long categoryId, SMap<String, String> labels) {
-		
+		categories = categories.add(categoryId, labels);
+		render();
 	}
 
 	protected void removeCategory(Long categoryId) {
-		
+		SMap<Long, SMap<String, String>> newCats = SMap.empty();
+		for (Long existingCat : categories.getKeys()) {
+			if (!existingCat.equals(categoryId)) {
+				newCats = newCats.add(existingCat, categories.get(existingCat));
+			}
+		}
+		categories = newCats;
+		render();
 	}
 	
 	// TODO create filtered selection tree?

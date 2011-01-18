@@ -53,6 +53,17 @@
       <servlet-name>CatalogServlet</servlet-name>
       <url-pattern>/catalogmanager/command</url-pattern>
     </servlet-mapping>
+
+	<servlet>
+		<servlet-name>AuthenticationServlet</servlet-name>
+		<!-- This is the default servlet, it puts files in session -->
+		<servlet-class>easyenterprise.lib.gwt.server.OpenIdServlet</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+      <servlet-name>AuthenticationServlet</servlet-name>
+      <url-pattern>/catalogmanager/authentication</url-pattern>
+    </servlet-mapping>
   
   <!-- Default page to serve -->
   <welcome-file-list>

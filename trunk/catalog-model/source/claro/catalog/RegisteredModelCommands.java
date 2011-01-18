@@ -1,6 +1,7 @@
 package claro.catalog;
 
-import claro.catalog.impl.RootPropertiesCommandImpl;
+import claro.catalog.impl.LoginImpl;
+import claro.catalog.impl.RootDataCommandImpl;
 import claro.catalog.impl.importing.GetImportSourceHistoryImpl;
 import claro.catalog.impl.importing.GetImportSourcesImpl;
 import claro.catalog.impl.importing.PerformImportImpl;
@@ -17,10 +18,11 @@ public class RegisteredModelCommands extends RegisteredCommands {
 		register(ItemDetailsCommandImpl.class);
 		register(FindItemsImpl.class);
 		register(FindPropertiesImpl.class);
-		register(RootPropertiesCommandImpl.class);
+		register(RootDataCommandImpl.class);
 		register(GetImportSourcesImpl.class);
 		register(GetImportSourceHistoryImpl.class);
 		register(StoreImportSourceImpl.class);
 		register(PerformImportImpl.class);
+		register(LoginImpl.class);
 	}
 }

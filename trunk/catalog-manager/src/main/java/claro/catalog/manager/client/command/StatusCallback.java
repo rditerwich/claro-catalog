@@ -16,11 +16,11 @@ public abstract class StatusCallback<T extends CommandResult> implements Retryin
 	}
 	public void failedAttempt(int attemptNr, Throwable caught) {
 		String message = action != null? messages.failureRetryingMessage(action, attemptNr) : messages.internalFailureRetryingMessage(attemptNr);
-		StatusMessage.get().showError(message, caught);
+		StatusMessage.showError(message, caught);
 	}
 	public void onFailure(Throwable caught) {
 		String message = action != null? messages.failureMessage(action) : messages.internalFailureMessage();
-		StatusMessage.get().showError(message, caught);
+		StatusMessage.showError(message, caught);
 		caught.printStackTrace();
 	}
 }
