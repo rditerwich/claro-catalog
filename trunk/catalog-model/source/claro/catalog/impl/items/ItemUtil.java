@@ -1,5 +1,10 @@
 package claro.catalog.impl.items;
 
+import java.util.Map.Entry;
+
+import claro.catalog.data.PropertyData;
+import claro.catalog.data.PropertyGroupInfo;
+import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
@@ -24,5 +29,52 @@ public class ItemUtil {
 		
 		return result;
 	}
+	
+
+	public static SMap<PropertyInfo, SMap<String, Object>> effectivePropertyValues(ItemModel candidate, StagingArea stagingArea, OutputChannel outputChannel) {
+		SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
+		for (Entry<PropertyGroupInfo, PropertyModel> property : candidate.getPropertyExtent()) {
+			propertyValues = propertyValues.add(property.getValue().getPropertyInfo(), property.getValue().getEffectiveValues(stagingArea, outputChannel));
+		}
+		return propertyValues;
+	}
+	
+
+	public static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData(ItemModel itemModel, StagingArea area, OutputChannel channel) {
+		SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> resultPropertyData = SMap.empty();
+		
+		// Obtain groups
+		// TODO Is there no property hiding???
+		
+		SMap<PropertyGroupInfo, PropertyModel> propertyExtent = itemModel.getPropertyExtent();
+		for (PropertyGroupInfo group : propertyExtent.getKeys()) {
+			SMap<PropertyInfo, PropertyData> properties = SMap.empty();
+			for (PropertyModel property : propertyExtent.getAll(group)) {
+				PropertyData propertyData = new PropertyData();
+				
+				// fill propertyData
+				propertyData.values = SMap.create(channel, property.getValues(area, channel));
+				propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
+				
+				// TODO How to do this???
+//			propertyData.importSourceValues = SMap.create(channel, property.getImportSourceValues(null)));
+				
+				properties = properties.add(property.getPropertyInfo(), propertyData);
+			}
+			resultPropertyData = resultPropertyData.add(group, properties);
+			
+		}
+		return resultPropertyData;
+	}
+
+
+	public static SMap<Long, SMap<String, String>> parents(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+		SMap<Long, SMap<String, String>> categories = SMap.empty();
+		for (ItemModel category : itemModel.getParents()) {
+			categories = categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
+		}
+		return categories;
+	}
+
 
 }

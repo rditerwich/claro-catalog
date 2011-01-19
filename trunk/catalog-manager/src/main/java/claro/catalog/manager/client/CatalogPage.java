@@ -95,7 +95,7 @@ public class CatalogPage extends Page {
 		cmd.catalogId = currentCatalogId;
 		cmd.resultType = ResultType.products;
 		
-		cmd.outputChannelId = currentOuputChannel;
+		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
 		cmd.language = currentLanguage;
 		
 		cmd.filter = filteredProductList.getFilter();
@@ -127,6 +127,9 @@ public class CatalogPage extends Page {
 	
 	private void storeItem(final StoreProduct cmd) {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
+		
+		cmd.catalogId = CatalogManager.getCurrentCatalogId();
+		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreProduct.Result>() {
 			public void onFailure(Throwable caught) {

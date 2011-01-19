@@ -50,7 +50,7 @@ public class CatalogModel {
 		this.catalog = findOrCreateCatalog(id);
 		ItemModel root = findOrCreateRootCategory();
 		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
-		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup);
+		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup, RootProperties.ROOTCATEGORY_NAME);
 		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
 		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
 		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String, generalPropertyGroup);
@@ -82,7 +82,7 @@ public class CatalogModel {
 		}
 		return itemData;
 	}
-
+	
 	public List<ItemModel> getItems(Collection<Long> ids) throws ItemNotFoundException {
 		List<ItemModel> result = new ArrayList<ItemModel>();
 		for (Long id : ids) {
@@ -91,6 +91,24 @@ public class CatalogModel {
 		return result;
 	}
 	
+	public synchronized void removeItem(Long id) {
+		ItemModel itemData = items.get(id);
+		Item item;
+		if (itemData != null) {
+			item = itemData.getEntity();
+			itemData.invalidateChildExtent(true);
+			items.remove(itemData);
+		} else {
+			item = CatalogDao.get().getItem(id);
+		}
+		
+		if (item == null) {
+			throw new ItemNotFoundException(id);
+		}
+		
+		CatalogDao.get().removeItem(item); // TODO It is more efficient in the context of a transaction rollback to move this to the beginning
+	}
+
 	public synchronized PropertyGroupInfo findOrCreatePropertyGroupInfo(PropertyGroup group) {
 		PropertyGroupInfo result = propertyGroupInfos.get(group.getId());
 		if (result == null) {
@@ -121,10 +139,10 @@ public class CatalogModel {
 	private ItemModel findOrCreateRootCategory() {
 	  ItemModel root;
 	  if (catalog.getRoot() == null) {
-	  	root = createCategory();
-			catalog.setRoot((Category) root.getEntity());
+		  root = createCategory();
+		  catalog.setRoot((Category) root.getEntity());
 	  } else {
-	  	root = getItem(catalog.getRoot().getId());
+		  root = getItem(catalog.getRoot().getId());
 	  }
 	  return root;
   }	

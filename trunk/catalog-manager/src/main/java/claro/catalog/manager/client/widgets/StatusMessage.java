@@ -58,6 +58,10 @@ public class StatusMessage {
 	 */
 	public static StatusMessage show(String message, int durationSeconds) {
 		final StatusMessage result = new StatusMessage();
+		show(result, message, durationSeconds);
+		return result;
+	}
+	private static StatusMessage show(final StatusMessage result, String message, int durationSeconds) {
 		new Timer() {
 			public void run() {
 				result.cancel();
@@ -78,7 +82,7 @@ public class StatusMessage {
 			new Timer() {
 				public void run() {
 					if (!result.canceled) {
-						show(message, durationSeconds);
+						show(result, message, durationSeconds);
 					}
 				}
 			}.schedule(startDelay * 1000);

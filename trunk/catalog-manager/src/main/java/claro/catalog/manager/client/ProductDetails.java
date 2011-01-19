@@ -11,18 +11,15 @@ import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
@@ -147,7 +144,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		StoreProduct cmd = new StoreProduct();
 		
 		cmd.productId = itemId;
-		cmd.setValues = SMap.create(propertyInfo, SMap.create(language, value));
+		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(language, value));
 
 		// Always include name if this is a new item.
 		if (itemId == null && !propertyInfo.equals(nameProperty)) {
@@ -163,7 +160,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		if (itemId != null) {
 			StoreProduct cmd = new StoreProduct();
 
-			cmd.removedValues = SMap.create(propertyInfo, Collections.singletonList(language));
+			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
 			
 			storeItem(cmd);
 		}
@@ -172,12 +169,8 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void categoryAdded(Long itemId, Long categoryId) {
 		StoreProduct cmd = new StoreProduct();
 		
-		// if the item is new, store all categories, if not only the last one added.
-		if (itemId != null) {
-			cmd.addedCategories = Collections.singletonList(categoryId);
-		} else {
-			cmd.addedCategories = categoryPanel.getCategories().getKeys();
-
+		cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
 		}
@@ -188,17 +181,21 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void addNamePropertyValue(StoreProduct cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
 		Object productName = getValue(nameProperty, properties);
-		cmd.setValues.add(nameProperty, SMap.create(language, productName));
+		cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {
 		// if the item is new, do not store
 		if (itemId != null) {
-			StoreProduct cmd = new StoreProduct();
-			
-			cmd.removedCategories = Collections.singletonList(categoryId);
-			
-			storeItem(cmd);
+			if (!categoryPanel.getCategories().getKeys().isEmpty()) {
+				StoreProduct cmd = new StoreProduct();
+				
+				cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+				
+				storeItem(cmd);
+			} else {
+				StatusMessage.show(messages.atLeastOneCategory(), 10);
+			}
 		}
 	}
 	

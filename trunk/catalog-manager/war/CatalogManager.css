@@ -353,6 +353,7 @@ ol li .send {
 
 .productMasterDetail .cbg-RPContainer { background-color: white; }
 .productMasterDetail table.mainTable { width: 100%; }
+.productMasterDetail table.mainTable tr.itemRowChanged td { font-style: italic; }
 .productMasterDetail table.mainTable table.product { width: 100%; cursor: pointer;}
 .productMasterDetail table.mainTable table.product td { border: none;}
 
@@ -407,6 +408,13 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 100%;
 }
 
+.productDetails .valueParent {
+	width: 100%;
+}
+.productDetails .valueParent .valueWidget {
+	width: 100%;
+}
+	
 .productDetails input.derived { 
 	color: blue;
 }

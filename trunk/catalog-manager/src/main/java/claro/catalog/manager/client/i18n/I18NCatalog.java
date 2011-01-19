@@ -226,6 +226,7 @@ public interface I18NCatalog extends Messages {
 	String savingProductDetailsStatus();
 	String savingProductDetailsFailedStatus();
 	String savingProductDetailsSuccessStatus();
+	String atLeastOneCategory();
 
 
 }

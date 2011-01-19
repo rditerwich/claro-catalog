@@ -1,6 +1,5 @@
 package claro.catalog.model;
 
-import static claro.catalog.util.CatalogModelUtil.find;
 import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
-import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
@@ -149,7 +147,6 @@ public class ItemModel {
 		}
 	}
 
-	
 	/**
 	 * Returns the children of this item.
 	 * @return
@@ -274,9 +271,13 @@ public class ItemModel {
 	}
 	
 	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group) {
+		return findOrCreateProperty(propertyLabel, language, type, group, null);
+	}
+	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group, String initialValue) {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
 			property = createProperty(SMap.create(language, propertyLabel), type, group);
+			property.setValue(null, null, language, initialValue);
 		}
 		return property;
 	}

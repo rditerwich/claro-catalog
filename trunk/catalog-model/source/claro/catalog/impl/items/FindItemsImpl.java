@@ -89,16 +89,13 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		// Collect effective values:
 		result.items = SMap.empty();
 		for (ItemModel candidate : productCandidates) {
-			SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
-			for (Entry<PropertyGroupInfo, PropertyModel> property : candidate.getPropertyExtent()) {
-				propertyValues = propertyValues.add(property.getValue().getPropertyInfo(), property.getValue().getEffectiveValues(stagingArea, outputChannel));
-			}
+			SMap<PropertyInfo, SMap<String, Object>> propertyValues = ItemUtil.effectivePropertyValues(candidate, stagingArea, outputChannel);
 			result.items = result.items.add(candidate.getItemId(), propertyValues);
 		}
 		
 		return result;
 	}
-	
+
 
 	public List<ItemModel> findItems() {
 		Set<ItemModel> candidates = findCategoryItems(categories);

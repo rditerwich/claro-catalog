@@ -13,4 +13,7 @@ public interface RootProperties {
 	
 	// General property group
 	String GENERALGROUP = "General";
+	
+	// Root category
+	String ROOTCATEGORY_NAME = "All Products";
 }

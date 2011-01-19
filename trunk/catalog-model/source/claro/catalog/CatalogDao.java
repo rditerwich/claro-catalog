@@ -204,6 +204,57 @@ public class CatalogDao {
 		return changed;
 	}
 	
+	public void removeItem(Item item) {
+		// Clear parents, but remember the first parent
+		Item firstParent = item.getParents().iterator().next().getParent();
+		for (ParentChild parent : item.getParents()) {
+			parent.getParent().getChildren().remove(parent);
+		}
+		item.getParents().clear();
+		
+		// Clear children, reassign children to firstparent.
+		ArrayList<ParentChild> children = new ArrayList<ParentChild>(item.getChildren());
+		item.getChildren().clear();
+		for (ParentChild child : children) {
+			// reassign to firstparent
+			child.setParent(firstParent);
+			firstParent.getChildren().add(child);
+			
+			// Find double:
+			ParentChild first = null;
+			ParentChild second = null;
+			for (ParentChild childParent : child.getChild().getParents()) {
+				if (childParent.getParent().getId().equals(firstParent.getId())) {
+					if (first != null) {
+						second = childParent;
+						break;  // Found a double
+					} else {
+						first = childParent;
+					}
+				}
+			}
+			
+			// Remove double
+			if (second != null) {
+				child.getChild().getParents().remove(second);
+				firstParent.getChildren().remove(second);
+				second.setChild(null);
+				second.setParent(null);
+				
+				entityManager.remove(second);
+			}
+		}
+		
+		// Remove from catalog
+		item.getCatalog().getItems().remove(item);
+		item.setCatalog(null);
+		
+		// Finally remove from db.
+		entityManager.remove(item);
+	}
+	
+
+	
 	
 	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, Class<? extends Item> itemClass) {
 		StringBuilder queryString = new StringBuilder("select item from ");

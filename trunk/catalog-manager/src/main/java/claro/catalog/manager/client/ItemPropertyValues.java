@@ -14,21 +14,16 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,9 +32,12 @@ import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.SingleUploader;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
-	public enum Styles implements Style { clear }
+	public enum Styles implements Style { clear, valueParent, valueWidget }
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
 	private static int VALUE_COLUMN = 2;
@@ -155,6 +153,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
+					StyleUtil.add(this, Styles.valueParent);
 					// Real value is added in the bind fase...
 					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
 						StyleUtil.add(this, Styles.clear);
@@ -254,10 +253,22 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			}
 			break;
 		case Media:
-			if (oldWidget instanceof MediaWidget) {
+			if (oldWidget instanceof FlowPanel && ((FlowPanel)oldWidget).getWidgetCount() > 1 && ((FlowPanel)oldWidget).getWidget(0) instanceof MediaWidget) {
 				result = oldWidget;
 			} else {
-				result = new MediaWidget(false);
+				result = new FlowPanel() {{
+					final FlowPanel me = this;
+					add(new MediaWidget(false));
+					add(new SingleUploader() {{
+						addOnFinishUploadHandler(new OnFinishUploaderHandler() {
+							public void onFinish(IUploader uploader) {
+								if (uploader.getStatus() == Status.SUCCESS) {
+									valueChanged(me, uploader.getServerInfo().field);  // TODO Add special case in command???
+								}
+							}
+						});
+					}});
+				}};
 			}
 			break;
 		default:
@@ -279,6 +290,8 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			propertyValueWidgets.valueParentWidget.setWidget(0, 0, result);
 		}
 		
+		StyleUtil.add(result, Styles.valueWidget);
+		
 		return result;
 	}
 	
@@ -289,8 +302,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			checkBox.setValue((Boolean) value);
 			break;
 		case Media:
-			// TODO Replace / Simplify Media widget.
-			MediaWidget mediaWidget = (MediaWidget) widget;
+			MediaWidget mediaWidget = (MediaWidget) ((FlowPanel)widget).getWidget(0);
 			if (value instanceof MediaValue) {
 				MediaValue mediaValue = (MediaValue) value;
 //				mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);

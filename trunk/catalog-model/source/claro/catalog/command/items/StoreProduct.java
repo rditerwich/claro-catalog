@@ -16,29 +16,34 @@ import easyenterprise.lib.util.SMap;
 public class StoreProduct implements Command<StoreProduct.Result> {
 
 	private static final long serialVersionUID = -1L;
+	
+	public Long catalogId;
+	
+	public Long stagingAreaId;
+	
+	public Long outputChannelId;
 
 	public Long productId;
 	
 	public boolean remove;
 	
-	public SMap<PropertyInfo, SMap<String, Object>> setValues;
+	public SMap<PropertyInfo, SMap<String, Object>> valuesToSet;
 	
 	/**
 	 * Removed values.  A value is identified by a property and a language.
 	 */
-	public SMap<PropertyInfo, List<String>> removedValues;
+	public SMap<PropertyInfo, List<String>> valuesToRemove;
 	
-	public List<Long> addedCategories;
-	
-	public List<Long> removedCategories;
+	public List<Long> categoriesToSet;
 	
 	@Override
 	public void checkValid() throws CommandValidationException {
+		validate (catalogId != null);
+		
 		if (remove) {
-			validate (isEmpty(setValues));
-			validate (isEmpty(removedValues));
-			validate (isEmpty(addedCategories));
-			validate (isEmpty(removedCategories));
+			validate (isEmpty(valuesToSet));
+			validate (isEmpty(valuesToRemove));
+			validate (isEmpty(categoriesToSet));
 		}
 	}
 

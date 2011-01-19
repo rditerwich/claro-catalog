@@ -32,6 +32,7 @@ import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
+// TODO Allow changing of order of categories.
 public class CategoriesWidget extends Composite implements Globals {
 	
 	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd, categoryTree }
@@ -175,7 +176,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	private Tree createTree(final Long root, final SMap<Long, SMap<String, String>> categories, final SMap<Long, Long> children) {
 		Tree result = new Tree();
 		
-		result.addItem(new TreeItem(messages.categoryTreeRootName()) {{
+		result.addItem(new TreeItem(categories.getOrEmpty(root).tryGet(CatalogManager.getUiLanguage(), null)) {{
 			setUserObject(root);
 			addItem(""); // Add uninitialized marker.
 		}});

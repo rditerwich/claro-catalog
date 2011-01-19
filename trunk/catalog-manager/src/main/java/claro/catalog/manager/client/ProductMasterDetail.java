@@ -125,6 +125,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		render(); 
 	}
 	
+	public OutputChannel getOutputChannel() {
+		return outputChannel;
+	}
+	
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
 		if (filterCategories != null) {
@@ -142,7 +146,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	public void updateProduct(Long previousProductId, Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
 		// Update product list:
-		products = products.add(productId, masterValues);
+		products = products.set(productId, masterValues);
 		
 		// Determine row to update
 		int itemRow = productKeys.indexOf(previousProductId);
@@ -152,7 +156,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			
 			Table productTable = getMasterTable();
 			if (setChangedStyle) {
-				StyleUtil.remove(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
+				StyleUtil.add(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
 			}
 			
 			rebind(itemRow, productId);
@@ -434,7 +438,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			// Only add new product once...
 			productKeys.add(0, null);
 		}
-		products = products.add(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
+		products = products.set(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
 		
 		render();
 

@@ -52,38 +52,11 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		// Convert item model to result.
 		ItemDetailsCommandResult result = new ItemDetailsCommandResult();
 		
-		// Categories
-		result.categories = SMap.empty();
-		for (ItemModel category : itemModel.getParents()) {
-			result.categories = result.categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
-		}
+		result.categories = ItemUtil.parents(itemModel, catalogModel, area, channel);
 		
 		// Properties.
-		result.propertyData = SMap.empty();
-		
-		// Obtain groups
-		// TODO Is there no property hiding???
-		
-		SMap<PropertyGroupInfo, PropertyModel> propertyExtent = itemModel.getPropertyExtent();
-		for (PropertyGroupInfo group : propertyExtent.getKeys()) {
-			SMap<PropertyInfo, PropertyData> properties = SMap.empty();
-			for (PropertyModel property : propertyExtent.getAll(group)) {
-				PropertyData propertyData = new PropertyData();
-				
-				// fill propertyData
-				propertyData.values = SMap.create(channel, property.getValues(area, channel));
-				propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
-				
-				// TODO How to do this???
-//			propertyData.importSourceValues = SMap.create(channel, property.getImportSourceValues(null)));
-				
-				properties = properties.add(property.getPropertyInfo(), propertyData);
-			}
-			result.propertyData = result.propertyData.add(group, properties);
-			
-		}
+		result.propertyData = ItemUtil.propertyData(itemModel, area, channel);
 		
 		return result;
 	}
-
 }

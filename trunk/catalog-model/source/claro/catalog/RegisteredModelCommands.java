@@ -10,6 +10,7 @@ import claro.catalog.impl.items.FindItemsImpl;
 import claro.catalog.impl.items.FindPropertiesImpl;
 import claro.catalog.impl.items.GetCategoryTreeImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
+import claro.catalog.impl.items.StoreProductImpl;
 import easyenterprise.lib.command.RegisteredCommands;
 
 public class RegisteredModelCommands extends RegisteredCommands {
@@ -18,6 +19,7 @@ public class RegisteredModelCommands extends RegisteredCommands {
 		register(ItemDetailsCommandImpl.class);
 		register(FindItemsImpl.class);
 		register(FindPropertiesImpl.class);
+		register(StoreProductImpl.class);
 		register(RootDataCommandImpl.class);
 		register(GetImportSourcesImpl.class);
 		register(GetImportSourceHistoryImpl.class);
