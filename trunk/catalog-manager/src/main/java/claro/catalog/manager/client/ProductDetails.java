@@ -150,6 +150,10 @@ abstract public class ProductDetails extends Composite implements Globals {
 		if (itemId == null && !propertyInfo.equals(nameProperty)) {
 			addNamePropertyValue(cmd);
 		}
+		// Always include categories for new items:
+		if (itemId == null) {
+			cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+		}
 		
 		storeItem(cmd);
 	}

@@ -117,7 +117,9 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 			validate(categoryModel != null);
 
 			// Ensure the category is not part of the product parents yet.
-			validate(!catalogModel.getItem(productId).getParents().contains(categoryModel));
+			if (productId != null) {
+				validate(!catalogModel.getItem(productId).getParents().contains(categoryModel));
+			}
 		}
 		
 		// properties for values to be removed should exist, as well as the values.
@@ -131,7 +133,19 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 		
 		// Properties for added values must exist.
 		for (PropertyInfo value : CollectionUtil.notNull(valuesToSet).getKeys()) {
-			validate(catalogModel.getItem(productId).findProperty(value.propertyId, true) != null);
+			if (productId != null) {
+				validate(catalogModel.getItem(productId).findProperty(value.propertyId, true) != null);
+			} else {
+				// New item, so property must be defined on one of the parents:
+				boolean found = false;
+				for (Long categoryId : CollectionUtil.notNull(categoriesToSet)) {
+					if (catalogModel.getItem(categoryId).findProperty(value.propertyId, true) != null) {
+						found = true;
+						break;
+					}
+				}
+				validate(found);
+			}
 		}
 	}
 
