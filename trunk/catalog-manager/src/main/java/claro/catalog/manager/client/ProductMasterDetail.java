@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -322,12 +323,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 				add(new Grid(2, 3) {{
 					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
 					setWidget(0, 0, new ListBox() {{
-						addItem("Default");
-						addItem("English");
-						addItem("French");
-						addItem("&nbsp;&nbsp;&nbsp;Shop");
-						addItem("English");
-						addItem("French");
+						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Shop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
 					}});
 					setWidget(0, 1, new TextBox() {{
 						addChangeHandler(new ChangeHandler() {
