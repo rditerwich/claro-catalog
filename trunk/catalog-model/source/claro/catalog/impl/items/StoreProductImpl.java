@@ -8,18 +8,23 @@ import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.fileupload.FileItem;
+
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.StoreProduct;
+import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
@@ -83,7 +88,15 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 			for (Entry<PropertyInfo, SMap<String, Object>> value : CollectionUtil.notNull(valuesToSet)) {
 				PropertyModel propertyModel = productModel.findProperty(value.getKey().propertyId, true);
 				for (Entry<String, Object> languageValue : value.getValue()) {
-					propertyModel.setValue(stagingArea, outputChannel, languageValue.getKey(), languageValue.getValue());
+					Object typedValue = languageValue.getValue();
+					if (propertyModel.getEntity().getType() == PropertyType.Media) {
+						FileItem fileItem = UploadServlet.getUploadedFile(typedValue.toString());
+						if (fileItem != null) {
+							MediaValue mv = new MediaValue(null, fileItem.getContentType(), fileItem.getName());
+							typedValue = mv;
+						}
+					}
+					propertyModel.setValue(stagingArea, outputChannel, languageValue.getKey(), typedValue);
 				}
 			}
 			

@@ -99,12 +99,11 @@ public class ItemModel {
 		CatalogDao dao = CatalogDao.get();
 		if (dao.setItemParents(getEntity(), items)) {
 			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
-			invalidItems.add(this);
 			invalidItems.addAll(getChildExtent());
+			invalidItems.add(this);
 			invalidItems.addAll(getParentExtent());
 			for (ItemModel parent : parents) {
 				invalidItems.add(parent);
-				invalidItems.addAll(parent.getChildExtent());
 				invalidItems.addAll(parent.getParentExtent());
 			}
 			catalog.invalidate(invalidItems);
