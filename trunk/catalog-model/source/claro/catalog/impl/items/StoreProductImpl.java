@@ -115,11 +115,6 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 		for (Long categoryId : CollectionUtil.notNull(categoriesToSet)) {
 			ItemModel categoryModel = catalogModel.getItem(categoryId);
 			validate(categoryModel != null);
-
-			// Ensure the category is not part of the product parents yet.
-			if (productId != null) {
-				validate(!catalogModel.getItem(productId).getParents().contains(categoryModel));
-			}
 		}
 		
 		// properties for values to be removed should exist, as well as the values.

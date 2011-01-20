@@ -34,4 +34,9 @@ public class PropertyInfo implements Serializable {
 	public int hashCode() {
 		return Objects.hashCode(propertyId);
 	}
+	
+	@Override
+	public String toString() {
+		return "PropertyInfo(" + propertyId + ")";
+	}
 }

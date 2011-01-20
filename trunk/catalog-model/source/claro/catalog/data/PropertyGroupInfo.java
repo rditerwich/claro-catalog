@@ -26,4 +26,9 @@ public class PropertyGroupInfo implements Serializable {
 	public int hashCode() {
 		return Objects.hashCode(propertyGroupId);
 	}
+	
+	@Override
+	public String toString() {
+		return "GroupInfo(" + propertyGroupId + ")"; 
+	}
 }

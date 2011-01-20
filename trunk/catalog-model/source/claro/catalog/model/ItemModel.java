@@ -99,9 +99,11 @@ public class ItemModel {
 		CatalogDao dao = CatalogDao.get();
 		if (dao.setItemParents(getEntity(), items)) {
 			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
+			invalidItems.add(this);
 			invalidItems.addAll(getChildExtent());
 			invalidItems.addAll(getParentExtent());
 			for (ItemModel parent : parents) {
+				invalidItems.add(parent);
 				invalidItems.addAll(parent.getChildExtent());
 				invalidItems.addAll(parent.getParentExtent());
 			}
@@ -334,6 +336,11 @@ public class ItemModel {
 			}
 			return propertyExtent;
 		}		
+	}
+	
+	@Override
+	public String toString() {
+		return "" + itemId;
 	}
 	
 	public Set<PropertyModel> getDanglingProperties() {

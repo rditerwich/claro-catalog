@@ -163,6 +163,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		// Only remove values if the item exists:
 		if (itemId != null) {
 			StoreProduct cmd = new StoreProduct();
+			cmd.productId = itemId;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
 			
@@ -172,6 +173,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	
 	private void categoryAdded(Long itemId, Long categoryId) {
 		StoreProduct cmd = new StoreProduct();
+		cmd.productId = itemId;
 		
 		cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
 		if (itemId == null) {
@@ -193,7 +195,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		if (itemId != null) {
 			if (!categoryPanel.getCategories().getKeys().isEmpty()) {
 				StoreProduct cmd = new StoreProduct();
-				
+				cmd.productId = itemId;
 				cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
 				
 				storeItem(cmd);
