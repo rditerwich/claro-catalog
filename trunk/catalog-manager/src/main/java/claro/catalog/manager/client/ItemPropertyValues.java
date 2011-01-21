@@ -18,20 +18,33 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasMouseOutHandlers;
+import com.google.gwt.event.dom.client.HasMouseOverHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.i18n.client.CurrencyData;
+import com.google.gwt.i18n.client.CurrencyList;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.MoneyWidget;
 import easyenterprise.lib.util.CollectionUtil;
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
+import gwtupload.client.IFileInput;
 import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
@@ -232,7 +245,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		return widget;
 	}
 
-	// TODO: Enums, Formatted Text.
+	// TODO: Enums, Formatted Text, Money.
 	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, final PropertyInfo property) {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;
@@ -260,6 +273,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 					final FlowPanel me = this;
 					add(new MediaWidget(false));
 					add(new SingleUploader() {{
+						addHoverVisibility(getFileInput());
 						addOnFinishUploadHandler(new OnFinishUploaderHandler() {
 							public void onFinish(IUploader uploader) {
 								if (uploader.getStatus() == Status.SUCCESS) {
@@ -271,6 +285,16 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				}};
 			}
 			break;
+		case Money:
+			if (oldWidget instanceof MoneyWidget) {
+				result = oldWidget;
+			} else {
+				result = new MoneyWidget() {
+					protected void valueChanged(Money newValue) {
+						ItemPropertyValues.this.valueChanged(this, newValue);
+					}
+				};
+			}
 		default:
 			if (oldWidget instanceof TextBox) {
 				result = oldWidget;
@@ -295,6 +319,26 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		return result;
 	}
 	
+	private void addHoverVisibility(final IFileInput widget) {
+		if (widget instanceof HasMouseOverHandlers) {
+			HasMouseOverHandlers hasMouseOver = (HasMouseOverHandlers) widget;
+			hasMouseOver.addMouseOverHandler(new MouseOverHandler() {
+				public void onMouseOver(MouseOverEvent event) {
+					widget.setVisible(true);
+				}
+			});
+		}
+		if (widget instanceof HasMouseOutHandlers) {
+			HasMouseOutHandlers hasMouseOut = (HasMouseOutHandlers) widget;
+			hasMouseOut.addMouseOutHandler(new MouseOutHandler() {
+				public void onMouseOut(MouseOutEvent event) {
+					widget.setVisible(false);
+				}
+			});
+		}
+	}
+
+	
 	private void setValue(Widget widget, Object value, PropertyInfo property) {
 		switch (property.type) {
 		case Boolean:
@@ -312,6 +356,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				mediaWidget.setData(null, null, null);
 			}
 			break;
+		case Money:
+			MoneyWidget moneyWidget = (MoneyWidget) widget;
+			moneyWidget.setValue((Money) value);
 		default:
 			TextBox textBox = (TextBox) widget;
 			textBox.setText(value != null? propertyStringConverter.toString(property.type, value) : null);

@@ -74,10 +74,8 @@ public class CatalogPage extends Page {
 		// Read Root properties
 		updateProductListRootProperties();		
 		
-		// TODO update PL categories
 		// TODO update OuputChannels and Languages. 
 		
-		// TODO Listen to language selection??
 	}
 
 	private void updateProductListRootProperties() {
