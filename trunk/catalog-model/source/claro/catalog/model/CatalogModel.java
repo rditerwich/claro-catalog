@@ -37,6 +37,7 @@ public class CatalogModel {
 	public final PropertyModel supplierArticleNumberProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
+	private PropertyGroup imagesPropertyGroup;
 
 	public static void startOperation(CatalogDao dao) {
 		CatalogAccess.startOperation(dao);
@@ -50,12 +51,13 @@ public class CatalogModel {
 		this.catalog = findOrCreateCatalog(id);
 		ItemModel root = findOrCreateRootCategory();
 		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
+		this.imagesPropertyGroup = findOrCreatePropertyGroup(RootProperties.IMAGES, null);
 		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup, RootProperties.ROOTCATEGORY_NAME);
 		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
 		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
 		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String, generalPropertyGroup);
-		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media, generalPropertyGroup);
-		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media, generalPropertyGroup);
+		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media, imagesPropertyGroup);
+		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media, imagesPropertyGroup);
 		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);

@@ -91,6 +91,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 						StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 					}});
+					productImage.setSize("100px", "100px");
 				}});
 				
 				add(propertyValues = new ItemPropertyValues(language, outputChannel) {

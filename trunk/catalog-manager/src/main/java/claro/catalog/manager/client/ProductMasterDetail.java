@@ -47,7 +47,7 @@ import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ProductMasterDetail extends MasterDetail implements Globals {
-	enum Styles implements Style { productMasterDetail, productprice, productname, product, productpanel }
+	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel }
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
 	private static final int PRICE_COL = 2;
@@ -89,6 +89,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
 	private SMap<Long, SMap<String, String>> newProductCategories;
+	private RoundedPanel masterRoundedPanel;
 
 
 	public ProductMasterDetail() {
@@ -181,6 +182,12 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 		Table productTable = getMasterTable();
 		
+		if (productKeys.isEmpty()) {
+			masterRoundedPanel.setWidget(noProductsFoundLabel);
+		} else {
+			masterRoundedPanel.setWidget(getMasterTable());
+		}
+		
 		noProductsFoundLabel.setVisible(productKeys.isEmpty());
 		updateFilterLabel();
 
@@ -230,7 +237,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 					addRowSelectionListener(this, row);
 				}});
 			}});
-			
+			productTable.getWidget(i, PRODUCT_COL).getElement().getParentElement().addClassName(Styles.productTD.toString());
 			// Price
 			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
 				StyleUtil.add(this, Styles.productprice);
@@ -363,20 +370,21 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 					add(filterLabel = new HTML() {{
 						setVisible(false); 
 					}});
-					add(noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-						setVisible(false);
-					}});
 				}});
 			}}); 
 		}});
+		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+			setVisible(false);
+		}};
 	}
 	
 	@Override
 	protected final Widget tableCreated(Table table) {
 		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
-		return new RoundedPanel(table, RoundedPanel.ALL, 4) {{
+		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
 			setBorderColor("white");
 		}};
+		return masterRoundedPanel;
 	}
 
 	

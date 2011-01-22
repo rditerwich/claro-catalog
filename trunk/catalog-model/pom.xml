@@ -7,6 +7,8 @@
 	<name>Claro Catalog Server</name>
 	<inceptionYear>2010</inceptionYear>
 	<properties>
+	  	<gwt.version>2.1.0</gwt.version>
+	
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
 	</properties>
@@ -36,6 +38,13 @@
 <!--      <version>1.0</version>-->
 <!--      <scope>provided</scope>-->
 <!--    </dependency>-->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
 		<dependency>
 	    <groupId>org.eclipse.persistence</groupId>
 	    <artifactId>eclipselink</artifactId>

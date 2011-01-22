@@ -356,6 +356,7 @@ ol li .send {
 .productMasterDetail table.mainTable tr.itemRowChanged td { font-style: italic; }
 .productMasterDetail table.mainTable table.product { width: 100%; cursor: pointer;}
 .productMasterDetail table.mainTable table.product td { border: none;}
+.productMasterDetail table.mainTable td.productTD { width: 100%; padding-left: 5px; padding-right: 5px;}
 
 
 
@@ -413,6 +414,16 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 }
 .productDetails .valueParent .valueWidget {
 	width: 100%;
+}
+
+
+/*.productDetails .valueParent .valueWidget .upld-form-elements .hoverStyle input {*/
+.GWTUpld .hoverStyle input, .GWTUpld .hoverStyle input button{
+	visibility: visible;
+}
+/*.productDetails .valueParent .valueWidget upld-form-elements .noHoverStyle input {*/
+.GWTUpld .noHoverStyle input, .GWTUpld .noHoverStyle button {
+	visibility: hidden;
 }
 	
 .productDetails input.derived { 

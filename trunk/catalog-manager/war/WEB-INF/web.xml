@@ -48,7 +48,32 @@
 		<url-pattern>*.gupld</url-pattern>
 	</servlet-mapping>
   
+	<servlet>
+		<servlet-name>downloadServlet</servlet-name>
+		<servlet-class>claro.catalog.manager.server.DownloadMediaServlet</servlet-class>
+		      <init-param>
+        <param-name>javax.persistence.jdbc.driver</param-name>
+        <param-value>org.postgresql.Driver</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.url</param-name>
+        <param-value>jdbc:postgresql:catalog</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.user</param-name>
+        <param-value>postgres</param-value>
+      </init-param>
+      <init-param>
+        <param-name>javax.persistence.jdbc.password</param-name>
+        <param-value>postgres</param-value>
+      </init-param>
+	</servlet>
   
+    <servlet-mapping>
+      <servlet-name>downloadServlet</servlet-name>
+      <url-pattern>/catalogmanager/DownloadMedia</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
       <servlet-name>CatalogServlet</servlet-name>
       <url-pattern>/catalogmanager/command</url-pattern>
@@ -56,7 +81,6 @@
 
 	<servlet>
 		<servlet-name>AuthenticationServlet</servlet-name>
-		<!-- This is the default servlet, it puts files in session -->
 		<servlet-class>easyenterprise.lib.gwt.server.OpenIdServlet</servlet-class>
 	</servlet>
 

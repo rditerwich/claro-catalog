@@ -267,6 +267,16 @@ public abstract class PropertyModel {
 		}
 	};
 	
+	static Object getNullValue(PropertyType type) {
+		switch(type) {
+		case Media: 
+			return MediaValue.create(null, null, null);
+		case Money:
+			return new Money(null, null);
+		default:
+			return null;
+		}		
+	}
 	
 	static void setTypedValue(PropertyValue propertyValue, Object value) {
 		switch(propertyValue.getProperty().getType()) {
@@ -275,6 +285,7 @@ public abstract class PropertyModel {
 				MediaValue mediaValue = (MediaValue) value;
 				propertyValue.setMimeType(mediaValue.mimeType);
 				propertyValue.setStringValue(mediaValue.filename);
+				propertyValue.setMediaValue(mediaValue.content);
 			} else {
 				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MediaValue");
 			}
@@ -291,7 +302,7 @@ public abstract class PropertyModel {
 			
 		// TODO add other non-string values
 		default:
-			propertyValue.setStringValue(value.toString());
+			propertyValue.setStringValue(value != null? value.toString() : null);
 		}
 	}
 
@@ -300,7 +311,7 @@ public abstract class PropertyModel {
 	// TODO add other non-string values
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
-		case Media: return new MediaValue(value.getId(), value.getMimeType(), value.getStringValue());
+		case Media: return MediaValue.create(value.getId(), value.getMimeType(), value.getStringValue());
 		case Money: return new Money(value.getMoneyValue(), value.getMoneyCurrency());
 		default: return value.getStringValue();
 		}

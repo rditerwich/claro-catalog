@@ -1,5 +1,6 @@
 package claro.catalog.command;
 
+import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
@@ -28,6 +29,7 @@ public class RootDataCommand implements Command<RootDataCommand.Result> {
 
 		private static final long serialVersionUID = 1L;
 
+		public MediaValue v;
 		public PropertyGroupInfo generalGroup;
 		public Long rootCategory;
 		public SMap<String, String> rootCategoryLabels;

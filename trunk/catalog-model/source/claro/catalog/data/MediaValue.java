@@ -9,13 +9,18 @@ public class MediaValue implements Serializable {
 	public Long propertyValueId;
 	public String mimeType;
 	public String filename;
+	transient public byte[] content;
 	
-	public MediaValue() {
+	public static MediaValue create(Long propertyValueId, String mimeType, String filename) {
+		return create(propertyValueId, mimeType, filename, null);
 	}
-	
-	public MediaValue(Long propertyValueId, String mimeType, String filename) {
-		this.propertyValueId = propertyValueId;
-		this.mimeType = mimeType;
-		this.filename = filename;
+	public static MediaValue create(Long propertyValueId, String mimeType, String filename, byte[] content) {
+		MediaValue result = new MediaValue();
+		result.propertyValueId = propertyValueId;
+		result.mimeType = mimeType;
+		result.filename = filename;
+		result.content = content;
+		
+		return result;
 	}
 }

@@ -201,12 +201,16 @@ public class ItemModel {
 	
 	public PropertyGroupInfo findGroup(Property property) {
 		PropertyGroup group = null;
-		for (ItemModel item : getParentExtent()) {
+		Set<ItemModel> items = new LinkedHashSet<ItemModel>();
+		items.add(this);
+		items.addAll(getParentExtent());
+		for (ItemModel item : items) {
 			if (item.getItemClass().equals(Category.class)) {
 				Category category = (Category) item.getEntity();
 				for (PropertyGroupAssignment groupAssignment : category.getPropertyGroupAssignments()) {
 					if (groupAssignment.getProperty().equals(property)) {
 						group = groupAssignment.getPropertyGroup();
+						break;
 					}
 				}
 			}
@@ -272,9 +276,9 @@ public class ItemModel {
 	}
 	
 	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group) {
-		return findOrCreateProperty(propertyLabel, language, type, group, null);
+		return findOrCreateProperty(propertyLabel, language, type, group, PropertyModel.getNullValue(type));
 	}
-	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group, String initialValue) {
+	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group, Object initialValue) {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
 			property = createProperty(SMap.create(language, propertyLabel), type, group);

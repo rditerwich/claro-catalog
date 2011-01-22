@@ -67,7 +67,7 @@ public class PropertyStringConverter {
 			if (index > -1) {
 				fileName = value.substring(index + 1);
 			}
-			return new MediaValue(id, mimetype, fileName);
+			return MediaValue.create(id, mimetype, fileName);
 		case Money: 
 			return Money.parse(value, defaultCurrency);
 		default: 

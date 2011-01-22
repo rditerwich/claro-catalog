@@ -92,7 +92,7 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 					if (propertyModel.getEntity().getType() == PropertyType.Media) {
 						FileItem fileItem = UploadServlet.getUploadedFile(typedValue.toString());
 						if (fileItem != null) {
-							MediaValue mv = new MediaValue(null, fileItem.getContentType(), fileItem.getName());
+							MediaValue mv = MediaValue.create(null, fileItem.getContentType(), fileItem.getName(), fileItem.get());
 							typedValue = mv;
 						}
 					}
