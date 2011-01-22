@@ -134,6 +134,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		
 		// Rebind property groups
 		int i = 0;
+		propertyByValueWidget.clear();
 		for (PropertyGroupInfo propertyGroup : propertyGroups) {
 			
 			// TabPanel tab text:
@@ -183,7 +184,6 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			}
 			
 			// (re)bind widgets
-			propertyByValueWidget.clear();
 			int j = 0;
 			for (PropertyInfo property : propertyKeys) {
 				PropertyValueWidgets propertyValueWidgets = groupPanelWidgets.valueWidgets.get(j);
