@@ -23,12 +23,14 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.util.CollectionUtil;
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 
 abstract public class ProductDetails extends Composite implements Globals {
-	private enum Styles implements Style { productDetails }
+	private enum Styles implements Style { productDetails, imagePrice }
 	
 	private Label productNameBox;
 	private CategoriesWidget categoryPanel;
@@ -86,12 +88,14 @@ abstract public class ProductDetails extends Composite implements Globals {
 				
 				// Image, Price
 				add(new HorizontalPanel(){{
+					StyleUtil.add(this, Styles.imagePrice);
+					setVerticalAlignment(ALIGN_MIDDLE);
 					add(productImage = new MediaWidget(false));
 					add(productPrice = new Label() {{
 						StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 					}});
-					productImage.setSize("100px", "100px");
+					productImage.setImageSize("125px", "125px");
 				}});
 				
 				add(propertyValues = new ItemPropertyValues(language, outputChannel) {
@@ -233,7 +237,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		final Object price = getValue(priceProperty, properties);
 		if (price != null) {
 			// TODO Use locale in the following format??
-			productPrice.setText(propertyStringConverter.toString(priceProperty.type, price));
+			productPrice.setText(MoneyFormatUtil.full((Money)price));
 		} else {
 			productPrice.setText("");
 		}

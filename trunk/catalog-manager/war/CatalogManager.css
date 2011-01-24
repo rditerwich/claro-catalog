@@ -369,7 +369,18 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 }
 
 .productDetails .productname {
+	font-size: large;
+}
+
+
+.productDetails .imagePrice {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.productDetails .productprice {
 	font-size: medium;
+	padding: 20px;
 }
 
 .productDetails .gwt-TabBarItem {

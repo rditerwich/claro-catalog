@@ -43,7 +43,9 @@ import com.google.gwt.user.client.ui.Widget;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
+import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.Table;
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 abstract public class ProductMasterDetail extends MasterDetail implements Globals {
@@ -294,7 +296,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
 		if (price != null) {
 			// TODO Use locale in the following format??
-			rowWidgets.priceLabel.setText(propertyStringConverter.toString(priceProperty.type, price));
+			rowWidgets.priceLabel.setText(MoneyFormatUtil.full((Money) price));
 		} else {
 			rowWidgets.priceLabel.setText("");
 		}

@@ -229,7 +229,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
 			
 			value = effectiveLanguageValues.tryGet(language, null);
-			isDerived = true; // TODO This makes no value derived???
+			isDerived = true; 
 		}
 		
 		setValue(widget, value, property);

@@ -116,4 +116,8 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 			}
 		}
 	}
+
+	public void setImageSize(String width, String height) {
+		image.setSize(width, height);
+	}
 }
