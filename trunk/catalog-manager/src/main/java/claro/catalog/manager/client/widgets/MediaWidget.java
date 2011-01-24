@@ -40,11 +40,12 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 	 * 
 	 * @param canUpload
 	 */
-	public MediaWidget(final boolean canUpload, boolean alwaysShow) {
+	public MediaWidget(final boolean canUpload, final boolean alwaysShow) {
 		this.alwaysShow = alwaysShow;
 		initWidget(new FlowPanel() {{
+			
 			add(image = new Image() {{
-				setVisible(false);
+				setVisible(alwaysShow);
 				setSize("70px", "70px");
 			}});
 			add(a = new Anchor() {{

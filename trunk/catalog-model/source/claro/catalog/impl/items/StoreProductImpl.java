@@ -151,7 +151,11 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 			} else {
 				// New item, so property must be defined on one of the parents:
 				boolean found = false;
-				for (Long categoryId : CollectionUtil.notNull(categoriesToSet)) {
+				List<Long> parents = new ArrayList<Long>(CollectionUtil.notNull(categoriesToSet));
+				if (parents.isEmpty()) {
+					parents.add(catalogModel.getRootItem().getItemId());
+				}
+				for (Long categoryId : parents) {
 					if (catalogModel.getItem(categoryId).findProperty(value.propertyId, true) != null) {
 						found = true;
 						break;

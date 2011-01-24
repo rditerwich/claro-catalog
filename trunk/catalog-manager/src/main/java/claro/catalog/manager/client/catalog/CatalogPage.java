@@ -52,10 +52,6 @@ public class CatalogPage extends Page {
 
 	public void show() {
 		initializeMainPanel();
-		
-		// Retrieve Products for filter:
-		updateProductList();
-
 	}
 	
 	private void initializeMainPanel() {
@@ -92,6 +88,7 @@ public class CatalogPage extends Page {
 			public void onSuccess(RootDataCommand.Result result) {
 				nameProperty = result.rootProperties.get(RootProperties.NAME);
 				filteredProductList.setRootProperties(result.rootProperties, result.generalGroup, result.rootCategory, result.rootCategoryLabels);
+				updateProductList();
 			}
 		});
 	}
@@ -106,7 +103,7 @@ public class CatalogPage extends Page {
 		
 		cmd.filter = filteredProductList.getFilter();
 		cmd.categoryIds = filteredProductList.getFilterCategories().getKeys();
-		cmd.orderByIds = Collections.singletonList(nameProperty != null ? nameProperty.propertyId : 1);  // TODO remove this hack (hardcoded property id).
+		cmd.orderByIds = Collections.singletonList(nameProperty.propertyId); 
 		// TODO set more command pars.
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
