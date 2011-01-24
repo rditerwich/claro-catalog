@@ -26,7 +26,6 @@ public class FindItems implements Command<FindItems.Result> {
 	public String language;
 	
 	public List<Long> categoryIds;
-	public Map<Long, Object> propertyFilters;
 	public String filter;
 
 	public List<Long> orderByIds;

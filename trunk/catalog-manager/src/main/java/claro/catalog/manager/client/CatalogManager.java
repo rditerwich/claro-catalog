@@ -3,6 +3,7 @@ package claro.catalog.manager.client;
 
 import claro.catalog.command.Login;
 import claro.catalog.command.Login.Result;
+import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.party.User;

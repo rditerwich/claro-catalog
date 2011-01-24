@@ -73,6 +73,11 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 					ItemModel categoryModel = catalogModel.getItem(categoryId);
 					categories.add(categoryModel);
 				}
+				
+				// Mare sure the product has a parent:
+				if (categories.isEmpty()) {
+					categories.add(catalogModel.getRootItem());
+				}
 				productModel.setParents(categories);
 			}
 			
@@ -104,7 +109,7 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 			result.storedProductId = productModel.getItemId();
 			result.masterValues = ItemUtil.effectivePropertyValues(productModel, stagingArea, outputChannel);
 			result.detailValues = ItemUtil.propertyData(productModel, stagingArea, outputChannel);
-			result.categories = ItemUtil.parents(productModel, catalogModel, stagingArea, outputChannel);
+			result.categories = ItemUtil.parents(productModel, catalogModel, stagingArea, outputChannel, false);
 		}
 		
 		

@@ -27,9 +27,10 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 	private Anchor a;
 	private UploadWidget up;
 	private boolean uploadDataSet;
+	private final boolean alwaysShow;
 
 	public MediaWidget() {
-		this(true);
+		this(false, false);
 	}
 
 	/**
@@ -39,7 +40,8 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 	 * 
 	 * @param canUpload
 	 */
-	public MediaWidget(final boolean canUpload) {
+	public MediaWidget(final boolean canUpload, boolean alwaysShow) {
+		this.alwaysShow = alwaysShow;
 		initWidget(new FlowPanel() {{
 			add(image = new Image() {{
 				setVisible(false);
@@ -88,7 +90,7 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 
 	private void render(Long id, String mimeType, String filename) {
 		if (id == null || mimeType == null || "".equals(mimeType.trim()) ) {
-			image.setVisible(false);
+			image.setVisible(alwaysShow);
 			a.setVisible(false);
 			image.setUrl("");
 			image.setTitle("");

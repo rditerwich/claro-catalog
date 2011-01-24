@@ -68,10 +68,12 @@ public class ItemUtil {
 	}
 
 
-	public static SMap<Long, SMap<String, String>> parents(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+	public static SMap<Long, SMap<String, String>> parents(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel, boolean includeRootCategory) {
 		SMap<Long, SMap<String, String>> categories = SMap.empty();
 		for (ItemModel category : itemModel.getParents()) {
-			categories = categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
+			if (includeRootCategory || !category.equals(catalogModel.getRootItem())) {
+				categories = categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
+			}
 		}
 		return categories;
 	}

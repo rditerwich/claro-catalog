@@ -6,13 +6,3 @@ import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.util.SMap;
 
-public class ItemDetailsCommandResult implements CommandResult {
-
-	private static final long serialVersionUID = 1L;
-	
-	public SMap<Long, SMap<String, String>> categories;
-	
-	public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
-	public SMap<PropertyInfo, PropertyData> danglingPropertyData;
-	
-}

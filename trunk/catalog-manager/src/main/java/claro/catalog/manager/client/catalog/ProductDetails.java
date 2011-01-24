@@ -1,4 +1,4 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.catalog;
 
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
@@ -10,6 +10,10 @@ import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.manager.client.CatalogManager;
+import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.CatalogManager.Styles;
+import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
@@ -90,7 +94,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 				add(new HorizontalPanel(){{
 					StyleUtil.add(this, Styles.imagePrice);
 					setVerticalAlignment(ALIGN_MIDDLE);
-					add(productImage = new MediaWidget(false));
+					add(productImage = new MediaWidget(false, true));
 					add(productPrice = new Label() {{
 						StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
@@ -198,15 +202,11 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void categoryRemoved(Long itemId, Long categoryId) {
 		// if the item is new, do not store
 		if (itemId != null) {
-			if (!categoryPanel.getCategories().getKeys().isEmpty()) {
-				StoreProduct cmd = new StoreProduct();
-				cmd.productId = itemId;
-				cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
-				
-				storeItem(cmd);
-			} else {
-				StatusMessage.show(messages.atLeastOneCategory(), 10);
-			}
+			StoreProduct cmd = new StoreProduct();
+			cmd.productId = itemId;
+			cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+			
+			storeItem(cmd);
 		}
 	}
 	

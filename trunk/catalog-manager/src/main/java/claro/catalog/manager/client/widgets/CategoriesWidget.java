@@ -1,8 +1,10 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.widgets;
 
 import java.util.List;
 
 import claro.catalog.command.items.GetCategoryTree;
+import claro.catalog.manager.client.CatalogManager;
+import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,6 +13,8 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -173,13 +177,18 @@ public class CategoriesWidget extends Composite implements Globals {
 	}
 	
 	// TODO create filtered selection tree?
-	private Tree createTree(final Long root, final SMap<Long, SMap<String, String>> categories, final SMap<Long, Long> children) {
+	private Tree createTree(final Long rootId, final SMap<Long, SMap<String, String>> categories, final SMap<Long, Long> children) {
 		Tree result = new Tree();
-		
-		result.addItem(new TreeItem(categories.getOrEmpty(root).tryGet(CatalogManager.getUiLanguage(), null)) {{
-			setUserObject(root);
-			addItem(""); // Add uninitialized marker.
-		}});
+		// Get root categories:
+		List<Long> rootCategories = children.getAll(rootId);
+		for (final Long root : rootCategories) {
+			String categoryName = categories.getOrEmpty(root).tryGet(CatalogManager.getUiLanguage(), null);
+			result.addItem(new TreeItem(categoryName) {{
+				StyleUtil.add(this, Styles.categoryName);
+				setUserObject(root);
+				addItem(""); // uninitialized marker.
+			}});
+		}
 
 		result.addOpenHandler(new OpenHandler<TreeItem>() {
 			public void onOpen(OpenEvent<TreeItem> event) {
@@ -201,6 +210,15 @@ public class CategoriesWidget extends Composite implements Globals {
 			}
 		});
 		
+		// Make sure the root cannot be closed:
+		result.addCloseHandler(new CloseHandler<TreeItem>() {
+			public void onClose(CloseEvent<TreeItem> event) {
+				if (event.getTarget() == event.getTarget().getTree().getItem(0)) {
+					event.getTarget().setState(true, false);
+				}
+			}
+		});
+		
 		result.addSelectionHandler(new SelectionHandler<TreeItem>() {
 			
 			@Override
@@ -211,6 +229,8 @@ public class CategoriesWidget extends Composite implements Globals {
 				}
 			}
 		});
+		
+		result.getItem(0).setState(true);
 		
 		return result;
 	}

@@ -1,63 +1,36 @@
 package claro.catalog.command.items;
 
+import claro.catalog.data.PropertyData;
+import claro.catalog.data.PropertyGroupInfo;
+import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
+import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
+import easyenterprise.lib.util.SMap;
 
-public class ItemDetailsCommand implements Command<ItemDetailsCommandResult>{
+public class ItemDetailsCommand implements Command<ItemDetailsCommand.Result>{
 
 	private static final long serialVersionUID = 1L;
 	
-	private Long catalogId;
-	private String language;
-	private Long item;
-	private Long outputChannel;
-	private Long stagingArea;
+	public Long catalogId;
+	public Long stagingAreaId;
+	public Long outputChannelId;
+	public String language;
+	public Long itemId;
+	public boolean includeRootCategory;
 	
 	public void checkValid() throws CommandValidationException {
 	}
 	
-	public Long getCatalogId() {
-		return catalogId;
+	public static class Result implements CommandResult {
+
+		private static final long serialVersionUID = 1L;
+		
+		public SMap<Long, SMap<String, String>> categories;
+		
+		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
+		public SMap<PropertyInfo, PropertyData> danglingPropertyData;
+		
 	}
-	
-	public ItemDetailsCommand setCatalogId(Long catalogId) {
-		this.catalogId = catalogId;
-		return this;
-	}
-	
-	public Long getItem() {
-		return item;
-	}
-	
-	public String getLanguage() {
-		return language;
-	}
-	
-	public Long getOutputChannel() {
-		return outputChannel;
-	}
-	
-	public Long getStagingArea() {
-		return stagingArea;
-	}
-	
-	public ItemDetailsCommand setItem(Long item) {
-		this.item = item;
-		return this;
-	}
-	
-	public ItemDetailsCommand setLanguage(String language) {
-		this.language = language;
-		return this;
-	}
-	
-	public ItemDetailsCommand setOutputChannel(Long outputChannel) {
-		this.outputChannel = outputChannel;
-		return this;
-	}
-	 
-	public ItemDetailsCommand setStagingArea(Long stagingArea) {
-		this.stagingArea = stagingArea;
-		return this;
-	}
+
 }

@@ -1,4 +1,4 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.catalog;
 
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
@@ -16,6 +16,11 @@ import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
+import claro.catalog.manager.client.CatalogManager;
+import claro.catalog.manager.client.GlobalStyles;
+import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.CatalogManager.Styles;
+import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
@@ -169,6 +174,8 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			if (getCurrentRow() == itemRow) {
 				details.setItemData(productId, categories, propertyValues);
 			}
+			openDetail(itemRow);  // Redraw selection if necessary.
+			
 		} else {
 			productKeys.add(productId);
 		}
@@ -212,7 +219,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			final int row = i;
 			
 			// Image
-			productTable.setWidget(i, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false) {{
+			productTable.setWidget(i, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false, false) {{
 				addRowSelectionListener(this, row);
 			}});
 			
@@ -352,6 +359,14 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 						protected String getRemoveCategoryTooltip(String categoryName) {
 							return messages.removeCategoryFilterTooltip(categoryName);
 						}
+						protected void removeCategory(Long categoryId) {
+							super.removeCategory(categoryId);
+							updateProductList();
+						}
+						protected void addCategory(Long categoryId, SMap<String, String> labels) {
+							super.addCategory(categoryId, labels);
+							updateProductList();
+						}
 					});
 					setWidget(1, 0, new Anchor(messages.newProduct()) {{
 						addClickHandler(new ClickHandler() {
@@ -426,7 +441,6 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		// TODO Maybe replace with server roundtrip???
 
 		newProductCategories = SMap.empty();
-		newProductCategories = newProductCategories.add(rootCategory, rootCategoryLabels);
 		
 		final Object newProductText = messages.newProduct();
 		

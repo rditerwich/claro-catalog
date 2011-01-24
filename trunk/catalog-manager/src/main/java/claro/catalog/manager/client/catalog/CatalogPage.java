@@ -1,13 +1,18 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.catalog;
 
+
+import java.util.Collections;
 
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.FindItems;
 import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.command.items.ItemDetailsCommand;
-import claro.catalog.command.items.ItemDetailsCommandResult;
 import claro.catalog.command.items.StoreProduct;
 import claro.catalog.command.items.StoreProduct.Result;
+import claro.catalog.data.PropertyInfo;
+import claro.catalog.data.RootProperties;
+import claro.catalog.manager.client.CatalogManager;
+import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.catalog.manager.client.widgets.StatusMessage;
 
@@ -28,6 +33,7 @@ public class CatalogPage extends Page {
 	private Long currentCatalogId;
 	private Long currentOuputChannel;
 	private String currentLanguage;
+	private PropertyInfo nameProperty;
 
 	
 	
@@ -82,7 +88,9 @@ public class CatalogPage extends Page {
 		RootDataCommand cmd = new RootDataCommand();
 		cmd.setCatalogId(-1L);
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<RootDataCommand.Result>() {
+
 			public void onSuccess(RootDataCommand.Result result) {
+				nameProperty = result.rootProperties.get(RootProperties.NAME);
 				filteredProductList.setRootProperties(result.rootProperties, result.generalGroup, result.rootCategory, result.rootCategoryLabels);
 			}
 		});
@@ -98,6 +106,7 @@ public class CatalogPage extends Page {
 		
 		cmd.filter = filteredProductList.getFilter();
 		cmd.categoryIds = filteredProductList.getFilterCategories().getKeys();
+		cmd.orderByIds = Collections.singletonList(nameProperty != null ? nameProperty.propertyId : 1);  // TODO remove this hack (hardcoded property id).
 		// TODO set more command pars.
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
@@ -111,10 +120,12 @@ public class CatalogPage extends Page {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
 
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
-		cmd .setCatalogId(currentCatalogId)
-			.setItem(productId);
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommandResult>() {
-			public void onSuccess(ItemDetailsCommandResult result) {
+		cmd.catalogId = currentCatalogId;
+		cmd.itemId = productId;
+		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
+//		cmd.language = filteredProductList.getLanguage(); TODO
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
+			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
 				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);
 			}

@@ -7,6 +7,7 @@ import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
 import claro.catalog.command.items.StoreProduct;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.manager.client.catalog.ProductDetails;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

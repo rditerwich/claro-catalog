@@ -171,7 +171,7 @@ tabs.showTab(0);
 			masterTable.setWidget(row, NAME_COL, rowWidgets.name = new Anchor() {{
 				addClickHandler(selectRowClickHandler);
 			}});
-			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new MediaWidget(false) {{
+			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new MediaWidget() {{
 				addClickHandler(selectRowClickHandler);
 			}});
 			masterTable.setWidget(row, WEATHER_COL, rowWidgets.health = new Image() {{

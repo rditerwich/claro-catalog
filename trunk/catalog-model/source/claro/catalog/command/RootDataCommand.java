@@ -1,12 +1,10 @@
 package claro.catalog.command;
 
-import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 public class RootDataCommand implements Command<RootDataCommand.Result> {
@@ -26,13 +24,12 @@ public class RootDataCommand implements Command<RootDataCommand.Result> {
 		return this;
 	}
 	
-	public Money dummy;
+	public SerializableTypes dummy;
 	public static class Result implements CommandResult {
 
 		private static final long serialVersionUID = 1L;
 
-		public MediaValue dummy;
-		public Money dummy2;
+		public SerializableTypes dummy;
 		public PropertyGroupInfo generalGroup;
 		public Long rootCategory;
 		public SMap<String, String> rootCategoryLabels;

@@ -1,6 +1,7 @@
 package claro.catalog.impl.items;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -104,8 +105,8 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		
 		List<ItemModel> result = filterItems(candidates);
 		
-		// TODO sort items
-//		Collections.sort(result, new ItemOrderComparator(orderBy));
+		Collections.sort(result, new ItemOrderComparator(orderBy, stagingArea, outputChannel, language));
+		
 		if (paging.shouldPage()) {
 			return result.subList(paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
 		}
