@@ -135,6 +135,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		render(); 
 	}
 	
+	public String getLanguage() {
+		return language;
+	}
+	
 	public OutputChannel getOutputChannel() {
 		return outputChannel;
 	}

@@ -26,16 +26,12 @@ import easyenterprise.lib.command.gwt.GwtCommandFacade;
 public class CatalogPage extends Page {
 
 	private LayoutPanel mainPanel;
-	private ProductMasterDetail filteredProductList;
+	private ProductMasterDetail productMasterDetail;
 
 	private boolean initialized;
 	
 	private Long currentCatalogId;
-	private Long currentOuputChannel;
-	private String currentLanguage;
 	private PropertyInfo nameProperty;
-
-	
 	
 	public CatalogPage(PlaceController placeController) {
 		super(placeController);
@@ -61,7 +57,7 @@ public class CatalogPage extends Page {
 
 		initialized = true;
 		
-		mainPanel.add(filteredProductList = new ProductMasterDetail() {
+		mainPanel.add(productMasterDetail = new ProductMasterDetail() {
 			protected void productSelected(final Long productId) {
 				updateProductSelection(productId);
 			}
@@ -87,7 +83,7 @@ public class CatalogPage extends Page {
 
 			public void onSuccess(RootDataCommand.Result result) {
 				nameProperty = result.rootProperties.get(RootProperties.NAME);
-				filteredProductList.setRootProperties(result.rootProperties, result.generalGroup, result.rootCategory, result.rootCategoryLabels);
+				productMasterDetail.setRootProperties(result.rootProperties, result.generalGroup, result.rootCategory, result.rootCategoryLabels);
 				updateProductList();
 			}
 		});
@@ -98,17 +94,16 @@ public class CatalogPage extends Page {
 		cmd.catalogId = currentCatalogId;
 		cmd.resultType = ResultType.products;
 		
-		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
-		cmd.language = currentLanguage;
+		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
+		cmd.language = productMasterDetail.getLanguage();
 		
-		cmd.filter = filteredProductList.getFilter();
-		cmd.categoryIds = filteredProductList.getFilterCategories().getKeys();
+		cmd.filter = productMasterDetail.getFilter();
+		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
 		cmd.orderByIds = Collections.singletonList(nameProperty.propertyId); 
-		// TODO set more command pars.
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
-				filteredProductList.setProducts(result.items);
+				productMasterDetail.setProducts(result.items);
 			}
 		});
 	}
@@ -119,12 +114,13 @@ public class CatalogPage extends Page {
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = currentCatalogId;
 		cmd.itemId = productId;
-		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
-//		cmd.language = filteredProductList.getLanguage(); TODO
+		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
+		cmd.language = productMasterDetail.getLanguage();
+		
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
-				filteredProductList.setSelectedProduct(productId, result.categories, result.propertyData);
+				productMasterDetail.setSelectedProduct(productId, result.categories, result.propertyData);
 			}
 		});
 		
@@ -135,7 +131,7 @@ public class CatalogPage extends Page {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = filteredProductList.getOutputChannel() != null? filteredProductList.getOutputChannel().getId() : null;
+		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreProduct.Result>() {
 			public void onFailure(Throwable caught) {
@@ -147,7 +143,7 @@ public class CatalogPage extends Page {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
 				
-				filteredProductList.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.categories, result.detailValues, true);
+				productMasterDetail.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.categories, result.detailValues, true);
 			}
 		});
 	}
