@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
@@ -426,9 +427,22 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	abstract protected void storeItem(StoreProduct cmd);
 
 	private void updateFilterLabel() {
+		StringBuilder filterText = new StringBuilder();
 		String actualFilter = getFilter();
-		if (actualFilter != null && !actualFilter.trim().equals("")) {
-			filterLabel.setHTML(messages.filterMessage(actualFilter)); 
+		boolean filterSet = actualFilter != null && !actualFilter.trim().equals("");
+		if (filterSet) {
+			filterText.append(actualFilter);
+		}
+		String sep = "";
+		if (filterSet) {
+			sep = " and ";
+		}
+		for (Entry<Long, SMap<String, String>> category : filterCategories.getCategories()) {
+			filterText.append(sep); sep = ", ";
+			filterText.append(category.getValue().tryGet(language, null));
+		}
+		if (filterText.length() > 0) {
+			filterLabel.setHTML(messages.filterMessage(filterText.toString())); 
 			filterLabel.setVisible(true);
 		} else {
 			filterLabel.setVisible(false);
