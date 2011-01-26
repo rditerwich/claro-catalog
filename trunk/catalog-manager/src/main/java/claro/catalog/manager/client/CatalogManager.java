@@ -5,6 +5,7 @@ import claro.catalog.command.Login;
 import claro.catalog.command.Login.Result;
 import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
+import claro.catalog.manager.client.taxonomy.TaxonomyPage;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.party.User;
 
@@ -140,6 +141,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				add(new MainMenu(pageContainer) {{
 					setStylePrimaryName(GlobalStyles.menu.toString());
 					addPage(new CatalogPage(placeController), "Catalog");
+					addPage(new TaxonomyPage(placeController), "Taxonomy");
 					addPage(new ImportPage(placeController), messages.importMenu());
 					
 					addPage(new MasterDetailTestPage(placeController), "MasterDetail");

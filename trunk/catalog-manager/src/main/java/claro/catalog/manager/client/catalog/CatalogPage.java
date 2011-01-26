@@ -30,13 +30,11 @@ public class CatalogPage extends Page {
 
 	private boolean initialized;
 	
-	private Long currentCatalogId;
 	private PropertyInfo nameProperty;
 	
 	public CatalogPage(PlaceController placeController) {
 		super(placeController);
 		
-		currentCatalogId = -1L; // TODO Make dynamic.
 		initWidget(mainPanel = new LayoutPanel());
 	}
 
@@ -91,7 +89,7 @@ public class CatalogPage extends Page {
 	
 	private void updateProductList() {
 		FindItems cmd = new FindItems();
-		cmd.catalogId = currentCatalogId;
+		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.resultType = ResultType.products;
 		
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
@@ -112,7 +110,7 @@ public class CatalogPage extends Page {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
 
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
-		cmd.catalogId = currentCatalogId;
+		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.itemId = productId;
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
 		cmd.language = productMasterDetail.getLanguage();
@@ -120,7 +118,7 @@ public class CatalogPage extends Page {
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
-				productMasterDetail.setSelectedProduct(productId, result.categories, result.propertyData);
+				productMasterDetail.setSelectedProduct(productId, result.parents, result.propertyData);
 			}
 		});
 		
@@ -143,7 +141,7 @@ public class CatalogPage extends Page {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
 				
-				productMasterDetail.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.categories, result.detailValues, true);
+				productMasterDetail.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.parents, result.detailValues, true);
 			}
 		});
 	}

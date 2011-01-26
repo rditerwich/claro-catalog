@@ -41,6 +41,9 @@ public interface Images extends ClientBundle {
   @Source("closeButton3.png")
   ImageResource clearImage3();
   
+  @Source("closeButton1.png")  // TODO Get more appropriate image.
+  ImageResource nonLeafImage();
+  
   @Source("dash.png")
   ImageResource dash();
 

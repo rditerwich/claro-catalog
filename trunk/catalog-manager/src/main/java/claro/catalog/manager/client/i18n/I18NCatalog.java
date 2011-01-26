@@ -188,6 +188,9 @@ public interface I18NCatalog extends Messages {
 	String filterMessage(String filter);
 	String internalFailureRetryingMessage(int retryNr);
 	String internalFailureMessage();
+	String loadingCategories();
+	String loadingCategoryDetails();
+	String newCategory();
 	String loadingProducts();
 	String loadingProductDetails();
 	String newProduct();
@@ -247,10 +250,15 @@ public interface I18NCatalog extends Messages {
 	String pleaseWait();
 	String definition();
 	String refresh();
+	String savingCategoryDetailsStatus();
+	String savingCategoryDetailsFailedStatus();
+	String savingCategoryDetailsSuccessStatus();
 	String savingProductDetailsStatus();
 	String savingProductDetailsFailedStatus();
 	String savingProductDetailsSuccessStatus();
-	String atLeastOneCategory();
+	String propertySourceTooltip(String propertyName, String sourceName);
+	String defaultValuesTab();
+	String propertyGroupsTab();
 	String detailsLabel();
 
 

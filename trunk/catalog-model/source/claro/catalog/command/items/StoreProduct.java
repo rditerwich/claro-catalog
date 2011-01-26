@@ -52,6 +52,7 @@ public class StoreProduct implements Command<StoreProduct.Result> {
 		public Long storedProductId;
 		public SMap<PropertyInfo, SMap<String, Object>> masterValues;
 		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> detailValues;
-		public SMap<Long, SMap<String, String>> categories;
+		public SMap<Long, SMap<String, String>> parents;
+		public SMap<Long, SMap<String, String>> parentExtent;
 	}
 }

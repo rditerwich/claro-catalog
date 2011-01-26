@@ -109,7 +109,8 @@ public class StoreProductImpl extends StoreProduct implements CommandImpl<StoreP
 			result.storedProductId = productModel.getItemId();
 			result.masterValues = ItemUtil.effectivePropertyValues(productModel, stagingArea, outputChannel);
 			result.detailValues = ItemUtil.propertyData(productModel, stagingArea, outputChannel);
-			result.categories = ItemUtil.parents(productModel, catalogModel, stagingArea, outputChannel, false);
+			result.parents = ItemUtil.parents(productModel, catalogModel, stagingArea, outputChannel, false);
+			result.parentExtent = ItemUtil.parentExtent(productModel, catalogModel, stagingArea, outputChannel);
 		}
 		
 		

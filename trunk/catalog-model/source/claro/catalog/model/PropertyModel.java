@@ -308,11 +308,16 @@ public abstract class PropertyModel {
 
 
 	
-	// TODO add other non-string values
+	// TODO map all non-string values
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
 		case Media: return MediaValue.create(value.getId(), value.getMimeType(), value.getStringValue());
 		case Money: return new Money(value.getMoneyValue(), value.getMoneyCurrency());
+		case Boolean: return value.getBooleanValue();
+		case Enum: return value.getEnumValue();
+		case Integer: return value.getIntegerValue();
+		case Item: return  value.getItemValue();
+		case Real: return value.getRealValue();
 		default: return value.getStringValue();
 		}
 	}

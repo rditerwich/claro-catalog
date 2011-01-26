@@ -1,6 +1,8 @@
 package claro.catalog.impl.items;
 
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -8,7 +10,9 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.SMap;
 
@@ -25,6 +29,16 @@ public class ItemUtil {
 			for (String language : values.getKeys()) {
 				result = result.add(language, (String) values.get(language));
 			}
+		}
+		
+		return result;
+	}
+	
+	public static SMap<String, String> getNameLabels(PropertyGroup group) {
+		SMap<String, String> result = SMap.empty();
+		
+		for (Label label : group.getLabels()) {
+			result = result.add(label.getLanguage(), label.getLabel());
 		}
 		
 		return result;
@@ -78,5 +92,35 @@ public class ItemUtil {
 		return categories;
 	}
 
+	public static SMap<Long, SMap<String, String>> parentExtent(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+		SMap<Long, SMap<String, String>> categories = SMap.empty();
+		for (ItemModel category : itemModel.getParentExtent()) {
+			categories = categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
+		}
+		return categories;
+	}
+	
+	public static SMap<Long, SMap<String, String>> groups(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+		SMap<Long, SMap<String, String>> groups = SMap.empty();
+		
+		for (PropertyGroup group : catalogModel.getCatalog().getPropertyGroups()) {
+			groups = groups.set(group.getId(), ItemUtil.getNameLabels(group));
+		}
+		
+		return groups;
+	}
+	
+	public static Set<ItemModel> parentExtent(ItemModel item, boolean includeSelf) {
+		Set<ItemModel> result;
+		if (includeSelf) {
+			result = new LinkedHashSet<ItemModel>();
+			result.add(item);
+			result.addAll(item.getParentExtent());
+		} else {
+			result = item.getParentExtent();
+		}
+		
+		return result;
+	}
 
 }

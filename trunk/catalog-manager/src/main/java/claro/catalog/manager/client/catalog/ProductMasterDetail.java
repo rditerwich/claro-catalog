@@ -1,12 +1,7 @@
 package claro.catalog.manager.client.catalog;
 
-import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
@@ -20,10 +15,8 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.GlobalStyles;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.CatalogManager.Styles;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -92,14 +85,11 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	private ProductDetails details;
 	
 	private PropertyGroupInfo generalGroup;
-	private Long rootCategory;
-	private SMap<String, String> rootCategoryLabels;
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
 	private SMap<Long, SMap<String, String>> newProductCategories;
 	private RoundedPanel masterRoundedPanel;
-
-
+	
 	public ProductMasterDetail() {
 		super(80, 0);
 		StyleUtil.add(this, Styles.productMasterDetail);
@@ -108,8 +98,6 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
 		this.generalGroup = generalGroup;
-		this.rootCategory = rootCategory;
-		this.rootCategoryLabels = rootCategoryLabels;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
@@ -514,4 +502,5 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		public Label productDescriptionLabel;
 		
 	}
+	
 }

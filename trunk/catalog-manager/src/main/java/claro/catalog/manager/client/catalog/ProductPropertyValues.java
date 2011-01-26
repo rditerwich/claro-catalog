@@ -50,7 +50,7 @@ import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
-abstract public class ItemPropertyValues extends Composite implements Globals {
+abstract public class ProductPropertyValues extends Composite implements Globals {
 	public enum Styles implements Style { clear, valueParent, valueWidget }
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
@@ -68,7 +68,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private String language;
 	private OutputChannel outputChannel;
 	
-	public ItemPropertyValues(String language, OutputChannel outputChannel) {
+	public ProductPropertyValues(String language, OutputChannel outputChannel) {
 		this.language = language;
 		this.outputChannel = outputChannel;
 		
@@ -295,7 +295,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			} else {
 				result = new MoneyWidget() {
 					protected void valueChanged(Money newValue) {
-						ItemPropertyValues.this.valueChanged(this, newValue);
+						ProductPropertyValues.this.valueChanged(this, newValue);
 					}
 				};
 			}

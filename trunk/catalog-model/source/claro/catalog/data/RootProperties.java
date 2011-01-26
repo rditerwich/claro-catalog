@@ -15,6 +15,6 @@ public interface RootProperties {
 	String GENERALGROUP = "General";
 	
 	// Root category
-	String ROOTCATEGORY_NAME = "All Products";
+	String ROOTCATEGORY_NAME = "Global";
 	String IMAGES = "Images";
 }

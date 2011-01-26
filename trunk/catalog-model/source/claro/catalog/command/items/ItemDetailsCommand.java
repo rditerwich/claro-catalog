@@ -26,9 +26,18 @@ public class ItemDetailsCommand implements Command<ItemDetailsCommand.Result>{
 
 		private static final long serialVersionUID = 1L;
 		
-		public SMap<Long, SMap<String, String>> categories;
+		// The direct parents with their names per language.
+		public SMap<Long, SMap<String, String>> parents;
 		
+		// The parent extent with their names per language.
+		public SMap<Long, SMap<String, String>> parentExtent;
+		
+		// All groups with their names per language.
+		public SMap<Long, SMap<String, String>> groups;
+		
+		// Property values per property, per group.
 		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
+
 		public SMap<PropertyInfo, PropertyData> danglingPropertyData;
 		
 	}
