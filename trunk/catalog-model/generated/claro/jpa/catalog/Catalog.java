@@ -5,25 +5,27 @@ import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("serial")
 public class Catalog implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private String name;
-    private Collection<Item> items;
+    private List<Item> items;
     private Category root;
-    private Collection<OutputChannel> outputChannels;
-    private Collection<Template> templates;
+    private List<OutputChannel> outputChannels;
+    private List<Template> templates;
     private List<Language> languages;
-    private Collection<PropertyGroup> propertyGroups;
+    private List<PropertyGroup> propertyGroups;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -35,14 +37,14 @@ public class Catalog implements Serializable {
         this.name = value;
     }
 
-    public Collection<Item> getItems() {
+    public List<Item> getItems() {
         if (items == null) {
             items = new ArrayList<Item>();
         }
         return items;
     }
 
-    public void setItems(Collection<Item> value) {
+    public void setItems(List<Item> value) {
         this.items = value;
     }
 
@@ -54,25 +56,25 @@ public class Catalog implements Serializable {
         this.root = value;
     }
 
-    public Collection<OutputChannel> getOutputChannels() {
+    public List<OutputChannel> getOutputChannels() {
         if (outputChannels == null) {
             outputChannels = new ArrayList<OutputChannel>();
         }
         return outputChannels;
     }
 
-    public void setOutputChannels(Collection<OutputChannel> value) {
+    public void setOutputChannels(List<OutputChannel> value) {
         this.outputChannels = value;
     }
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         if (templates == null) {
             templates = new ArrayList<Template>();
         }
         return templates;
     }
 
-    public void setTemplates(Collection<Template> value) {
+    public void setTemplates(List<Template> value) {
         this.templates = value;
     }
 
@@ -87,14 +89,14 @@ public class Catalog implements Serializable {
         this.languages = value;
     }
 
-    public Collection<PropertyGroup> getPropertyGroups() {
+    public List<PropertyGroup> getPropertyGroups() {
         if (propertyGroups == null) {
             propertyGroups = new ArrayList<PropertyGroup>();
         }
         return propertyGroups;
     }
 
-    public void setPropertyGroups(Collection<PropertyGroup> value) {
+    public void setPropertyGroups(List<PropertyGroup> value) {
         this.propertyGroups = value;
     }
 

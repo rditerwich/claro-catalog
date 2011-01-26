@@ -7,24 +7,27 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class ImportCategory implements Serializable {
-    private Long id;
-    private ImportSource importSource;
-    private String categoryExpression;
+    private Long id = 0l;
+    private ImportProducts importProducts;
+    private String categoryExpression = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
-    public ImportSource getImportSource() {
-        return importSource;
+    public ImportProducts getImportProducts() {
+        return importProducts;
     }
 
-    public void setImportSource(ImportSource value) {
-        this.importSource = value;
+    public void setImportProducts(ImportProducts value) {
+        this.importProducts = value;
     }
 
     public String getCategoryExpression() {
@@ -32,6 +35,9 @@ public class ImportCategory implements Serializable {
     }
 
     public void setCategoryExpression(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.categoryExpression = value;
     }
 

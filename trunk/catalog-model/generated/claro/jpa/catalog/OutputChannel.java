@@ -5,22 +5,25 @@ import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class OutputChannel implements Serializable {
-    private Long id;
-    private String name;
+    private Long id = 0l;
+    private String name = "";
     private Catalog catalog;
     private String defaultLanguage;
-    private Collection<Property> excludedProperties;
-    private Collection<Item> excludedItems;
+    private List<Property> excludedProperties;
+    private List<Item> excludedItems;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -29,6 +32,9 @@ public class OutputChannel implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 
@@ -48,25 +54,25 @@ public class OutputChannel implements Serializable {
         this.defaultLanguage = value;
     }
 
-    public Collection<Property> getExcludedProperties() {
+    public List<Property> getExcludedProperties() {
         if (excludedProperties == null) {
             excludedProperties = new ArrayList<Property>();
         }
         return excludedProperties;
     }
 
-    public void setExcludedProperties(Collection<Property> value) {
+    public void setExcludedProperties(List<Property> value) {
         this.excludedProperties = value;
     }
 
-    public Collection<Item> getExcludedItems() {
+    public List<Item> getExcludedItems() {
         if (excludedItems == null) {
             excludedItems = new ArrayList<Item>();
         }
         return excludedItems;
     }
 
-    public void setExcludedItems(Collection<Item> value) {
+    public void setExcludedItems(List<Item> value) {
         this.excludedItems = value;
     }
 

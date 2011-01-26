@@ -9,18 +9,21 @@ import java.sql.Timestamp;
 
 @SuppressWarnings("serial")
 public class JobResult implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Job job;
-    private Boolean success;
+    private Boolean success = false;
     private Timestamp startTime;
     private Timestamp endTime;
-    private String log;
+    private String log = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -37,6 +40,9 @@ public class JobResult implements Serializable {
     }
 
     public void setSuccess(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
         this.success = value;
     }
 
@@ -61,6 +67,9 @@ public class JobResult implements Serializable {
     }
 
     public void setLog(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.log = value;
     }
 

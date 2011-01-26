@@ -14,6 +14,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.Help;
 import claro.jpa.catalog.Property;
+import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportSource;
 
@@ -41,6 +42,8 @@ import easyenterprise.lib.util.Tuple;
 
 public abstract class ImportDefinitionPanel extends Composite implements Globals {
 
+	private ImportProducts importProducts = new ImportProducts();
+	
 	private Table propertyGrid;
 	private ImportSource importSource;
 	private SExprEditor importUrlEditor;
@@ -62,7 +65,7 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 	public ImportDefinitionPanel() {
 		initWidget(new VerticalPanel() {{
 			add(new Grid(2, 3) {{
-				setWidget(0, 0, new Label(messages.importUrl()));
+				setWidget(0, 0, new Label(messages.importUrlLabel()));
 				setWidget(0, 1, importUrlEditor = new SExprEditor() {{
 					addValueChangeHandler(valueChangeHandler);
 				}});
@@ -81,7 +84,7 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						ImportProperty importProperty = new ImportProperty();
-						importSource.getProperties().add(importProperty);
+						importProducts.getProperties().add(importProperty);
 						importProperty.setValueExpression("");
 						render();
 					}
@@ -97,11 +100,11 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 	}
 
 	private void render() {
-		importUrlEditor.setExpression(importSource.getImportUrlExpression());
+		importUrlEditor.setExpression(orElse(importSource.getImportUrl(), ""));
 		
 		int i = propertyGrid.getRowCount();
-		propertyGrid.resizeRows(importSource.getProperties().size());
-		for (; i < importSource.getProperties().size(); i++) { 
+		propertyGrid.resizeRows(importProducts.getProperties().size());
+		for (; i < importProducts.getProperties().size(); i++) { 
 			final int row = i;
 			propertyGrid.setWidget(row, 0, new ListBox() {{
 				addChangeHandler(changeHandler);
@@ -114,13 +117,13 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 					public void onClick(ClickEvent event) {
 						ImportProperty importProperty = getImportProperty(row);
 						if (importProperty.getId() != null) {
-							importSource.getProperties().remove(importProperty);
+							importProducts.getProperties().remove(importProperty);
 							StoreImportSource command = new StoreImportSource(importSource);
-							command.skipImportSource = true;
+//							command.skipImportSource = true;
 							command.importPropertiesToBeRemoved = Lists.newArrayList(importProperty);
 							storeImportSource(command);
 						} else {
-							importSource.getProperties().remove(importProperty);
+							importProducts.getProperties().remove(importProperty);
 							render();
 						}
 					}
@@ -133,7 +136,7 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 			public void onFailure(Throwable caught) {
 			}
 			public void onSuccess(FindProperties.Result result) {
-				fillPropertyListbox(matchPropertyListBox, importSource.getMatchProperty());
+				fillPropertyListbox(matchPropertyListBox, importProducts.getMatchProperty());
 				
 				int row = 0;
 				properties.clear();
@@ -141,7 +144,7 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 					properties.add(Tuple.create(info.labels.tryGet(CatalogManager.getUiLanguage(), null), info.propertyId));
 				}
 				sort(properties);
-				for (ImportProperty importProperty : importSource.getProperties()) {
+				for (ImportProperty importProperty : importProducts.getProperties()) {
 					ListBox listBox = (ListBox) propertyGrid.getWidget(row, 0);
 					fillPropertyListbox(listBox, importProperty.getProperty());
 					SExprEditor editor = (SExprEditor) propertyGrid.getWidget(row, 1);
@@ -156,7 +159,7 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 	}
 	
 	private ImportProperty getImportProperty(int row) {
-		return Iterables.get(importSource.getProperties(), row);
+		return Iterables.get(importProducts.getProperties(), row);
 	}
 	
 	private void fillPropertyListbox(ListBox listBox, Property currentProperty) {
@@ -174,23 +177,23 @@ public abstract class ImportDefinitionPanel extends Composite implements Globals
 		boolean changed = false;
 		
 		System.out.println(importUrlEditor.getExpression());
-		if (!importSource.getImportUrlExpression().equals(importUrlEditor.getExpression())) {
+		if (!importSource.getImportUrl().equals(importUrlEditor.getExpression())) {
 			changed = true;
 			System.out.println(importUrlEditor.getExpression());
-			importSource.setImportUrlExpression(importUrlEditor.getExpression());
+			importSource.setImportUrl(importUrlEditor.getExpression());
 		}
 		
 		int selectedIndex = matchPropertyListBox.getSelectedIndex();
 		Long propertyId = properties.get(selectedIndex).getSecond();
-		if (importSource.getMatchProperty() == null || !propertyId.equals(importSource.getMatchProperty().getId())) {
+		if (importProducts.getMatchProperty() == null || !propertyId.equals(importProducts.getMatchProperty().getId())) {
 			changed = true;
 			Property property = new Property();
 			property.setId(propertyId);
-			importSource.setMatchProperty(property);
+			importProducts.setMatchProperty(property);
 		}
 		
 		int row = 0;
-		for (ImportProperty importProperty : importSource.getProperties()) {
+		for (ImportProperty importProperty : importProducts.getProperties()) {
 			selectedIndex = ((ListBox) propertyGrid.getWidget(row, 0)).getSelectedIndex();
 			propertyId = properties.get(selectedIndex).getSecond();
 			if (!equal(propertyId, importProperty.getId())) {

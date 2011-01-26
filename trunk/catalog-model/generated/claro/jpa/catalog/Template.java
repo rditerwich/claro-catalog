@@ -7,10 +7,10 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Template implements Serializable {
-    private Long id;
-    private String name;
+    private Long id = 0l;
+    private String name = "";
     private String language;
-    private String templateXml;
+    private String templateXml = "";
     private Item item;
 
     public Long getId() {
@@ -18,6 +18,9 @@ public class Template implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -26,6 +29,9 @@ public class Template implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 
@@ -42,6 +48,9 @@ public class Template implements Serializable {
     }
 
     public void setTemplateXml(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.templateXml = value;
     }
 

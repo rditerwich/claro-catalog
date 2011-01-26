@@ -7,8 +7,8 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Berth implements Serializable {
-    private Long id;
-    private String name;
+    private Long id = 0l;
+    private String name = "";
     private Label2 description2;
     private Label2 profile;
 
@@ -17,6 +17,9 @@ public class Berth implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -25,6 +28,9 @@ public class Berth implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 

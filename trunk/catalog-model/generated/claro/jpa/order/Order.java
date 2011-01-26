@@ -5,30 +5,33 @@ import java.lang.Double;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import claro.jpa.party.Address;
 import claro.jpa.party.User;
 import claro.jpa.shop.Shop;
 
 @SuppressWarnings("serial")
 public class Order implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Shop shop;
     private Date orderDate;
-    private Collection<ProductOrder> productOrders;
+    private List<ProductOrder> productOrders;
     private Address deliveryAddress;
     private Transport transport;
     private User user;
     private OrderStatus status;
-    private Double amountPaid;
-    private Collection<OrderHistory> history;
+    private Double amountPaid = 0.0;
+    private List<OrderHistory> history;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -48,14 +51,14 @@ public class Order implements Serializable {
         this.orderDate = value;
     }
 
-    public Collection<ProductOrder> getProductOrders() {
+    public List<ProductOrder> getProductOrders() {
         if (productOrders == null) {
             productOrders = new ArrayList<ProductOrder>();
         }
         return productOrders;
     }
 
-    public void setProductOrders(Collection<ProductOrder> value) {
+    public void setProductOrders(List<ProductOrder> value) {
         this.productOrders = value;
     }
 
@@ -96,17 +99,20 @@ public class Order implements Serializable {
     }
 
     public void setAmountPaid(Double value) {
+        if (value == null) {
+            value = 0.0;
+        }
         this.amountPaid = value;
     }
 
-    public Collection<OrderHistory> getHistory() {
+    public List<OrderHistory> getHistory() {
         if (history == null) {
             history = new ArrayList<OrderHistory>();
         }
         return history;
     }
 
-    public void setHistory(Collection<OrderHistory> value) {
+    public void setHistory(List<OrderHistory> value) {
         this.history = value;
     }
 

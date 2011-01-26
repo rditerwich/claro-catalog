@@ -7,12 +7,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 
 public class Help extends Image implements Globals {
 	private PopupPanel popup;
 	public Help(final String message) {
 		super(images.help());
+		setStylePrimaryName("ee-Help");
 		setTitle(message);
 		addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -22,9 +22,9 @@ public class Help extends Image implements Globals {
 					popup.setAutoHideEnabled(true);
 					popup.setWidth("20em");
 			}
+				popup.setPopupPosition(getAbsoluteLeft() + getOffsetWidth(), getAbsoluteTop());
 				if (popup.isShowing()) popup.hide();
 				else popup.show();
-				popup.setPopupPosition(getAbsoluteLeft() + getOffsetWidth(), getAbsoluteTop());
 			}
 		});
 	}

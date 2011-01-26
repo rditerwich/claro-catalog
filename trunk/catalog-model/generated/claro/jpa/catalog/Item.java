@@ -4,23 +4,26 @@ import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Item implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Catalog catalog;
-    private Collection<ParentChild> parents;
-    private Collection<ParentChild> children;
-    private Collection<Property> properties;
-    private Collection<PropertyValue> propertyValues;
-    private Collection<Template> templates;
+    private List<ParentChild> parents;
+    private List<ParentChild> children;
+    private List<Property> properties;
+    private List<PropertyValue> propertyValues;
+    private List<Template> templates;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -32,58 +35,58 @@ public class Item implements Serializable {
         this.catalog = value;
     }
 
-    public Collection<ParentChild> getParents() {
+    public List<ParentChild> getParents() {
         if (parents == null) {
             parents = new ArrayList<ParentChild>();
         }
         return parents;
     }
 
-    public void setParents(Collection<ParentChild> value) {
+    public void setParents(List<ParentChild> value) {
         this.parents = value;
     }
 
-    public Collection<ParentChild> getChildren() {
+    public List<ParentChild> getChildren() {
         if (children == null) {
             children = new ArrayList<ParentChild>();
         }
         return children;
     }
 
-    public void setChildren(Collection<ParentChild> value) {
+    public void setChildren(List<ParentChild> value) {
         this.children = value;
     }
 
-    public Collection<Property> getProperties() {
+    public List<Property> getProperties() {
         if (properties == null) {
             properties = new ArrayList<Property>();
         }
         return properties;
     }
 
-    public void setProperties(Collection<Property> value) {
+    public void setProperties(List<Property> value) {
         this.properties = value;
     }
 
-    public Collection<PropertyValue> getPropertyValues() {
+    public List<PropertyValue> getPropertyValues() {
         if (propertyValues == null) {
             propertyValues = new ArrayList<PropertyValue>();
         }
         return propertyValues;
     }
 
-    public void setPropertyValues(Collection<PropertyValue> value) {
+    public void setPropertyValues(List<PropertyValue> value) {
         this.propertyValues = value;
     }
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         if (templates == null) {
             templates = new ArrayList<Template>();
         }
         return templates;
     }
 
-    public void setTemplates(Collection<Template> value) {
+    public void setTemplates(List<Template> value) {
         this.templates = value;
     }
 

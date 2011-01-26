@@ -2,6 +2,7 @@ package claro.catalog.manager.client.i18n;
 
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.ui.Widget;
 
 public interface I18NCatalog extends Messages {
 
@@ -200,33 +201,58 @@ public interface I18NCatalog extends Messages {
 	
 
 
-	String loadingImportSources();
-	String importSource();
-	String newImportSource();
-	String creatingImportSource();
-	
+	String loadingImportSourcesMessage();
+	String importSourceLabel();
+	String newImportSourceLink();
+	String creatingImportSourceMessage();
+	String importSourceNameHelp();
+	String importUrlLabel();
+	String importUrlHelp();
+	String multiFileImportLabel();
+	String multiFileImportHelp();
+	String fileFormatLink();
+	String importRulesLink();
+	String importNowHelp();
+	String importNowButton();
+	String incrementalImportLabel();
+	String incrementalImportHelp();
+	String sequentialImportNamesLabel();
+	String sequentialImportNamesHelp();
+	String orderedImportNamesLabel();
+	String orderedImportNamesHelp();
+	String relativeImportUrlLabel();
+	String addNestedFileLink();
+	String multiFileTab();
+	String notAMultiFileImportSourceMessage();
+
+
 	String name();
-	String lastStatus();
+	String lastStatusLabel();
+	String lastStatusHelp();
 	String success();
 	String failed();
 	String notRun();
 	String log();
-	String importUrl();
-	String showLog();
+	String showLogLink();
 	SafeHtml addPropertyMapping();
 	String propertyMappings();
 	String property();
 	String expression();
 	String selectProperty();
-	String importUrlHelp();
 	String matchProperty();
 	String matchPropertyHelp();
 	String importMenu();
+	String jobStatus();
+	String history();
+	String pleaseWait();
+	String definition();
 	String refresh();
 	String savingProductDetailsStatus();
 	String savingProductDetailsFailedStatus();
 	String savingProductDetailsSuccessStatus();
 	String atLeastOneCategory();
+	String detailsLabel();
+
 
 
 }

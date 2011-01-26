@@ -8,18 +8,21 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class User implements Serializable {
-    private Long id;
-    private String email;
-    private String password;
+    private Long id = 0l;
+    private String email = "";
+    private String password = "";
     private Party party;
-    private Boolean isCatalogUser;
-    private String uiLanguage;
+    private Boolean isCatalogUser = false;
+    private String uiLanguage = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -28,6 +31,9 @@ public class User implements Serializable {
     }
 
     public void setEmail(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.email = value;
     }
 
@@ -36,6 +42,9 @@ public class User implements Serializable {
     }
 
     public void setPassword(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.password = value;
     }
 
@@ -52,6 +61,9 @@ public class User implements Serializable {
     }
 
     public void setIsCatalogUser(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
         this.isCatalogUser = value;
     }
 
@@ -60,6 +72,9 @@ public class User implements Serializable {
     }
 
     public void setUiLanguage(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.uiLanguage = value;
     }
 

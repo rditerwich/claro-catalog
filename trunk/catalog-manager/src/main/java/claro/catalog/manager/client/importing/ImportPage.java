@@ -35,15 +35,15 @@ public class ImportPage extends Page {
 
 	@Override
 	public void show() {
-		updateImportSources();
+		getImportSources();
 	}
 
 	@Override
 	protected void initialize() {
 		
-		mainPanel.add(masterDetail = new ImportMasterDetail(100, 100) {
+		mainPanel.add(masterDetail = new ImportMasterDetail(100, 0) {
 			protected void updateImportSource(ImportSource importSource) {
-				ImportPage.this.updateImportSource(importSource);
+				ImportPage.this.getImportSource(importSource);
 			}
 			protected void storeImportSource(StoreImportSource command) {
 				ImportPage.this.storeImportSource(command);
@@ -53,23 +53,22 @@ public class ImportPage extends Page {
 	
 	protected void createImportSource() {
 		StoreImportSource command = new StoreImportSource(new ImportSource());
-		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>(messages.creatingImportSource()) {
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>(messages.creatingImportSourceMessage()) {
 			public void onSuccess(StoreImportSource.Result result) {
 			}
 		});
 	}
 
-	private void updateImportSources() {
+	private void getImportSources() {
 		GetImportSources command = new GetImportSources();
-		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>(messages.loadingImportSources()) {
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>(messages.loadingImportSourcesMessage()) {
 			public void onSuccess(GetImportSources.Result result) {
 				masterDetail.setImportSources(result.importSources);
-				System.out.println("yes");
 			}
 		});
 	}
 		
-	protected void updateImportSource(final ImportSource importSource) {
+	protected void getImportSource(final ImportSource importSource) {
 		GetImportSources command = new GetImportSources();
 		command.importSourceId = importSource.getId();
 		command.includeDefinitionDetails = true;

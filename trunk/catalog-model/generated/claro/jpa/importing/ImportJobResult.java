@@ -8,7 +8,7 @@ import claro.jpa.jobs.JobResult;
 @SuppressWarnings("serial")
 public class ImportJobResult extends JobResult implements Serializable {
     private ImportSource importSource;
-    private String url;
+    private String url = "";
 
     public ImportSource getImportSource() {
         return importSource;
@@ -23,6 +23,9 @@ public class ImportJobResult extends JobResult implements Serializable {
     }
 
     public void setUrl(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.url = value;
     }
 

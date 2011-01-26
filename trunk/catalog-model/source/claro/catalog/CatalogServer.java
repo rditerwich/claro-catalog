@@ -39,7 +39,7 @@ public class CatalogServer implements CommandExecutor {
 		CommandServer server = new CommandServer(registeredCommands);
 		catalogModelService = new CatalogModelService(server);
 		executor = new JpaService(catalogModelService, entityManagerFactory);
-//		createDatabase();
+		createDatabase();
 	}
 	
 	

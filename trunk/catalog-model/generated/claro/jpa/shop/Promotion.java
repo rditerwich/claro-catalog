@@ -4,23 +4,26 @@ import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import claro.jpa.catalog.Template;
 
 @SuppressWarnings("serial")
 public class Promotion implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Date startDate;
     private Date endDate;
     private Shop shop;
-    private Collection<Template> templates;
+    private List<Template> templates;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -48,14 +51,14 @@ public class Promotion implements Serializable {
         this.shop = value;
     }
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         if (templates == null) {
             templates = new ArrayList<Template>();
         }
         return templates;
     }
 
-    public void setTemplates(Collection<Template> value) {
+    public void setTemplates(List<Template> value) {
         this.templates = value;
     }
 

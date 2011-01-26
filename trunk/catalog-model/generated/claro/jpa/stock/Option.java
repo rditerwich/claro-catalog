@@ -5,21 +5,24 @@ import java.lang.Double;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Option implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Date expirationDate;
-    private Double strike;
-    private Collection<OptionId> ids;
+    private Double strike = 0.0;
+    private List<OptionId> ids;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -36,17 +39,20 @@ public class Option implements Serializable {
     }
 
     public void setStrike(Double value) {
+        if (value == null) {
+            value = 0.0;
+        }
         this.strike = value;
     }
 
-    public Collection<OptionId> getIds() {
+    public List<OptionId> getIds() {
         if (ids == null) {
             ids = new ArrayList<OptionId>();
         }
         return ids;
     }
 
-    public void setIds(Collection<OptionId> value) {
+    public void setIds(List<OptionId> value) {
         this.ids = value;
     }
 

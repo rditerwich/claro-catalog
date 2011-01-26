@@ -5,34 +5,37 @@ import java.lang.Boolean;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Property implements Serializable {
-    private Long id;
-    private Collection<Label> labels;
-    private Boolean categoryProperty;
+    private Long id = 0l;
+    private List<Label> labels;
+    private Boolean categoryProperty = false;
     private Item item;
     private PropertyType type;
-    private Boolean isMany;
-    private Collection<EnumValue> enumValues;
+    private Boolean isMany = false;
+    private List<EnumValue> enumValues;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
-    public Collection<Label> getLabels() {
+    public List<Label> getLabels() {
         if (labels == null) {
             labels = new ArrayList<Label>();
         }
         return labels;
     }
 
-    public void setLabels(Collection<Label> value) {
+    public void setLabels(List<Label> value) {
         this.labels = value;
     }
 
@@ -41,6 +44,9 @@ public class Property implements Serializable {
     }
 
     public void setCategoryProperty(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
         this.categoryProperty = value;
     }
 
@@ -65,17 +71,20 @@ public class Property implements Serializable {
     }
 
     public void setIsMany(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
         this.isMany = value;
     }
 
-    public Collection<EnumValue> getEnumValues() {
+    public List<EnumValue> getEnumValues() {
         if (enumValues == null) {
             enumValues = new ArrayList<EnumValue>();
         }
         return enumValues;
     }
 
-    public void setEnumValues(Collection<EnumValue> value) {
+    public void setEnumValues(List<EnumValue> value) {
         this.enumValues = value;
     }
 

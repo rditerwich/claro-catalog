@@ -499,6 +499,8 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		widget.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				rowSelected(row);
+				// prevent detail to close immediately
+				event.stopPropagation();
 			}
 		});
 	}

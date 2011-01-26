@@ -8,25 +8,28 @@ import claro.jpa.catalog.Property;
 
 @SuppressWarnings("serial")
 public class ImportProperty implements Serializable {
-    private Long id;
-    private ImportSource importSource;
+    private Long id = 0l;
+    private ImportProducts importProducts;
     private Property property;
-    private String valueExpression;
+    private String valueExpression = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
-    public ImportSource getImportSource() {
-        return importSource;
+    public ImportProducts getImportProducts() {
+        return importProducts;
     }
 
-    public void setImportSource(ImportSource value) {
-        this.importSource = value;
+    public void setImportProducts(ImportProducts value) {
+        this.importProducts = value;
     }
 
     public Property getProperty() {
@@ -42,6 +45,9 @@ public class ImportProperty implements Serializable {
     }
 
     public void setValueExpression(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.valueExpression = value;
     }
 

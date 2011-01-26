@@ -11,12 +11,12 @@ import claro.jpa.shop.Promotion;
 
 @SuppressWarnings("serial")
 public class ProductOrder implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Product product;
     private Promotion promotion;
-    private Integer volume;
-    private Double price;
-    private String priceCurrency;
+    private Integer volume = 0;
+    private Double price = 0.0;
+    private String priceCurrency = "";
     private Order order;
 
     public Long getId() {
@@ -24,6 +24,9 @@ public class ProductOrder implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -48,6 +51,9 @@ public class ProductOrder implements Serializable {
     }
 
     public void setVolume(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.volume = value;
     }
 
@@ -56,6 +62,9 @@ public class ProductOrder implements Serializable {
     }
 
     public void setPrice(Double value) {
+        if (value == null) {
+            value = 0.0;
+        }
         this.price = value;
     }
 
@@ -64,6 +73,9 @@ public class ProductOrder implements Serializable {
     }
 
     public void setPriceCurrency(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.priceCurrency = value;
     }
 

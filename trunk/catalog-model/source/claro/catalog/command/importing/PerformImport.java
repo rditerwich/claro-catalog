@@ -1,6 +1,9 @@
 package claro.catalog.command.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
+
+import java.util.List;
+
 import claro.jpa.jobs.JobResult;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
@@ -28,8 +31,6 @@ public class PerformImport implements Command<PerformImport.Result> {
 	 */
 	public boolean replaceExistingData = false;
 	
-	public boolean generateJobResult = false;
-	
 	public boolean dryRun = false;
 
 	public void checkValid() throws CommandValidationException {
@@ -40,6 +41,6 @@ public class PerformImport implements Command<PerformImport.Result> {
 	
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
-		public JobResult jobResult;
+		public List<JobResult> jobResults;
 	}
 }

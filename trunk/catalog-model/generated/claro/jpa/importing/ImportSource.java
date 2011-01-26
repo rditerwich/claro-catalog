@@ -1,26 +1,24 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
-import java.lang.Integer;
+import java.lang.Boolean;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
-import java.util.Collection;
-import claro.jpa.catalog.Property;
+import java.util.List;
 import claro.jpa.catalog.Source;
 import claro.jpa.jobs.Job;
 
 @SuppressWarnings("serial")
 public class ImportSource extends Source implements Serializable {
-    private String name;
-    private String importUrlExpression;
-    private String languageExpression;
-    private String defaultCurrency;
-    private String outputChannelExpression;
-    private Property matchProperty;
-    private Integer sequenceNr;
-    private Collection<ImportCategory> categories;
-    private Collection<ImportProperty> properties;
+    private String name = "";
+    private String importUrl;
+    private Boolean sequentialUrl = false;
+    private Boolean orderedUrl = false;
+    private Boolean incremental = false;
+    private String lastImportedUrl;
+    private Boolean multiFileImport = false;
+    private List<ImportRules> rules;
     private Job job;
 
     public String getName() {
@@ -28,77 +26,81 @@ public class ImportSource extends Source implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 
-    public String getImportUrlExpression() {
-        return importUrlExpression;
+    public String getImportUrl() {
+        return importUrl;
     }
 
-    public void setImportUrlExpression(String value) {
-        this.importUrlExpression = value;
+    public void setImportUrl(String value) {
+        this.importUrl = value;
     }
 
-    public String getLanguageExpression() {
-        return languageExpression;
+    public Boolean getSequentialUrl() {
+        return sequentialUrl;
     }
 
-    public void setLanguageExpression(String value) {
-        this.languageExpression = value;
-    }
-
-    public String getDefaultCurrency() {
-        return defaultCurrency;
-    }
-
-    public void setDefaultCurrency(String value) {
-        this.defaultCurrency = value;
-    }
-
-    public String getOutputChannelExpression() {
-        return outputChannelExpression;
-    }
-
-    public void setOutputChannelExpression(String value) {
-        this.outputChannelExpression = value;
-    }
-
-    public Property getMatchProperty() {
-        return matchProperty;
-    }
-
-    public void setMatchProperty(Property value) {
-        this.matchProperty = value;
-    }
-
-    public Integer getSequenceNr() {
-        return sequenceNr;
-    }
-
-    public void setSequenceNr(Integer value) {
-        this.sequenceNr = value;
-    }
-
-    public Collection<ImportCategory> getCategories() {
-        if (categories == null) {
-            categories = new ArrayList<ImportCategory>();
+    public void setSequentialUrl(Boolean value) {
+        if (value == null) {
+            value = false;
         }
-        return categories;
+        this.sequentialUrl = value;
     }
 
-    public void setCategories(Collection<ImportCategory> value) {
-        this.categories = value;
+    public Boolean getOrderedUrl() {
+        return orderedUrl;
     }
 
-    public Collection<ImportProperty> getProperties() {
-        if (properties == null) {
-            properties = new ArrayList<ImportProperty>();
+    public void setOrderedUrl(Boolean value) {
+        if (value == null) {
+            value = false;
         }
-        return properties;
+        this.orderedUrl = value;
     }
 
-    public void setProperties(Collection<ImportProperty> value) {
-        this.properties = value;
+    public Boolean getIncremental() {
+        return incremental;
+    }
+
+    public void setIncremental(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
+        this.incremental = value;
+    }
+
+    public String getLastImportedUrl() {
+        return lastImportedUrl;
+    }
+
+    public void setLastImportedUrl(String value) {
+        this.lastImportedUrl = value;
+    }
+
+    public Boolean getMultiFileImport() {
+        return multiFileImport;
+    }
+
+    public void setMultiFileImport(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
+        this.multiFileImport = value;
+    }
+
+    public List<ImportRules> getRules() {
+        if (rules == null) {
+            rules = new ArrayList<ImportRules>();
+        }
+        return rules;
+    }
+
+    public void setRules(List<ImportRules> value) {
+        this.rules = value;
     }
 
     public Job getJob() {

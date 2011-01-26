@@ -7,16 +7,19 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class EmailConfirmation implements Serializable {
-    private Long id;
-    private String email;
-    private String confirmationKey;
-    private Long expirationTime;
+    private Long id = 0l;
+    private String email = "";
+    private String confirmationKey = "";
+    private Long expirationTime = 0l;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -25,6 +28,9 @@ public class EmailConfirmation implements Serializable {
     }
 
     public void setEmail(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.email = value;
     }
 
@@ -33,6 +39,9 @@ public class EmailConfirmation implements Serializable {
     }
 
     public void setConfirmationKey(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.confirmationKey = value;
     }
 
@@ -41,6 +50,9 @@ public class EmailConfirmation implements Serializable {
     }
 
     public void setExpirationTime(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.expirationTime = value;
     }
 

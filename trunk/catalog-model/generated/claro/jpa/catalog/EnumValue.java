@@ -5,13 +5,13 @@ import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class EnumValue implements Serializable {
-    private Long id;
-    private Integer value;
-    private Collection<Label> labels;
+    private Long id = 0l;
+    private Integer value = 0;
+    private List<Label> labels;
     private Property property;
 
     public Long getId() {
@@ -19,6 +19,9 @@ public class EnumValue implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -27,17 +30,20 @@ public class EnumValue implements Serializable {
     }
 
     public void setValue(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.value = value;
     }
 
-    public Collection<Label> getLabels() {
+    public List<Label> getLabels() {
         if (labels == null) {
             labels = new ArrayList<Label>();
         }
         return labels;
     }
 
-    public void setLabels(Collection<Label> value) {
+    public void setLabels(List<Label> value) {
         this.labels = value;
     }
 

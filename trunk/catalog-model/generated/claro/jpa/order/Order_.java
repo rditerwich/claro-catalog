@@ -9,15 +9,15 @@ import claro.jpa.party.User;
 import claro.jpa.shop.Shop;
 import java.util.Date;
 import javax.annotation.Generated;
-import javax.persistence.metamodel.CollectionAttribute;
+import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110121-r8858", date="2011-01-21T14:45:02")
+@Generated(value="EclipseLink-2.2.0.v20110121-r8858", date="2011-01-26T12:59:44")
 @StaticMetamodel(Order.class)
 public class Order_ { 
 
-    public static volatile CollectionAttribute<Order, OrderHistory> history;
+    public static volatile ListAttribute<Order, OrderHistory> history;
     public static volatile SingularAttribute<Order, Long> id;
     public static volatile SingularAttribute<Order, Shop> shop;
     public static volatile SingularAttribute<Order, Transport> transport;
@@ -26,6 +26,6 @@ public class Order_ {
     public static volatile SingularAttribute<Order, Double> amountPaid;
     public static volatile SingularAttribute<Order, User> user;
     public static volatile SingularAttribute<Order, Address> deliveryAddress;
-    public static volatile CollectionAttribute<Order, ProductOrder> productOrders;
+    public static volatile ListAttribute<Order, ProductOrder> productOrders;
 
 }

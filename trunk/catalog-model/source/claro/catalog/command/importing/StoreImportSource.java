@@ -2,12 +2,15 @@ package claro.catalog.command.importing;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import static easyenterprise.lib.util.CollectionUtil.isEmpty;
+import static easyenterprise.lib.util.CollectionUtil.notNull;
 
 import java.util.List;
 
 import claro.catalog.command.importing.StoreImportSource.Result;
 import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
@@ -25,36 +28,34 @@ public class StoreImportSource implements Command<Result> {
 	}
 	
 	/**
-	 * Don't update import definition instance. Only use {@link #importSource}
-	 * to find nested import-categories or import-properties, or to store the id
-	 * for removing import-categories or import-properties.
-	 */
-	public boolean skipImportSource;
-	
-	/**
-	 * Remove the entire import definition. The field {@link #skipImportSource}
-	 * should be set to false, {@link #importCategoriesToBeRemoved} and
-	 * {@link #importPropertiesToBeRemoved} should be empty.
-	 */
-	public boolean remove;
-	
-	/**
-	 * Only basic fields will be stored, no recursion
+	 * Import source to be stored, recursively. Deleted children are not detected, please
+	 * use ...ToBeRemoved collections
 	 */
 	public ImportSource importSource;
 	
+	/**
+	 * Remove the entire import source. The field {@link #skipImportSource}
+	 * should be set to false, {@link #importCategoriesToBeRemoved} and
+	 * {@link #importPropertiesToBeRemoved} should be empty.
+	 */
+	public boolean removeImportSource;
+	public List<ImportRules> importRulesToBeRemoved;
+	public List<ImportProducts> importProductsToBeRemoved;
 	public List<ImportCategory> importCategoriesToBeRemoved;
-	
 	public List<ImportProperty> importPropertiesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
-		validate (importSource != null);
-		if (remove) validate(!skipImportSource);
-		if (remove) validate(isEmpty(importCategoriesToBeRemoved));
-		if (remove) validate(isEmpty(importPropertiesToBeRemoved));
-		if (skipImportSource) validate(importSource.getId() != null);
-		if (!isEmpty(importCategoriesToBeRemoved)) validate(importSource.getId() != null);
-		if (!isEmpty(importPropertiesToBeRemoved)) validate(importSource.getId() != null);
+		validate (importSource != null, "No import source specified");
+		if (removeImportSource) validate(isEmpty(importRulesToBeRemoved), "Nested removes are redundant");
+		if (removeImportSource) validate(isEmpty(importProductsToBeRemoved), "Nested removes are redundant");
+		if (removeImportSource) validate(isEmpty(importCategoriesToBeRemoved), "Nested removes are redundant");
+		if (removeImportSource) validate(isEmpty(importPropertiesToBeRemoved), "Nested removes are redundant");
+		for (ImportRules rules : notNull(importRulesToBeRemoved)) 
+			validate(rules.getImportSource() == null || rules.getImportSource().getId().equals(importSource.getId()), "Import rules do not belong to import source");
+		for (ImportCategory cat : notNull(importCategoriesToBeRemoved)) 
+			validate(cat.getImportProducts() != null && cat.getImportProducts().getId() != null, "Import products not specified for category");
+		for (ImportProperty prop : notNull(importPropertiesToBeRemoved))
+			validate(prop.getImportProducts() != null && prop.getImportProducts().getId() != null, "Import products not specified for property");
 	}
 	
 	public static class Result implements CommandResult {

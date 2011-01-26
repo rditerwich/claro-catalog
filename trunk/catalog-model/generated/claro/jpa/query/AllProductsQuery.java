@@ -9,7 +9,7 @@ import claro.jpa.shop.Shop;
 @SuppressWarnings("serial")
 public class AllProductsQuery extends Query implements Serializable {
     private Category category;
-    private String stringValue;
+    private String stringValue = "";
     private Shop shop;
 
     public Category getCategory() {
@@ -25,6 +25,9 @@ public class AllProductsQuery extends Query implements Serializable {
     }
 
     public void setStringValue(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.stringValue = value;
     }
 

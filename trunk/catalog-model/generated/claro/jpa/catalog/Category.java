@@ -4,29 +4,32 @@ import java.io.Serializable;
 import java.lang.Boolean;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Category extends Item implements Serializable {
-    private Boolean containsProducts;
-    private Collection<PropertyGroupAssignment> propertyGroupAssignments;
+    private Boolean containsProducts = false;
+    private List<PropertyGroupAssignment> propertyGroupAssignments;
 
     public Boolean getContainsProducts() {
         return containsProducts;
     }
 
     public void setContainsProducts(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
         this.containsProducts = value;
     }
 
-    public Collection<PropertyGroupAssignment> getPropertyGroupAssignments() {
+    public List<PropertyGroupAssignment> getPropertyGroupAssignments() {
         if (propertyGroupAssignments == null) {
             propertyGroupAssignments = new ArrayList<PropertyGroupAssignment>();
         }
         return propertyGroupAssignments;
     }
 
-    public void setPropertyGroupAssignments(Collection<PropertyGroupAssignment> value) {
+    public void setPropertyGroupAssignments(List<PropertyGroupAssignment> value) {
         this.propertyGroupAssignments = value;
     }
 

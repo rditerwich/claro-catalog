@@ -6,7 +6,7 @@ import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class PropertyGroupAssignment implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private PropertyGroup propertyGroup;
     private Property property;
     private Category category;
@@ -16,6 +16,9 @@ public class PropertyGroupAssignment implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 

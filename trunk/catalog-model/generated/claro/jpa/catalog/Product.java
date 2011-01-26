@@ -3,20 +3,20 @@ package claro.jpa.catalog;
 import java.io.Serializable;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Product extends Item implements Serializable {
-    private Collection<Template> templates;
+    private List<Template> templates;
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         if (templates == null) {
             templates = new ArrayList<Template>();
         }
         return templates;
     }
 
-    public void setTemplates(Collection<Template> value) {
+    public void setTemplates(List<Template> value) {
         this.templates = value;
     }
 

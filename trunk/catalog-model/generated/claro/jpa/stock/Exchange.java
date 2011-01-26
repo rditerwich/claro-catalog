@@ -7,14 +7,17 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Exchange implements Serializable {
-    private Long id;
-    private String name;
+    private Long id = 0l;
+    private String name = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -23,6 +26,9 @@ public class Exchange implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 

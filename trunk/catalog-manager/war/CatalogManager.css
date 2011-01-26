@@ -346,6 +346,16 @@ ol li .send {
 	border-bottom: 1px solid #E4E4FE;
 }
 
+/** Form styles */
+
+.ee-FormTable tr {
+	height: 24px;
+}
+
+.ee-FormTable .ee-Help {
+	margin-left: 8px;
+	margin-right: 8px;
+}
 
 /** catalogpage styles */
 
@@ -513,3 +523,20 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 }
 
 .masterdetailtest { padding: 5px;}
+
+/** Import Styles */
+
+.ImportLogPanel {
+	width: 100%;
+}
+
+.ImportLogPanel .LogText  {
+	border: 1px solid gray;
+	font-family: Courier;
+	background-color: white;
+}
+
+.ImportMainPanel td.ee-FormTableHelp {
+	margin-left: 60px;
+	width: 250px;
+}

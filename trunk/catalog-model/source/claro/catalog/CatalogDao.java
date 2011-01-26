@@ -287,7 +287,7 @@ public class CatalogDao {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<ImportSource> c = cb.createQuery(ImportSource.class);
 		Root<ImportSource> importSource = c.from(ImportSource.class);
-		c.select(importSource);
+		c.select(importSource).orderBy(cb.asc(importSource.get(ImportSource_.name)));
 		
 		TypedQuery<ImportSource> query = entityManager.createQuery(c);
 		if (paging.shouldPage()) {
@@ -333,7 +333,9 @@ public class CatalogDao {
 		ParameterExpression<String> nameParam = cb.parameter(String.class);
 		Root<ImportSource> ImportSource = c.from(ImportSource.class);
 		Path<String> nameAttr = ImportSource.get(ImportSource_.name);
-		c.select(ImportSource).where(cb.like(nameAttr, nameParam));
+		c.select(ImportSource).
+			where(cb.like(nameAttr, nameParam)).
+			orderBy(cb.asc(nameAttr));
 
 		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(nameParam, "%" + name + "%");
 		if (paging.shouldPage()) {

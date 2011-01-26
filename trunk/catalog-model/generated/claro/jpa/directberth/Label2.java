@@ -7,15 +7,18 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Label2 implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private String language;
-    private String label;
+    private String label = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -32,6 +35,9 @@ public class Label2 implements Serializable {
     }
 
     public void setLabel(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.label = value;
     }
 

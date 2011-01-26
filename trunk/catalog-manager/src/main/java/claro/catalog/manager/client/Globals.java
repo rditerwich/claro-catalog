@@ -10,10 +10,4 @@ public interface Globals {
 	I18NCatalog messages = GWT.create(I18NCatalog.class);
 	ResourceBundle deprecatedImages = GWT.create(ResourceBundle.class);
 	Images images = GWT.create(Images.class);
-	
-	enum Styles {		
-		header,
-		menu,
-		active,
-		mainTable}
 }

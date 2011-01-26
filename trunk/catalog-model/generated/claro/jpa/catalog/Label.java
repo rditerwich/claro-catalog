@@ -7,9 +7,9 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Label implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private String language;
-    private String label;
+    private String label = "";
     private Property property;
     private PropertyGroup propertyGroup;
     private EnumValue enumValue;
@@ -19,6 +19,9 @@ public class Label implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -35,6 +38,9 @@ public class Label implements Serializable {
     }
 
     public void setLabel(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.label = value;
     }
 

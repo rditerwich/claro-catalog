@@ -26,11 +26,67 @@ Package {
                     name = name
                     type = primitive:String
                 }
-                @comment "Expression for import url"
+                @comment "Can contain a * wildcard to denote substition"
                 Attribute {
-                    name = importUrlExpression
+                    name = importUrl
                     type = primitive:String
                     lower = 0
+                }
+                @comment "Expects a number in the wildcard that should denote a sequence. A missing sequence will be flagged. Works with non-file urls"
+                Attribute {
+                    name = sequentialUrl
+                    type = primitive:Boolean
+                }
+                @comment "Urls are ordered lexicagraficcally. There should be a wildcard in importUrl. Only larger urls will be imported. Only works with file urls." 
+                Attribute {
+                    name = orderedUrl
+                    type = primitive:Boolean
+                }
+                Attribute {
+                    name = incremental
+                    type = primitive:Boolean
+                }
+                Attribute {
+                    name = lastImportedUrl
+                    type = primitive:String
+                    lower = 0
+                }
+                @comment "if false, use the first rules (when sorted by relative url) and ignore relative url"
+                Attribute {
+                    name = multiFileImport
+                    type = primitive:Boolean
+                    default = false
+                }
+                @comment "sorted by relative url"   
+                Attribute {
+                    name = rules
+                    type = importing:ImportRules
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = importing:ImportRules/attributes:importSource
+                }
+                Attribute {
+                    name = job
+                    type = jobs:Job
+                    isComposite = true
+                }
+            }
+        }
+        Class {
+            name = ImportRules
+            attributes = {
+                @comment "Url appended to importUrl. Useful for importing multi-file archives. When not set, importUrl is used."
+                Attribute {
+                    name = relativeUrl
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                    name = fileFormat
+                    type = importing:ImportFileFormat
+                    lower = 0
+                    isComposite = true
                 }
                 Attribute {
                     name = languageExpression
@@ -43,21 +99,30 @@ Package {
                     lower = 0
                 }
                 Attribute {
-                    name = outputChannelExpression
-                    type = primitive:String
+                    name = importProducts
+                    type = importing:ImportProducts
                     lower = 0
+                    isComposite = true
                 }
+                Attribute {
+                    name = importSource
+                    type = importing:ImportSource
+                    opposite = importing:ImportSource/attributes:rules
+                }
+            }
+        }
+        Class {
+            name = ImportProducts
+            attributes = {
                 @comment "Determines what property is used to match products"
                 Attribute {
                     name = matchProperty
                     type = catalog:Property
                     lower = 0
                 }
-                @comment "Incremented in every import, can be used in expressions"
                 Attribute {
-                    name = sequenceNr
-                    type = primitive:Integer
-                    lower = 0
+                    name = outputChannelExpression
+                    type = primitive:String
                 }
                 Attribute {
                     name = categories
@@ -65,7 +130,7 @@ Package {
                     lower = 0
                     upper = {}
                     isComposite = true
-                    opposite = importing:ImportCategory/attributes:ImportSource
+                    opposite = importing:ImportCategory/attributes:importProducts
                 }
                 Attribute {
                     name = properties
@@ -73,12 +138,7 @@ Package {
                     lower = 0
                     upper = {}
                     isComposite = true
-                    opposite = importing:ImportProperty/attributes:ImportSource
-                }
-                Attribute {
-                    name = job
-                    type = jobs:Job
-                    isComposite = true
+                    opposite = importing:ImportProperty/attributes:importProducts
                 }
             }
         }
@@ -97,8 +157,11 @@ Package {
             }
         }
         Class {
-            name = TabularImportSource
-            superClass = importing:ImportSource
+            name = ImportFileFormat
+        }
+        Class {
+            name = TabularFileFormat
+            superClass = importing:ImportFileFormat
             attributes = {
                 Attribute {
                     name = headerLine
@@ -115,16 +178,19 @@ Package {
                     type = primitive:String
                     lower = 0
                 }
-                
             }
+        }
+        Class {
+            name = XmlFileFormat
+            superClass = importing:ImportFileFormat
         }
         Class {
             name = ImportCategory
             attributes = {
                 Attribute {
-                    name = ImportSource
-                    type = importing:ImportSource
-                    opposite = importing:ImportSource/attributes:categories
+                    name = importProducts
+                    type = importing:ImportProducts
+                    opposite = importing:ImportProducts/attributes:categories
                 }
                 Attribute {
                     name = categoryExpression
@@ -136,9 +202,9 @@ Package {
             name = ImportProperty
             attributes = {
                 Attribute {
-                    name = ImportSource
-                    type = importing:ImportSource
-                    opposite = importing:ImportSource/attributes:properties
+                    name = importProducts
+                    type = importing:ImportProducts
+                    opposite = importing:ImportProducts/attributes:properties
                 }
                 Attribute {
                     name = property

@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class PropertyGroup implements Serializable {
-    private Long id;
-    private Collection<Label> labels;
+    private Long id = 0l;
+    private List<Label> labels;
     private Catalog catalog;
 
     public Long getId() {
@@ -17,17 +17,20 @@ public class PropertyGroup implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
-    public Collection<Label> getLabels() {
+    public List<Label> getLabels() {
         if (labels == null) {
             labels = new ArrayList<Label>();
         }
         return labels;
     }
 
-    public void setLabels(Collection<Label> value) {
+    public void setLabels(List<Label> value) {
         this.labels = value;
     }
 

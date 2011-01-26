@@ -11,15 +11,17 @@ import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.GlobalStyles;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.jpa.importing.ImportJobResult;
+import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Job;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -48,8 +50,12 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	private ImportSource currentImportSource = null;
 	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
-	private ImportSourceMainPanel importSourceMainPanel;
+	private ImportMainPanel importSourceMainPanel;
+	private MultiFileImportPanel multiFilePanel;
 	private ImportDefinitionPanel propertyMappingsPanel;
+	private ImportHistoryPanel2 historyPanel;
+	private ImportLogPanel logPanel;
+
 	private PullUpTabs tabs;
 	
 	public ImportMasterDetail(int headerSize, int footerSize) {
@@ -78,8 +84,11 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		}
 		if (currentImportSource != null && equal(currentImportSource.getId(), importSource.getId())) {
 			currentImportSource = importSource;
+			multiFilePanel.setImportSource(currentImportSource);
 			importSourceMainPanel.setImportSource(currentImportSource);
 			propertyMappingsPanel.setImportSource(currentImportSource);
+			historyPanel.setImportSource(currentImportSource);
+			logPanel.setImportSource(currentImportSource);
 		}
 	}
 	
@@ -90,12 +99,12 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	final protected void masterPanelCreated(DockLayoutPanel masterPanel) {
 		Table table = getMasterTable();
 		table.resizeColumns(NR_COLS);
-		table.setHeaderText(0, 0, messages.importSource());
+		table.setHeaderText(0, 0, messages.importSourceLabel());
 		
 		LayoutPanel header = getMasterHeader();
 		header.add(new RoundedPanel( RoundedPanel.ALL, 4) {{
 			setBorderColor("white");
-			add(new Anchor(messages.newImportSource()) {{
+			add(new Anchor(messages.newImportSourceLink()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						createImportSource();
@@ -125,24 +134,57 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 				});
 			}}, 50);
 			add(tabs = new PullUpTabs(30, 5) {{
-				setMainWidget(importSourceMainPanel = new ImportSourceMainPanel() {
+				setMainWidget(importSourceMainPanel = new ImportMainPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
+					}
+					@Override
+					protected void showFileFormat(ImportRules rules) {
+					}
+					@Override
+					protected void showImportRules(ImportRules rules) {
+						tabs.showTab(propertyMappingsPanel);
 					}
 					protected void showLastRunLog() {
-						tabs.showTab(1);
+						new Timer() {
+							public void run() {
+								tabs.showTab(logPanel);
+							}
+						}.schedule(1);
 					};
 				});
-				addTab(new Label(messages.propertyMappings()), 80, propertyMappingsPanel = new ImportDefinitionPanel() {
+				addTab(new Label(messages.multiFileTab()), 100, multiFilePanel = new MultiFileImportPanel() {
+					
+					@Override
+					protected void storeImportSource(StoreImportSource command) {
+						ImportMasterDetail.this.storeImportSource(command);
+					}
+					
+					@Override
+					protected void showImportRules(ImportRules rules) {
+						tabs.showTab(propertyMappingsPanel);
+					}
+					
+					@Override
+					protected void showFileFormat(ImportRules rules) {
+					}
+				});
+				addTab(new Label(messages.definition()), 80, propertyMappingsPanel = new ImportDefinitionPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
 					}
 				});
-				addTab(new Label(messages.log()), 50, new ImportLogPanel());
+				addTab(new Label(messages.history()), 50, historyPanel = new ImportHistoryPanel2() {
+					protected void showLog(ImportJobResult jobResult) {
+						logPanel.setJobResult(jobResult);
+						tabs.showTab(logPanel);
+					}
+				});
+				addTab(new Label(messages.log()), 50, logPanel = new ImportLogPanel());
 			}});
 		}});
 		//ruud
-tabs.showTab(0);
+//tabs.showTab(0);
 	}
 
 
@@ -164,6 +206,8 @@ tabs.showTab(0);
 			final ClickHandler selectRowClickHandler = new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					selectRow(row);
+					// prevent detail to close immediately
+					event.stopPropagation();
 				}
 			};
 			
@@ -211,14 +255,12 @@ tabs.showTab(0);
 	private void selectRow(int row) {
 		openDetail(row);
 		currentImportSource = importSources.get(row);
-		importSourceMainPanel.setImportSource(currentImportSource);
-		if (currentImportSource.getId() != null) {
-			updateImportSource(currentImportSource);
-		}
+		importSourceChanged(currentImportSource, currentImportSource);
 	}
 	
 	final protected void createImportSource() {
 			ImportSource importSource = new ImportSource();
+			importSource.setName("new import source");
 			importSource.setJob(new Job());
 			importSources.add(0, importSource);
 			renderTable();

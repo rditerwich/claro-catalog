@@ -2,8 +2,6 @@ package claro.catalog.data;
 
 import java.io.Serializable;
 
-import org.hsqldb.lib.tar.PIFData;
-
 import com.google.common.base.Objects;
 
 import claro.jpa.catalog.PropertyType;

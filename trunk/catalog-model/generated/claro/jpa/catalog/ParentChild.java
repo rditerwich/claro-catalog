@@ -7,16 +7,19 @@ import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class ParentChild implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Item parent;
     private Item child;
-    private Integer index;
+    private Integer index = 0;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -41,6 +44,9 @@ public class ParentChild implements Serializable {
     }
 
     public void setIndex(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.index = value;
     }
 

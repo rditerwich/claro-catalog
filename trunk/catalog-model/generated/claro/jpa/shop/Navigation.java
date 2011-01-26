@@ -5,15 +5,15 @@ import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import claro.jpa.catalog.Category;
 
 @SuppressWarnings("serial")
 public class Navigation implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Category category;
-    private Integer index;
-    private Collection<Navigation> subNavigation;
+    private Integer index = 0;
+    private List<Navigation> subNavigation;
     private Shop parentShop;
     private Navigation parentNavigation;
 
@@ -22,6 +22,9 @@ public class Navigation implements Serializable {
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -38,17 +41,20 @@ public class Navigation implements Serializable {
     }
 
     public void setIndex(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.index = value;
     }
 
-    public Collection<Navigation> getSubNavigation() {
+    public List<Navigation> getSubNavigation() {
         if (subNavigation == null) {
             subNavigation = new ArrayList<Navigation>();
         }
         return subNavigation;
     }
 
-    public void setSubNavigation(Collection<Navigation> value) {
+    public void setSubNavigation(List<Navigation> value) {
         this.subNavigation = value;
     }
 

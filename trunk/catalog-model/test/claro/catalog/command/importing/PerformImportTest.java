@@ -12,8 +12,12 @@ import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
-import claro.jpa.importing.TabularImportSource;
+import claro.jpa.importing.ImportRules;
+import claro.jpa.importing.ImportSource;
+import claro.jpa.importing.TabularFileFormat;
+import claro.jpa.jobs.JobResult;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.sexpr.Constant;
 
@@ -27,19 +31,26 @@ public class PerformImportTest extends CatalogTestBase {
 		CatalogModel model = getCatalogModel();
 		
 		// create an import definition
-		TabularImportSource importDef = new TabularImportSource();
-		importDef.setMatchProperty(model.articleNumberProperty.getEntity());
+		ImportSource importSource = new ImportSource();
+		ImportRules rules = new ImportRules();
+		importSource.getRules().add(rules);
+		ImportProducts importProducts = new ImportProducts();
+		rules.setImportProducts(importProducts);
+		TabularFileFormat fileFormat = new TabularFileFormat();
+		rules.setFileFormat(fileFormat);
 		
-		importDef.setName("Import Test Products");
-		importDef.setHeaderLine(true);
+		importProducts.setMatchProperty(model.articleNumberProperty.getEntity());
+		
+		importSource.setName("Import Test Products");
+		fileFormat.setHeaderLine(true);
 		ImportProperty propDef = new ImportProperty();
 		propDef.setProperty(model.articleNumberProperty.getEntity());
 		propDef.setValueExpression("#Klantartikelnummer");
-		importDef.getProperties().add(propDef);
+		importProducts.getProperties().add(propDef);
 		propDef = new ImportProperty();
 		propDef.setProperty(model.nameProperty.getEntity());
 		propDef.setValueExpression("#omschrijving");
-		importDef.getProperties().add(propDef);
+		importProducts.getProperties().add(propDef);
 		
 		// create a category
 		String categoryName = "HP Ink Cartridges";
@@ -50,11 +61,11 @@ public class PerformImportTest extends CatalogTestBase {
 		
 		ImportCategory importCat = new ImportCategory();
 		importCat.setCategoryExpression(Constant.constant(categoryName));
-		importDef.getCategories().add(importCat);
+		importProducts.getCategories().add(importCat);
 
 		// create an import definition
 		StoreImportSource update = new StoreImportSource();
-		update.importSource = importDef;
+		update.importSource = importSource;
 		Result updateResult = executeCommand(update);
 		
 		
@@ -63,13 +74,16 @@ public class PerformImportTest extends CatalogTestBase {
 		performImport.catalogId = TEST_CATALOG_ID;
 		performImport.importSourceId = updateResult.importSource.getId();
 		performImport.importUrl = new Constant(getClass().getResource("sample-products.csv").toString()).toString();
-		performImport.generateJobResult = true;
 		
 		System.out.println("FIRST RUN:");
 		PerformImport.Result result = executeCommand(performImport);
-		System.out.println(result.jobResult.getLog());
+		for (JobResult jobResult : result.jobResults) {
+			System.out.println(jobResult.getLog());
+		}
 		System.out.println("SECOND RUN:");
 		result = executeCommand(performImport);
-		System.out.println(result.jobResult.getLog());
+		for (JobResult jobResult : result.jobResults) {
+			System.out.println(jobResult.getLog());
+		}
 	}
 }

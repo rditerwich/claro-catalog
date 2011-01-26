@@ -1,13 +1,21 @@
 package claro.catalog.impl.importing;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static easyenterprise.lib.command.CommandValidationException.validate;
+import static easyenterprise.lib.util.CollectionUtil.concat;
 import static easyenterprise.lib.util.CollectionUtil.notNull;
+import static java.util.Collections.singleton;
 
 import javax.persistence.EntityManager;
 
+import com.google.common.base.Strings;
+
 import claro.catalog.command.importing.StoreImportSource;
 import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Frequency;
 import claro.jpa.jobs.Job;
@@ -23,46 +31,78 @@ import easyenterprise.lib.util.CollectionUtil;
 public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
 
 	private static final long serialVersionUID = 1L;
-	private static View view = new BasicView("matchProperty", "categories/categoryExpression", "properties/property", "job");
+	private static View view = new BasicView("job", "rules/fileFormat", "rules/importProducts/matchProperty", "rules/importProducts/categories/categoryExpression", "rules/importProducts/properties/property");
 	
 	@Override
 	public Result execute() throws CommandException {
 		EntityManager em = JpaService.getEntityManager();
 		validateCommand(em);
 		Result result = new Result();
-		if (remove) {
+		if (removeImportSource) {
 			em.remove(importSource);
 		} else {
-			if (skipImportSource) {
-				for (ImportCategory cat : CollectionUtil.notNull(importSource.getCategories())) {
-						em.merge(cat);
-				}
-				for (ImportProperty prop : notNull(importSource.getProperties())) {
-						em.merge(prop);
-				}
-				result.importSource = em.find(ImportSource.class, importSource.getId());
-			} else {
-				result.importSource = em.merge(importSource);
-				fillinJob(result.importSource, em);
-			}
-			for (ImportCategory cat : CollectionUtil.notNull(result.importSource.getCategories())) {
-				cat.setImportSource(result.importSource);
-			}
-			for (ImportProperty prop : CollectionUtil.notNull(result.importSource.getProperties())) {
-				prop.setImportSource(result.importSource);
-			}
-			for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
-				if (result.importSource.getCategories().remove(cat)) {
-					em.remove(em.find(ImportCategory.class, cat.getId()));
+			
+			// store changes to import source
+			result.importSource = em.merge(importSource);
+			
+			// make sure there is job instance attached
+			fillinJob(result.importSource, em);
+			
+			// set parent pointers
+			for (ImportRules rules : result.importSource.getRules()) {
+				rules.setImportSource(result.importSource);
+				if (rules.getImportProducts() != null) {
+					for (ImportCategory cat : rules.getImportProducts().getCategories()) {
+						cat.setImportProducts(rules.getImportProducts());
+					}
+					for (ImportProperty prop : rules.getImportProducts().getProperties()) {
+						prop.setImportProducts(rules.getImportProducts());
+					}
 				}
 			}
+			
+			// remove import rules
+			for (ImportRules rules : notNull(importRulesToBeRemoved)) {
+				if (result.importSource.getRules().remove(rules)) {
+					em.remove(em.find(ImportRules.class, rules.getId()));
+				}
+			}
+			
+			// remove import products
+			for (ImportProducts products : notNull(importProductsToBeRemoved)) {
+				for (ImportRules rules : result.importSource.getRules()) {
+					if (equal(rules.getImportProducts(), products)) {
+						rules.setImportProducts(null);
+						em.remove(em.find(ImportProducts.class, products.getId()));
+					}
+				}
+			}
+			
+			// remove categories
+			for (ImportCategory cat : notNull(importCategoriesToBeRemoved)) {
+				for (ImportRules rules : result.importSource.getRules()) {
+					for (ImportProducts products : singleton(rules.getImportProducts())) {
+						if (products.getCategories().remove(cat)) {
+							em.remove(em.find(ImportCategory.class, cat.getId()));
+						}
+					}
+				}
+			}
+			
+			// remove properties
 			for (ImportProperty prop : CollectionUtil.notNull(importPropertiesToBeRemoved)) {
-				if (result.importSource.getProperties().remove(prop)) {
-					em.remove(em.find(ImportProperty.class, prop.getId()));
+				for (ImportRules rules : result.importSource.getRules()) {
+					for (ImportProducts products : singleton(rules.getImportProducts())) {
+						if (products.getProperties().remove(prop)) {
+							em.remove(em.find(ImportProperty.class, prop.getId()));
+						}
+					}
 				}
 			}
+			
+			// clone result
+			result.importSource = Cloner.clone(result.importSource, view);
 		}
-		result.importSource = Cloner.clone(result.importSource, view);
 		return result;
 	}
 	
@@ -72,7 +112,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			job = new Job();
 			importSource.setJob(job);
 		}
-		if (job.getName() == null) {
+		if (isNullOrEmpty(job.getName())) {
 			job.setName(importSource.getName());
 		}
 		if (job.getRunFrequency() == null) {
@@ -85,32 +125,48 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 	
 	private void validateCommand(EntityManager em) throws CommandValidationException {
 		checkValid();
+		// rules to be removed should exist
+		for (ImportRules rules : notNull(importRulesToBeRemoved)) {
+			validate(rules.getId() != null);
+		}
 		// categories to be removed should exist
-		for (ImportCategory cat : CollectionUtil.notNull(importCategoriesToBeRemoved)) {
+		for (ImportCategory cat : notNull(importCategoriesToBeRemoved)) {
 			validate(cat.getId() != null);
 		}
-		// all categories should belong to the current import definition
-		for (ImportCategory cat : CollectionUtil.concat(importSource.getCategories(), importCategoriesToBeRemoved)) {
-			if (cat.getId() != null) {
-				ImportCategory existing = em.find(ImportCategory.class, cat.getId());
-				if (existing != null) {
-					validate(existing.getImportSource().equals(importSource));
-				}
-			}
-		}
 		// properties to be removed should exist
-		for (ImportProperty prop : CollectionUtil.notNull(importPropertiesToBeRemoved)) {
+		for (ImportProperty prop : notNull(importPropertiesToBeRemoved)) {
 			validate(prop.getId() != null);
 		}
-		// all properties should belong to the current import definition
-		for (ImportProperty prop : CollectionUtil.concat(importSource.getProperties(), importPropertiesToBeRemoved)) {
-			if (prop.getId() != null) {
-				ImportProperty existing = em.find(ImportProperty.class, prop.getId());
+		// all rules should belong to the current import definition
+		for (ImportRules rules : concat(importSource.getRules(), importRulesToBeRemoved)) {
+			if (rules.getId() != null) {
+				ImportRules existing = em.find(ImportRules.class, rules.getId());
 				if (existing != null) {
 					validate(existing.getImportSource().equals(importSource));
 				}
 			}
+			// all categories should belong to the current rules
+			if (rules.getImportProducts() != null) {
+				for (ImportCategory cat : rules.getImportProducts().getCategories()) {
+					if (cat.getId() != null) {
+						ImportCategory existing = em.find(ImportCategory.class, cat.getId());
+						if (existing != null) {
+							validate(existing.getImportProducts().equals(rules.getImportProducts()));
+						}
+					}
+				}
+				// all properties should belong to the current import definition
+				for (ImportProperty prop : rules.getImportProducts().getProperties()) {
+					if (prop.getId() != null) {
+						ImportProperty existing = em.find(ImportProperty.class, prop.getId());
+						if (existing != null) {
+							validate(existing.getImportProducts().equals(rules.getImportProducts()));
+						}
+					}
+				}
+			}
 		}
+		
 		
 	}
 }

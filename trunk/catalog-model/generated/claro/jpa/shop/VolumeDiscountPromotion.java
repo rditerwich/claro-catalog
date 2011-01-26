@@ -10,9 +10,9 @@ import claro.jpa.catalog.Product;
 @SuppressWarnings("serial")
 public class VolumeDiscountPromotion extends Promotion implements Serializable {
     private Product product;
-    private Double price;
-    private String priceCurrency;
-    private Integer volumeDiscount;
+    private Double price = 0.0;
+    private String priceCurrency = "";
+    private Integer volumeDiscount = 0;
 
     public Product getProduct() {
         return product;
@@ -27,6 +27,9 @@ public class VolumeDiscountPromotion extends Promotion implements Serializable {
     }
 
     public void setPrice(Double value) {
+        if (value == null) {
+            value = 0.0;
+        }
         this.price = value;
     }
 
@@ -35,6 +38,9 @@ public class VolumeDiscountPromotion extends Promotion implements Serializable {
     }
 
     public void setPriceCurrency(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.priceCurrency = value;
     }
 
@@ -43,6 +49,9 @@ public class VolumeDiscountPromotion extends Promotion implements Serializable {
     }
 
     public void setVolumeDiscount(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.volumeDiscount = value;
     }
 

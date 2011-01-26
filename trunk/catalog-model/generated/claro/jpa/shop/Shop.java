@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Template;
 
 @SuppressWarnings("serial")
 public class Shop extends OutputChannel implements Serializable {
     private String urlPrefix;
-    private Collection<Navigation> navigation;
-    private Collection<Promotion> promotions;
-    private Collection<Template> templates;
+    private List<Navigation> navigation;
+    private List<Promotion> promotions;
+    private List<Template> templates;
 
     public String getUrlPrefix() {
         return urlPrefix;
@@ -23,36 +23,36 @@ public class Shop extends OutputChannel implements Serializable {
         this.urlPrefix = value;
     }
 
-    public Collection<Navigation> getNavigation() {
+    public List<Navigation> getNavigation() {
         if (navigation == null) {
             navigation = new ArrayList<Navigation>();
         }
         return navigation;
     }
 
-    public void setNavigation(Collection<Navigation> value) {
+    public void setNavigation(List<Navigation> value) {
         this.navigation = value;
     }
 
-    public Collection<Promotion> getPromotions() {
+    public List<Promotion> getPromotions() {
         if (promotions == null) {
             promotions = new ArrayList<Promotion>();
         }
         return promotions;
     }
 
-    public void setPromotions(Collection<Promotion> value) {
+    public void setPromotions(List<Promotion> value) {
         this.promotions = value;
     }
 
-    public Collection<Template> getTemplates() {
+    public List<Template> getTemplates() {
         if (templates == null) {
             templates = new ArrayList<Template>();
         }
         return templates;
     }
 
-    public void setTemplates(Collection<Template> value) {
+    public void setTemplates(List<Template> value) {
         this.templates = value;
     }
 

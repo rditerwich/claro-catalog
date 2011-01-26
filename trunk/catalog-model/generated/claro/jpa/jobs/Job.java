@@ -8,23 +8,26 @@ import java.lang.Override;
 import java.lang.String;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Job implements Serializable {
-    private Long id;
-    private String name;
+    private Long id = 0l;
+    private String name = "";
     private Timestamp firstRun;
     private Frequency runFrequency;
     private Integer healthPerc;
     private Boolean lastSuccess;
-    private Collection<JobResult> results;
+    private List<JobResult> results;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -33,6 +36,9 @@ public class Job implements Serializable {
     }
 
     public void setName(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.name = value;
     }
 
@@ -68,14 +74,14 @@ public class Job implements Serializable {
         this.lastSuccess = value;
     }
 
-    public Collection<JobResult> getResults() {
+    public List<JobResult> getResults() {
         if (results == null) {
             results = new ArrayList<JobResult>();
         }
         return results;
     }
 
-    public void setResults(Collection<JobResult> value) {
+    public void setResults(List<JobResult> value) {
         this.results = value;
     }
 

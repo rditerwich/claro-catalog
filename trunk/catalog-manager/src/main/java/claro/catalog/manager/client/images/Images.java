@@ -40,4 +40,17 @@ public interface Images extends ClientBundle {
   
   @Source("closeButton3.png")
   ImageResource clearImage3();
+  
+  @Source("dash.png")
+  ImageResource dash();
+
+  @Source("ok.png")
+  ImageResource ok();
+  
+  @Source("warning.png")
+  ImageResource warning();
+  
+  @Source("error.png")
+  ImageResource error();
+  
 }

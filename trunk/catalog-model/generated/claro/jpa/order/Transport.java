@@ -8,16 +8,19 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Transport implements Serializable {
-    private Long id;
-    private String desciption;
-    private String transportCompany;
-    private Integer deliveryTime;
+    private Long id = 0l;
+    private String desciption = "";
+    private String transportCompany = "";
+    private Integer deliveryTime = 0;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -26,6 +29,9 @@ public class Transport implements Serializable {
     }
 
     public void setDesciption(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.desciption = value;
     }
 
@@ -34,6 +40,9 @@ public class Transport implements Serializable {
     }
 
     public void setTransportCompany(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.transportCompany = value;
     }
 
@@ -42,6 +51,9 @@ public class Transport implements Serializable {
     }
 
     public void setDeliveryTime(Integer value) {
+        if (value == null) {
+            value = 0;
+        }
         this.deliveryTime = value;
     }
 

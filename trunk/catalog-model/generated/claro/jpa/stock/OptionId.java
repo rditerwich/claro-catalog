@@ -7,15 +7,18 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class OptionId implements Serializable {
-    private Long id2;
+    private Long id2 = 0l;
     private OptionIdType type;
-    private String id;
+    private String id = "";
 
     public Long getId2() {
         return id2;
     }
 
     public void setId2(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id2 = value;
     }
 
@@ -32,6 +35,9 @@ public class OptionId implements Serializable {
     }
 
     public void setId(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.id = value;
     }
 

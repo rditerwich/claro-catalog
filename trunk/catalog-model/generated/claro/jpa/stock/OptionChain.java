@@ -5,21 +5,24 @@ import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class OptionChain implements Serializable {
-    private Long id;
+    private Long id = 0l;
     private Exchange exchange;
     private Underlying underlying;
-    private String symbol;
-    private Collection<Option> options;
+    private String symbol = "";
+    private List<Option> options;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -44,17 +47,20 @@ public class OptionChain implements Serializable {
     }
 
     public void setSymbol(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.symbol = value;
     }
 
-    public Collection<Option> getOptions() {
+    public List<Option> getOptions() {
         if (options == null) {
             options = new ArrayList<Option>();
         }
         return options;
     }
 
-    public void setOptions(Collection<Option> value) {
+    public void setOptions(List<Option> value) {
         this.options = value;
     }
 

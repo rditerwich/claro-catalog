@@ -7,18 +7,21 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Address implements Serializable {
-    private Long id;
-    private String address1;
+    private Long id = 0l;
+    private String address1 = "";
     private String address2;
-    private String town;
-    private String postalCode;
-    private String country;
+    private String town = "";
+    private String postalCode = "";
+    private String country = "";
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
+        if (value == null) {
+            value = 0l;
+        }
         this.id = value;
     }
 
@@ -27,6 +30,9 @@ public class Address implements Serializable {
     }
 
     public void setAddress1(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.address1 = value;
     }
 
@@ -43,6 +49,9 @@ public class Address implements Serializable {
     }
 
     public void setTown(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.town = value;
     }
 
@@ -51,6 +60,9 @@ public class Address implements Serializable {
     }
 
     public void setPostalCode(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.postalCode = value;
     }
 
@@ -59,6 +71,9 @@ public class Address implements Serializable {
     }
 
     public void setCountry(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.country = value;
     }
 
