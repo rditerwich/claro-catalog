@@ -92,9 +92,9 @@ public class ItemUtil {
 		return categories;
 	}
 
-	public static SMap<Long, SMap<String, String>> parentExtent(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+	public static SMap<Long, SMap<String, String>> parentExtent(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel, boolean includeSelf) {
 		SMap<Long, SMap<String, String>> categories = SMap.empty();
-		for (ItemModel category : itemModel.getParentExtent()) {
+		for (ItemModel category : parentExtent(itemModel, includeSelf)) {
 			categories = categories.add(category.getItemId(), ItemUtil.getNameLabels(category, catalogModel, channel, area));
 		}
 		return categories;

@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.Header;
 import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.util.CollectionUtil;
@@ -32,9 +33,9 @@ import easyenterprise.lib.util.SMap;
 
 
 abstract public class CategoryDetails extends Composite implements Globals {
-	private enum Styles implements Style { productDetails, imagePrice }
+	private enum Styles implements Style { categoryDetails, imagePrice }
 	
-	private Label categoryNameBox;
+	private Header categoryNameBox;
 	private CategoriesWidget categoryPanel;
 //	private Label productPrice;
 //	private MediaWidget productImage;
@@ -62,18 +63,21 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		this.imageProperty = imageProperty;
 		
 		initWidget(new PullUpTabs(30, 5) {{
+			StyleUtil.add(this, Styles.categoryDetails);
 			setMainWidget(new ScrollPanel(new FlowPanel() {{
-				StyleUtil.add(this, Styles.productDetails);
 				
 //			add(new Trail());
 				
 				// Title
 				add(new Grid(1, 2) {{
 					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
-					setWidget(0, 0, categoryNameBox = new Label() {{
+					setWidget(0, 0, categoryNameBox = new Header(1, "") {{
 						StyleUtil.add(this, CategoryMasterDetail.Styles.productname);
 					}});
 					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
+						protected String getAddCategoryLabel() {
+							return messages.addParentCategoriesLink();
+						};
 						protected String getAddCategoryTooltip() {
 							return messages.addCategoryProductDetailsTooltip(categoryNameBox.getText());  // TODO This is a little dirty??
 						}
@@ -150,18 +154,18 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	 * @param item
 	 * @param values
 	 */
-	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtent, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
+	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
 		this.itemId = itemId;
 		this.groups = groups;
 		this.parents = parents;
 		
 		this.propertyValues = splitValues(values, itemId, false);
 		
-		this.inheritedPropertyValues = splitValues(values, itemId, true);
+		this.inheritedPropertyValues = values;// splitValues(values, itemId, true);
 		
-		propertiesComponent.setItemData(itemId, groups, parentExtent, propertyValues);
+		propertiesComponent.setItemData(itemId, groups, parentExtentWithSelf, propertyValues);
 		
-		inheritedPropertyValuesComponent.setItemData(itemId, groups, parentExtent, inheritedPropertyValues);
+		inheritedPropertyValuesComponent.setItemData(itemId, groups, parentExtentWithSelf, inheritedPropertyValues);
 		
 		render();
 	}

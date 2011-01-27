@@ -108,7 +108,7 @@ public class TaxonomyPage extends Page {
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
-				categoryMasterDetail.setSelectedCategory(productId, result.groups, result.parentExtent, result.parents, result.propertyData);
+				categoryMasterDetail.setSelectedCategory(productId, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
 			}
 		});
 		
@@ -130,6 +130,14 @@ public class TaxonomyPage extends Page {
 			public void onSuccess(Result result) {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingCategoryDetailsSuccessStatus());
+				
+				// Invalidate cached category tree.
+				GetCategoryTree getTreeCmd = new GetCategoryTree();
+				getTreeCmd.catalogId = cmd.catalogId;
+				getTreeCmd.outputChannelId = cmd.outputChannelId;
+				getTreeCmd.stagingAreaId = cmd.stagingAreaId;
+				
+				GwtCommandFacade.invalidateCache(getTreeCmd);
 				
 				categoryMasterDetail.updateCategory(cmd.productId, result.storedProductId, result.masterValues, result.parents, result.detailValues, true);
 			}

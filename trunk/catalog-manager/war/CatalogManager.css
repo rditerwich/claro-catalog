@@ -430,6 +430,7 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 .productDetails .productprice {
 	font-size: medium;
 	padding: 20px;
+	text-align: right;
 }
 
 .productDetails .gwt-TabBarItem {
@@ -469,7 +470,7 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 100%;
 }
 
-.productDetails .categoryProperties {
+.categoryDetails .categoryProperties {
 	width: 100%;
 }
 
@@ -484,10 +485,32 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 100%;
 }
 
+.categoryDetails .itemPropertyValues .valueParent.inherited .valueWidget {
+	color: gray;
+}
+
+.categoryDetails .itemPropertyValues .valueParent.overridden .valueWidget {
+	color: blue;
+}
+
+.productDetails .itemPropertyValues .valueParent.inherited .valueWidget {
+	color: gray;
+}
+.productDetails .itemPropertyValues .valueParent.overridden .valueWidget {
+	color: blue;
+}
+
 .productDetails .valueParent {
 	width: 100%;
 }
 .productDetails .valueParent .valueWidget {
+	width: 100%;
+}
+
+.categoryDetails .valueParent {
+	width: 100%;
+}
+.categoryDetails .valueParent .valueWidget {
 	width: 100%;
 }
 

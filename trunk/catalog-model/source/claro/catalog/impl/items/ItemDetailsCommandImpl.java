@@ -44,7 +44,7 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		
 		result.parents = ItemUtil.parents(itemModel, catalogModel, area, channel, includeRootCategory);
 		
-		result.parentExtent = ItemUtil.parentExtent(itemModel, catalogModel, area, channel);
+		result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, area, channel, true);
 		
 		result.groups = ItemUtil.groups(itemModel, catalogModel, area, channel);
 		

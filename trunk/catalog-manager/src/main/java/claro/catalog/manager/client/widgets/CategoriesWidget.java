@@ -108,8 +108,12 @@ public class CategoriesWidget extends Composite implements Globals {
 			}});
 		}
 		if (categoryKeys.isEmpty()) {
-			mainPanel.add(createAddAnchor(messages.addCategoriesLink()));
+			mainPanel.add(createAddAnchor(getAddCategoryLabel()));
 		}
+	}
+
+	protected String getAddCategoryLabel() {
+		return messages.addToCategoriesLink();
 	}
 
 	private Anchor createAddAnchor(String addCategoryText) {

@@ -204,13 +204,14 @@ public class ItemModel {
 		Set<ItemModel> items = new LinkedHashSet<ItemModel>();
 		items.add(this);
 		items.addAll(getParentExtent());
+		itemloop:
 		for (ItemModel item : items) {
 			if (item.getItemClass().equals(Category.class)) {
 				Category category = (Category) item.getEntity();
 				for (PropertyGroupAssignment groupAssignment : category.getPropertyGroupAssignments()) {
 					if (groupAssignment.getProperty().equals(property)) {
 						group = groupAssignment.getPropertyGroup();
-						break;
+						break itemloop;
 					}
 				}
 			}
@@ -328,13 +329,13 @@ public class ItemModel {
 				for (ItemModel parent : getParentExtent()) {
 					for (Entry<PropertyGroupInfo, PropertyModel> property : parent.getProperties()) {
 						PropertyModel propertyRoot = PropertyModel.create(property.getValue(), this);
-						propertyExtent = propertyExtent.add(property.getKey(), propertyRoot);
+						propertyExtent = propertyExtent.add(findGroup(property.getValue().getEntity()), propertyRoot);
 					}
 				}
 				
 				// Add local properties
 				for (Entry<PropertyGroupInfo, PropertyModel> property : getProperties()) {
-					propertyExtent = propertyExtent.add(property.getKey(), property.getValue());
+					propertyExtent = propertyExtent.add(findGroup(property.getValue().getEntity()), property.getValue());
 				}
 			}
 			return propertyExtent;

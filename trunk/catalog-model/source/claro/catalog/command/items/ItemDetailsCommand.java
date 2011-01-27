@@ -30,7 +30,7 @@ public class ItemDetailsCommand implements Command<ItemDetailsCommand.Result>{
 		public SMap<Long, SMap<String, String>> parents;
 		
 		// The parent extent with their names per language.
-		public SMap<Long, SMap<String, String>> parentExtent;
+		public SMap<Long, SMap<String, String>> parentExtentWithSelf;
 		
 		// All groups with their names per language.
 		public SMap<Long, SMap<String, String>> groups;

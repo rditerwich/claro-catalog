@@ -216,8 +216,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		Table productTable = getMasterTable();
 
 		productTable.resizeColumns(NR_COLS);
-		productTable.setHeaderText(0, 1, messages.product());
-		productTable.setHeaderText(0, 2, messages.price());
 		
 		// search panel
 		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
@@ -397,13 +395,13 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	abstract protected void categorySelected(Long productId);
 
 	
-	public void setSelectedCategory(Long categoryId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtent, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
+	public void setSelectedCategory(Long categoryId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
 		
 		int row = categoryRows.indexOf(new CategoryRow(categoryId, false, 0));
 
 		openDetail(row);
 
-		details.setItemData(categoryId, groups, parentExtent, parents, properties);
+		details.setItemData(categoryId, groups, parentExtentWithSelf, parents, properties);
 	}
 	
 	abstract protected void updateCategories();
@@ -462,13 +460,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 
 		newCategoryProperties = SMap.create(generalGroup, propertyMap);
 		setSelectedCategory(null, null, null, newCategoryParents, newCategoryProperties); // TODO What group/parentextent??
-	}
-	private void addRowSelectionListener(HasClickHandlers widget, final int row) {
-		widget.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				rowSelected(row);
-			}
-		});
 	}
 
 	private List<CategoryRow> createRows() {

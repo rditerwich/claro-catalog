@@ -174,7 +174,111 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		}
 	}
 	
-	public void render() {
+	@Override
+	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
+		Table productTable = getMasterTable();
+
+		productTable.resizeColumns(NR_COLS);
+		productTable.setHeaderText(0, 1, messages.product());
+		productTable.setHeaderText(0, 2, messages.price());
+		
+		// search panel
+		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
+			
+			add(new VerticalPanel() {{
+				add(new Grid(2, 3) {{
+					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
+					setWidget(0, 0, new ListBox() {{
+						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Shop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
+					}});
+					setWidget(0, 1, new TextBox() {{
+						addChangeHandler(new ChangeHandler() {
+							public void onChange(ChangeEvent event) {
+								filterString = getText();
+								updateFilterLabel();
+								updateProductList();
+							}
+						});
+					}});
+					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
+							setData(SMap.<Long, SMap<String, String>>empty(), language);
+						}
+						protected String getAddCategoryLabel() {
+							return messages.addCategoriesLink();
+						};
+						protected String getAddCategoryTooltip() {
+							return messages.addCategoryFilter();
+						}
+						protected String getRemoveCategoryTooltip(String categoryName) {
+							return messages.removeCategoryFilterTooltip(categoryName);
+						}
+						protected void removeCategory(Long categoryId) {
+							super.removeCategory(categoryId);
+							updateProductList();
+						}
+						protected void addCategory(Long categoryId, SMap<String, String> labels) {
+							super.addCategory(categoryId, labels);
+							updateProductList();
+						}
+					});
+					setWidget(1, 0, new Anchor(messages.newProduct()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								createNewProduct();
+							}
+						});
+					}});
+					setWidget(1, 1, new Anchor(messages.refresh()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								updateProductList();
+							}
+						});
+					}});
+				}});
+				add(new FlowPanel() {{
+					add(filterLabel = new HTML() {{
+						setVisible(false); 
+					}});
+				}});
+			}}); 
+		}});
+		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
+			setVisible(false);
+		}};
+	}
+	
+	@Override
+	protected final Widget tableCreated(Table table) {
+		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
+		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
+			setBorderColor("white");
+		}};
+		return masterRoundedPanel;
+	}
+
+	
+	@Override
+	protected void detailPanelCreated(LayoutPanel detailPanel) {
+		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
+			addNorth(new Anchor("Close") {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						closeDetail(true);
+					}
+				});
+			}}, 40);
+			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
+				protected void storeItem(StoreProduct cmd) {
+					ProductMasterDetail.this.storeItem(cmd);
+				}
+			});
+		}});
+	}
+
+	
+	private void render() {
 		
 		// Make sure we have the root properties:
 		if (nameProperty == null) {
@@ -316,105 +420,6 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	abstract protected void productSelected(Long productId);
 	
 	
-	@Override
-	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
-		Table productTable = getMasterTable();
-
-		productTable.resizeColumns(NR_COLS);
-		productTable.setHeaderText(0, 1, messages.product());
-		productTable.setHeaderText(0, 2, messages.price());
-		
-		// search panel
-		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-			
-			add(new VerticalPanel() {{
-				add(new Grid(2, 3) {{
-					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
-					setWidget(0, 0, new ListBox() {{
-						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Shop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
-					}});
-					setWidget(0, 1, new TextBox() {{
-						addChangeHandler(new ChangeHandler() {
-							public void onChange(ChangeEvent event) {
-								filterString = getText();
-								updateFilterLabel();
-								updateProductList();
-							}
-						});
-					}});
-					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-							setData(SMap.<Long, SMap<String, String>>empty(), language);
-						}
-						protected String getAddCategoryTooltip() {
-							return messages.addCategoryFilter();
-						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
-							return messages.removeCategoryFilterTooltip(categoryName);
-						}
-						protected void removeCategory(Long categoryId) {
-							super.removeCategory(categoryId);
-							updateProductList();
-						}
-						protected void addCategory(Long categoryId, SMap<String, String> labels) {
-							super.addCategory(categoryId, labels);
-							updateProductList();
-						}
-					});
-					setWidget(1, 0, new Anchor(messages.newProduct()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								createNewProduct();
-							}
-						});
-					}});
-					setWidget(1, 1, new Anchor(messages.refresh()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								updateProductList();
-							}
-						});
-					}});
-				}});
-				add(new FlowPanel() {{
-					add(filterLabel = new HTML() {{
-						setVisible(false); 
-					}});
-				}});
-			}}); 
-		}});
-		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
-			setVisible(false);
-		}};
-	}
-	
-	@Override
-	protected final Widget tableCreated(Table table) {
-		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
-		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-		}};
-		return masterRoundedPanel;
-	}
-
-	
-	@Override
-	protected void detailPanelCreated(LayoutPanel detailPanel) {
-		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						closeDetail(true);
-					}
-				});
-			}}, 40);
-			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
-				protected void storeItem(StoreProduct cmd) {
-					ProductMasterDetail.this.storeItem(cmd);
-				}
-			});
-		}});
-	}
 	
 	abstract protected void storeItem(StoreProduct cmd);
 

@@ -238,10 +238,10 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 		setValue(widget, value, property);
 		
 		if (isDerived) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		} else {
 			// TODO Maybe changelistener to remove derived?
-			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		}
 		return widget;
 	}

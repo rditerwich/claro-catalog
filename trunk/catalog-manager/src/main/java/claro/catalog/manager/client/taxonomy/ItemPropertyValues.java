@@ -43,7 +43,7 @@ import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
-	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues }
+	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden }
 	private static int NAME_COLUMN = 0;
 	private static int VALUE_COLUMN = 1;
 	private static int GROUP_COLUMN = 2;
@@ -61,7 +61,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private String language;
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> groups;
-	private SMap<Long, SMap<String, String>> parentExtent;
+	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
 	private final boolean showPropertySources;
 	private final boolean canReassignGroups;
 	
@@ -94,10 +94,10 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	 * @param itemId
 	 * @param values
 	 */
-	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtent, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
+	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
 		this.itemId = itemId;
 		this.groups = groups;
-		this.parentExtent = parentExtent;
+		this.parentExtentWithSelf = parentExtentWithSelf;
 		this.values = values;
 		render();
 	}
@@ -223,7 +223,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				
 				// property source
 				if (showPropertySources) {
-					String sourceName = parentExtent.get(property.ownerItemId).tryGet(language, null);
+					String sourceName = parentExtentWithSelf.get(property.ownerItemId).tryGet(language, null);
 					propertyValueWidgets.propertySourceWidget.setText(sourceName);
 					propertyValueWidgets.propertySourceWidget.setTitle(messages.propertySourceTooltip(propertyName, sourceName));
 				}
@@ -252,24 +252,32 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		
 		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(outputChannel); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
 		Object value = values.tryGet(language, null);
-		boolean isDerived = false;
+		boolean isHerited = false;
+
+		SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
+		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
+		Object inheritedValue = effectiveLanguageValues.tryGet(language, null);
 
 		if (value == null) {
-			SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
-			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
-			
-			value = effectiveLanguageValues.tryGet(language, null);
-			isDerived = true; 
+			value = inheritedValue;
+			if (value != null) {
+				isHerited = true; 
+			}
 		}
 		
 		setValue(widget, value, property);
 		
-		if (isDerived) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+		if (isHerited) {
+			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
+//			StyleUtil.remove(propertyValueWidgets.valueParentWidget, Styles.overridden);
 		} else {
-			// TODO Maybe changelistener to remove derived?
-			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
+			if (value != null && inheritedValue != null) {
+				// Value is overridden
+//				StyleUtil.add(propertyValueWidgets.valueParentWidget, Styles.overridden);
+			}
 		}
+		
 		return widget;
 	}
 

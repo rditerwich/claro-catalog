@@ -48,7 +48,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 		button4,
 		button5,
 		choices, 
-		derived,
+		inherited,
 		itemoverallactions, 
 		itempanel,
 		properties, 

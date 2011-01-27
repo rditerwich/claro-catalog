@@ -3,6 +3,7 @@ package claro.catalog.manager.client.taxonomy;
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -50,11 +52,11 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	private static int TYPE_COLUMN = 1;
 	private static int VALUE_COLUMN = 2;
 	private static int GROUP_COLUMN = 3;
-	private static int SOURCE_COLUMN = 4;
-	private static int NR_FIXED_COLS = 5;
+	private static int NR_COLS = 4;
+	private static PropertyType[] propertyTypes = PropertyType.values();
 
 	private TabPanel propertyGroupPanel;
-	private List<GroupPanelWidgets> groupPanels = new ArrayList<GroupPanelWidgets>();
+	private List<PropertyValueWidgets> valueWidgets = new ArrayList<PropertyValueWidgets>();
 	private Map<Widget, PropertyInfo> propertyByValueWidget = new HashMap<Widget, PropertyInfo>();
 	
 	
@@ -64,17 +66,17 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	private String language;
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> groups;
-	private SMap<Long, SMap<String, String>> parentExtent;
+	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
+	private Grid propertyPanel;
 	
 	public CategoryProperties(String language, OutputChannel outputChannel) {
 		this.language = language;
 		this.outputChannel = outputChannel;
 		
-		propertyGroupPanel = new TabPanel();
 		initWidget(new VerticalPanel() {{
 			StyleUtil.add(this, Styles.categoryProperties);
 			add(new Anchor("Define new property...")); // TODO i18n.
-			add(propertyGroupPanel);
+			add(propertyPanel = new Grid(0, NR_COLS));
 		}});
 	}
 	
@@ -96,10 +98,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	 * @param itemId
 	 * @param values
 	 */
-	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtent, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
+	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
 		this.itemId = itemId;
 		this.groups = groups;
-		this.parentExtent = parentExtent;
+		this.parentExtentWithSelf = parentExtentWithSelf;
 		this.values = values;
 		render();
 	}
@@ -117,85 +119,65 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	
 	private void render() {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
-		// Remove extraneous property groups.
-		int oldPanelCount = propertyGroupPanel.getWidgetCount();
-		for (int i = oldPanelCount - 1; i >= propertyGroups.size(); i--) {
-			groupPanels.remove(i);
-			propertyGroupPanel.remove(i);
+		int requiredNrRows = getNrProperties(values);
+
+		// Remove redundant properties
+		int oldRowCount = propertyPanel.getRowCount();
+		propertyPanel.resizeRows(requiredNrRows);  
+		for (int j = oldRowCount - 1; j >= requiredNrRows; j--) {
+			valueWidgets.remove(j);
 		}
 		
-		// Create new panels
-		for (int i = oldPanelCount; i < propertyGroups.size(); i++) {
-			GroupPanelWidgets propertyGroupWidgets = new GroupPanelWidgets();
+		// Create new rows
+		for (int j = oldRowCount; j < requiredNrRows; j++) {
+			final PropertyValueWidgets propertyValueWidgets = new PropertyValueWidgets();
 			
-			propertyGroupPanel.add(propertyGroupWidgets.panel = new Grid(0, NR_FIXED_COLS), "");
+			// name
+			propertyPanel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new TextBox()); // TODO Change listener.
 			
-			groupPanels.add(propertyGroupWidgets);
+			// type
+			propertyPanel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new ListBox() {{
+				// TODO Sort types?
+				for (PropertyType type : propertyTypes) {
+					addItem(type.name());// TODO How about i18n??
+				}
+			}}); 
 			
-			// If there was no panel, select a default one now.
-			if (oldPanelCount == 0) {
-				propertyGroupPanel.selectTab(0);
+			if (false) {
+			// Value + Clear button
+			propertyPanel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
+				StyleUtil.add(this, Styles.valueParent);
+				// Real value is added in the bind fase...
+				setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
+					StyleUtil.add(this, Styles.clear);
+					final Widget me = this;
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							clearValue(me);
+						}
+					});
+				}
+				}); 
+			}});
 			}
 			
+			// groups
+			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox());
+			
+			valueWidgets.add(propertyValueWidgets);
 		}
-		
-		// Rebind property groups
+
+		// (re)bind widgets
 		int i = 0;
 		propertyByValueWidget.clear();
 		for (PropertyGroupInfo propertyGroup : propertyGroups) {
 			
-			// TabPanel tab text:
-			propertyGroupPanel.getTabBar().setTabText(i, propertyGroup.labels.tryGet(CatalogManager.getUiLanguage(), null));
-
-			// TabPanel tab content:
 			
-			GroupPanelWidgets groupPanelWidgets = groupPanels.get(i);
 			SMap<PropertyInfo, PropertyData> properties = values.get(propertyGroup);
 			List<PropertyInfo> propertyKeys = properties.getKeys();
 			
-			// Remove redundant properties
-			int oldRowCount = groupPanelWidgets.panel.getRowCount();
-			groupPanelWidgets.panel.resizeRows(propertyKeys.size());  
-			for (int j = oldRowCount - 1; j >= propertyKeys.size(); j--) {
-				groupPanelWidgets.valueWidgets.remove(j);
-			}
-			
-			// Create new rows
-			for (int j = oldRowCount; j < propertyKeys.size(); j++) {
-				final PropertyValueWidgets propertyValueWidgets = new PropertyValueWidgets();
-				
-				// name
-				groupPanelWidgets.panel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new Label());
-				
-				// type
-				groupPanelWidgets.panel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new Label());
-
-				// Value + Clear button
-				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
-					StyleUtil.add(this, Styles.valueParent);
-					// Real value is added in the bind fase...
-					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
-						StyleUtil.add(this, Styles.clear);
-							final Widget me = this;
-							addClickHandler(new ClickHandler() {
-								public void onClick(ClickEvent event) {
-									clearValue(me);
-								}
-							});
-						}
-					}); 
-				}});
-				
-				// groups
-				groupPanelWidgets.panel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox());
-				
-				groupPanelWidgets.valueWidgets.add(propertyValueWidgets);
-			}
-			
-			// (re)bind widgets
-			int j = 0;
 			for (PropertyInfo property : propertyKeys) {
-				PropertyValueWidgets propertyValueWidgets = groupPanelWidgets.valueWidgets.get(j);
+				PropertyValueWidgets propertyValueWidgets = valueWidgets.get(i);
 				PropertyData propertyData = properties.get(property);
 				
 				// Set name
@@ -203,14 +185,17 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				propertyValueWidgets.nameWidget.setText(propertyName);
 				
 				// set type
-				propertyValueWidgets.typeWidget.setText(property.type.name()); // TODO How about i18n??
+				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.type)); 
 				
+				Widget valueWidget = null;
+				if (false) {
 				// ensure value widget
-				Widget valueWidget = setValueWidget(propertyValueWidgets, j, VALUE_COLUMN, property, propertyData);
+				valueWidget = setValueWidget(propertyValueWidgets, i, VALUE_COLUMN, property, propertyData);
+				}
 				
 				// Groups
 				propertyValueWidgets.propertyGroupsWidget.clear();
-				int k = 0;
+				int j = 0;
 				for (Entry<Long, SMap<String, String>> group : groups) {
 					// add item
 					String groupName = group.getValue().tryGet(language, null);
@@ -218,9 +203,9 @@ abstract public class CategoryProperties extends Composite implements Globals {
 					
 					// check selection
 					if (group.getKey().equals(propertyGroup.propertyGroupId)) {
-						propertyValueWidgets.propertyGroupsWidget.setSelectedIndex(k);
+						propertyValueWidgets.propertyGroupsWidget.setSelectedIndex(j);
 					}
-					k++;
+					j++;
 				}
 				
 				// Remember binding
@@ -229,13 +214,19 @@ abstract public class CategoryProperties extends Composite implements Globals {
 					propertyByValueWidget.put(propertyValueWidgets.clearValueWidget, property);
 				}
 				
-				j++;
+				i++;
 			}
-			
-			i++;
 		}
 	}
 	
+	private static int getNrProperties(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
+		int result = 0;
+		for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : values) {
+			result += group.getValue().getKeys().size();
+		}
+		return result;
+	}
+
 	private Widget setValueWidget(PropertyValueWidgets propertyValueWidgets, int row, int col, PropertyInfo property, PropertyData propertyData) {
 		
 		// ensure widget:
@@ -260,10 +251,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		setValue(widget, value, property);
 		
 		if (isDerived) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		} else {
 			// TODO Maybe changelistener to remove derived?
-			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.derived);
+			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		}
 		return widget;
 	}
@@ -381,15 +372,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
 	}
 	
-	private class GroupPanelWidgets {
-		public Grid panel;
-		public List<PropertyValueWidgets> valueWidgets = new ArrayList<PropertyValueWidgets>();
-	}
-	
 	private class PropertyValueWidgets {
 		protected Widget clearValueWidget;
-		public Label nameWidget;
-		public Label typeWidget;
+		public TextBox nameWidget;
+		public ListBox typeWidget;
 		public Grid valueParentWidget;
 		public ListBox propertyGroupsWidget;
 	}

@@ -177,6 +177,7 @@ public interface I18NCatalog extends Messages {
 //	
 //	String down();
 //
+	String addToCategoriesLink();
 	String addCategoriesLink();
 	String addCategoryFilter();
 	String addCategoryProductDetailsTooltip(String productName);
@@ -260,6 +261,7 @@ public interface I18NCatalog extends Messages {
 	String defaultValuesTab();
 	String propertyGroupsTab();
 	String detailsLabel();
+	String addParentCategoriesLink();
 	SafeHtml importNowLink();
 	String lastRunLabel();
 	String lastRunUrlLabel();
