@@ -26,9 +26,11 @@ html, .main {
 }
 h1 {
 	margin:0;
-	padding:24px 0;
-	color:#fff;
-	font:bold 40px/1.2em Arial, Helvetica, sans-serif;
+	padding:0 0;
+	margin-before: 12px;
+	margin-after: 8px;
+	color:black;
+	font:bold 22px/1.2em Arial, Helvetica, sans-serif;
 	letter-spacing:-2px;
 }
 h1 a, h1 a:hover {
@@ -73,6 +75,12 @@ a {
 .header {
 	background-color:#2e3242;
 }
+
+.headerimage {
+	margin-left: 24px !important;
+	margin-top: 12px !important;
+}
+
 .header_resize {
 	margin:0 auto;
 	padding:0;
@@ -84,6 +92,7 @@ a {
 }
 .menu {
 	margin:0;
+	margin-right: 24px;
 	padding:32px 0 0;
 	float:right;
 }
@@ -232,15 +241,12 @@ ul.ex_menu li a:hover {
 	float:left;
 }
 .footer {
-	background-color:#2d2f3d;
+#	background-color:#2d2f3d;
+	width: 100%;
+	color: #2d2f3d;
+	height: 40px;
 }
-.footer_resize {
-	margin:0 auto;
-	padding:32px 40px 24px;
-	width:890px;
-	background:url(images/footer_bg.gif) repeat-x top;
-	color:#fff;
-}
+
 .footer p {
 	margin:0;
 	padding:4px 0;
@@ -248,12 +254,31 @@ ul.ex_menu li a:hover {
 	color:#fff;
 }
 .footer a {
-	color:#fff;
+	color:#2d2f3d;
 	padding:inherit;
 	text-decoration:underline;
 }
 .footer a:hover {
 	text-decoration:none;
+}
+div.footer {
+	text-align: center;
+}
+
+.footer .links {
+	margin-top: 4px;
+	 width: 350px ;
+  margin-left: auto ;
+  margin-right: auto ;
+}
+.footer .legal {
+	position: absolute;
+	left: 24px;
+	margin-top: -20px;
+}
+
+.footer .links td {
+	text-align: center;
 }
 .footer .lf {
 	float:left;
@@ -346,17 +371,31 @@ ol li .send {
 	border-bottom: 1px solid #E4E4FE;
 }
 
-/** Form styles */
+/***** ee-FormTable *****/
 
 .ee-FormTable tr {
 	height: 24px;
 }
+
+.ee-FormTable td.ee-FormTableSepHelp {
+	width: 5%;
+}
+
+td.ee-FormTableHelp {
+	width: 250px;
+}
+
 
 .ee-FormTable .ee-Help {
 	margin-left: 8px;
 	margin-right: 8px;
 }
 
+/** GlobalStyles */
+
+.detailPanelCloseButton {
+	padding: 8px;
+}
 /** catalogpage styles */
 
 .productMasterDetail { margin: 20px; }
@@ -551,7 +590,15 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	background-color: white;
 }
 
-.ImportMainPanel td.ee-FormTableHelp {
-	margin-left: 60px;
-	width: 250px;
+.ImportMainPanel .statusTable {
+	border-spacing: 12px;
+}
+	
+.ImportMainPanel .statusTable td {
+	vertical-align: top;
+}
+
+
+.ImportMainPanel .statusTable img {
+	padding-top: 4px;
 }

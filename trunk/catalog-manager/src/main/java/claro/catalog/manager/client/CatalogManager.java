@@ -153,29 +153,21 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 			}}, 95);
 
 			// footer
-			addSouth(new HorizontalPanel() {{
+			addSouth(new FlowPanel() {{
 				StyleUtil.add(this, Styles.footer);
-				
-				// PoweredBy
-				Label poweredBy;
-				add(poweredBy = new Label("Powered By AgileXS") {{
-					StyleUtil.add(this, Styles.legal);
-					
-				}});
-				setCellVerticalAlignment(poweredBy, HorizontalPanel.ALIGN_MIDDLE);
-				
-				// Links
-				HorizontalPanel links;
-				add(links = new HorizontalPanel() {{
+				add(new HorizontalPanel() {{
 					StyleUtil.add(this, Styles.links);
-					
 					add(new Anchor("Privacy Policy"));
 					add(new Label("|"));
 					add(new Anchor("Legal Information"));
 					add(new Label("|"));
 					add(new Anchor("Terms of Use"));
 				}}); 
-				setCellVerticalAlignment(links, HorizontalPanel.ALIGN_MIDDLE);
+				// PoweredBy
+				Label poweredBy;
+				add(poweredBy = new Label("Powered By AgileXS") {{
+					StyleUtil.add(this, Styles.legal);
+				}});
 				
 			}}, 40);
 			add(pageContainer);

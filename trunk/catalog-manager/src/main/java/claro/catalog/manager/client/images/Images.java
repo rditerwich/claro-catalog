@@ -32,6 +32,9 @@ public interface Images extends ClientBundle {
   @Source("help.gif")
 	ImageResource help();
   
+  @Source("close-blue.png")
+  ImageResource closeBlue();
+  
   @Source("closeButton1.png")
   ImageResource clearImage1();
 

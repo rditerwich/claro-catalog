@@ -7,5 +7,6 @@ public enum GlobalStyles implements Style {
 	menu,
 	active,
 	mainTable,
-	formTable
+	formTable, 
+	detailPanelCloseButton
 }

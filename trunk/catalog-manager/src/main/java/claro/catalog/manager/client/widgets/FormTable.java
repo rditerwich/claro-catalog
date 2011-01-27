@@ -5,17 +5,17 @@ import claro.catalog.manager.client.Globals;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
@@ -23,7 +23,7 @@ import easyenterprise.lib.gwt.client.Style;
 public class FormTable extends Composite implements Globals {
 
 	public enum Styles implements Style {
-		FormTable, FormTableLabel, FormTableWidget, FormTableHelp;
+		FormTable, FormTableLabel, FormTableWidget, FormTableSepHelp, FormTableHelp;
 		
 		public String toString() {
 			return "ee-" + super.toString();
@@ -31,25 +31,28 @@ public class FormTable extends Composite implements Globals {
 	}
 
 	private FlexTable table;
-	private Label helpText;
+	private HTML helpText;
 	private Widget lastWidget;
 	private Element textCell;
 	private int currentHelpRow = -1;
 
 	public FormTable() {
 		table = new FlexTable();
-		table.getElement().getStyle().setWidth(100, Unit.PCT);
 		table.setStylePrimaryName(Styles.FormTable.toString());
 		table.getColumnFormatter().setStylePrimaryName(0, Styles.FormTableLabel.toString());
 		table.getColumnFormatter().setStylePrimaryName(1, Styles.FormTableWidget.toString());
-		table.getColumnFormatter().setStylePrimaryName(2, Styles.FormTableHelp.toString());
-		table.getCellFormatter().setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
-		table.getFlexCellFormatter().setRowSpan(0, 2, 100);
-		textCell = table.getFlexCellFormatter().getElement(0, 2);
+		table.getColumnFormatter().setStylePrimaryName(2, Styles.FormTableSepHelp.toString());
+		table.getColumnFormatter().setStylePrimaryName(3, Styles.FormTableHelp.toString());
+		table.getCellFormatter().setVerticalAlignment(0, 3, HasVerticalAlignment.ALIGN_TOP);
+		table.getFlexCellFormatter().setRowSpan(0, 3, 100);
+		table.getFlexCellFormatter().getElement(0, 0).setClassName(Styles.FormTableLabel.toString());
+		table.getFlexCellFormatter().getElement(0, 1).setClassName(Styles.FormTableWidget.toString());
+		table.getFlexCellFormatter().getElement(0, 2).setClassName(Styles.FormTableSepHelp.toString());
+		textCell = table.getFlexCellFormatter().getElement(0, 3);
 		textCell.setClassName(Styles.FormTableHelp.toString());
-		helpText = new Label();
+		helpText = new HTML();
 		helpText.setStylePrimaryName(Styles.FormTableHelp.toString());
-		table.setWidget(0, 2, helpText);
+		table.setWidget(0, 3, helpText);
 		table.getCellFormatter().getElement(0, 0).getParentElement().getStyle().setHeight(0, Unit.PX);
 		initWidget(table);
 	}
@@ -93,7 +96,7 @@ public class FormTable extends Composite implements Globals {
 
 		} else {
 			table.setWidget(row, 0, widget);
-			table.getFlexCellFormatter().setColSpan(row, 0, 2);
+			table.getFlexCellFormatter().setColSpan(row, 0, 3);
 		}
 		lastWidget = widget;
 		return widget;
@@ -103,16 +106,16 @@ public class FormTable extends Composite implements Globals {
 		if (currentHelpRow != -1) {
 			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "");
 			table.getWidget(currentHelpRow, 1).getElement();
-			helpText.setText("");
-			table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 1);
+			helpText.setHTML("");
+			table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 2);
 			currentHelpRow = -1;
 		}
 		if (widget != null && help != null && !help.toString().equals("")) {
 			currentHelpRow = row;
 			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "images/dash.png");
-			helpText.setText(help);
+			helpText.setHTML(help);
 			
-			int bottom = lastWidget.getAbsoluteTop() + lastWidget.getOffsetHeight() - table.getAbsoluteTop();
+			int bottom = table.getOffsetHeight();
 			
 			// try place text under the line
 			boolean extendDash = true;
@@ -129,7 +132,7 @@ public class FormTable extends Composite implements Globals {
 			textCell.getStyle().setPaddingTop(padding, Unit.PX);
 			
 			if (extendDash) {
-				table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 2);
+				table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 3);
 			}
 		}
 	}

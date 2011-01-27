@@ -10,13 +10,13 @@ import org.cobogw.gwt.user.client.ui.RoundedPanel;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.GlobalStyles;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.ActionImage;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Job;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
@@ -124,15 +125,15 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 
 	@Override
 	final protected void detailPanelCreated(LayoutPanel detailPanel) {
-		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						tabs.hideTab();
-						closeDetail(true);
-					}
-				});
-			}}, 50);
+		detailPanel.add(new LayoutPanel() {{
+			add(new ActionImage(images.closeBlue(), new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					tabs.hideTab();
+					closeDetail(true);
+				}
+			}) {{
+				setStylePrimaryName(GlobalStyles.detailPanelCloseButton.toString());
+			}});
 			add(tabs = new PullUpTabs(30, 5) {{
 				setMainWidget(importSourceMainPanel = new ImportMainPanel() {
 					protected void storeImportSource(StoreImportSource command) {

@@ -234,7 +234,7 @@ public interface I18NCatalog extends Messages {
 	String lastStatusHelp();
 	String success();
 	String failed();
-	String notRun();
+	String notRunMessage();
 	String log();
 	String showLogLink();
 	SafeHtml addPropertyMapping();
@@ -260,6 +260,12 @@ public interface I18NCatalog extends Messages {
 	String defaultValuesTab();
 	String propertyGroupsTab();
 	String detailsLabel();
+	SafeHtml importNowLink();
+	String lastRunLabel();
+	String lastRunUrlLabel();
+	String statusHeader();
+	String actionsHeader();
+	String nameLabel();
 
 
 
