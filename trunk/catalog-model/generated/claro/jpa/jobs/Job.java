@@ -18,6 +18,7 @@ public class Job implements Serializable {
     private Frequency runFrequency;
     private Integer healthPerc;
     private Boolean lastSuccess;
+    private Timestamp lastTime;
     private List<JobResult> results;
 
     public Long getId() {
@@ -72,6 +73,14 @@ public class Job implements Serializable {
 
     public void setLastSuccess(Boolean value) {
         this.lastSuccess = value;
+    }
+
+    public Timestamp getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(Timestamp value) {
+        this.lastTime = value;
     }
 
     public List<JobResult> getResults() {

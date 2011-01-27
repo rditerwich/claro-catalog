@@ -301,6 +301,7 @@ CREATE TABLE catalog.job (
     runfrequency_id      VARCHAR NOT NULL,
     healthperc           INTEGER,
     lastsuccess          BOOLEAN,
+    lasttime             TIMESTAMP,
     id                   SERIAL NOT NULL,
     PRIMARY KEY (id) 
 );
@@ -364,17 +365,6 @@ CREATE TABLE catalog.orderhistory (
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.query (
-    type                 VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    stringvalue          VARCHAR,
-    category_id          INTEGER,
-    stringvalue2         VARCHAR,
-    shop_id              INTEGER,
-    shop_id2             INTEGER,
-    PRIMARY KEY (id) 
-);
-
 CREATE TABLE catalog.navigation (
     category_id          INTEGER,
     index                INTEGER NOT NULL,
@@ -401,6 +391,17 @@ CREATE TABLE catalog.promotion_templates (
     templates_id         INTEGER,
     promotion_id         INTEGER
      
+);
+
+CREATE TABLE catalog.query (
+    type                 VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    stringvalue          VARCHAR,
+    shop_id              INTEGER,
+    category_id          INTEGER,
+    stringvalue2         VARCHAR,
+    shop_id2             INTEGER,
+    PRIMARY KEY (id) 
 );
 
 CREATE TABLE catalog.catalog_templates (
@@ -513,10 +514,6 @@ ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) RE
 ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-
 ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentnavigation FOREIGN KEY (parentnavigation_id) REFERENCES catalog.navigation (id) DEFERRABLE INITIALLY DEFERRED;
@@ -526,6 +523,10 @@ ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id)
 
 ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_catalog FOREIGN KEY (catalog_id) REFERENCES catalog.catalog (id) DEFERRABLE INITIALLY DEFERRED;

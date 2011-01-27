@@ -44,6 +44,11 @@ Package {
                     lower = 0
                 }
                 Attribute {
+                    name = lastTime
+                    type = primitive:Timestamp
+                    lower = 0
+                }
+                Attribute {
                     name = results
                     type = jobs:JobResult
                     lower = 0

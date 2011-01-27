@@ -159,9 +159,6 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 					for (ImportRules rules : importSource.getRules()) {
 						importRules(importFile.getFirst(), rules);
 					}
-					if (!dryRun) {
-						importSource.setLastImportedUrl(importFile.getSecond());
-					}
 					jobResult.setSuccess(true);
 				} catch (CommandException e) {
 					log.append("IMPORT FAILED:" + e.getMessage());
@@ -180,6 +177,9 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 					// calculate job statistics 
 				if (!dryRun) {
 					jobResult.getJob().setLastSuccess(jobResult.getSuccess());
+					jobResult.getJob().setLastTime(jobResult.getEndTime());
+					importSource.setLastImportedUrl(importFile.getSecond());
+
 					List<JobResult> lastResults = dao.getLastJobResults(jobResult.getJob(), 5);
 					int successCount = 0;
 					for (JobResult result : lastResults) {
@@ -268,7 +268,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			if (!dir.isDirectory()) {
 				dir = dir.getParentFile();
 			}
-			File[] files = dir.listFiles();
+			File[] files = dir != null ? dir.listFiles() : new File[0];
 			Arrays.sort(files);
 			for (File file : files) {
 				String url = file.toURI().toString();

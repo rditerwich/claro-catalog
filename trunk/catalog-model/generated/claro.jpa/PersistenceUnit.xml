@@ -964,6 +964,9 @@
             <basic name="lastSuccess">
                 <column name="lastsuccess" table="job" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
+            <basic name="lastTime">
+                <column name="lasttime" table="job" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
             <one-to-many name="results" target-entity="claro.jpa.jobs.JobResult" mapped-by="job">
                 <cascade>
                     <cascade-all />
@@ -1136,48 +1139,6 @@
             </many-to-one>   
         </attributes>
     </entity>
-    <entity name="Query" class="claro.jpa.query.Query" access="FIELD">
-        <table name="query" schema="catalog">
-            <unique-constraint>
-                <column-name>id</column-name>
-            </unique-constraint>
-        </table>
-        <inheritance strategy="SINGLE_TABLE" />
-        <discriminator-value>query.query</discriminator-value>
-        <discriminator-column name="type" discriminator-type="STRING" />
-        <sequence-generator name="query_id_seq" sequence-name="catalog.query_id_seq" allocation-size="1"/>
-        <attributes>
-            <id name="id">
-                <column name="id" table="query" nullable="false" unique="true" insertable="true" updatable="true"/>
-                <generated-value strategy="IDENTITY" generator="query_id_seq"/>
-            </id>   
-        </attributes>
-    </entity>
-    <entity name="ProductShopQuery" class="claro.jpa.query.ProductShopQuery" access="FIELD">
-        <discriminator-value>query.productshopquery</discriminator-value>
-        <attributes>
-            <basic name="stringValue" optional="false">
-                <column name="stringvalue" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
-                <join-column name="shop_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
-    <entity name="AllProductsQuery" class="claro.jpa.query.AllProductsQuery" access="FIELD">
-        <discriminator-value>query.allproductsquery</discriminator-value>
-        <attributes>
-            <basic name="stringValue" optional="false">
-                <column name="stringvalue2" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </basic>
-            <many-to-one name="category" target-entity="claro.jpa.catalog.Category" optional="false">
-                <join-column name="category_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>
-            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
-                <join-column name="shop_id2" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
-            </many-to-one>   
-        </attributes>
-    </entity>
     <entity name="Shop" class="claro.jpa.shop.Shop" access="FIELD">
         <discriminator-value>shop.shop</discriminator-value>
         <attributes>
@@ -1280,6 +1241,48 @@
             </basic>
             <many-to-one name="product" target-entity="claro.jpa.catalog.Product" optional="false">
                 <join-column name="product_id" referenced-column-name="id" table="promotion" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="Query" class="claro.jpa.query.Query" access="FIELD">
+        <table name="query" schema="catalog">
+            <unique-constraint>
+                <column-name>id</column-name>
+            </unique-constraint>
+        </table>
+        <inheritance strategy="SINGLE_TABLE" />
+        <discriminator-value>query.query</discriminator-value>
+        <discriminator-column name="type" discriminator-type="STRING" />
+        <sequence-generator name="query_id_seq" sequence-name="catalog.query_id_seq" allocation-size="1"/>
+        <attributes>
+            <id name="id">
+                <column name="id" table="query" nullable="false" unique="true" insertable="true" updatable="true"/>
+                <generated-value strategy="IDENTITY" generator="query_id_seq"/>
+            </id>   
+        </attributes>
+    </entity>
+    <entity name="ProductShopQuery" class="claro.jpa.query.ProductShopQuery" access="FIELD">
+        <discriminator-value>query.productshopquery</discriminator-value>
+        <attributes>
+            <basic name="stringValue" optional="false">
+                <column name="stringvalue" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
+                <join-column name="shop_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>   
+        </attributes>
+    </entity>
+    <entity name="AllProductsQuery" class="claro.jpa.query.AllProductsQuery" access="FIELD">
+        <discriminator-value>query.allproductsquery</discriminator-value>
+        <attributes>
+            <basic name="stringValue" optional="false">
+                <column name="stringvalue2" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </basic>
+            <many-to-one name="category" target-entity="claro.jpa.catalog.Category" optional="false">
+                <join-column name="category_id" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
+            </many-to-one>
+            <many-to-one name="shop" target-entity="claro.jpa.shop.Shop" optional="false">
+                <join-column name="shop_id2" referenced-column-name="id" table="query" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>   
         </attributes>
     </entity>
