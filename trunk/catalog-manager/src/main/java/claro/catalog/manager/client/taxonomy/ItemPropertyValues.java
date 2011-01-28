@@ -43,12 +43,12 @@ import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
-	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden }
+	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden, source, itemPropertyValueRow, groupInherited }
 	private static int NAME_COLUMN = 0;
 	private static int VALUE_COLUMN = 1;
 	private static int GROUP_COLUMN = 2;
-	private static int SOURCE_COLUMN = 3;
-	private static int NR_COLS = 4;
+//	private static int SOURCE_COLUMN = 3;
+	private static int NR_COLS = 3;
 
 	private TabPanel propertyGroupPanel;
 	private List<GroupPanelWidgets> groupPanels = new ArrayList<GroupPanelWidgets>();
@@ -161,9 +161,23 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			// Create new rows
 			for (int j = oldRowCount; j < propertyKeys.size(); j++) {
 				final PropertyValueWidgets propertyValueWidgets = new PropertyValueWidgets();
+
+				// Style
+				StyleUtil.add(groupPanelWidgets.panel.getRowFormatter(), j, Styles.itemPropertyValueRow);
 				
-				// name
-				groupPanelWidgets.panel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new Label());
+				// name and source
+				groupPanelWidgets.panel.setWidget(j, NAME_COLUMN, new Grid(1, 2) {{
+					// name
+					setWidget(0, 0, propertyValueWidgets.nameWidget = new Label());
+
+					// property source
+					if (showPropertySources) {
+						setWidget(0, 1, propertyValueWidgets.propertySourceWidget = new Label() {{
+							StyleUtil.add(this, Styles.source);
+						}});
+					}
+					
+				}});
 				
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
@@ -182,12 +196,8 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				}});
 				
 				// groups
-				groupPanelWidgets.panel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox());
+				groupPanelWidgets.panel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new Label());
 				
-				// property source
-				if (showPropertySources) {
-					groupPanelWidgets.panel.setWidget(j, SOURCE_COLUMN, propertyValueWidgets.propertySourceWidget = new Label());
-				}
 				
 				
 				groupPanelWidgets.valueWidgets.add(propertyValueWidgets);
@@ -207,24 +217,32 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				Widget valueWidget = setValueWidget(propertyValueWidgets, j, VALUE_COLUMN, property, propertyData);
 				
 				// Groups
-				propertyValueWidgets.propertyGroupsWidget.clear();
-				int k = 0;
-				for (Entry<Long, SMap<String, String>> group : groups) {
-					// add item
-					String groupName = group.getValue().tryGet(language, null);
-					propertyValueWidgets.propertyGroupsWidget.addItem(groupName);
-					
-					// check selection
-					if (group.getKey().equals(propertyGroup.propertyGroupId)) {
-						propertyValueWidgets.propertyGroupsWidget.setSelectedIndex(k);
-					}
-					k++;
+//				propertyValueWidgets.propertyGroupsWidget.clear();
+//				int k = 0;
+//				for (Entry<Long, SMap<String, String>> group : groups) {
+//					// add item
+//					String groupName = group.getValue().tryGet(language, null);
+//					propertyValueWidgets.propertyGroupsWidget.addItem(groupName);
+//					
+//					// check selection
+//					if (group.getKey().equals(propertyGroup.propertyGroupId)) {
+//						propertyValueWidgets.propertyGroupsWidget.setSelectedIndex(k);
+//					}
+//					k++;
+//				}
+				
+				String groupName = groups.getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
+				propertyValueWidgets.propertyGroupsWidget.setText(groupName);
+				if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
+					StyleUtil.add(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
+				} else {
+					StyleUtil.remove(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
 				}
 				
 				// property source
 				if (showPropertySources) {
 					String sourceName = parentExtentWithSelf.get(property.ownerItemId).tryGet(language, null);
-					propertyValueWidgets.propertySourceWidget.setText(sourceName);
+					propertyValueWidgets.propertySourceWidget.setText("(" + sourceName + ")");
 					propertyValueWidgets.propertySourceWidget.setTitle(messages.propertySourceTooltip(propertyName, sourceName));
 				}
 				
@@ -403,7 +421,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		protected Widget clearValueWidget;
 		public Label nameWidget;
 		public Grid valueParentWidget;
-		public ListBox propertyGroupsWidget;
+		public Label propertyGroupsWidget;
 		public Label propertySourceWidget;
 	}
 }

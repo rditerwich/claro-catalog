@@ -54,7 +54,7 @@ public class ItemUtil {
 	}
 	
 
-	public static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData(ItemModel itemModel, StagingArea area, OutputChannel channel) {
+	public static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData(CatalogModel catalogModel, ItemModel itemModel, StagingArea area, OutputChannel channel) {
 		SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> resultPropertyData = SMap.empty();
 		
 		// Obtain groups
@@ -67,11 +67,15 @@ public class ItemUtil {
 				PropertyData propertyData = new PropertyData();
 				
 				// fill propertyData
+				propertyData.groupAssignmentItemId = property.getGroupAssignmentItemId();
+				if (propertyData.groupAssignmentItemId != null) {
+					propertyData.groupItemNameLabels = getNameLabels(catalogModel.getItem(propertyData.groupAssignmentItemId), catalogModel, channel, area);
+				}
 				propertyData.values = SMap.create(channel, property.getValues(area, channel));
 				propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
 				
 				// TODO How to do this???
-//			propertyData.importSourceValues = SMap.create(channel, property.getImportSourceValues(null)));
+//			    propertyData.sourceValues = SMap.create(channel, property.getSourceValues(null)));
 				
 				properties = properties.add(property.getPropertyInfo(), propertyData);
 			}

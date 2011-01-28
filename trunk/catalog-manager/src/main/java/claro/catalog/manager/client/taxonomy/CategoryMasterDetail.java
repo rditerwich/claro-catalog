@@ -5,12 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
 import claro.catalog.command.items.StoreProduct;
-import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -18,17 +16,14 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.GlobalStyles;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.ActionImage;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
-import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -38,20 +33,16 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
-import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.CollectionUtil;
-import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 abstract public class CategoryMasterDetail extends MasterDetail implements Globals {
@@ -282,13 +273,13 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	@Override
 	protected void detailPanelCreated(LayoutPanel detailPanel) {
 		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
+			addNorth(new ActionImage(images.closeBlue(), new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						closeDetail(true);
 					}
-				});
-			}}, 40);
+				}) {{
+					setStylePrimaryName(GlobalStyles.detailPanelCloseButton.toString());
+				}}, 40);
 			add(details = new CategoryDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreProduct cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);

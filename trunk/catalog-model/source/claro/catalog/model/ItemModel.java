@@ -199,24 +199,29 @@ public class ItemModel {
 		}
 	}
 	
-	public PropertyGroupInfo findGroup(Property property) {
+	private PropertyGroupAssignment findGroupAssignment(Property property) {
 		PropertyGroup group = null;
 		Set<ItemModel> items = new LinkedHashSet<ItemModel>();
 		items.add(this);
 		items.addAll(getParentExtent());
-		itemloop:
 		for (ItemModel item : items) {
 			if (item.getItemClass().equals(Category.class)) {
 				Category category = (Category) item.getEntity();
 				for (PropertyGroupAssignment groupAssignment : category.getPropertyGroupAssignments()) {
 					if (groupAssignment.getProperty().equals(property)) {
-						group = groupAssignment.getPropertyGroup();
-						break itemloop;
+						return groupAssignment;
 					}
 				}
 			}
 		}
-		if (group == null) {
+		return null;
+	}
+	
+	private PropertyGroupInfo findGroupInfo(PropertyGroupAssignment groupAssignment) {
+		PropertyGroup group;
+		if (groupAssignment != null) {
+			group = groupAssignment.getPropertyGroup();
+		} else {
 			group = catalog.generalPropertyGroup;
 		}
 		
@@ -228,8 +233,9 @@ public class ItemModel {
 			if (properties == null) {
 				properties = SMap.empty();
 				for (Property property : getEntity().getProperties()) {
-					PropertyModel propertyRoot = PropertyModel.createRoot(property.getId(), false, this);
-					properties = properties.add(findGroup(property), propertyRoot);
+					PropertyGroupAssignment groupAssignment = findGroupAssignment(property);
+					PropertyModel propertyRoot = PropertyModel.createRoot(property.getId(), false, this, groupAssignment != null? groupAssignment.getCategory().getId() : null);
+					properties = properties.add(findGroupInfo(groupAssignment), propertyRoot);
 				}
 			}
 			return properties;
@@ -318,7 +324,7 @@ public class ItemModel {
 			}
 			catalog.invalidate(this);
 			catalog.invalidate(childExtent);
-			return PropertyModel.createRoot(property.getId(), false, this);
+			return PropertyModel.createRoot(property.getId(), false, this, group != null? entity.getId() : null);
 		}
 	}
 
@@ -328,14 +334,16 @@ public class ItemModel {
 				propertyExtent = SMap.empty();
 				for (ItemModel parent : getParentExtent()) {
 					for (Entry<PropertyGroupInfo, PropertyModel> property : parent.getProperties()) {
-						PropertyModel propertyRoot = PropertyModel.create(property.getValue(), this);
-						propertyExtent = propertyExtent.add(findGroup(property.getValue().getEntity()), propertyRoot);
+						PropertyGroupAssignment groupAssignment = findGroupAssignment(property.getValue().getEntity());
+						PropertyModel propertyRoot = PropertyModel.create(property.getValue(), this, groupAssignment != null? groupAssignment.getCategory().getId() : null);
+						propertyExtent = propertyExtent.add(findGroupInfo(groupAssignment), propertyRoot);
 					}
 				}
 				
 				// Add local properties
 				for (Entry<PropertyGroupInfo, PropertyModel> property : getProperties()) {
-					propertyExtent = propertyExtent.add(findGroup(property.getValue().getEntity()), property.getValue());
+					PropertyGroupAssignment groupAssignment = findGroupAssignment(property.getValue().getEntity());
+					propertyExtent = propertyExtent.add(findGroupInfo(groupAssignment), property.getValue());
 				}
 			}
 			return propertyExtent;
@@ -354,7 +362,7 @@ public class ItemModel {
 				Set<Property> propertyEntities = PropertyModel.getEntities(getPropertyExtent());
 				for (PropertyValue value : getEntity().getPropertyValues()) {
 					if (!propertyEntities.contains(value.getProperty())) {
-						properties.add(PropertyModel.createRoot(value.getProperty().getId(), true, this));
+						properties.add(PropertyModel.createRoot(value.getProperty().getId(), true, this, null));  // TODO Possibly a special dangling properties group?
 					}
 				}
 				danglingProperties = ImmutableSet.copyOf(properties);

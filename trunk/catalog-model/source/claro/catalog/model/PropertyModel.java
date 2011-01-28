@@ -3,7 +3,6 @@ package claro.catalog.model;
 
 import static com.google.common.base.Objects.equal;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
@@ -55,15 +54,19 @@ public abstract class PropertyModel {
 	private SMap<Source, SMap<OutputChannel, SMap<String, Object>>> sourceValues = SMap.empty();
 	private final ItemModel item;
 
-	static PropertyModel create(final PropertyModel root, ItemModel item) {
+	static PropertyModel create(final PropertyModel root, ItemModel item, final Long groupAssignmentItemId) {
 		return new PropertyModel(item) {
 			PropertyModel getRoot() {
 				return root; 
 			}
+			@Override
+			public Long getGroupAssignmentItemId() {
+				return groupAssignmentItemId;
+			}
 		};
 	}
 
-	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, final ItemModel item) {
+	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, final ItemModel item, final Long groupAssignmentItemId) {
 		return new PropertyModel(item) {
 			private PropertyInfo propertyInfo = createPropertyInfo(item, getEntity(), isDangling);
 			PropertyModel getRoot() {
@@ -76,6 +79,10 @@ public abstract class PropertyModel {
 			@Override
 			public PropertyInfo getPropertyInfo() {
 				return propertyInfo;
+			}
+			@Override
+			public Long getGroupAssignmentItemId() {
+				return groupAssignmentItemId;
 			}
 		};			
 	}
@@ -91,6 +98,8 @@ public abstract class PropertyModel {
 	public ItemModel getOwnerItem() {
 		return getRoot().getItem();
 	}
+	
+	public abstract Long getGroupAssignmentItemId();
 	
 	public ItemModel getItem() {
 		return item;

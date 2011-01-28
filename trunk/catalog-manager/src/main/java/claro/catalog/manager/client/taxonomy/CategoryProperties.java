@@ -4,6 +4,7 @@ import static claro.catalog.manager.client.CatalogManager.propertyStringConverte
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -53,7 +53,15 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	private static int VALUE_COLUMN = 2;
 	private static int GROUP_COLUMN = 3;
 	private static int NR_COLS = 4;
+	private static Comparator<PropertyType> typeComparator = new Comparator<PropertyType> () {
+		public int compare(PropertyType o1, PropertyType o2) {
+			return o1.name().compareToIgnoreCase(o2.name());
+		}
+	};
 	private static PropertyType[] propertyTypes = PropertyType.values();
+	{
+		Arrays.sort(propertyTypes, typeComparator);
+	}
 
 	private TabPanel propertyGroupPanel;
 	private List<PropertyValueWidgets> valueWidgets = new ArrayList<PropertyValueWidgets>();
@@ -185,7 +193,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				propertyValueWidgets.nameWidget.setText(propertyName);
 				
 				// set type
-				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.type)); 
+				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.type, typeComparator)); 
 				
 				Widget valueWidget = null;
 				if (false) {

@@ -22,19 +22,32 @@ public class StoreProduct implements Command<StoreProduct.Result> {
 	public Long stagingAreaId;
 	
 	public Long outputChannelId;
-
-	public Long productId;
 	
+
+	// Item wide
+	public Long productId;
 	public boolean remove;
 	
+	// parents
+	public List<Long> categoriesToSet;
+	
+	
+	// Properties
+	public List<PropertyInfo> propertiesToSet;
+	public List<Long> propertiesToRemove;
+	
+	// Groups
+	public SMap<PropertyInfo, PropertyGroupInfo> groupsToSet;
+	public List<Long> groupsToRemove;
+	
+	// Values
 	public SMap<PropertyInfo, SMap<String, Object>> valuesToSet;
 	
 	/**
 	 * Removed values.  A value is identified by a property and a language.
 	 */
 	public SMap<PropertyInfo, List<String>> valuesToRemove;
-	
-	public List<Long> categoriesToSet;
+
 	
 	@Override
 	public void checkValid() throws CommandValidationException {

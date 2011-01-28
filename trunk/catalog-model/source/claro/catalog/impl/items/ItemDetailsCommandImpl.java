@@ -49,7 +49,7 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		result.groups = ItemUtil.groups(itemModel, catalogModel, area, channel);
 		
 		// Properties.
-		result.propertyData = ItemUtil.propertyData(itemModel, area, channel);
+		result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, area, channel);
 		
 		return result;
 	}

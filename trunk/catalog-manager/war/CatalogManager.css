@@ -485,6 +485,10 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 100%;
 }
 
+.itemPropertyValues .groupInherited {
+	color: gray
+}
+
 .categoryDetails .itemPropertyValues .valueParent.inherited .valueWidget {
 	color: gray;
 }
@@ -536,7 +540,7 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	
 }
 
-.productDetails img.derived {
+.productDetails img.inherited {
 	background: url(images/closeButton1.png);
 	width: 14px;
 	height: 14px;
@@ -546,6 +550,36 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	background: url(images/closeButton3.png);
 	width: 14px;
 	height: 14px;
+}
+
+.itemPropertyValues img.clear {
+	background:  url(images/closeButton2.png);
+	width: 14px;
+	height: 14px;
+	border: none;
+	
+}
+
+.itemPropertyValues img.inherited {
+	background: url(images/closeButton1.png);
+	width: 14px;
+	height: 14px;
+}
+
+.itemPropertyValues img.clear:hover {
+	background: url(images/closeButton3.png);
+	width: 14px;
+	height: 14px;
+}
+
+.itemPropertyValues .source {
+	visibility: hidden;
+	margin-left: 5px;
+	font-style: italic;
+}
+.itemPropertyValues tr.itemPropertyValueRow:hover .source {
+	visibility: visible;
+	color: gray;
 }
 
 /** Categories component */
