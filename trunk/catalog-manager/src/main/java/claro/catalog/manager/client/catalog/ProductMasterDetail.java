@@ -91,7 +91,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	private RoundedPanel masterRoundedPanel;
 	
 	public ProductMasterDetail() {
-		super(80, 0);
+		super(126, 0);
 		StyleUtil.add(this, Styles.productMasterDetail);
 		
 	}

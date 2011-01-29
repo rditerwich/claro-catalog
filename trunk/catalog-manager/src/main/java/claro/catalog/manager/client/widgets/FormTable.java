@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
@@ -52,6 +53,7 @@ public class FormTable extends Composite implements Globals {
 		textCell.setClassName(Styles.FormTableHelp.toString());
 		helpText = new HTML();
 		helpText.setStylePrimaryName(Styles.FormTableHelp.toString());
+		table.setWidget(0, 2, new Label(" "));
 		table.setWidget(0, 3, helpText);
 		table.getCellFormatter().getElement(0, 0).getParentElement().getStyle().setHeight(0, Unit.PX);
 		initWidget(table);
@@ -107,9 +109,10 @@ public class FormTable extends Composite implements Globals {
 			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "");
 			table.getWidget(currentHelpRow, 1).getElement();
 			helpText.setHTML("");
-			table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 2);
+			table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 1);
 			currentHelpRow = -1;
 		}
+		if (row == 0) return;
 		if (widget != null && help != null && !help.toString().equals("")) {
 			currentHelpRow = row;
 			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "images/dash.png");
@@ -133,6 +136,8 @@ public class FormTable extends Composite implements Globals {
 			
 			if (extendDash) {
 				table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 3);
+			} else {
+				table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 2);
 			}
 		}
 	}

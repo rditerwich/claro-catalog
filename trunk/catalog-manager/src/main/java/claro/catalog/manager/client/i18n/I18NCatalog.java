@@ -266,6 +266,7 @@ public interface I18NCatalog extends Messages {
 	String lastRunLabel();
 	String lastRunUrlLabel();
 	String statusHeader();
+	String healthHeader();
 	String actionsHeader();
 	String nameLabel();
 

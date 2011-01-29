@@ -101,6 +101,8 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		Table table = getMasterTable();
 		table.resizeColumns(NR_COLS);
 		table.setHeaderText(0, 0, messages.importSourceLabel());
+		table.setHeaderText(0, 1, messages.statusHeader());
+		table.setHeaderText(0, 2, messages.healthHeader());
 		
 		LayoutPanel header = getMasterHeader();
 		header.add(new RoundedPanel( RoundedPanel.ALL, 4) {{

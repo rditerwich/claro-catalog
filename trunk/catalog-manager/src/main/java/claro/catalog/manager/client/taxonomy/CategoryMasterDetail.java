@@ -95,7 +95,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 
 
 	public CategoryMasterDetail() {
-		super(80, 0);
+		super(126, 0);
 		StyleUtil.add(this, Styles.productMasterDetail);
 		
 	}

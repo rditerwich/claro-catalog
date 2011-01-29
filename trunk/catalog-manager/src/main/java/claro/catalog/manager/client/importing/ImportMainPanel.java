@@ -71,6 +71,7 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 					add(lastRunTimeHTML = new HTML());
 					add(lastRunUrlHTML = new HTML());
 				}});
+				getColumnFormatter().setStylePrimaryName(1, "col2");
 				setWidget(0, 2, lastRunLog = new Anchor(messages.showLogLink()));
 			}});
 			add(new FormTable() {{

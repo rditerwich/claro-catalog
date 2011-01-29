@@ -27,11 +27,11 @@ html, .main {
 h1 {
 	margin:0;
 	padding:0 0;
-	margin-before: 12px;
-	margin-after: 8px;
+	margin-top: 8px;
+	margin-bottom: 8px;
 	color:black;
-	font:bold 22px/1.2em Arial, Helvetica, sans-serif;
-	letter-spacing:-2px;
+	font:normal 22px/1.2em Arial, Helvetica, Lucida, sans-serif;
+	letter-spacing:-1px;
 }
 h1 a, h1 a:hover {
 	color:#fff;
@@ -338,7 +338,7 @@ ol li .send {
 .ee-MasterDetailSelection td { background-color: #E0E7FC; padding: 0px;}
 
 .ee-PullUpTabs-Tab { background-color: #eeadfe; text-align: center; font-weight: bold; vertical-align: center; }
-.ee-PullUpTabs-MainPanel { padding: 12px; }
+.ee-PullUpTabs-MainPanel { padding: 18px; }
 .ee-PullUpTabs-Panel { padding: 12px; padding-bottom: 24px; background-color: #FFedfe; border: 2px solid #eeadfe }
 .ee-MasterDetailTablePanel {
 }
@@ -357,12 +357,12 @@ ol li .send {
 	width: 100%;
 }
 
-.ee-MasterDetailMaster .cbg-RPContainer {
-	/* space between rounded panel border and table content */
+.ee-MasterDetailMaster .cbg-RPContainer, .ee-MasterDetailHeader .cbg-RPContainer {
+	/* space between rounded panel border and content */
 	padding: 12px;
 }
 
-.ee-MasterDetailMaster .cbg-RPContainer, .ee-MasterDetailMaster .cbg-RP {
+.ee-MasterDetailMaster .cbg-RPContainer, .ee-MasterDetailMaster .cbg-RP , .ee-MasterDetailHeader .cbg-RPContainer {
 	/* rounded panels have a white background */
 	background-color: white;
 }
@@ -371,6 +371,10 @@ ol li .send {
 	border-bottom: 1px solid #E4E4FE;
 }
 
+ .ee-MasterDetailHeader {
+ 	margin-top: 24px;
+ }
+
 /***** ee-FormTable *****/
 
 .ee-FormTable tr {
@@ -378,11 +382,13 @@ ol li .send {
 }
 
 .ee-FormTable td.ee-FormTableSepHelp {
-	width: 5%;
+	padding-left: 25px;
 }
 
 td.ee-FormTableHelp {
 	width: 250px;
+	text-align: left;
+	margin-left: auto;
 }
 
 
@@ -398,8 +404,6 @@ td.ee-FormTableHelp {
 }
 /** catalogpage styles */
 
-.productMasterDetail { margin: 20px; }
-
 .productMasterDetail .cbg-RPContainer { background-color: white; }
 .productMasterDetail table.mainTable { width: 100%; }
 .productMasterDetail table.mainTable tr.itemRowChanged td { font-style: italic; }
@@ -409,7 +413,7 @@ td.ee-FormTableHelp {
 
 
 
-table.filterpanel { margin-left: 20px; vertical-align: middle; }
+table.filterpanel { vertical-align: middle; }
 table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 
@@ -648,7 +652,12 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 }
 
 .ImportMainPanel .statusTable {
-	border-spacing: 12px;
+	margin-top: 8px;
+	margin-bottom: 8px;s
+}
+
+.ImportMainPanel .statusTable td {
+	padding-right: 12px;
 }
 	
 .ImportMainPanel .statusTable td {
