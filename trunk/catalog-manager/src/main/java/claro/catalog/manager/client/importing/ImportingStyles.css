@@ -1,0 +1,29 @@
+/** Import Styles */
+
+.ImportLogPanel {
+	width: 100%;
+}
+
+.ImportLogPanel .logText  {
+	border: 1px solid gray;
+	font-family: Courier;
+	background-color: white;
+}
+
+.ImportMainPanel .statusTable {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+.ImportMainPanel .statusTable td {
+	padding-right: 12px;
+}
+	
+.ImportMainPanel .statusTable td {
+	vertical-align: top;
+}
+
+
+.ImportMainPanel .statusTable img {
+	padding-top: 4px;
+}

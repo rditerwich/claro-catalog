@@ -60,10 +60,10 @@ public class MasterDetailTestPage extends Page {
 			masterTable.resizeColumns(5);
 			masterTable.resizeHeaderRows(1);
 			masterTable.setHeaderText(0, 0, "col1");
-			masterTable.setHeaderText(0, 1, "col2");
-			masterTable.setHeaderText(0, 2, "col2");
-			masterTable.setHeaderText(0, 3, "col2");
-			masterTable.setHeaderText(0, 4, "col2");
+//			masterTable.setHeaderText(0, 1, "col2");
+//			masterTable.setHeaderText(0, 2, "col2");
+//			masterTable.setHeaderText(0, 3, "col2");
+//			masterTable.setHeaderText(0, 4, "col2");
 			
 			
 			// We need a row for every master:
@@ -76,6 +76,7 @@ public class MasterDetailTestPage extends Page {
 				masterTable.setWidget(row, 0, new Anchor(master + row) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
+							event.stopPropagation();
 							System.out.println("Opening Row: " + row);
 							getDetail().clear();
 							
@@ -85,6 +86,7 @@ public class MasterDetailTestPage extends Page {
 									add(new Anchor("Close") {{
 										addClickHandler(new ClickHandler() {
 											public void onClick(ClickEvent event) {
+												event.stopPropagation();
 												System.out.println("Closing Row: " + row);
 												closeDetail(true);
 											}
@@ -102,10 +104,10 @@ public class MasterDetailTestPage extends Page {
 						}
 					});
 				}});
-				masterTable.setWidget(row, 1, new Label(master + row));
-				masterTable.setWidget(row, 2, new Label(master + row));
-				masterTable.setWidget(row, 3, new Label(master + row));
-				masterTable.setWidget(row, 4, new Label(master + row));
+//				masterTable.setWidget(row, 1, new Label(master + row));
+//				masterTable.setWidget(row, 2, new Label(master + row));
+//				masterTable.setWidget(row, 3, new Label(master + row));
+//				masterTable.setWidget(row, 4, new Label(master + row));
 			}
 
 		}

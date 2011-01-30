@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -64,7 +63,7 @@ public class FormTable extends Composite implements Globals {
 	}
 	
 	public <T extends Widget> T add(String label, final T widget, final String help) {
-		return add(new InlineLabel(label), widget, help);
+		return add(new Label(label), widget, help);
 	}
 	
 	public <T extends Widget> T add(Widget label, final T widget, final String help) {

@@ -1,8 +1,6 @@
 package claro.catalog.manager.client;
 
 
-import claro.catalog.command.Login;
-import claro.catalog.command.Login.Result;
 import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.manager.client.taxonomy.TaxonomyPage;
@@ -11,16 +9,12 @@ import claro.jpa.party.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -28,11 +22,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 
@@ -53,7 +45,6 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 		itempanel,
 		properties, 
 		footer, 
-		legal, 
 		links, 
 		headerimage, 
 		itemName, 
@@ -97,7 +88,6 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 	public void onModuleLoad() {
 		
 		final LayoutPanel pageContainer = new LayoutPanel();
-
 		
 		EventBus eventBus = new SimpleEventBus();
 		final PlaceController placeController = new PlaceController(eventBus);
@@ -106,7 +96,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 		RootLayoutPanel.get().add(new DockLayoutPanel(Unit.PX) {{
 			// header
 			addNorth(new HorizontalPanel() {{
-				setStylePrimaryName(GlobalStyles.header.toString());
+				setStylePrimaryName(GlobalStylesEnum.header.toString());
 				setWidth("100%");
 				getElement().getStyle().setHeight(100, Unit.PC);
 				add(new Image(rb.logo()) {{
@@ -139,7 +129,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 //					});
 //				}});
 				add(new MainMenu(pageContainer) {{
-					setStylePrimaryName(GlobalStyles.menu.toString());
+					setStylePrimaryName(GlobalStylesEnum.menu.toString());
 					addPage(new CatalogPage(placeController), "Catalog");
 					addPage(new TaxonomyPage(placeController), "Taxonomy");
 					addPage(new ImportPage(placeController), messages.importMenu());
@@ -157,17 +147,14 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				StyleUtil.add(this, Styles.footer);
 				add(new HorizontalPanel() {{
 					StyleUtil.add(this, Styles.links);
+					add(new Label("Powered By AgileXS"));
+					add(new Label("|"));
 					add(new Anchor("Privacy Policy"));
 					add(new Label("|"));
 					add(new Anchor("Legal Information"));
 					add(new Label("|"));
 					add(new Anchor("Terms of Use"));
 				}}); 
-				// PoweredBy
-				Label poweredBy;
-				add(poweredBy = new Label("Powered By AgileXS") {{
-					StyleUtil.add(this, Styles.legal);
-				}});
 				
 			}}, 40);
 			add(pageContainer);

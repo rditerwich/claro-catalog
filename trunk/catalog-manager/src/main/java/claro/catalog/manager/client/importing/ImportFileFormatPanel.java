@@ -1,5 +1,7 @@
 package claro.catalog.manager.client.importing;
 
+import static com.google.common.base.Objects.equal;
+
 import java.util.Collections;
 
 import claro.catalog.command.importing.StoreImportSource;
@@ -18,22 +20,38 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.widgets.InlinePanel;
-import easyenterprise.lib.gwt.client.widgets.Table;
 
-public abstract class MultiFileImportPanel extends Composite implements Globals {
+public abstract class ImportFileFormatPanel extends Composite implements Globals {
 
 	private ImportSource importSource;
-	private Table multiFileLinks;
 	protected CheckBox isMultiFile;
 	protected FlowPanel tablePanel;
+	private ImportRules currentRules;
+	private HorizontalPanel nestedFilePanel;
+	private ListBox nestedFileListBox;
+
 	
-	public MultiFileImportPanel() {
+	public ImportFileFormatPanel() {
 		initWidget(new VerticalPanel() {{
+			add(nestedFilePanel = new HorizontalPanel() {{
+				add(new Label(messages.selectNestedFileLabel()));
+				add(nestedFileListBox = new ListBox() {{
+					addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							currentRules = importSource.getRules().get(getSelectedIndex());
+							render();
+						}
+					});
+				}});
+			}});
 			add(new FormTable() {{
 				add(messages.multiFileImportLabel(), isMultiFile = new CheckBox(), messages.multiFileImportHelp());
 			}});
@@ -45,9 +63,6 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 					}
 				});
 				add(tablePanel = new FlowPanel() {{
-					add(multiFileLinks = new Table(0, 3) {{
-						setHeaderText(0, 0, messages.relativeImportUrlLabel());
-					}});
 					add(new Anchor(messages.addNestedFileLink()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
@@ -67,18 +82,20 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 		render();
 	}
 	
+	public void setImportRules(ImportRules rules) {
+		this.currentRules = rules;
+		render();
+	}
+
 	private void render() {
-		isMultiFile.setValue(importSource.getMultiFileImport());
-		tablePanel.setVisible(isMultiFile.getValue());
-		if (importSource.getMultiFileImport() && importSource.getRules().isEmpty()) {
-			importSource.getRules().add(new ImportRules());
-		}
-		multiFileLinks.resize(importSource.getRules().size(), 3);
+		nestedFilePanel.setVisible(isMultiFile.getValue());
 		int row = 0;
+		nestedFileListBox.clear();
 		for (ImportRules rules : importSource.getRules()) {
-			multiFileLinks.setWidget(row, 0, createTextBox(rules));
-			multiFileLinks.setWidget(row, 1, createRulesLinks(rules));
-			multiFileLinks.setWidget(row, 2, createRemoveImage(rules));
+			nestedFileListBox.addItem(rules.getRelativeUrl());
+			if (equal(currentRules, rules)) {
+				nestedFileListBox.setSelectedIndex(row);
+			}
 			row++;
 		}
 	}

@@ -93,7 +93,7 @@ a {
 .menu {
 	margin:0;
 	margin-right: 24px;
-	padding:32px 0 0;
+	padding:38px 0 0;
 	float:right;
 }
 .menu ul {
@@ -104,35 +104,36 @@ a {
 	padding:0 2px 0 0;
 	float:left;
 }
-.menu a, .menu a:visited {
+.menu .gwt-Hyperlink a, .menu a:visited {
 	display:block;
 	margin:0;
 	padding:0 0 0 14px;
 	color:#fff;
 	text-decoration:none;
-	background:#f00 url(images/menu_l.gif) no-repeat left top;
+	background:transparent url(images/menu_l.gif) no-repeat left top;
 }
-.menu a span {
+.menu .gwt-Hyperlink a span {
 	display:block;
 	margin:0;
 	padding:0 14px 0 0;
-	background:#f00 url(images/menu_r.gif) no-repeat right top;
+	background:transparent url(images/menu_r.gif) no-repeat right top;
 }
-.menu a span span {
+.menu .gwt-Hyperlink a span span {
 	display:block;
 	margin:0;
 	padding:6px 8px 26px;
-	background:#f00 url(images/menu.gif) repeat-x top;
+	background:transparent url(images/menu.gif) repeat-x top;
 }
-.menu .active a, .menu a:hover {
-	background:#f00 url(images/menu_al.gif) no-repeat left top;
+.menu .gwt-Hyperlink.active a, .menu a:hover {
+	background:transparent url(images/menu_al.gif) no-repeat left top;
 }
-.menu .active a span, .menu a:hover span {
-	background:#f00 url(images/menu_ar.gif) no-repeat right top;
+.menu .gwt-Hyperlink.active a span, .menu a:hover span {
+	background:transparent url(images/menu_ar.gif) no-repeat right top;
 }
-.menu .active a span span, .menu a:hover span span {
-	background:#f00 url(images/menu_a.gif) repeat-x top;
+.menu .gwt-Hyperlink.active a span span, .menu a:hover span span {
+	background:transparent url(images/menu_a.gif) repeat-x top;
 }
+
 .content_resize {
 	margin:0 auto;
 	padding:8px 0 0;
@@ -267,14 +268,9 @@ div.footer {
 
 .footer .links {
 	margin-top: 4px;
-	 width: 350px ;
+	 width: 450px;
   margin-left: auto ;
   margin-right: auto ;
-}
-.footer .legal {
-	position: absolute;
-	left: 24px;
-	margin-top: -20px;
 }
 
 .footer .links td {
@@ -328,18 +324,82 @@ ol li .send {
 	background-color: white;
 }
 
+/***** ee-Button *****/
+
+.ee-Button {
+	margin:0;
+	padding:0 0px 0 0;
+	float:left;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+}
+.ee-Button div {
+	display:block;
+	margin:0;
+	padding:0 0 0 3px;
+	color:#fff;
+	text-decoration:none;
+	background: transparent url(images/button-l.png) no-repeat left top;
+}
+.ee-Button div span {
+	display:block;
+	margin:0;
+	padding:0 3px 0 0;
+	background:transparent url(images/button-r.png) no-repeat right top;
+}
+.ee-Button div span span {
+	display:block;
+	margin:0;
+	color: #444;
+	padding:7px 8px 15px;
+	background:transparent url(images/button-m.png) repeat-x top;
+}
+
+.ee-ButtonBar td {
+	padding-right: 12px !important;
+}
+
+.ee-ButtonBar td td {
+	padding-right: 0px;
+}
+
+/***** TAB Button *****/
+
+.ee-PullUpTabs-Tab .ee-Button {
+	width: 100%;
+}
+
+.ee-PullUpTabs-Tab .ee-Button div {
+	background: transparent url(images/tab-l.png) no-repeat left top;
+	padding:0 0 0 11px;
+}
+
+.ee-PullUpTabs-Tab .ee-Button div span {
+	padding:0 11px 0 0;
+	background:transparent url(images/tab-r.png) no-repeat right top;
+}
+
+.ee-PullUpTabs-Tab .ee-Button div span span {
+	color: white;
+	font-weight: bold;
+	font-size: 9pt;
+	padding:6px 8px 15px;
+	background:transparent url(images/tab-m.png) repeat-x top;
+}
 
 /** master detail styles */
 
 .ee-MasterDetailDetailPanel { background-color: #E0E7FC; border: 3px solid #2E3242; margin-top: 12px; margin-bottom: 12px; margin-right: 12px; }
-.ee-MasterDetailErasePanel { border-left: 9px solid #E0E7FC;}
+.ee-MasterDetailErasePanel { background-color: #E0E7FC;}
 .ee-MasterDetailSelectionPanel { border: 3px solid #2E3242;}
-.ee-MasterDetail table td { padding: 0px; margin: 0px;}
+.ee-MasterDetailSelectionPanelContent { border-left: 14px solid #E0E7FC; }
+.ee-MasterDetail table td { padding: 0px; margin: 0px; padding-right: 12px;}
 .ee-MasterDetailSelection td { background-color: #E0E7FC; padding: 0px;}
 
-.ee-PullUpTabs-Tab { background-color: #eeadfe; text-align: center; font-weight: bold; vertical-align: center; }
+.ee-PullUpTabs-Tab { text-align: center; font-weight: bold; vertical-align: center; }
 .ee-PullUpTabs-MainPanel { padding: 18px; }
-.ee-PullUpTabs-Panel { padding: 12px; padding-bottom: 24px; background-color: #FFedfe; border: 2px solid #eeadfe }
+.ee-PullUpTabs-Panel { padding: 12px; padding-bottom: 24px; background-color: #F7E2C5; border-top: 2px solid #8A5743; border-left: 2px solid #8A5743; border-right: 2px solid #8A5743 }
 .ee-MasterDetailTablePanel {
 }
 
@@ -641,11 +701,17 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 /** Import Styles */
 
+.ImportPage .ee-MasterDetailMaster td img {
+	margin-left: 8px;
+	margin-right: 8px;
+	margin-top: 4px;
+}
+
 .ImportLogPanel {
 	width: 100%;
 }
 
-.ImportLogPanel .LogText  {
+.ImportLogPanel .logText  {
 	border: 1px solid gray;
 	font-family: Courier;
 	background-color: white;
@@ -653,7 +719,7 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 .ImportMainPanel .statusTable {
 	margin-top: 8px;
-	margin-bottom: 8px;s
+	margin-bottom: 8px;
 }
 
 .ImportMainPanel .statusTable td {

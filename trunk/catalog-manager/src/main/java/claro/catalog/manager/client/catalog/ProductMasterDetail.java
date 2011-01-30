@@ -13,7 +13,7 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
-import claro.catalog.manager.client.GlobalStyles;
+import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
@@ -251,7 +251,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	@Override
 	protected final Widget tableCreated(Table table) {
-		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
+		table.setStylePrimaryName(GlobalStylesEnum.mainTable.toString());
 		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
 			setBorderColor("white");
 		}};

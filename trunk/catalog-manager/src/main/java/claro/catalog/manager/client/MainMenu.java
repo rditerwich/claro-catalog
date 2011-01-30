@@ -47,13 +47,13 @@ public class MainMenu extends Composite {
 		PageWrapper page = pages.get(historyToken);
 		if (page != currentPage) {
 			if (currentPage != null) {
-				currentPage.link.removeStyleName(GlobalStyles.active.toString());
+				currentPage.link.removeStyleName(GlobalStylesEnum.active.toString());
 //				currentPage.page.setVisible(false);
 				currentPage.page.removeFromParent();
 			}
 			if (page != null) {
 				currentPage = page;
-				currentPage.link.addStyleName(GlobalStyles.active.toString());
+				currentPage.link.addStyleName(GlobalStylesEnum.active.toString());
 				if (!page.initialized) {
 					page.initialized = true;
 					page.page.initialize();

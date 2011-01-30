@@ -8,10 +8,8 @@ import java.util.List;
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
 import claro.catalog.command.importing.StoreImportSource;
-import claro.catalog.manager.client.GlobalStyles;
+import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.ActionImage;
-import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
@@ -25,9 +23,9 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.gwt.client.widgets.Table;
@@ -35,16 +33,16 @@ import easyenterprise.lib.gwt.client.widgets.Table;
 public abstract class ImportMasterDetail extends MasterDetail implements Globals {
 
 	private static final int NAME_COL = 0;
-	private static final int STATUS_COL = 1;
-	private static final int WEATHER_COL = 2;
-	private static final int LASTRUN_COL = 3;
-	private static final int NR_COLS = 3;
+	private static final int LASTRUN_COL = 1;
+	private static final int STATUS_COL = 2;
+	private static final int WEATHER_COL = 3;
+	private static final int NR_COLS = 4;
 	
 	private class RowWidgets {
 		public Anchor name;
-		public MediaWidget status;
-		public Image health;
 		public Label lastRun;
+		public Image status;
+		public Image health;
 	}
 
 	private List<ImportSource> importSources = new ArrayList<ImportSource>();
@@ -53,6 +51,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
 	private ImportMainPanel importSourceMainPanel;
 	private MultiFileImportPanel multiFilePanel;
+	private ImportFileFormatPanel fileFormatPanel;
 	private ImportDefinitionPanel propertyMappingsPanel;
 	private ImportHistoryPanel2 historyPanel;
 	private ImportLogPanel logPanel;
@@ -87,6 +86,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 			currentImportSource = importSource;
 			multiFilePanel.setImportSource(currentImportSource);
 			importSourceMainPanel.setImportSource(currentImportSource);
+			fileFormatPanel.setImportSource(currentImportSource);
 			propertyMappingsPanel.setImportSource(currentImportSource);
 			historyPanel.setImportSource(currentImportSource);
 			logPanel.setImportSource(currentImportSource);
@@ -100,9 +100,10 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	final protected void masterPanelCreated(DockLayoutPanel masterPanel) {
 		Table table = getMasterTable();
 		table.resizeColumns(NR_COLS);
-		table.setHeaderText(0, 0, messages.importSourceLabel());
-		table.setHeaderText(0, 1, messages.statusHeader());
-		table.setHeaderText(0, 2, messages.healthHeader());
+		table.setHeaderText(0, NAME_COL, messages.importSourceLabel());
+		table.setHeaderText(0, LASTRUN_COL, messages.lastRunLabel());
+		table.setHeaderText(0, STATUS_COL, messages.statusHeader());
+		table.setHeaderText(0, WEATHER_COL, messages.healthHeader());
 		
 		LayoutPanel header = getMasterHeader();
 		header.add(new RoundedPanel( RoundedPanel.ALL, 4) {{
@@ -119,7 +120,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	
 	@Override
 	protected final Widget tableCreated(Table table) {
-		table.setStylePrimaryName(GlobalStyles.mainTable.toString());
+		table.setStylePrimaryName(GlobalStylesEnum.mainTable.toString());
 		return new RoundedPanel(table, RoundedPanel.ALL, 4) {{
 			setBorderColor("white");
 		}};
@@ -128,21 +129,23 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	@Override
 	final protected void detailPanelCreated(LayoutPanel detailPanel) {
 		detailPanel.add(new LayoutPanel() {{
-			add(new ActionImage(images.closeBlue(), new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					tabs.hideTab();
-					closeDetail(true);
-				}
-			}) {{
-				setStylePrimaryName(GlobalStyles.detailPanelCloseButton.toString());
-			}});
-			add(tabs = new PullUpTabs(30, 5) {{
+//			add(new ActionImage(images.closeBlue(), new ClickHandler() {
+//				public void onClick(ClickEvent event) {
+//					tabs.hideTab();
+//					closeDetail(true);
+//				}
+//			}) {{
+//				setStylePrimaryName(GlobalStylesEnum.detailPanelCloseButton.toString());
+//			}});
+			add(tabs = new PullUpTabs(26, 5) {{
 				setMainWidget(importSourceMainPanel = new ImportMainPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
 					}
 					@Override
 					protected void showFileFormat(ImportRules rules) {
+						fileFormatPanel.setImportRules(rules);
+						tabs.showTab(fileFormatPanel);
 					}
 					@Override
 					protected void showImportRules(ImportRules rules) {
@@ -156,7 +159,25 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 						}.schedule(1);
 					};
 				});
-				addTab(new Label(messages.multiFileTab()), 100, multiFilePanel = new MultiFileImportPanel() {
+				addTab(new EEButton(messages.multiFileTab()), 100, multiFilePanel = new MultiFileImportPanel() {
+					
+					@Override
+					protected void storeImportSource(StoreImportSource command) {
+						ImportMasterDetail.this.storeImportSource(command);
+					}
+					
+					@Override
+					protected void showImportRules(ImportRules rules) {
+						tabs.showTab(propertyMappingsPanel);
+					}
+					
+					@Override
+					protected void showFileFormat(ImportRules rules) {
+						fileFormatPanel.setImportRules(rules);
+						tabs.showTab(fileFormatPanel);
+					}
+				});
+				addTab(new EEButton(messages.fileFormatTab()), 110, fileFormatPanel = new ImportFileFormatPanel() {
 					
 					@Override
 					protected void storeImportSource(StoreImportSource command) {
@@ -172,18 +193,18 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					protected void showFileFormat(ImportRules rules) {
 					}
 				});
-				addTab(new Label(messages.definition()), 80, propertyMappingsPanel = new ImportDefinitionPanel() {
+				addTab(new EEButton(messages.definition()), 100, propertyMappingsPanel = new ImportDefinitionPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
 					}
 				});
-				addTab(new Label(messages.history()), 50, historyPanel = new ImportHistoryPanel2() {
+				addTab(new EEButton(messages.history()), 100, historyPanel = new ImportHistoryPanel2() {
 					protected void showLog(ImportJobResult jobResult) {
 						logPanel.setJobResult(jobResult);
 						tabs.showTab(logPanel);
 					}
 				});
-				addTab(new Label(messages.log()), 50, logPanel = new ImportLogPanel());
+				addTab(new EEButton(messages.log()), 100, logPanel = new ImportLogPanel());
 			}});
 		}});
 		//ruud
@@ -218,8 +239,11 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 			masterTable.setWidget(row, NAME_COL, rowWidgets.name = new Anchor() {{
 				addClickHandler(selectRowClickHandler);
 			}});
-			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new MediaWidget() {{
-				addClickHandler(selectRowClickHandler);
+			masterTable.setWidget(row, LASTRUN_COL, rowWidgets.lastRun = new Label() {{
+				addDomHandler(selectRowClickHandler, ClickEvent.getType());
+			}});
+			masterTable.setWidget(row, STATUS_COL, rowWidgets.status = new Image() {{
+				addDomHandler(selectRowClickHandler, ClickEvent.getType());
 			}});
 			masterTable.setWidget(row, WEATHER_COL, rowWidgets.health = new Image() {{
 				addClickHandler(selectRowClickHandler);
@@ -238,6 +262,16 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		ImportSource importSource = importSources.get(row);
 		RowWidgets rowWidgets = tableWidgets.get(row);
 		rowWidgets.name.setText(importSource.getName());
+		
+		// lastrun
+		if (importSource.getJob() != null && importSource.getJob().getLastSuccess() != null) {
+			rowWidgets.status.setResource(importSource.getJob().getLastSuccess() ? images.ok() : images.error());
+		} else {
+			rowWidgets.status.setResource(images.warning());
+		}
+		if (importSource.getJob() != null && importSource.getJob().getLastTime() != null) {
+			rowWidgets.lastRun.setText(importSource.getJob().getLastTime().toString());
+		}
 		
 		// health
 		int health = 0;

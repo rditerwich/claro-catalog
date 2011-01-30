@@ -1,8 +1,6 @@
 package claro.catalog.manager.client.i18n;
 
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.Widget;
 
 public interface I18NCatalog extends Messages {
 
@@ -218,6 +216,7 @@ public interface I18NCatalog extends Messages {
 	String importRulesLink();
 	String importNowHelp();
 	String importNowButton();
+	String importFileButton();
 	String incrementalImportLabel();
 	String incrementalImportHelp();
 	String sequentialImportNamesLabel();
@@ -238,7 +237,7 @@ public interface I18NCatalog extends Messages {
 	String notRunMessage();
 	String log();
 	String showLogLink();
-	SafeHtml addPropertyMapping();
+	String addPropertyMapping();
 	String propertyMappings();
 	String property();
 	String expression();
@@ -262,13 +261,15 @@ public interface I18NCatalog extends Messages {
 	String propertyGroupsTab();
 	String detailsLabel();
 	String addParentCategoriesLink();
-	SafeHtml importNowLink();
+	String importNowLink();
 	String lastRunLabel();
 	String lastRunUrlLabel();
 	String statusHeader();
 	String healthHeader();
 	String actionsHeader();
 	String nameLabel();
+	String fileFormatTab();
+	String selectNestedFileLabel();
 
 
 

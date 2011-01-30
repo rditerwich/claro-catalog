@@ -1,12 +1,6 @@
 package claro.catalog.manager.client;
 
-import easyenterprise.lib.gwt.client.Style;
+import com.google.gwt.resources.client.CssResource;
 
-public enum GlobalStyles implements Style {
-	header,
-	menu,
-	active,
-	mainTable,
-	formTable, 
-	detailPanelCloseButton
-}
+public interface GlobalStyles extends CssResource {
+}	

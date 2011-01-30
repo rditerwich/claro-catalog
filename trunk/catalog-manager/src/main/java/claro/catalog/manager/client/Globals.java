@@ -10,4 +10,6 @@ public interface Globals {
 	I18NCatalog messages = GWT.create(I18NCatalog.class);
 	ResourceBundle deprecatedImages = GWT.create(ResourceBundle.class);
 	Images images = GWT.create(Images.class);
+	GlobalStyles globalStyles = CatalogManagerResources.instance.globalStyles();
+//	ImportingStyles importingStyles = CatalogManagerResources.instance.importingStyles();
 }

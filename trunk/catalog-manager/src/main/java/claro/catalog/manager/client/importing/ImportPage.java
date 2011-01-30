@@ -25,7 +25,10 @@ public class ImportPage extends Page {
 		super(placeController);
 		context.addFunctions(BuiltinFunctions.functions);
 		mainPanel = new LayoutPanel();
+		mainPanel.setStylePrimaryName("ImportPage");
 		initWidget(mainPanel);
+
+		ImportingStyles.instance.ensureInjected();
 	}
 
 	@Override
