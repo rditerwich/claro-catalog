@@ -9,8 +9,6 @@ import static java.util.Collections.singleton;
 
 import javax.persistence.EntityManager;
 
-import com.google.common.base.Strings;
-
 import claro.catalog.command.importing.StoreImportSource;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProducts;
@@ -19,9 +17,7 @@ import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Frequency;
 import claro.jpa.jobs.Job;
-import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.Cloner;
-import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
@@ -31,7 +27,6 @@ import easyenterprise.lib.util.CollectionUtil;
 public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
 
 	private static final long serialVersionUID = 1L;
-	private static View view = new BasicView("job", "rules/fileFormat", "rules/importProducts/matchProperty", "rules/importProducts/categories/categoryExpression", "rules/importProducts/properties/property");
 	
 	@Override
 	public Result execute() throws CommandException {
@@ -63,9 +58,8 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			
 			// remove import rules
 			for (ImportRules rules : notNull(importRulesToBeRemoved)) {
-				if (result.importSource.getRules().remove(rules)) {
-					em.remove(em.find(ImportRules.class, rules.getId()));
-				}
+				result.importSource.getRules().remove(rules);
+				em.remove(em.find(ImportRules.class, rules.getId()));
 			}
 			
 			// remove import products
@@ -101,7 +95,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			}
 			
 			// clone result
-			result.importSource = Cloner.clone(result.importSource, view);
+			result.importSource = Cloner.clone(result.importSource, GetImportSourcesImpl.view);
 		}
 		return result;
 	}
