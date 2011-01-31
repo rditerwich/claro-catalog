@@ -267,7 +267,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			addNorth(new Anchor("Close") {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						closeDetail(true);
+						closeDetail();
 					}
 				});
 			}}, 40);
@@ -421,6 +421,21 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			details.resetTabState();
 		}
 	}
+	
+
+	private void closeDetail() {
+		int currentRow = getCurrentRow();
+
+		closeDetail(true);
+		
+		Long selectedCategory = productKeys.get(currentRow);
+		if (selectedCategory == null) {
+			productKeys.remove(null);
+			render();
+		}
+		
+	}
+
 	
 	abstract protected void createNewProduct(Long parentId);
 	

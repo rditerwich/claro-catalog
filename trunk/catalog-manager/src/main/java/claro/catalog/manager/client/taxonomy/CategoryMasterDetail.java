@@ -253,7 +253,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 			addNorth(new Anchor("Close") {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						closeDetail(true);
+						CategoryMasterDetail.this.closeDetail();
 					}
 				});
 			}}, 40);
@@ -354,6 +354,19 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		rowWidgets.categoryName.setText(label);
 	}
 	
+	private void closeDetail() {
+		int currentRow = getCurrentRow();
+
+		closeDetail(true);
+		
+		CategoryRow selectedCategory = categoryRows.get(currentRow);
+		if (selectedCategory.categoryId == null) {
+			categoryRows.remove(currentRow);
+		
+			render();
+		}
+		
+	}
 	
 	private void rowSelected(int row) {
 
