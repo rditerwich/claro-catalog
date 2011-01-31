@@ -58,6 +58,11 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			
 			// remove import rules
 			for (ImportRules rules : notNull(importRulesToBeRemoved)) {
+				ImportProducts importProducts = rules.getImportProducts();
+				if (importProducts != null) {
+					rules.setImportProducts(null);
+					em.remove(em.find(ImportProducts.class, importProducts.getId()));
+				}
 				result.importSource.getRules().remove(rules);
 				em.remove(em.find(ImportRules.class, rules.getId()));
 			}

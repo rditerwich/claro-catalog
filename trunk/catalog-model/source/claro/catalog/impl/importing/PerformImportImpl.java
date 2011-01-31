@@ -563,7 +563,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		try {
 			tempDir = createTempDir("CatalogImport", file.getName());
 			unzip(new FileInputStream(file), tempDir);
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			return file;
 		}
 		return tempDir;

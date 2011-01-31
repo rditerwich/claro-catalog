@@ -20,12 +20,6 @@ public class GetImportSourceHistoryImpl extends GetImportSourceHistory implement
 	@Override
 	public Result execute() throws CommandException {
 		
-		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		Result result = new Result();
 		
 		if (jobResultId != null) {
