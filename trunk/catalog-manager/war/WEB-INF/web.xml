@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app
-    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee">
 
-<web-app>
+ <display-name>CatalogXS Catalog Manager</display-name>
   
   <servlet>
     <servlet-name>CatalogServlet</servlet-name>
@@ -14,7 +12,7 @@
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.url</param-name>
-        <param-value>jdbc:postgresql:catalog</param-value>
+        <param-value>jdbc:postgresql:catalog3</param-value>
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.user</param-name>
@@ -57,7 +55,7 @@
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.url</param-name>
-        <param-value>jdbc:postgresql:catalog</param-value>
+        <param-value>jdbc:postgresql:catalog3</param-value>
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.user</param-name>
@@ -93,5 +91,4 @@
   <welcome-file-list>
     <welcome-file>CatalogManager.html</welcome-file>
   </welcome-file-list>
-
 </web-app>
