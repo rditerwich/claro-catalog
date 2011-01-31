@@ -47,12 +47,13 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 
 	private List<ImportSource> importSources = new ArrayList<ImportSource>();
 	private ImportSource currentImportSource = null;
+	private ImportRules currentRules = null;
 	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
 	private ImportMainPanel importSourceMainPanel;
 	private MultiFileImportPanel multiFilePanel;
 	private ImportFileFormatPanel fileFormatPanel;
-	private ImportDefinitionPanel propertyMappingsPanel;
+	private ImportDataMappingPanel propertyMappingPanel;
 	private ImportHistoryPanel2 historyPanel;
 	private ImportLogPanel logPanel;
 
@@ -86,16 +87,37 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 			currentImportSource = importSource;
 			multiFilePanel.setImportSource(currentImportSource);
 			importSourceMainPanel.setImportSource(currentImportSource);
-			fileFormatPanel.setImportSource(currentImportSource);
-			propertyMappingsPanel.setImportSource(currentImportSource);
 			historyPanel.setImportSource(currentImportSource);
 			logPanel.setImportSource(currentImportSource);
+			setImportRules(currentRules);
+		} else {
+			setImportRules(null);
 		}
 	}
 	
 	protected abstract void updateImportSource(ImportSource importSource);
 	protected abstract void storeImportSource(StoreImportSource command);
 
+	private void setImportRules(ImportRules rules) {
+		if (currentImportSource == null) return;
+		currentRules = rules;
+		if (currentRules == null) {
+			for (ImportRules r : currentImportSource.getRules()) {
+				if (currentRules == null || currentRules.getRelativeUrl().compareTo(r.getRelativeUrl()) > 0) {
+					currentRules = r;
+				}
+			}
+		}
+		if (currentRules == null) {
+			currentRules = new ImportRules();
+		}
+		if (!currentImportSource.getRules().contains(currentRules)) {
+			currentImportSource.getRules().add(currentRules);
+		}
+		fileFormatPanel.setImportSourceAndRules(currentImportSource, currentRules);
+		propertyMappingPanel.setImportRules(currentImportSource, currentRules);
+	}
+	
 	@Override
 	final protected void masterPanelCreated(DockLayoutPanel masterPanel) {
 		Table table = getMasterTable();
@@ -144,12 +166,13 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					}
 					@Override
 					protected void showFileFormat(ImportRules rules) {
-						fileFormatPanel.setImportRules(rules);
+						setImportRules(rules);
 						tabs.showTab(fileFormatPanel);
 					}
 					@Override
 					protected void showImportRules(ImportRules rules) {
-						tabs.showTab(propertyMappingsPanel);
+						setImportRules(rules);
+						tabs.showTab(propertyMappingPanel);
 					}
 					protected void showLastRunLog() {
 						new Timer() {
@@ -167,13 +190,14 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					}
 					
 					@Override
-					protected void showImportRules(ImportRules rules) {
-						tabs.showTab(propertyMappingsPanel);
+					protected void showDataMapping(ImportRules rules) {
+						setImportRules(rules);
+						tabs.showTab(propertyMappingPanel);
 					}
 					
 					@Override
 					protected void showFileFormat(ImportRules rules) {
-						fileFormatPanel.setImportRules(rules);
+						setImportRules(rules);
 						tabs.showTab(fileFormatPanel);
 					}
 				});
@@ -185,17 +209,24 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					}
 					
 					@Override
-					protected void showImportRules(ImportRules rules) {
-						tabs.showTab(propertyMappingsPanel);
+					protected void showDataMapping(ImportRules rules) {
+						setImportRules(rules);
+						tabs.showTab(propertyMappingPanel);
 					}
 					
 					@Override
 					protected void showFileFormat(ImportRules rules) {
+						setImportRules(rules);
+						tabs.showTab(fileFormatPanel);
 					}
 				});
-				addTab(new EEButton(messages.definition()), 100, propertyMappingsPanel = new ImportDefinitionPanel() {
+				addTab(new EEButton(messages.dataMappingTab()), 140, propertyMappingPanel = new ImportDataMappingPanel() {
 					protected void storeImportSource(StoreImportSource command) {
 						ImportMasterDetail.this.storeImportSource(command);
+					}
+					@Override
+					protected void currentImportRulesChanged(ImportRules importRules) {
+						ImportMasterDetail.this.setImportRules(importRules);
 					}
 				});
 				addTab(new EEButton(messages.history()), 100, historyPanel = new ImportHistoryPanel2() {
@@ -204,7 +235,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 						tabs.showTab(logPanel);
 					}
 				});
-				addTab(new EEButton(messages.log()), 100, logPanel = new ImportLogPanel());
+				addTab(new EEButton(messages.log()), 80, logPanel = new ImportLogPanel());
 			}});
 		}});
 		//ruud

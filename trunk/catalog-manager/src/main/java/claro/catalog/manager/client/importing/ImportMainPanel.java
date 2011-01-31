@@ -80,7 +80,6 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 				add(messages.incrementalImportLabel(), incrementalCheckBox = new CheckBox(), messages.incrementalImportHelp());
 				add(messages.sequentialImportNamesLabel(), sequentialCheckBox = new CheckBox(), messages.sequentialImportNamesHelp());
 				add(messages.orderedImportNamesLabel(), orderedCheckBox = new CheckBox(), messages.orderedImportNamesHelp());
-				add(messages.incrementalImportLabel(), incrementalCheckBox = new CheckBox(), messages.incrementalImportHelp());
 			}});		
 		}});
 		
@@ -89,6 +88,7 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 				importSource.setName(nameTextBox.getText());
 				importSource.setImportUrl(importUrlTextBox.getText());
 				importSource.setIncremental(incrementalCheckBox.getValue());
+				importSource.setSequentialUrl(sequentialCheckBox.getValue());
 				importSource.setOrderedUrl(orderedCheckBox.getValue());
 				storeImportSource(new StoreImportSource(importSource));
 			}

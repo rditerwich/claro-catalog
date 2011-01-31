@@ -34,6 +34,7 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 	
 	public MultiFileImportPanel() {
 		initWidget(new VerticalPanel() {{
+			setStylePrimaryName("MultiFileImportPanel");
 			add(new FormTable() {{
 				add(messages.multiFileImportLabel(), isMultiFile = new CheckBox(), messages.multiFileImportHelp());
 			}});
@@ -77,8 +78,8 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 		int row = 0;
 		for (ImportRules rules : importSource.getRules()) {
 			multiFileLinks.setWidget(row, 0, createTextBox(rules));
-			multiFileLinks.setWidget(row, 1, createRulesLinks(rules));
-			multiFileLinks.setWidget(row, 2, createRemoveImage(rules));
+			multiFileLinks.setWidget(row, 1, createRemoveImage(rules));
+			multiFileLinks.setWidget(row, 2, createRulesLinks(rules));
 			row++;
 		}
 	}
@@ -106,10 +107,10 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 					}
 				});
 			}}, 
-			new Anchor(messages.importRulesLink()) {{
+			new Anchor(messages.dataMappingsLink()) {{
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					showImportRules(rules);
+					showDataMapping(rules);
 				}
 			});
 		}});
@@ -131,5 +132,5 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 
 	protected abstract void storeImportSource(StoreImportSource command);
 	protected abstract void showFileFormat(ImportRules rules);
-	protected abstract void showImportRules(ImportRules rules);
+	protected abstract void showDataMapping(ImportRules rules);
 }

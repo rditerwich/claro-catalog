@@ -14,15 +14,11 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -32,44 +28,42 @@ import easyenterprise.lib.gwt.client.widgets.InlinePanel;
 public abstract class ImportFileFormatPanel extends Composite implements Globals {
 
 	private ImportSource importSource;
-	protected CheckBox isMultiFile;
 	protected FlowPanel tablePanel;
 	private ImportRules currentRules;
-	private HorizontalPanel nestedFilePanel;
 	private ListBox nestedFileListBox;
-
+	private ListBox fileFormatListBox;
+	protected FormTable formTable;
 	
 	public ImportFileFormatPanel() {
 		initWidget(new VerticalPanel() {{
-			add(nestedFilePanel = new HorizontalPanel() {{
-				add(new Label(messages.selectNestedFileLabel()));
-				add(nestedFileListBox = new ListBox() {{
+			add(formTable = new FormTable() {{
+				add(messages.selectNestedFileLabel(), nestedFileListBox = new ListBox() {{
 					addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
 							currentRules = importSource.getRules().get(getSelectedIndex());
 							render();
 						}
 					});
-				}});
+				}}, messages.selectNestedFileHelp());
+				add(messages.fileFormatLabel(), fileFormatListBox = new ListBox() {{
+					addItem("CSV");
+					addItem("Excel");
+					addItem("XML");
+				}}, messages.fileFormatHelp());
+				add(messages.headerLineLabel(), new CheckBox(), messages.headerLineHelp());
+				add(messages.fieldSeparatorLabel(), new TextBox(), messages.fieldSeparatorHelp());
+				add(messages.charsetLabel(), new ListBox() {{
+					addItem("UTF-8");
+					addItem("ASCII");
+					addItem("ISO_LATIN_1");
+					addItem("ISO_LATIN_1");
+				}}, messages.charsetHelp());
 			}});
-			add(new FormTable() {{
-				add(messages.multiFileImportLabel(), isMultiFile = new CheckBox(), messages.multiFileImportHelp());
-			}});
-			isMultiFile.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						importSource.setMultiFileImport(isMultiFile.getValue());
-						tablePanel.setVisible(isMultiFile.getValue());
-						storeImportSource(new StoreImportSource(importSource));
-					}
-				});
 				add(tablePanel = new FlowPanel() {{
-					add(new Anchor(messages.addNestedFileLink()) {{
+					add(new Anchor(messages.dataMappingsLink()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								ImportRules rules = new ImportRules();
-								importSource.getRules().add(rules);
-								render();
-								storeImportSource(new StoreImportSource(importSource));
+								showDataMapping(currentRules);
 							}					
 						});
 					}});
@@ -77,18 +71,14 @@ public abstract class ImportFileFormatPanel extends Composite implements Globals
 		}});
 	}
 	
-	public void setImportSource(ImportSource importSource) {
+	public void setImportSourceAndRules(ImportSource importSource, ImportRules rules) {
 		this.importSource = importSource;
-		render();
-	}
-	
-	public void setImportRules(ImportRules rules) {
 		this.currentRules = rules;
 		render();
 	}
 
 	private void render() {
-		nestedFilePanel.setVisible(isMultiFile.getValue());
+		formTable.setRowVisible(nestedFileListBox, importSource.getMultiFileImport());
 		int row = 0;
 		nestedFileListBox.clear();
 		for (ImportRules rules : importSource.getRules()) {
@@ -123,10 +113,10 @@ public abstract class ImportFileFormatPanel extends Composite implements Globals
 					}
 				});
 			}}, 
-			new Anchor(messages.importRulesLink()) {{
+			new Anchor(messages.dataMappingsLink()) {{
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					showImportRules(rules);
+					showDataMapping(rules);
 				}
 			});
 		}});
@@ -148,5 +138,5 @@ public abstract class ImportFileFormatPanel extends Composite implements Globals
 
 	protected abstract void storeImportSource(StoreImportSource command);
 	protected abstract void showFileFormat(ImportRules rules);
-	protected abstract void showImportRules(ImportRules rules);
+	protected abstract void showDataMapping(ImportRules rules);
 }

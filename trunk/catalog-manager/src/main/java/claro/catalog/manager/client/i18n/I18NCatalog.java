@@ -213,7 +213,7 @@ public interface I18NCatalog extends Messages {
 	String multiFileImportLabel();
 	String multiFileImportHelp();
 	String fileFormatLink();
-	String importRulesLink();
+	String dataMappingsLink();
 	String importNowHelp();
 	String importNowButton();
 	String importFileButton();
@@ -248,7 +248,6 @@ public interface I18NCatalog extends Messages {
 	String jobStatus();
 	String history();
 	String pleaseWait();
-	String definition();
 	String refresh();
 	String savingCategoryDetailsStatus();
 	String savingCategoryDetailsFailedStatus();
@@ -271,6 +270,7 @@ public interface I18NCatalog extends Messages {
 	String nameLabel();
 	String fileFormatTab();
 	String selectNestedFileLabel();
+	String selectNestedFileHelp();
 
 	String catalogMenu();
 	String taxonomyMenu();
@@ -282,5 +282,15 @@ public interface I18NCatalog extends Messages {
 	String newChildCategory();
 	String noCategoriesAvailable();
 
-
+	String dataMappingTab();
+	String fileFormatLabel();
+	String fileFormatHelp();
+	String headerLineLabel();
+	String fieldSeparatorLabel();
+	String charsetLabel();
+	String headerLineHelp();
+	String fieldSeparatorHelp();
+	String charsetHelp();
+	String selectCategoryLabel();
+	String selectCategoryHelp();
 }

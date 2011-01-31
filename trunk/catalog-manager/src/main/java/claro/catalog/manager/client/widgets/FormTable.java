@@ -58,6 +58,21 @@ public class FormTable extends Composite implements Globals {
 		initWidget(table);
 	}
 	
+	public int findRow(Widget w) {
+		for (int row = 0; row < table.getRowCount(); row++) {
+			if (table.getWidget(row, 1) == w.getParent())
+				return row;
+		}
+		return -1;
+	}
+	
+	public void setRowVisible(Widget w, boolean visible) {
+		int row = findRow(w);
+		if (row >= 0) {
+			table.getRowFormatter().setVisible(row, visible);
+		}
+	}
+	
 	public <T extends Widget> T add(T widget, String help) {
 		return add((Widget) null, widget, help);
 	}
@@ -94,6 +109,7 @@ public class FormTable extends Composite implements Globals {
 				addDomHandler(mouseOut, MouseOutEvent.getType());
 				widget.addDomHandler(keyUp, KeyUpEvent.getType());
 			}});
+			table.setWidget(row, 2, new Label(""));
 
 		} else {
 			table.setWidget(row, 0, widget);
@@ -114,7 +130,9 @@ public class FormTable extends Composite implements Globals {
 		if (row == 0) return;
 		if (widget != null && help != null && !help.toString().equals("")) {
 			currentHelpRow = row;
-			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "images/dash.png");
+			Element dashElement = table.getWidget(currentHelpRow, 1).getElement();
+			setBackGround(dashElement, "images/dash.png");
+
 			helpText.setHTML(help);
 			
 			int bottom = table.getOffsetHeight();

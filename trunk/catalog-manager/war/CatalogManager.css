@@ -769,3 +769,11 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 .ImportMainPanel .statusTable img {
 	padding-top: 4px;
 }
+
+.MultiFileImportPanel .ee-FormTable {
+	height: 120px;
+}
+
+.ImportDataMappingPanel .ee-FormTable {
+	height: 80px;
+}	
