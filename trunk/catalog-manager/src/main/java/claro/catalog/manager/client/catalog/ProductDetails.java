@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.Header;
 import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Money;
@@ -34,7 +35,7 @@ import easyenterprise.lib.util.SMap;
 abstract public class ProductDetails extends Composite implements Globals {
 	private enum Styles implements Style { productDetails, imagePrice }
 	
-	private Label productNameBox;
+	private Header productNameBox;
 	private CategoriesWidget categoryPanel;
 	private Label productPrice;
 	private MediaWidget productImage;
@@ -66,7 +67,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 				// Title
 				add(new Grid(1, 2) {{
 					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
-					setWidget(0, 0, productNameBox = new Label() {{
+					setWidget(0, 0, productNameBox = new Header(1, "") {{
 						StyleUtil.add(this, ProductMasterDetail.Styles.productname);
 					}});
 					setWidget(0, 1, categoryPanel = new CategoriesWidget() {

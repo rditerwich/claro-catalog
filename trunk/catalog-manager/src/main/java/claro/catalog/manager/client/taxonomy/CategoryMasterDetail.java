@@ -146,6 +146,8 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		// Find row to update
 		int itemRow = categoryRows.indexOf(new CategoryRow(previousCategoryId, false, -1));
 		if (itemRow != -1) {
+			// Update row
+			categoryRows.get(itemRow).categoryId = categoryId;
 			
 			// Mark it changed
 			Table categoryTable = getMasterTable();

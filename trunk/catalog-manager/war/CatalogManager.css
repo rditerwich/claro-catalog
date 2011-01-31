@@ -500,8 +500,11 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	margin: 20px;
 }
 
-.productDetails .productname {
+.categoryDetails .categoryname.gwt-TextBox {
 	font-size: large;
+	font:normal 22px/1.2em Arial, Helvetica, Lucida, sans-serif;
+	letter-spacing:-1px;
+	
 }
 
 

@@ -5,38 +5,38 @@ import java.util.Map.Entry;
 
 import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
-import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
-import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.gwt.client.widgets.Header;
-import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.util.CollectionUtil;
-import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 
 abstract public class CategoryDetails extends Composite implements Globals {
-	private enum Styles implements Style { categoryDetails, imagePrice }
+	private enum Styles implements Style { categoryDetails, imagePrice, categoryname }
 	
-	private Header categoryNameBox;
+	private HasText categoryNameBox;
 	private CategoriesWidget categoryPanel;
 //	private Label productPrice;
 //	private MediaWidget productImage;
@@ -72,9 +72,14 @@ abstract public class CategoryDetails extends Composite implements Globals {
 				// Title
 				add(new Grid(1, 2) {{
 					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
-					setWidget(0, 0, categoryNameBox = new Header(1, "") {{
-						StyleUtil.add(this, CategoryMasterDetail.Styles.productname);
-					}});
+					setWidget(0, 0, (Widget)(categoryNameBox = new TextBox() {{
+						StyleUtil.add(this, Styles.categoryname);
+						addChangeHandler(new ChangeHandler() {
+							public void onChange(ChangeEvent event) {
+								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, language, categoryNameBox.getText());
+							}
+						});
+					}}));
 					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
 						protected String getAddCategoryLabel() {
 							return messages.addParentCategoriesLink();
