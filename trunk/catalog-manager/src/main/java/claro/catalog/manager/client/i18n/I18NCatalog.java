@@ -280,6 +280,7 @@ public interface I18NCatalog extends Messages {
 	String contentLibraryMenu();
 	String reportAndAnalysisMenu();
 	String newChildCategory();
+	String noCategoriesAvailable();
 
 
 }

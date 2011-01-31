@@ -136,7 +136,11 @@ public class CategoriesWidget extends Composite implements Globals {
 					GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
 						public void onSuccess(GetCategoryTree.Result result) {
 							// TODO Only create tree if data changed??
-							((ScrollPanel)addCategoryPanel.getWidget()).setWidget(createTree(result.root, result.categories, result.children));
+							Widget panelWidget = createTree(result.root, result.categories, result.children);
+							if (panelWidget == null) {
+								panelWidget = new Label(messages.noCategoriesAvailable());
+							}
+							((ScrollPanel)addCategoryPanel.getWidget()).setWidget(panelWidget);
 						}
 					});
 					
@@ -185,6 +189,10 @@ public class CategoriesWidget extends Composite implements Globals {
 		Tree result = new Tree();
 		// Get root categories:
 		List<Long> rootCategories = children.getAll(rootId);
+		if (rootCategories.isEmpty()) {
+			return null;
+		}
+
 		for (final Long root : rootCategories) {
 			String categoryName = categories.getOrEmpty(root).tryGet(CatalogManager.getUiLanguage(), null);
 			result.addItem(new TreeItem(categoryName) {{
