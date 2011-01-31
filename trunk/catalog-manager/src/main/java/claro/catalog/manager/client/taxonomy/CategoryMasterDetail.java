@@ -248,13 +248,13 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	@Override
 	protected void detailPanelCreated(LayoutPanel detailPanel) {
 		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new ActionImage(images.closeBlue(), new ClickHandler() {
+			addNorth(new Anchor("Close") {{
+				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						closeDetail(true);
 					}
-				}) {{
-					setStylePrimaryName(GlobalStylesEnum.detailPanelCloseButton.toString());
-				}}, 40);
+				});
+			}}, 40);
 			add(details = new CategoryDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);
