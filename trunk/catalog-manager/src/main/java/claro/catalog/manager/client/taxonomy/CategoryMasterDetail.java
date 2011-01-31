@@ -46,17 +46,12 @@ import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 abstract public class CategoryMasterDetail extends MasterDetail implements Globals {
-	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel }
+	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel, categoryNewSubCategory }
 
-	private List<Long> productKeys = new ArrayList<Long>();
-	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
 	private String language;
 	private String filterString;
 	
-
 	private OutputChannel outputChannel;
-
-
 
 	private PropertyInfo nameProperty;
 	private PropertyInfo variantProperty;
@@ -75,8 +70,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	private CategoryDetails details;
 	
 	private PropertyGroupInfo generalGroup;
-	private Long rootCategory;
-	private SMap<String, String> rootCategoryLabels;
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newCategoryProperties;
 	private SMap<Long, SMap<String, String>> newCategoryParents;
@@ -85,6 +78,8 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	private SMap<Long, SMap<String, String>> categories;
 	private SMap<Long, Long> childrenByCategory;
 	private List<claro.catalog.manager.client.taxonomy.CategoryMasterDetail.CategoryRow> categoryRows = Collections.emptyList();
+	private SMap<Long, SMap<String, String>> newCategoryGroups;
+	private SMap<Long, SMap<String, String>> newCategoryParentExtentWithSelf;
 
 
 	public CategoryMasterDetail() {
@@ -95,8 +90,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
 		this.generalGroup = generalGroup;
-		this.rootCategory = rootCategory;
-		this.rootCategoryLabels = rootCategoryLabels;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
@@ -230,7 +223,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								createNewCategory(-1);
+								createNewCategory(rootCategoryId, 0);
 							}
 						});
 					}});
@@ -317,10 +310,11 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					});
 				}});
 				
-				add(new Anchor() {{
+				add(new Anchor(messages.newChildCategory()) {{
+					StyleUtil.add(this, Styles.categoryNewSubCategory);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							createNewCategory(row);
+							createNewCategory(categoryRows.get(row).categoryId, row);
 						}
 					});
 				}});
@@ -329,7 +323,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		
 
 		// (Re) bind widgets:
-		
 		
 		int i = 0;
 		for (CategoryRow categoryRow : categoryRows) {
@@ -365,7 +358,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		CategoryRow selectedCategory = categoryRows.get(row);
 		if (selectedCategory.categoryId == null) {
 			// New category selected, only update locally.
-			setSelectedCategory(null, null, null, newCategoryParents, newCategoryProperties); // TODO What groups/parentextent to supply?
+			setSelectedCategory(null, newCategoryGroups, newCategoryParentExtentWithSelf, newCategoryParents, newCategoryProperties); 
 		} else {
 			categorySelected(selectedCategory.categoryId);
 		}
@@ -382,6 +375,9 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 
 		details.setItemData(categoryId, groups, parentExtentWithSelf, parents, properties);
 	}
+	
+	
+	abstract protected void createNewCategory(long parentId, int parentRow);
 	
 	abstract protected void updateCategories();
 	
@@ -409,15 +405,49 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 			filterLabel.setVisible(false);
 		}
 	}
+	
+	protected void createCategory(Long parentId, int parentRow, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
+		// Update name property
+		final Object newCategoryText = messages.newCategory();
+		PropertyData namePropertyData = properties.get(generalGroup).get(nameProperty);
+		Object parentName = namePropertyData.values.get(outputChannel).tryGet(language, null);
+		namePropertyData.values = namePropertyData.values.set(outputChannel, SMap.create(language, newCategoryText));
+		
+		// Parents
+		if (parentName != null) {
+			parents = parents.set(parentId, SMap.create(language, parentName.toString()));
+		}
+		
+		// Parent extent
+		parentExtentWithSelf = parentExtentWithSelf.set(null, SMap.create(language, newCategoryText.toString()));
+		
+		// Insert new row
+		CategoryRow parentCategoryRow = categoryRows.get(parentRow);
+		categoryRows.add(parentRow + 1, new CategoryRow(null, true, parentCategoryRow.indentation + 1));
 
+		// Add to backing collection
+		categories = categories.set(null, SMap.create(language, newCategoryText.toString()));
+		
+		// Redraw master
+		render();
+
+		// Select new category.
+		newCategoryParents = parents;
+		newCategoryGroups = groups;
+		newCategoryProperties = properties;
+		newCategoryParentExtentWithSelf = parentExtentWithSelf;
+		
+		setSelectedCategory(null, newCategoryGroups, null, newCategoryParents, newCategoryProperties); 
+	}
 
 	@SuppressWarnings("serial")
-	private void createNewCategory(int parentRow) {
+	@Deprecated
+	private void createNewCategoryOld(int parentRow) {
 		// TODO Maybe replace with server roundtrip???
 
 		newCategoryParents = SMap.empty();
 		
-		if (parentRow != -1) {
+		if (parentRow == -1) {
 			parentRow = 0;  // Reset to root
 		}
 		
@@ -432,12 +462,17 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		propertyMap = propertyMap.add(nameProperty, new PropertyData() {{
 			values = SMap.create(outputChannel, SMap.create(language, newCategoryText));
 		}});
-		categories.set(null, SMap.create(language, newCategoryText.toString()));
 		
+		// Add to backing collection
+		categories = categories.set(null, SMap.create(language, newCategoryText.toString()));
+		
+		// Redraw master
 		render();
 
+		// Select new category.
 		newCategoryProperties = SMap.create(generalGroup, propertyMap);
-		setSelectedCategory(null, null, null, newCategoryParents, newCategoryProperties); // TODO What group/parentextent??
+		newCategoryGroups = SMap.create(generalGroup.propertyGroupId, generalGroup.labels);
+		setSelectedCategory(null, newCategoryGroups, null, newCategoryParents, newCategoryProperties); // TODO What group/parentextent??
 	}
 
 	private List<CategoryRow> createRows() {

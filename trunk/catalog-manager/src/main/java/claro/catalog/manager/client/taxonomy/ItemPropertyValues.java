@@ -236,7 +236,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 //				}
 				
 				if (canReassignGroups) {
-					String groupName = groups.getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
+					String groupName = CollectionUtil.notNull(groups).getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
 					propertyValueWidgets.propertyGroupsWidget.setText(groupName);
 					if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
 						StyleUtil.add(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
@@ -247,9 +247,16 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				
 				// property source
 				if (showPropertySources) {
-					String sourceName = parentExtentWithSelf.get(property.ownerItemId).tryGet(language, null);
-					propertyValueWidgets.propertySourceWidget.setText("(" + sourceName + ")");
-					propertyValueWidgets.propertySourceWidget.setTitle(messages.propertySourceTooltip(propertyName, sourceName));
+					String sourceName = CollectionUtil.notNull(parentExtentWithSelf).getOrEmpty(property.ownerItemId).tryGet(language, null);
+					if (sourceName != null) {
+						propertyValueWidgets.propertySourceWidget.setText("(" + sourceName + ")");
+						propertyValueWidgets.propertySourceWidget.setTitle(messages.propertySourceTooltip(propertyName, sourceName));
+					}
+					else {
+						propertyValueWidgets.propertySourceWidget.setText("(unknown)");
+						propertyValueWidgets.propertySourceWidget.setTitle(messages.unknownPropertySourceTooltip(propertyName));
+						
+					}
 				}
 				
 				// Remember binding

@@ -257,6 +257,7 @@ public interface I18NCatalog extends Messages {
 	String savingProductDetailsFailedStatus();
 	String savingProductDetailsSuccessStatus();
 	String propertySourceTooltip(String propertyName, String sourceName);
+	String unknownPropertySourceTooltip(String propertyName);
 	String defaultValuesTab();
 	String propertyGroupsTab();
 	String detailsLabel();
@@ -278,6 +279,7 @@ public interface I18NCatalog extends Messages {
 	String campaignsMenu();
 	String contentLibraryMenu();
 	String reportAndAnalysisMenu();
+	String newChildCategory();
 
 
 }

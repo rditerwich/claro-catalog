@@ -62,6 +62,9 @@ public class TaxonomyPage extends Page {
 			protected void storeItem(StoreItemDetails cmd) {
 				TaxonomyPage.this.storeItem(cmd);
 			}
+			protected void createNewCategory(long parentId, int parentRow) {
+				TaxonomyPage.this.createNewCategory(parentId, parentRow);
+			}
 		});
 		
 		// Read Root properties
@@ -95,6 +98,27 @@ public class TaxonomyPage extends Page {
 			}
 		});
 	}
+
+	private void createNewCategory(final Long parentId, final int parentRow) {
+//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
+		// TODO Useful message???
+		
+		ItemDetailsCommand cmd = new ItemDetailsCommand();
+		cmd.catalogId = CatalogManager.getCurrentCatalogId();
+		cmd.itemId = parentId;
+		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
+		cmd.language = categoryMasterDetail.getLanguage();
+		
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
+			public void onSuccess(ItemDetailsCommand.Result result) {
+//				loadingMessage.cancel();
+				categoryMasterDetail.createCategory(parentId, parentRow, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
+			}
+		});
+		
+		// TODO See whether it was cached 
+	}
+	
 
 	private void updateCategorySelection(final Long productId) {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingCategoryDetails(), 2, 1000);

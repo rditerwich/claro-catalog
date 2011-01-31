@@ -665,6 +665,18 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	color: gray;
 }
 
+/** Taxonomy Page */
+
+.ee-MasterDetailTable .categoryNewSubCategory {
+	font-style: italic;
+	margin-left: 30px;
+	visibility: hidden;
+}
+
+.ee-MasterDetailTable tr:hover .categoryNewSubCategory {
+	visibility: visible;
+}
+
 /** Categories component */
 .categoryStyle {
 	margin-left: 10px;

@@ -89,6 +89,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
 	private SMap<Long, SMap<String, String>> newProductCategories;
 	private RoundedPanel masterRoundedPanel;
+	private Long rootCategory;
 	
 	public ProductMasterDetail() {
 		super(126, 0);
@@ -98,6 +99,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
 		this.generalGroup = generalGroup;
+		this.rootCategory = rootCategory;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
@@ -225,7 +227,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 					setWidget(1, 0, new Anchor(messages.newProduct()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								createNewProduct();
+								createNewProduct(rootCategory);
 							}
 						});
 					}});
@@ -415,11 +417,11 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 	}
 	
+	abstract protected void createNewProduct(Long parentId);
+	
 	abstract protected void updateProductList();
 	
 	abstract protected void productSelected(Long productId);
-	
-	
 	
 	abstract protected void storeItem(StoreItemDetails cmd);
 
@@ -446,8 +448,36 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		}
 	}
 
+	protected void createProduct(Long productParent, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
+		
+		// Update name property
+		final Object newProductText = messages.newProduct();
+		PropertyData namePropertyData = propertyValues.get(generalGroup).get(nameProperty);
+		Object parentName = namePropertyData.values.get(outputChannel).tryGet(language, null);
+		namePropertyData.values = namePropertyData.values.set(outputChannel, SMap.create(language, newProductText));
+		
+		// Parents
+		if (parentName != null) {
+			parents = parents.set(productParent, SMap.create(language, parentName.toString()));
+		}
+
+		// Update products for master table
+		if (!productKeys.contains(null)) {
+			// Only add new product once...
+			productKeys.add(0, null);
+		}
+		products = products.set(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
+		
+		render();
+
+		// UPdate selection
+		newProductCategories = parents;
+		newProductPropertyValues = propertyValues;
+		setSelectedProduct(null, parents, propertyValues);
+	}
 
 	@SuppressWarnings("serial")
+	@Deprecated
 	private void createNewProduct() {
 		// TODO Maybe replace with server roundtrip???
 
@@ -462,6 +492,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		propertyMap = propertyMap.add(variantProperty, new PropertyData());
 		propertyMap = propertyMap.add(descriptionProperty, new PropertyData());
 		propertyMap = propertyMap.add(artNoProperty, new PropertyData());
+		propertyMap = propertyMap.add(priceProperty, new PropertyData());
 		propertyMap = propertyMap.add(imageProperty, new PropertyData());
 		propertyMap = propertyMap.add(smallImageProperty, new PropertyData());
 		

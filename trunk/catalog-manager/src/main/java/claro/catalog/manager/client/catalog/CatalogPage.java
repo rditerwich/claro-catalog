@@ -62,6 +62,10 @@ public class CatalogPage extends Page {
 			protected void updateProductList() {
 				CatalogPage.this.updateProductList();
 			}
+			protected void createNewProduct(Long parentId) {
+				CatalogPage.this.createNewProduct(parentId);
+				
+			}
 			protected void storeItem(StoreItemDetails cmd) {
 				CatalogPage.this.storeItem(cmd);
 			}
@@ -108,6 +112,26 @@ public class CatalogPage extends Page {
 		});
 	}
 
+	private void createNewProduct(final Long parentId) {
+//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
+		// TODO Useful message???
+		
+		ItemDetailsCommand cmd = new ItemDetailsCommand();
+		cmd.catalogId = CatalogManager.getCurrentCatalogId();
+		cmd.itemId = parentId;
+		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
+		cmd.language = productMasterDetail.getLanguage();
+		
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
+			public void onSuccess(ItemDetailsCommand.Result result) {
+//				loadingMessage.cancel();
+				productMasterDetail.createProduct(parentId, result.parents, result.propertyData);
+			}
+		});
+		
+		// TODO See whether it was cached 
+	}
+	
 	private void updateProductSelection(final Long productId) {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
 
