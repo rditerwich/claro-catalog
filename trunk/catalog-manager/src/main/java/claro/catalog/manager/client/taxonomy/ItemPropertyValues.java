@@ -328,8 +328,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 					setVerticalAlignment(ALIGN_MIDDLE);
 					add(new MediaWidget(false, true));
 					add(new SingleUploader() {{
-//						addHoverVisibility(getForm());
-//						addHoverVisibility(this.getFileInput());
+						setAutoSubmit(true);
 						addOnFinishUploadHandler(new OnFinishUploaderHandler() {
 							public void onFinish(IUploader uploader) {
 								if (uploader.getStatus() == Status.SUCCESS) {

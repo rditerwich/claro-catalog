@@ -9,6 +9,7 @@ import java.util.Set;
 
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindItems;
+import claro.catalog.command.items.ItemType;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
@@ -105,7 +106,9 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		
 		List<ItemModel> result = filterItems(candidates);
 		
-		Collections.sort(result, new ItemOrderComparator(orderBy, stagingArea, outputChannel, language));
+		if (orderBy != null) {
+			Collections.sort(result, new ItemOrderComparator(orderBy, stagingArea, outputChannel, language));
+		}
 		
 		if (paging.shouldPage()) {
 			return result.subList(paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
@@ -120,7 +123,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	private Set<ItemModel> filterByClass(Set<ItemModel> candidates) {
 		
 		// No filtering necessary if all items are requested:
-		if (resultType == ResultType.items) {
+		if (resultType == ItemType.item) {
 			return candidates;
 		}
 		
@@ -159,8 +162,8 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	
 	private Class<? extends Item> resultClass() {
 		switch (resultType) {
-		case catagories: return Category.class;
-		case products: return Product.class;
+		case catagory: return Category.class;
+		case product: return Product.class;
 		default: return Item.class;
 		}
 	}

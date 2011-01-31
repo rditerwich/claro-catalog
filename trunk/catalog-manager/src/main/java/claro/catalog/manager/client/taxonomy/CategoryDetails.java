@@ -3,7 +3,8 @@ package claro.catalog.manager.client.taxonomy;
 import java.util.Collections;
 import java.util.Map.Entry;
 
-import claro.catalog.command.items.StoreProduct;
+import claro.catalog.command.items.ItemType;
+import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -188,12 +189,13 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		return result;
 	}
 
-	abstract protected void storeItem(StoreProduct cmd);
+	abstract protected void storeItem(StoreItemDetails cmd);
 	
 	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-		StoreProduct cmd = new StoreProduct();
+		StoreItemDetails cmd = new StoreItemDetails();
 		
-		cmd.productId = itemId;
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.catagory;
 		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(language, value));
 
 		// Always include name if this is a new item.
@@ -202,7 +204,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		}
 		// Always include categories for new items:
 		if (itemId == null) {
-			cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
 		}
 		
 		storeItem(cmd);
@@ -212,8 +214,8 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		
 		// Only remove values if the item exists:
 		if (itemId != null) {
-			StoreProduct cmd = new StoreProduct();
-			cmd.productId = itemId;
+			StoreItemDetails cmd = new StoreItemDetails();
+			cmd.itemId = itemId;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
 			
@@ -222,10 +224,11 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	}
 	
 	private void categoryAdded(Long itemId, Long categoryId) {
-		StoreProduct cmd = new StoreProduct();
-		cmd.productId = itemId;
+		StoreItemDetails cmd = new StoreItemDetails();
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.catagory;
 		
-		cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+		cmd.parentsToSet = categoryPanel.getCategories().getKeys();
 		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
@@ -234,7 +237,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		storeItem(cmd);
 	}
 
-	private void addNamePropertyValue(StoreProduct cmd) {
+	private void addNamePropertyValue(StoreItemDetails cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(inheritedPropertyValues);
 		Object productName = getValue(nameProperty, properties);
 		cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
@@ -243,9 +246,9 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	private void categoryRemoved(Long itemId, Long categoryId) {
 		// if the item is new, do not store
 		if (itemId != null) {
-			StoreProduct cmd = new StoreProduct();
-			cmd.productId = itemId;
-			cmd.categoriesToSet = categoryPanel.getCategories().getKeys();
+			StoreItemDetails cmd = new StoreItemDetails();
+			cmd.itemId = itemId;
+			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
 			
 			storeItem(cmd);
 		}

@@ -130,12 +130,15 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 //				}});
 				add(new MainMenu(pageContainer) {{
 					setStylePrimaryName(GlobalStylesEnum.menu.toString());
-					addPage(new CatalogPage(placeController), "Catalog");
-					addPage(new TaxonomyPage(placeController), "Taxonomy");
-					addPage(new ImportPage(placeController), messages.importMenu());
-					
-					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
-					addPage(new TearupTabsTestPage(placeController), "TabTest");
+					addPage(new CatalogPage(placeController), messages.catalogMenu());
+					addPage(new TaxonomyPage(placeController), messages.taxonomyMenu());
+					addPage(new EmptyPage(placeController, messages.webshopMenu()), messages.webshopMenu());
+					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
+					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
+					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
+					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
+//					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
+//					addPage(new TearupTabsTestPage(placeController), "TabTest");
 
 				}});
 //			topPanel.add(choices);

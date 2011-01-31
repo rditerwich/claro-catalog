@@ -110,6 +110,18 @@ public class CatalogModel {
 		
 		CatalogDao.get().removeItem(item); // TODO It is more efficient in the context of a transaction rollback to move this to the beginning
 	}
+	
+	public synchronized PropertyGroupInfo findPropertyGroupInfo(Long id) {
+		PropertyGroupInfo result = propertyGroupInfos.get(id);
+		if (result == null) {
+			PropertyGroup group = JpaService.getEntityManager().find(PropertyGroup.class, id);
+			if (group != null) {
+				result = findOrCreatePropertyGroupInfo(group);
+			}
+		}
+		
+		return result;
+	}
 
 	public synchronized PropertyGroupInfo findOrCreatePropertyGroupInfo(PropertyGroup group) {
 		PropertyGroupInfo result = propertyGroupInfos.get(group.getId());

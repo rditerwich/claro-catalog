@@ -71,8 +71,18 @@ public class ItemUtil {
 				if (propertyData.groupAssignmentItemId != null) {
 					propertyData.groupItemNameLabels = getNameLabels(catalogModel.getItem(propertyData.groupAssignmentItemId), catalogModel, channel, area);
 				}
-				propertyData.values = SMap.create(channel, property.getValues(area, channel));
-				propertyData.effectiveValues = SMap.create(area, SMap.create(channel, property.getEffectiveValues(area, channel)));
+				
+				// Values
+				SMap<String, Object> values = property.getValues(area, channel);
+				if (values != null && !values.isEmpty()) {
+					propertyData.values = SMap.create(channel, values);
+				}
+				
+				// Effective Values
+				SMap<String, Object> effectiveValues = property.getEffectiveValues(area, channel);
+				if (effectiveValues != null && !effectiveValues.isEmpty()) {
+					propertyData.effectiveValues = SMap.create(area, SMap.create(channel, effectiveValues));
+				}
 				
 				// TODO How to do this???
 //			    propertyData.sourceValues = SMap.create(channel, property.getSourceValues(null)));

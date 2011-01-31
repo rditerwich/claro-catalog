@@ -24,6 +24,8 @@ import claro.jpa.catalog.Label_;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyGroup;
+import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
@@ -209,6 +211,7 @@ public class CatalogDao {
 		Item firstParent = item.getParents().iterator().next().getParent();
 		for (ParentChild parent : item.getParents()) {
 			parent.getParent().getChildren().remove(parent);
+			entityManager.remove(parent);
 		}
 		item.getParents().clear();
 		
@@ -247,7 +250,6 @@ public class CatalogDao {
 		
 		// Remove from catalog
 		item.getCatalog().getItems().remove(item);
-		item.setCatalog(null);
 		
 		// Finally remove from db.
 		entityManager.remove(item);
@@ -359,5 +361,30 @@ public class CatalogDao {
 		TypedQuery<JobResult> query = entityManager.createQuery(c);//.setParameter(jobParam, job);
 		query.setMaxResults(count);
 		return query.getResultList();
+	}
+
+	public void removeGroupAssignment(PropertyGroupAssignment groupAssignment) {
+		groupAssignment.getCategory().getPropertyGroupAssignments().remove(groupAssignment);
+		entityManager.remove(groupAssignment);
+	}
+
+	public PropertyGroupAssignment createGroupAssignment(Property property, PropertyGroup group, Category item) {
+		PropertyGroupAssignment result = new PropertyGroupAssignment();
+		
+		result.setCategory(item);
+		result.setProperty(property);
+		result.setPropertyGroup(group);
+		item.getPropertyGroupAssignments().add(result);
+		
+		entityManager.persist(result);
+		
+		return result;
+	}
+
+	public void removeProperty(Property entity) {
+		for (Label label : entity.getLabels()) {
+			entityManager.remove(label);
+		}
+		entityManager.remove(entity);
 	}
 }

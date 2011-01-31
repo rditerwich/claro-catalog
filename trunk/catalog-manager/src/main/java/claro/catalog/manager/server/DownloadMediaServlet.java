@@ -51,7 +51,7 @@ public class DownloadMediaServlet extends HttpServlet {
             return;
         }
         // Build response
-        resp.setHeader("Expires", "now plus 1 year");
+        resp.setHeader("Expires", "now plus 1 year");  // TODO is this right?  Check whether updates are visible...
         final FileData fileData = retrieveFile(req, resp);
 
         if (fileData == null) {

@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 
-import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.test.util.CatalogTestBase;
@@ -27,7 +26,7 @@ public class FindItemsTest extends CatalogTestBase {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = TEST_CATALOG_ID;
 		cmd.filter = "Deskjet";
-		cmd.resultType = ResultType.products;
+		cmd.resultType = ItemType.product;
 		
 		FindItems.Result result = executeCommand(cmd);
 
@@ -44,7 +43,7 @@ public class FindItemsTest extends CatalogTestBase {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = TEST_CATALOG_ID;
 		cmd.filter = "arti:123";
-		cmd.resultType = ResultType.products;
+		cmd.resultType = ItemType.product;
 		
 		FindItems.Result result = executeCommand(cmd);
 		

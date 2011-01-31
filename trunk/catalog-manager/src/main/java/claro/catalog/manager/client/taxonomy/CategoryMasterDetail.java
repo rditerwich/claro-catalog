@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
-import claro.catalog.command.items.StoreProduct;
+import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -47,14 +47,7 @@ import easyenterprise.lib.util.SMap;
 
 abstract public class CategoryMasterDetail extends MasterDetail implements Globals {
 	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel }
-	private static final int IMAGE_COL = 0;
-	private static final int PRODUCT_COL = 1;
-	private static final int PRICE_COL = 2;
 
-	private static final int NR_COLS = 3;
-
-	
-	
 	private List<Long> productKeys = new ArrayList<Long>();
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
 	private String language;
@@ -206,7 +199,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
 		Table productTable = getMasterTable();
 
-		productTable.resizeColumns(NR_COLS);
+		productTable.resizeColumns(1);
 		
 		// search panel
 		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
@@ -281,7 +274,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					setStylePrimaryName(GlobalStylesEnum.detailPanelCloseButton.toString());
 				}}, 40);
 			add(details = new CategoryDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
-				protected void storeItem(StoreProduct cmd) {
+				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);
 				}
 			});
@@ -335,8 +328,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					});
 				}});
 			}});
-			
-//			categoryTable.getWidget(i, PRODUCT_COL).getElement().getParentElement().addClassName(Styles.productTD.toString());
 		}
 		
 
@@ -397,7 +388,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	
 	abstract protected void updateCategories();
 	
-	abstract protected void storeItem(StoreProduct cmd);
+	abstract protected void storeItem(StoreItemDetails cmd);
 
 	private void updateFilterLabel() {
 		StringBuilder filterText = new StringBuilder();

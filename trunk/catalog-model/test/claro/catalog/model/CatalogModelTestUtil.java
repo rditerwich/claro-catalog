@@ -3,15 +3,18 @@ package claro.catalog.model;
 import static claro.catalog.model.PropertyModel.setTypedValue;
 
 import java.sql.SQLException;
+import java.util.Collections;
 
 import javax.persistence.EntityManager;
 
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
+import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 
@@ -46,6 +49,22 @@ public class CatalogModelTestUtil {
 		entityManager.persist(p);
 		
 		return p;
+	}
+	
+	public static PropertyGroup addGroup(EntityManager entityManager, CatalogModel catalogModel, String name) throws SQLException {
+		PropertyGroup group = new PropertyGroup();
+		group.setCatalog(catalogModel.getCatalog());
+		
+		Label nameLabel = new Label();
+		nameLabel.setLabel(name);
+		nameLabel.setPropertyGroup(group);
+		
+		group.setLabels(Collections.singletonList(nameLabel));
+
+		entityManager.persist(group);
+		entityManager.persist(nameLabel);
+		
+		return group;
 	}
 	
 	public static void addChild(EntityManager entityManager, Item item, Item newChild) throws SQLException {

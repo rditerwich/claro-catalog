@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
-import claro.catalog.command.items.StoreProduct;
+import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.catalog.ProductDetails;
 
@@ -94,7 +94,7 @@ public class MasterDetailTestPage extends Page {
 									}});
 									add(new Label("Details for " + masterData.get(row) + "..."));
 									add(new ProductDetails(null, null, null, null, null, null) {
-										protected void storeItem(StoreProduct cmd) {
+										protected void storeItem(StoreItemDetails cmd) {
 										}
 									});
 								}});

@@ -11,9 +11,10 @@ import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
-public class StoreProduct implements Command<StoreProduct.Result> {
+public class StoreItemDetails implements Command<StoreItemDetails.Result> {
 
 	private static final long serialVersionUID = -1L;
 	
@@ -25,11 +26,14 @@ public class StoreProduct implements Command<StoreProduct.Result> {
 	
 
 	// Item wide
-	public Long productId;
+	
+	/** Compulsory when a new item is created, optional otherwise. */
+	public ItemType itemType; 
+	public Long itemId;
 	public boolean remove;
 	
 	// parents
-	public List<Long> categoriesToSet;
+	public List<Long> parentsToSet;
 	
 	
 	// Properties
@@ -38,7 +42,7 @@ public class StoreProduct implements Command<StoreProduct.Result> {
 	
 	// Groups
 	public SMap<PropertyInfo, PropertyGroupInfo> groupsToSet;
-	public List<Long> groupsToRemove;
+	public SMap<PropertyInfo, PropertyGroupInfo> groupsToRemove;
 	
 	// Values
 	public SMap<PropertyInfo, SMap<String, Object>> valuesToSet;
@@ -53,16 +57,45 @@ public class StoreProduct implements Command<StoreProduct.Result> {
 	public void checkValid() throws CommandValidationException {
 		validate (catalogId != null);
 		
+		// New items require a type.
+		validate (itemId != null || itemType != null);
+		
+		// For now, we treat item as abstract
+		validate (itemType == null || itemType != ItemType.item);
+		
 		if (remove) {
 			validate (isEmpty(valuesToSet));
 			validate (isEmpty(valuesToRemove));
-			validate (isEmpty(categoriesToSet));
+			validate (isEmpty(propertiesToSet));
+			validate (isEmpty(propertiesToRemove));
+			validate (isEmpty(groupsToSet));
+			validate (isEmpty(groupsToRemove));
+		}
+		
+		for (PropertyInfo property : CollectionUtil.notNull(propertiesToSet)) {
+			// New properties require a type.
+			validate(property.propertyId != null || property.type != null);
+			
+			// Make sure we are not also throwing them away:  // TODO This could arguably be correct.
+			validate(!CollectionUtil.notNull(propertiesToRemove).contains(property));
+		}
+		
+		for (PropertyInfo property : CollectionUtil.notNull(valuesToSet).getKeys()) {
+			
+			// Make sure we are not also throwing them away:
+			validate(!CollectionUtil.notNull(propertiesToRemove).contains(property));
+		}
+		
+		for (PropertyInfo property : CollectionUtil.notNull(groupsToSet).getKeys()) {
+			
+			// Make sure we are not also throwing them away:
+			validate(!CollectionUtil.notNull(propertiesToRemove).contains(property));
 		}
 	}
 
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
-		public Long storedProductId;
+		public Long storedItemId;
 		public SMap<PropertyInfo, SMap<String, Object>> masterValues;
 		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> detailValues;
 		public SMap<Long, SMap<String, String>> parents;

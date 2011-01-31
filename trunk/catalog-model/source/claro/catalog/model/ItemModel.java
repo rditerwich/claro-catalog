@@ -14,7 +14,9 @@ import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
+import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.Category;
+import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.ParentChild;
@@ -27,6 +29,7 @@ import claro.jpa.catalog.PropertyValue;
 import com.google.common.collect.ImmutableSet;
 
 import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 public class ItemModel {
@@ -199,8 +202,7 @@ public class ItemModel {
 		}
 	}
 	
-	private PropertyGroupAssignment findGroupAssignment(Property property) {
-		PropertyGroup group = null;
+	public PropertyGroupAssignment findGroupAssignment(Property property) {
 		Set<ItemModel> items = new LinkedHashSet<ItemModel>();
 		items.add(this);
 		items.addAll(getParentExtent());
@@ -295,12 +297,62 @@ public class ItemModel {
 	}
 	
 	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type, PropertyGroup group) {
+		return createProperty(initialLabels, type, false, null, group);
+	}
+	
+	public boolean mergeProperty(PropertyModel property, SMap<String, String> newLabels, PropertyType newType, boolean newIsMany, SMap<Integer, SMap<String, String>> newEnumValues) {
+		synchronized (catalog) {
+			boolean changed = false;
+			
+			// Labels
+			for (Entry<String, String> newLabel : CollectionUtil.notNull(newLabels)) {
+				String existingLabel = property.getPropertyInfo().labels.get(newLabel.getKey());
+				if (existingLabel == null) {
+					// New label 
+					Label label = new Label();
+					label.setLanguage(newLabel.getKey());
+					label.setLabel(newLabel.getValue());
+					label.setProperty(property.getEntity());
+					property.getEntity().getLabels().add(label);
+					JpaService.getEntityManager().persist(label);
+
+					changed = true;
+				} else if (!existingLabel.equals(newLabel.getValue())) {
+					// Update label. TODO
+					changed = true;
+				}
+			}
+			
+			// Type
+			if (newType != null && !property.getPropertyInfo().type.equals(newType)) {
+				property.getEntity().setType(newType);
+				
+				changed = true;
+			}
+			
+			// IsMany
+			if (property.getPropertyInfo().isMany != newIsMany) {
+				property.getEntity().setIsMany(newIsMany);
+				changed = true;
+			}
+			
+			// Enums
+			if (newEnumValues != null) {
+				// TODO.
+			}
+			
+			return changed;
+		}
+	}
+	public PropertyModel createProperty(SMap<String, String> initialLabels, PropertyType type, boolean isMany, SMap<Integer, SMap<String, String>> enumValues, PropertyGroup group) {
 		synchronized (catalog) {
 			Property property = new Property();
+			
 			property.setType(type);
-			property.setIsMany(false);
+			property.setIsMany(isMany);
 			property.setCategoryProperty(false);
-			for (String lanuage : initialLabels.getKeys()) {
+			
+			for (String lanuage : CollectionUtil.notNull(initialLabels).getKeys()) {
 				Label label = new Label();
 				label.setLanguage(lanuage);
 				label.setLabel(initialLabels.get(lanuage));
@@ -312,18 +364,30 @@ public class ItemModel {
 			Item entity = getEntity();
 			entity.getProperties().add(property);
 			property.setItem(entity);
+			
+			if (enumValues != null) {
+				for (Entry<Integer, SMap<String, String>> enumValue : enumValues) {
+					EnumValue newValue = new EnumValue();
+					newValue.setProperty(property);
+					newValue.setValue(enumValue.getKey());
+					
+					// Labels
+					for (Entry<String, String> langValue : enumValue.getValue()) {
+						Label label = new Label();
+						label.setLanguage(langValue.getKey());
+						label.setLabel(langValue.getValue());
+						label.setEnumValue(newValue);
+						
+					}
+					JpaService.getEntityManager().persist(newValue);
+				}
+			}
+			
 			if (group != null) {
 				assert entity instanceof Category;
-				Category category = (Category) entity;
-				PropertyGroupAssignment groupAssignment = new PropertyGroupAssignment();
-				groupAssignment.setCategory(category);
-				groupAssignment.setProperty(property);
-				groupAssignment.setPropertyGroup(group);
-				category.getPropertyGroupAssignments().add(groupAssignment);
-				JpaService.getEntityManager().persist(groupAssignment);
+				CatalogDao.get().createGroupAssignment(property, group, (Category) entity);
 			}
-			catalog.invalidate(this);
-			catalog.invalidate(childExtent);
+			invalidateChildExtent(true);
 			return PropertyModel.createRoot(property.getId(), false, this, group != null? entity.getId() : null);
 		}
 	}
@@ -371,6 +435,98 @@ public class ItemModel {
 		}		
 	}
 	
+	
+
+	public void removeGroupAssignments(SMap<PropertyInfo, PropertyGroupInfo> groupsToRemove) {
+		synchronized (catalog) {
+			for (Entry<PropertyInfo, PropertyGroupInfo> group : groupsToRemove) {
+				PropertyModel property = findProperty(group.getKey().propertyId, true);
+				if (property == null) {
+					throw new PropertyNotFoundException(group.getKey().propertyId);
+				}
+				PropertyGroupAssignment groupAssignment = findGroupAssignment(property.getEntity());
+				if (groupAssignment != null) {
+					// Invalidating child extent of group assignment.  This could be refined to invalidating only the propertyMOdels of the child extent.
+					ItemModel groupAssignmentCategory = catalog.getItem(groupAssignment.getCategory().getId());
+					groupAssignmentCategory.invalidateChildExtent(true);
+					
+					CatalogDao.get().removeGroupAssignment(groupAssignment);
+					
+				}
+			}
+		}		
+	}
+
+	public void assignGroups(SMap<PropertyInfo, PropertyGroupInfo> groupsToSet) {
+		// TODO What if properties are already assigned to these groups?  Set anyway? Now: check is made... not assigned again. 
+		synchronized (catalog) {
+			if (getItemClass() != Category.class) {
+				throw new UnsupportedOperationException();
+			}
+			for (Entry<PropertyInfo, PropertyGroupInfo> group : groupsToSet) {
+				PropertyModel property = findProperty(group.getKey().propertyId, true);
+				if (property == null) {
+					throw new PropertyNotFoundException(group.getKey().propertyId);
+				}
+				PropertyGroupAssignment groupAssignment = findGroupAssignment(property.getEntity());
+				if (groupAssignment == null || !groupAssignment.getPropertyGroup().getId().equals(group.getValue().propertyGroupId)) {
+					PropertyGroup groupEntity = JpaService.getEntityManager().find(PropertyGroup.class, group.getValue().propertyGroupId);
+					CatalogDao.get().createGroupAssignment(property.getEntity(), groupEntity, (Category)getEntity());
+					
+					invalidateChildExtent(true);
+				}
+			}
+		}
+	}
+	
+	public void removeProperties(List<Long> propertiesToRemove) {
+		synchronized (catalog) {
+			for (Long propertyId : propertiesToRemove) {
+				PropertyModel property = findProperty(propertyId, false);  // Can only remove my own properties.
+				if (property == null) {
+					throw new PropertyNotFoundException(propertyId);
+				}
+				
+				CatalogDao.get().removeProperty(property.getEntity());
+
+				invalidateChildExtent(true);
+			}
+		}
+	}
+	
+	public void setProperties(List<PropertyInfo> propertiesToSet) {
+		synchronized (catalog) {
+			boolean changed = false;
+			for (PropertyInfo propertyInfo : propertiesToSet) {
+				// Existing property?
+				if (propertyInfo.propertyId != null) {
+					PropertyModel property = findProperty(propertyInfo.propertyId, false);  // Can only remove my own properties.
+					if (property == null) {
+						throw new PropertyNotFoundException(propertyInfo.propertyId);
+					}
+					
+					// Merge property info.
+					if (mergeProperty(property, propertyInfo.labels, propertyInfo.type, propertyInfo.isMany, propertyInfo.enumValues)) {
+						changed = true;
+					}
+				}
+				
+				// New property.
+				else {
+					PropertyModel createdProperty = createProperty(propertyInfo.labels, propertyInfo.type, propertyInfo.isMany, propertyInfo.enumValues, null);
+					propertyInfo.propertyId = createdProperty.getPropertyId(); // TODO Isn't this a bit too magical??
+					changed = true;
+				}
+				
+				
+			}
+			if (changed) {
+				invalidateChildExtent(true);
+			}
+		}
+		
+	}
+	
 	void invalidateChildExtent(boolean includeSelf) {
 		// TODO Do we need synchronization?
 		
@@ -394,5 +550,4 @@ public class ItemModel {
 			danglingProperties = null;
 		}		
 	}
-	
 }

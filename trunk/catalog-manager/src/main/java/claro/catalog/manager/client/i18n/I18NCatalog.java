@@ -271,6 +271,13 @@ public interface I18NCatalog extends Messages {
 	String fileFormatTab();
 	String selectNestedFileLabel();
 
+	String catalogMenu();
+	String taxonomyMenu();
+	String dataExchangeMenu();
+	String webshopMenu();
+	String campaignsMenu();
+	String contentLibraryMenu();
+	String reportAndAnalysisMenu();
 
 
 }

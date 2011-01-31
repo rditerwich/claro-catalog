@@ -5,10 +5,10 @@ import java.util.Collections;
 
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.FindItems;
-import claro.catalog.command.items.FindItems.ResultType;
 import claro.catalog.command.items.ItemDetailsCommand;
-import claro.catalog.command.items.StoreProduct;
-import claro.catalog.command.items.StoreProduct.Result;
+import claro.catalog.command.items.ItemType;
+import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.command.items.StoreItemDetails.Result;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
@@ -62,7 +62,7 @@ public class CatalogPage extends Page {
 			protected void updateProductList() {
 				CatalogPage.this.updateProductList();
 			}
-			protected void storeItem(StoreProduct cmd) {
+			protected void storeItem(StoreItemDetails cmd) {
 				CatalogPage.this.storeItem(cmd);
 			}
 		});
@@ -90,7 +90,7 @@ public class CatalogPage extends Page {
 	private void updateProductList() {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.resultType = ResultType.products;
+		cmd.resultType = ItemType.product;
 		
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
 		cmd.language = productMasterDetail.getLanguage();
@@ -127,13 +127,13 @@ public class CatalogPage extends Page {
 		// TODO See whether it was cached 
 	}
 	
-	private void storeItem(final StoreProduct cmd) {
+	private void storeItem(final StoreItemDetails cmd) {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
 		
-		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreProduct.Result>() {
+		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
 				savingMessage.cancel();
 				StatusMessage.showError(messages.savingProductDetailsFailedStatus(), caught);
@@ -143,7 +143,7 @@ public class CatalogPage extends Page {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
 				
-				productMasterDetail.updateProduct(cmd.productId, result.storedProductId, result.masterValues, result.parents, result.detailValues, true);
+				productMasterDetail.updateProduct(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.detailValues, true);
 			}
 		});
 	}

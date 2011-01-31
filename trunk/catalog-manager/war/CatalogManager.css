@@ -394,7 +394,7 @@ ol li .send {
 .ee-MasterDetailErasePanel { background-color: #E0E7FC;}
 .ee-MasterDetailSelectionPanel { border: 3px solid #2E3242;}
 .ee-MasterDetailSelectionPanelContent { border-left: 14px solid #E0E7FC; }
-.ee-MasterDetail table td { padding: 0px; margin: 0px; padding-right: 12px;}
+.ee-MasterDetail table.ee-masterDetailTable td { padding: 0px; margin: 0px; padding-right: 12px;}
 .ee-MasterDetailSelection td { background-color: #E0E7FC; padding: 0px;}
 
 .ee-PullUpTabs-Tab { text-align: center; font-weight: bold; vertical-align: center; }
@@ -427,7 +427,8 @@ ol li .send {
 	background-color: white;
 }
 
-.ee-MasterDetailTable td {
+/* Note this selector is not supported in IE6 */
+table.ee-MasterDetailTable>tbody>tr>td {
 	border-bottom: 1px solid #E4E4FE;
 }
 
@@ -462,6 +463,23 @@ td.ee-FormTableHelp {
 .detailPanelCloseButton {
 	padding: 8px;
 }
+
+.emptyPage {
+	margin: 24px; 
+}
+
+/** Empty page styles */
+.emptyPage .cbg-RPContainer {
+	/* space between rounded panel border and content */
+	padding: 12px;
+}
+
+.emptyPage .cbg-RPContainer, .emptyPage .cbg-RP {
+	/* rounded panels have a white background */
+	background-color: white;
+}
+
+
 /** catalogpage styles */
 
 .productMasterDetail .cbg-RPContainer { background-color: white; }
@@ -470,6 +488,7 @@ td.ee-FormTableHelp {
 .productMasterDetail table.mainTable table.product { width: 100%; cursor: pointer;}
 .productMasterDetail table.mainTable table.product td { border: none;}
 .productMasterDetail table.mainTable td.productTD { width: 100%; padding-left: 5px; padding-right: 5px;}
+.productMasterDetail table.mainTable .productprice { text-align: right; }
 
 
 
@@ -653,8 +672,9 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 .categoryStyle table {
 	border-spacing: 0px;
 }
-.categoryStyle td {
+.categoryStyle table td {
 	border-collapse: collapse;
+	padding: 0px;
 }
 .categoryStyle a {
 	font-size: x-small;

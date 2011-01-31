@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
-import claro.catalog.command.items.StoreProduct;
+import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -161,7 +161,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 				StyleUtil.add(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
 			}
 			
-			rebind(itemRow, productId);
+			render(itemRow, productId);
 			
 			// Update details:
 			if (getCurrentRow() == itemRow) {
@@ -270,7 +270,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 				});
 			}}, 40);
 			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
-				protected void storeItem(StoreProduct cmd) {
+				protected void storeItem(StoreItemDetails cmd) {
 					ProductMasterDetail.this.storeItem(cmd);
 				}
 			});
@@ -359,13 +359,13 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		for (Long productId : productKeys) {
 			StyleUtil.remove(productTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
 
-			rebind(i, productId);
+			render(i, productId);
 			
 			i++;
 		}
 	}
 
-	private void rebind(int i, Long productId) {
+	private void render(int i, Long productId) {
 		RowWidgets rowWidgets = tableWidgets.get(i);
 		
 		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
@@ -421,7 +421,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	
 	
-	abstract protected void storeItem(StoreProduct cmd);
+	abstract protected void storeItem(StoreItemDetails cmd);
 
 	private void updateFilterLabel() {
 		StringBuilder filterText = new StringBuilder();

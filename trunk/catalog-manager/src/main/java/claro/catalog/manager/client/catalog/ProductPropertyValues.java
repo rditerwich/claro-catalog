@@ -275,6 +275,7 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 					setVerticalAlignment(ALIGN_MIDDLE);
 					add(new MediaWidget(false, true));
 					add(new SingleUploader() {{
+						setAutoSubmit(true);
 //						addHoverVisibility(getForm());
 //						addHoverVisibility(this.getFileInput());
 						addOnFinishUploadHandler(new OnFinishUploaderHandler() {

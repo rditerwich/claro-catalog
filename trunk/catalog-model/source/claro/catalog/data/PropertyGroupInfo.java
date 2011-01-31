@@ -13,6 +13,13 @@ public class PropertyGroupInfo implements Serializable {
 	public Long propertyGroupId;
 	public SMap<String, String> labels = SMap.empty();
 	
+	public PropertyGroupInfo() {
+	}
+	
+	public PropertyGroupInfo(Long id) {
+		propertyGroupId = id;
+	}	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PropertyGroupInfo) {

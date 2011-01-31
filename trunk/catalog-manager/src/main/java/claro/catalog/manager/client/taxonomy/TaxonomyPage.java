@@ -4,8 +4,8 @@ package claro.catalog.manager.client.taxonomy;
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.command.items.ItemDetailsCommand;
-import claro.catalog.command.items.StoreProduct;
-import claro.catalog.command.items.StoreProduct.Result;
+import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.command.items.StoreItemDetails.Result;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
@@ -59,7 +59,7 @@ public class TaxonomyPage extends Page {
 			protected void updateCategories() {
 				TaxonomyPage.this.updateCategories();
 			}
-			protected void storeItem(StoreProduct cmd) {
+			protected void storeItem(StoreItemDetails cmd) {
 				TaxonomyPage.this.storeItem(cmd);
 			}
 		});
@@ -115,13 +115,13 @@ public class TaxonomyPage extends Page {
 		// TODO See whether it was cached 
 	}
 	
-	private void storeItem(final StoreProduct cmd) {
+	private void storeItem(final StoreItemDetails cmd) {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingCategoryDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
 		
-		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreProduct.Result>() {
+		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
 				savingMessage.cancel();
 				StatusMessage.showError(messages.savingCategoryDetailsFailedStatus(), caught);
@@ -139,7 +139,7 @@ public class TaxonomyPage extends Page {
 				
 				GwtCommandFacade.invalidateCache(getTreeCmd);
 				
-				categoryMasterDetail.updateCategory(cmd.productId, result.storedProductId, result.masterValues, result.parents, result.detailValues, true);
+				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.detailValues, true);
 			}
 		});
 	}

@@ -14,9 +14,7 @@ public class FindItems implements Command<FindItems.Result> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public enum ResultType { products, catagories, items }
-
-	public ResultType resultType = ResultType.items;
+	public ItemType resultType = ItemType.item;
 	
 	public Long catalogId;
 	public Long stagingAreaId;
