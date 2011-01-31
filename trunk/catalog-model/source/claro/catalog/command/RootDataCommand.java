@@ -7,12 +7,15 @@ import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.SMap;
 
+import static easyenterprise.lib.command.CommandValidationException.validate;
+
 public class RootDataCommand implements Command<RootDataCommand.Result> {
 	private static final long serialVersionUID = 1L;
 	
 	private Long catalogId;
 	
 	public void checkValid() throws CommandValidationException {
+		validate (catalogId != null);
 	}
 
 	public Long getCatalogId() {

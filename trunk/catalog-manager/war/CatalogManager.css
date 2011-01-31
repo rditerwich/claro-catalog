@@ -670,6 +670,9 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 /** Taxonomy Page */
 
+table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
+	cursor: hand;
+}
 .ee-MasterDetailTable .categoryNewSubCategory {
 	font-style: italic;
 	margin-left: 30px;

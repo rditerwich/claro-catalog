@@ -46,7 +46,7 @@ import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 abstract public class CategoryMasterDetail extends MasterDetail implements Globals {
-	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel, categoryNewSubCategory }
+	enum Styles implements Style { productMasterDetail, productprice, categoryname, product, productTD, productpanel, categoryNewSubCategory }
 
 	private String language;
 	private String filterString;
@@ -304,7 +304,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 				
 				// Anchor
 				add(rowWidgets.categoryName = new Anchor() {{
-					StyleUtil.add(this, Styles.productname);
+					StyleUtil.add(this, Styles.categoryname);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							rowSelected(row);
