@@ -1,7 +1,5 @@
 package claro.catalog.manager.client.catalog;
 
-import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
-
 import java.util.Collections;
 import java.util.Map.Entry;
 
@@ -13,10 +11,9 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.CatalogManager.Styles;
+import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.catalog.manager.client.widgets.StatusMessage;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -42,7 +39,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private Label productPrice;
 	private MediaWidget productImage;
 	
-	private ProductPropertyValues propertyValues;
+	private ItemPropertyValues propertyValues;
 	private String language;
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> categories;
@@ -103,7 +100,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 					productImage.setImageSize("125px", "125px");
 				}});
 				
-				add(propertyValues = new ProductPropertyValues(language, outputChannel) {
+				add(propertyValues = new ItemPropertyValues(language, outputChannel, false, false) {
 					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 						ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 					}
@@ -143,7 +140,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		this.itemId = itemId;
 		this.categories = categories;
 		this.values = values;
-		propertyValues.setItemData(itemId, values);
+		propertyValues.setItemData(itemId, null, null, values);
 		
 		render();
 	}

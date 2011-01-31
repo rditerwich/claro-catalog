@@ -92,6 +92,8 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	 * set the item data and (re)render.
 	 * 
 	 * @param itemId
+	 * @param groups only necessary when groups can be reassigned.
+	 * @param parentExtentWithSelf only necessary if sources are shown
 	 * @param values
 	 */
 	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
@@ -196,7 +198,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				}});
 				
 				// groups
-				groupPanelWidgets.panel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new Label());
+				if (canReassignGroups) {
+					groupPanelWidgets.panel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new Label());
+				}
 				
 				
 				
@@ -231,12 +235,14 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 //					k++;
 //				}
 				
-				String groupName = groups.getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
-				propertyValueWidgets.propertyGroupsWidget.setText(groupName);
-				if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
-					StyleUtil.add(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
-				} else {
-					StyleUtil.remove(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
+				if (canReassignGroups) {
+					String groupName = groups.getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
+					propertyValueWidgets.propertyGroupsWidget.setText(groupName);
+					if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
+						StyleUtil.add(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
+					} else {
+						StyleUtil.remove(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
+					}
 				}
 				
 				// property source

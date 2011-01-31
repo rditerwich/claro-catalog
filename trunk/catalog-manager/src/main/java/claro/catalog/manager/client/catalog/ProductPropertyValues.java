@@ -50,6 +50,7 @@ import gwtupload.client.IUploadStatus.Status;
 import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
+@Deprecated
 abstract public class ProductPropertyValues extends Composite implements Globals {
 	public enum Styles implements Style { clear, valueParent, valueWidget }
 	private static int NAME_COLUMN = 0;
