@@ -119,6 +119,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	private Anchor createAddAnchor(String addCategoryText) {
 		return new Anchor(addCategoryText) {{ // TODO Use image instead?
 			StyleUtil.add(this, Styles.categoryAdd);
+			setTitle(getAddCategoryTooltip());
 			addHoverStyles(this);
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
