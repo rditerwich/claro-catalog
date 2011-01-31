@@ -143,7 +143,7 @@ public class CatalogPage extends Page {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
 				
-				productMasterDetail.updateProduct(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.detailValues, true);
+				productMasterDetail.updateProduct(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.propertyData, true);
 			}
 		});
 	}

@@ -136,11 +136,17 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			// Update result with new data.
 			result.storedItemId = itemModel.getItemId();
 			
-			// TODO Fill categorytree data as well.
-			result.masterValues = ItemUtil.effectivePropertyValues(itemModel, stagingArea, outputChannel);
-			result.detailValues = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);
+			if (itemType == ItemType.product) {
+				result.masterValues = ItemUtil.effectivePropertyValues(itemModel, stagingArea, outputChannel);
+			}
+			if (itemType == ItemType.catagory) {
+				result.categoryLabels = ItemUtil.getNameLabels(itemModel, catalogModel, outputChannel, stagingArea);
+			}
+			
 			result.parents = ItemUtil.parents(itemModel, catalogModel, stagingArea, outputChannel, false);
-			result.parentExtent = ItemUtil.parentExtent(itemModel, catalogModel, stagingArea, outputChannel, false);
+			result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, stagingArea, outputChannel, true);
+			result.groups = ItemUtil.groups(itemModel, catalogModel, stagingArea, outputChannel);
+			result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);
 		}
 		
 		

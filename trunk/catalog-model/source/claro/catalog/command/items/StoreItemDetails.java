@@ -96,9 +96,18 @@ public class StoreItemDetails implements Command<StoreItemDetails.Result> {
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
 		public Long storedItemId;
+		
+		// product result
 		public SMap<PropertyInfo, SMap<String, Object>> masterValues;
-		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> detailValues;
+		
+		// category results
+		public SMap<Long, SMap<String, String>> parentExtentWithSelf;
+		public SMap<String, String> categoryLabels;
+		public SMap<Long, SMap<String, String>> groups;
+
+		// shared results
+		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
 		public SMap<Long, SMap<String, String>> parents;
-		public SMap<Long, SMap<String, String>> parentExtent;
+		
 	}
 }

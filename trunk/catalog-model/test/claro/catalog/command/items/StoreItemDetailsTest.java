@@ -101,7 +101,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertEquals(inkCatId, result.storedItemId);
 		
 		// The property should automatically be tied to the general property group:
-		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.detailValues.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
+		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.propertyData.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
 		Assert.assertNotNull(generalGroupProperties);
 		
 		// Find the info back, it should have no values attached to it.
@@ -157,7 +157,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertEquals(inkCatId, result.storedItemId);
 		
 		// The property should now be tied to the general property group:
-		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.detailValues.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
+		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.propertyData.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
 		Assert.assertNotNull(generalGroupProperties);
 		
 		// Find the model for the property, it should have new group info.
@@ -193,7 +193,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertEquals(hpPrintersCatId, result.storedItemId);
 		
 		// The property should now be tied to the general property group, through the root:
-		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.detailValues.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
+		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.propertyData.get(new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
 		Assert.assertNotNull(generalGroupProperties);
 		
 		// Find the model for the property, it should have new group info.

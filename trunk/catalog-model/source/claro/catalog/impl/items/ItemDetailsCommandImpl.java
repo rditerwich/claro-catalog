@@ -43,12 +43,8 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		ItemDetailsCommand.Result result = new ItemDetailsCommand.Result();
 		
 		result.parents = ItemUtil.parents(itemModel, catalogModel, area, channel, includeRootCategory);
-		
 		result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, area, channel, true);
-		
 		result.groups = ItemUtil.groups(itemModel, catalogModel, area, channel);
-		
-		// Properties.
 		result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, area, channel);
 		
 		return result;

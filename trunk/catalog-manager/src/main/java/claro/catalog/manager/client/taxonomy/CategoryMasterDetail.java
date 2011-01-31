@@ -118,14 +118,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		render();
 	}
 	
-	public void setProducts(SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products) {
-		this.products = products;
-		this.productKeys.clear();
-		this.productKeys.addAll(products.getKeys());
-		
-		render();
-	}
-	
 	public void setLanguage(String newLanguage) {
 		language = newLanguage;
 		
@@ -155,34 +147,31 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	
 
 	
-	public void updateCategory(Long previousCategoryId, Long categoryId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
-		// Update product list:
+	public void updateCategory(Long previousCategoryId, Long categoryId, SMap<String, String> categoryLabels, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
+		categories = categories.set(categoryId, categoryLabels);
 		
-//		
-//		products = products.set(categoryId, masterValues);
-//		
-//		// Determine row to update
-//		int itemRow = productKeys.indexOf(previousCategoryId);
-//		if (itemRow != -1) {
-//			// update row
-//			productKeys.set(itemRow, categoryId);
-//			
-//			Table productTable = getMasterTable();
-//			if (setChangedStyle) {
-//				StyleUtil.add(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
-//			}
-//			
-//			render(itemRow, categoryId);
-//			
-//			// Update details:
-//			if (getCurrentRow() == itemRow) {
-//				details.setItemData(categoryId, categories, propertyValues);
-//			}
-//			openDetail(itemRow);  // Redraw selection if necessary.
-//			
-//		} else {
-//			productKeys.add(categoryId);
-//		}
+		// Find row to update
+		int itemRow = categoryRows.indexOf(new CategoryRow(previousCategoryId, false, -1));
+		if (itemRow != -1) {
+			
+			// Mark it changed
+			Table categoryTable = getMasterTable();
+			if (setChangedStyle) {
+				StyleUtil.add(categoryTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
+			}
+			
+			// Rerender row
+			render(itemRow, categoryRows.get(itemRow));
+			
+			// Update details:
+			if (getCurrentRow() == itemRow) {
+				details.setItemData(categoryId, groups, parentExtentWithSelf, parents, propertyValues);
+			}
+			openDetail(itemRow);  // Redraw selection if necessary.
+
+		} else {
+			categoryRows.add(new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), 1));
+		}
 	}
 	
 	@Override
@@ -241,7 +230,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								createNewCategory();
+								createNewCategory(-1);
 							}
 						});
 					}});
@@ -324,6 +313,14 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							rowSelected(row);
+						}
+					});
+				}});
+				
+				add(new Anchor() {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							createNewCategory(row);
 						}
 					});
 				}});
@@ -415,28 +412,27 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 
 
 	@SuppressWarnings("serial")
-	private void createNewCategory() {
+	private void createNewCategory(int parentRow) {
 		// TODO Maybe replace with server roundtrip???
 
 		newCategoryParents = SMap.empty();
 		
-		final Object newProductText = messages.newProduct();
+		if (parentRow != -1) {
+			parentRow = 0;  // Reset to root
+		}
 		
+		// Insert new row
+		CategoryRow parentCategoryRow = categoryRows.get(parentRow);
+		newCategoryParents = SMap.create(parentCategoryRow.categoryId, categories.get(parentCategoryRow.categoryId));
+		categoryRows.add(parentRow + 1, new CategoryRow(null, true, parentCategoryRow.indentation + 1));
+
+		// Set name property
+		final Object newCategoryText = messages.newCategory();
 		SMap<PropertyInfo, PropertyData> propertyMap = SMap.empty();
 		propertyMap = propertyMap.add(nameProperty, new PropertyData() {{
-			values = SMap.create(outputChannel, SMap.create(language, newProductText));
+			values = SMap.create(outputChannel, SMap.create(language, newCategoryText));
 		}});
-		propertyMap = propertyMap.add(variantProperty, new PropertyData());
-		propertyMap = propertyMap.add(descriptionProperty, new PropertyData());
-		propertyMap = propertyMap.add(artNoProperty, new PropertyData());
-		propertyMap = propertyMap.add(imageProperty, new PropertyData());
-		propertyMap = propertyMap.add(smallImageProperty, new PropertyData());
-		
-		if (!productKeys.contains(null)) {
-			// Only add new product once...
-			productKeys.add(0, null);
-		}
-		products = products.set(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
+		categories.set(null, SMap.create(language, newCategoryText.toString()));
 		
 		render();
 

@@ -139,7 +139,8 @@ public class TaxonomyPage extends Page {
 				
 				GwtCommandFacade.invalidateCache(getTreeCmd);
 				
-				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.detailValues, true);
+				// TODO Another option is to return the entire category tree in command and update the cache rather than invalidate it.
+				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData, true);
 			}
 		});
 	}
