@@ -415,7 +415,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		
 		// Parents
 		if (parentName != null) {
-			parents = parents.set(parentId, SMap.create(language, parentName.toString()));
+			parents = SMap.create(parentId, SMap.create(language, parentName.toString()));
 		}
 		
 		// Parent extent
