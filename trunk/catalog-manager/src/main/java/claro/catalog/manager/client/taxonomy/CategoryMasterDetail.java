@@ -373,9 +373,16 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		
 		int row = categoryRows.indexOf(new CategoryRow(categoryId, false, 0));
 
+		int oldRow = getCurrentRow();
+		
 		openDetail(row);
 
 		details.setItemData(categoryId, groups, parentExtentWithSelf, parents, properties);
+		
+		
+		if (oldRow != row) {
+			details.resetTabState();
+		}
 	}
 	
 	

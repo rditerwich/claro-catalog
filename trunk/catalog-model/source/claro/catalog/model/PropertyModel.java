@@ -275,18 +275,7 @@ public abstract class PropertyModel {
 			});
 		}
 	};
-	
-	static Object getNullValue(PropertyType type) {
-		switch(type) {
-		case Media: 
-			return MediaValue.create(null, null, null);
-		case Money:
-			return new Money(null, null);
-		default:
-			return null;
-		}		
-	}
-	
+
 	static void setTypedValue(PropertyValue propertyValue, Object value) {
 		switch(propertyValue.getProperty().getType()) {
 		case Media: 
@@ -295,7 +284,12 @@ public abstract class PropertyModel {
 				propertyValue.setMimeType(mediaValue.mimeType);
 				propertyValue.setStringValue(mediaValue.filename);
 				propertyValue.setMediaValue(mediaValue.content);
-			} else {
+			} else if (value == null) {
+				propertyValue.setMimeType(null);
+				propertyValue.setStringValue(null);
+				propertyValue.setMediaValue(null);
+			}
+			else {
 				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MediaValue");
 			}
 			break;
@@ -304,6 +298,9 @@ public abstract class PropertyModel {
 				Money moneyValue = (Money) value;
 				propertyValue.setMoneyValue(moneyValue.value);
 				propertyValue.setMoneyCurrency(moneyValue.currency);
+			} else if (value == null) {
+				propertyValue.setMoneyValue(null);
+				propertyValue.setMoneyCurrency(null);
 			} else {
 				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MoneyValue");
 			}

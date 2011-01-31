@@ -411,10 +411,15 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
 		int row = productKeys.indexOf(productId);
 
+		int oldRow = getCurrentRow();
+		
 		openDetail(row);
 
 		details.setItemData(productId, categories, propertyValues);
 		
+		if (oldRow != row) {
+			details.resetTabState();
+		}
 	}
 	
 	abstract protected void createNewProduct(Long parentId);

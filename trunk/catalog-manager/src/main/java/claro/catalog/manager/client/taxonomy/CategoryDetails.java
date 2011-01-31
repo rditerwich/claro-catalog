@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
@@ -54,6 +55,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	protected CategoryProperties propertiesComponent;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues;
 	private SMap<Long, SMap<String, String>> groups;
+	private PullUpTabs pullups;
 	
 	public CategoryDetails(final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.language = language;
@@ -63,7 +65,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		this.priceProperty = priceProperty;
 		this.imageProperty = imageProperty;
 		
-		initWidget(new PullUpTabs(30, 5) {{
+		initWidget(pullups = new PullUpTabs(30, 5) {{
 			StyleUtil.add(this, Styles.categoryDetails);
 			setMainWidget(new ScrollPanel(new FlowPanel() {{
 				
@@ -123,7 +125,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 					}
 				});	
 			}}));
-			addTab(new Label(messages.defaultValuesTab()), 100, inheritedPropertyValuesComponent = new ItemPropertyValues(language, outputChannel, true, true) {
+			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(language, outputChannel, true, true) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 				}
@@ -175,6 +177,14 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		
 		render();
 	}
+	
+
+	public void resetTabState() {
+		pullups.hideTab();
+		inheritedPropertyValuesComponent.resetTabState();
+	}
+
+
 	
 	private static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> splitValues(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values, Long itemId, boolean inheritedProperty) {
 		SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> result = SMap.empty();
@@ -245,7 +255,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	private void addNamePropertyValue(StoreItemDetails cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(inheritedPropertyValues);
 		Object productName = getValue(nameProperty, properties);
-		cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
+		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {

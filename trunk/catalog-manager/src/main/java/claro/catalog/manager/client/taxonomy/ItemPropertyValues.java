@@ -104,6 +104,14 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		render();
 	}
 	
+
+	public void resetTabState() {
+		if (propertyGroupPanel.getWidgetCount() > 0) {
+			propertyGroupPanel.selectTab(0);
+		}
+	}
+
+	
 	/**
 	 * Called when the value of a property is set.
 	 * @param itemId
@@ -312,7 +320,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		return widget;
 	}
 
-	// TODO: Enums, Formatted Text, Money.
+	// TODO: Enums, Formatted Text.
 	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, final PropertyInfo property) {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;

@@ -146,6 +146,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 		render();
 	}
 	
+
+	public void resetTabState() {
+		propertyValues.resetTabState();
+	}
+
+
+	
 	abstract protected void storeItem(StoreItemDetails cmd);
 	
 	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
@@ -197,7 +204,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void addNamePropertyValue(StoreItemDetails cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
 		Object productName = getValue(nameProperty, properties);
-		cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
+		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {
@@ -281,5 +288,4 @@ abstract public class ProductDetails extends Composite implements Globals {
 		
 		return result;
 	}
-
 }

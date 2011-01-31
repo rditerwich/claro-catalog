@@ -285,7 +285,7 @@ public class ItemModel {
 	}
 	
 	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group) {
-		return findOrCreateProperty(propertyLabel, language, type, group, PropertyModel.getNullValue(type));
+		return findOrCreateProperty(propertyLabel, language, type, group, null);
 	}
 	public PropertyModel findOrCreateProperty(String propertyLabel, String language, PropertyType type, PropertyGroup group, Object initialValue) {
 		PropertyModel property = findProperty(propertyLabel, language, false);
