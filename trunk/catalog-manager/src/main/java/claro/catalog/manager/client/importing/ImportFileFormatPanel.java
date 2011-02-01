@@ -51,7 +51,7 @@ public abstract class ImportFileFormatPanel extends Composite implements Globals
 					addItem("XML");
 				}}, messages.fileFormatHelp());
 				add(messages.headerLineLabel(), new CheckBox(), messages.headerLineHelp());
-				add(messages.fieldSeparatorLabel(), new TextBox(), messages.fieldSeparatorHelp());
+				add(messages.fieldSeparatorLabel(), new TextBox(){{setText(";,");}}, messages.fieldSeparatorHelp());
 				add(messages.charsetLabel(), new ListBox() {{
 					addItem("UTF-8");
 					addItem("ASCII");

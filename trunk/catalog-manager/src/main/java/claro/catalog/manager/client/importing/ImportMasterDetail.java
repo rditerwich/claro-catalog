@@ -107,6 +107,13 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 					currentRules = r;
 				}
 			}
+		} else {
+			for (ImportRules r : currentImportSource.getRules()) {
+				if (r.getId().equals(currentRules.getId())) {
+					currentRules = r;
+					break;
+				}
+			}
 		}
 		if (currentRules == null) {
 			currentRules = new ImportRules();
@@ -323,6 +330,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	private void selectRow(int row) {
 		openDetail(row);
 		currentImportSource = importSources.get(row);
+		currentRules = null;
 		importSourceChanged(currentImportSource, currentImportSource);
 	}
 	

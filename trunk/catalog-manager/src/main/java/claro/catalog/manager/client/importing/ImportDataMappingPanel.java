@@ -132,7 +132,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 	
 	private void render() {
 	
-		final ImportProducts importProducts = getImportProducts();
+		ImportProducts importProducts = getImportProducts();
 		
 		formTable.setRowVisible(nestedFileListBox, importSource.getMultiFileImport());
 		int r = 0;
@@ -160,6 +160,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			propertyGrid.setWidget(row, 2, new Image(images.removeImmediately()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
+						ImportProducts importProducts = getImportProducts();
 						ImportProperty importProperty = getImportProperty(row);
 						if (importProperty.getId() != null) {
 							importProducts.getProperties().remove(importProperty);
@@ -181,6 +182,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			public void onFailure(Throwable caught) {
 			}
 			public void onSuccess(FindProperties.Result result) {
+				ImportProducts importProducts = getImportProducts();
 				fillPropertyListbox(matchPropertyListBox, importProducts.getMatchProperty());
 				
 				int row = 0;
@@ -231,7 +233,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			property.setId(propertyId);
 			importProducts.setMatchProperty(property);
 		}
-		
+
 		int row = 0;
 		for (ImportProperty importProperty : importProducts.getProperties()) {
 			selectedIndex = ((ListBox) propertyGrid.getWidget(row, 0)).getSelectedIndex();
@@ -243,6 +245,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 				changed = true;
 			}
 			String expression = ((SExprEditor) propertyGrid.getWidget(row, 1)).getExpression();
+			System.out.println("Expression: " + expression);
 			if (!equal(expression, importProperty.getValueExpression())) {
 				importProperty.setValueExpression(expression);
 				storeImportSource(new StoreImportSource(importSource));
