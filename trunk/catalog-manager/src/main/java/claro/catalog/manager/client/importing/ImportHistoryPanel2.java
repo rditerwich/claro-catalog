@@ -5,8 +5,8 @@ import claro.catalog.command.importing.GetImportSourceHistory.Result;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.RefreshPanel;
 import claro.jpa.importing.ImportJobResult;
-import claro.jpa.importing.ImportSource;
 
+import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -15,26 +15,24 @@ import com.google.gwt.user.client.ui.Label;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.gwt.client.widgets.Table;
 
-public abstract class ImportHistoryPanel2 extends RefreshPanel<Result, Table> implements Globals {
+public class ImportHistoryPanel2 extends RefreshPanel<Result, Table> implements Globals {
 
-	private ImportSource importSource;
+	private final ImportSoureModel state;
+	private Long lastImportSourceId = null;
 
-	public ImportHistoryPanel2() {
+	public ImportHistoryPanel2(ImportSoureModel state) {
 		super(true, new Table());
-	}
-	
-	public void setImportSource(ImportSource importSource) {
-		if (this.importSource != importSource) {
-			this.importSource = importSource;
-			refresh();
-		}
+		this.state = state;
 	}
 	
 	protected Command<Result> getRefreshCommand() {
-		if (importSource == null) return null;
-		GetImportSourceHistory command = new GetImportSourceHistory();
-		command.importSourceId = importSource.getId();
-		return command;
+		if (state.getImportSource() != null && state.getImportSource().getId() != null) {
+			GetImportSourceHistory command = new GetImportSourceHistory();
+			lastImportSourceId = state.getImportSource().getId();
+			command.importSourceId = lastImportSourceId;
+			return command;
+		}
+		return null;
 	}
 	
 	protected void render(Table table, Result result) {
@@ -50,7 +48,8 @@ public abstract class ImportHistoryPanel2 extends RefreshPanel<Result, Table> im
 			table.setWidget(row, 3, new Anchor(messages.showLogLink()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						showLog(jobResult);
+						state.setJobResult(jobResult);
+						state.showLog();
 					}
 				});
 			}});
@@ -59,5 +58,9 @@ public abstract class ImportHistoryPanel2 extends RefreshPanel<Result, Table> im
 		}
 	}
 	
-	protected abstract void showLog(ImportJobResult jobResult);
+	public void render() {
+		if (!Objects.equal(lastImportSourceId, state.getImportSource().getId())) {
+			refresh();
+		}
+	}
 }

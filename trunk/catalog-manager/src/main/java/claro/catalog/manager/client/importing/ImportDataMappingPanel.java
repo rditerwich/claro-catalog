@@ -12,13 +12,13 @@ import claro.catalog.command.items.FindProperties;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.ActionImage;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportRules;
-import claro.jpa.importing.ImportSource;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -31,7 +31,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -41,15 +40,14 @@ import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.SMap;
 import easyenterprise.lib.util.Tuple;
 
-public abstract class ImportDataMappingPanel extends Composite implements Globals {
+public class ImportDataMappingPanel extends Composite implements Globals {
 
 	private Table propertyGrid;
-	private ImportSource importSource;
 	private ListBox matchPropertyListBox;
-	private ImportRules currentRules;
 	private ListBox nestedFileListBox;
 	private CategoriesWidget categoryPanel;
 	private final List<Tuple<String, Long>> properties = new ArrayList<Tuple<String,Long>>();
+	private final ImportSoureModel model;
 
 	private ValueChangeHandler<String> valueChangeHandler = new ValueChangeHandler<String>() {
 		public void onValueChange(ValueChangeEvent<String> event) {
@@ -62,26 +60,17 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			doStore();
 		}
 	};
-
-	private ImportProducts getImportProducts() {
-		ImportProducts products = currentRules.getImportProducts();
-		if (products == null) {
-			products = new ImportProducts();
-			currentRules.setImportProducts(products);
-		}
-		return products;
-	}
-	
 	protected FormTable formTable;
 	
-	public ImportDataMappingPanel() {
+	public ImportDataMappingPanel(ImportSoureModel s) {
+		this.model = s;
 		initWidget(new VerticalPanel() {{
 			setStylePrimaryName("ImportDataMappingPanel");
 			add(formTable = new FormTable() {{
 				add(messages.selectNestedFileLabel(), nestedFileListBox = new ListBox() {{
 					addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
-							currentImportRulesChanged(importSource.getRules().get(getSelectedIndex()));
+							model.setRules(getSelectedIndex());
 						}
 					});
 				}}, messages.selectNestedFileHelp());
@@ -114,7 +103,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						ImportProperty importProperty = new ImportProperty();
-						getImportProducts().getProperties().add(importProperty);
+						model.getImportProducts().getProperties().add(importProperty);
 						importProperty.setValueExpression("");
 						render();
 					}
@@ -124,22 +113,13 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 		
 	}
 
-	public void setImportRules(ImportSource importSource, ImportRules rules) {
-		this.importSource = importSource;
-		this.currentRules = rules;
-		render();
-	}
-	
-	private void render() {
-	
-		ImportProducts importProducts = getImportProducts();
-		
-		formTable.setRowVisible(nestedFileListBox, importSource.getMultiFileImport());
+	void render() {
+		formTable.setRowVisible(nestedFileListBox, model.getImportSource().getMultiFileImport());
 		int r = 0;
 		nestedFileListBox.clear();
-		for (ImportRules rules : importSource.getRules()) {
+		for (ImportRules rules : model.getImportSource().getRules()) {
 			nestedFileListBox.addItem(rules.getRelativeUrl());
-			if (equal(currentRules, rules)) {
+			if (rules == model.getRules()) {
 				nestedFileListBox.setSelectedIndex(r);
 			}
 			r++;
@@ -148,8 +128,8 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 		categoryPanel.setData(SMap.<Long, SMap<String, String>>empty(), null);
 
 		int i = propertyGrid.getRowCount();
-		propertyGrid.resizeRows(importProducts.getProperties().size());
-		for (; i < importProducts.getProperties().size(); i++) { 
+		propertyGrid.resizeRows(model.getImportProducts().getProperties().size());
+		for (; i < model.getImportProducts().getProperties().size(); i++) { 
 			final int row = i;
 			propertyGrid.setWidget(row, 0, new ListBox() {{
 				addChangeHandler(changeHandler);
@@ -157,24 +137,22 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			propertyGrid.setWidget(row, 1, new SExprEditor() {{
 				addValueChangeHandler(valueChangeHandler);
 			}});
-			propertyGrid.setWidget(row, 2, new Image(images.removeImmediately()) {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						ImportProducts importProducts = getImportProducts();
-						ImportProperty importProperty = getImportProperty(row);
-						if (importProperty.getId() != null) {
-							importProducts.getProperties().remove(importProperty);
-							StoreImportSource command = new StoreImportSource(importSource);
+			propertyGrid.setWidget(row, 2, new ActionImage(images.removeImmediately(), new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					ImportProducts importProducts = model.getImportProducts();
+					ImportProperty importProperty = getImportProperty(row);
+					if (importProperty.getId() != null) {
+						importProducts.getProperties().remove(importProperty);
+						StoreImportSource command = new StoreImportSource(model.getImportSource());
 //							command.skipImportSource = true;
-							command.importPropertiesToBeRemoved = Lists.newArrayList(importProperty);
-							storeImportSource(command);
-						} else {
-							importProducts.getProperties().remove(importProperty);
-							render();
-						}
+						command.importPropertiesToBeRemoved = Lists.newArrayList(importProperty);
+						model.store(command);
+					} else {
+						importProducts.getProperties().remove(importProperty);
+						render();
 					}
-				});
-			}});
+				}
+			}));
 		}
 		FindProperties command = new FindProperties();
 		command.catalogId = CatalogManager.getCurrentCatalogId();
@@ -182,7 +160,8 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			public void onFailure(Throwable caught) {
 			}
 			public void onSuccess(FindProperties.Result result) {
-				ImportProducts importProducts = getImportProducts();
+				if (model.getImportSource() == null) return;
+				ImportProducts importProducts = model.getImportProducts();
 				fillPropertyListbox(matchPropertyListBox, importProducts.getMatchProperty());
 				
 				int row = 0;
@@ -206,7 +185,7 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 	}
 	
 	private ImportProperty getImportProperty(int row) {
-		return Iterables.get(getImportProducts().getProperties(), row);
+		return Iterables.get(model.getImportProducts().getProperties(), row);
 	}
 	
 	private void fillPropertyListbox(ListBox listBox, Property currentProperty) {
@@ -223,19 +202,17 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 	private void doStore() {
 		boolean changed = false;
 		
-		ImportProducts importProducts = getImportProducts();
-		
 		int selectedIndex = matchPropertyListBox.getSelectedIndex();
 		Long propertyId = properties.get(selectedIndex).getSecond();
-		if (importProducts.getMatchProperty() == null || !propertyId.equals(importProducts.getMatchProperty().getId())) {
+		if (model.getImportProducts().getMatchProperty() == null || !propertyId.equals(model.getImportProducts().getMatchProperty().getId())) {
 			changed = true;
 			Property property = new Property();
 			property.setId(propertyId);
-			importProducts.setMatchProperty(property);
+			model.getImportProducts().setMatchProperty(property);
 		}
 
 		int row = 0;
-		for (ImportProperty importProperty : importProducts.getProperties()) {
+		for (ImportProperty importProperty : model.getImportProducts().getProperties()) {
 			selectedIndex = ((ListBox) propertyGrid.getWidget(row, 0)).getSelectedIndex();
 			propertyId = properties.get(selectedIndex).getSecond();
 			if (!equal(propertyId, importProperty.getId())) {
@@ -248,17 +225,12 @@ public abstract class ImportDataMappingPanel extends Composite implements Global
 			System.out.println("Expression: " + expression);
 			if (!equal(expression, importProperty.getValueExpression())) {
 				importProperty.setValueExpression(expression);
-				storeImportSource(new StoreImportSource(importSource));
 				changed = true;
 			}
 			row++;
 		}
 		if (changed) {
-			storeImportSource(new StoreImportSource(importSource));
+			model.store(new StoreImportSource(model.getImportSource()));
 		}
 	}
-	
-	protected abstract void storeImportSource(StoreImportSource command);
-	protected abstract void currentImportRulesChanged(ImportRules importRules);
-	
 }

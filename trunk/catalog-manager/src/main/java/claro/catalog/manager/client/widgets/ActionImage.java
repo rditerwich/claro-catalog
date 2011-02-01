@@ -9,7 +9,7 @@ public class ActionImage extends Image {
 	public ActionImage(ImageResource image, ClickHandler handler) {
 		super(image);
 		addClickHandler(handler);
-		setStyleName("ee-ActionLabel");
+		setStyleName("ee-ActionImage");
 	}
 
 }

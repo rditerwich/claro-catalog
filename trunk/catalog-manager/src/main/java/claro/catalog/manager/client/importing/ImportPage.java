@@ -1,6 +1,5 @@
 package claro.catalog.manager.client.importing;
 
-import static easyenterprise.lib.util.CollectionUtil.firstOrNull;
 import claro.catalog.command.importing.GetImportSources;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.Page;
@@ -44,14 +43,7 @@ public class ImportPage extends Page {
 	@Override
 	protected void initialize() {
 		
-		mainPanel.add(masterDetail = new ImportMasterDetail(100, 0) {
-			protected void updateImportSource(ImportSource importSource) {
-				ImportPage.this.getImportSource(importSource);
-			}
-			protected void storeImportSource(StoreImportSource command) {
-				ImportPage.this.storeImportSource(command);
-			}
-		});
+		mainPanel.add(masterDetail = new ImportMasterDetail(100, 0));
 	}
 	
 	protected void createImportSource() {
@@ -77,16 +69,7 @@ public class ImportPage extends Page {
 		command.includeDefinitionDetails = true;
 		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>() {
 			public void onSuccess(GetImportSources.Result result) {
-				masterDetail.importSourceChanged(importSource, firstOrNull(result.importSources));
-			}
-		});
-	}
-	
-	protected void storeImportSource(final StoreImportSource command) {
-		final ImportSource importSource = command.importSource;
-		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>() {
-			public void onSuccess(StoreImportSource.Result result) {
-				masterDetail.importSourceChanged(importSource, result.importSource);
+//				masterDetail.importSourceChanged(importSource, firstOrNull(result.importSources));
 			}
 		});
 	}

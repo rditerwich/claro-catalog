@@ -293,6 +293,10 @@ public interface I18NCatalog extends Messages {
 	String charsetHelp();
 	String selectCategoryLabel();
 	String selectCategoryHelp();
+	String removeImportSourceLink();
+	String yesButton();
+	String noButton();
+	String removeImportSourceConfirmationMessage();
 	String noProductNameSet();
 	String noCategoryNameSet();
 }

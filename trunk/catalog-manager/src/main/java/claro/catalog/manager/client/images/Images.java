@@ -58,5 +58,8 @@ public interface Images extends ClientBundle {
   
   @Source("error.png")
   ImageResource error();
+
+  @Source("remove.jpg")
+	ImageResource removeIcon();
   
 }

@@ -324,6 +324,13 @@ ol li .send {
 	background-color: white;
 }
 
+
+/**** Misc ****/
+
+.ee-ActionImage {
+	cursor: pointer;
+}
+
 /***** ee-Button *****/
 
 .ee-Button {
@@ -753,6 +760,10 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	border: 1px solid gray;
 	font-family: Courier;
 	background-color: white;
+}
+
+.ImportMainPanel h1 {
+	margin-right: 12px;
 }
 
 .ImportMainPanel .statusTable {

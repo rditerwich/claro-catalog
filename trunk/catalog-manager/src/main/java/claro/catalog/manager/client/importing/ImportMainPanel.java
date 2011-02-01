@@ -7,11 +7,12 @@ import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
-import claro.jpa.importing.ImportRules;
-import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.JobResult;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,25 +35,45 @@ import gwtupload.client.IUploader;
 import gwtupload.client.ModalUploadStatus;
 import gwtupload.client.SingleUploader;
 
-public abstract class ImportMainPanel extends Composite implements Globals {
+public class ImportMainPanel extends Composite implements Globals {
 
+	private final ImportSoureModel model;
 	private TextBox nameTextBox;
 	private TextBox importUrlTextBox;
 	private CheckBox incrementalCheckBox;
 	private CheckBox sequentialCheckBox;
 	private CheckBox orderedCheckBox;
-	private ImportSource importSource;
 	private HTML lastRunTimeHTML;
 	private HTML lastRunUrlHTML;
 	private Anchor lastRunLog;
 	private Header header;
 	private Image lastRunStatusImage;
 	
+	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(messages.removeImportSourceConfirmationMessage(), images.removeIcon()) {
+		protected void yesPressed() {
+			StoreImportSource command = new StoreImportSource(model.getImportSource());
+			command.removeImportSource = true;
+			model.store(command);
+			model.renderAll();
+		}
+	};
+	
 	@SuppressWarnings("unchecked")
-	public ImportMainPanel() {
+	public ImportMainPanel(ImportSoureModel model_) {
+		this.model = model_;
 		initWidget(new VerticalPanel() {{
-			setStylePrimaryName(ImportingStyles.instance.importMainPanel());
-			add(header = new Header(1, ""));
+			setStylePrimaryName("ImportMainPanel");
+			add(new Grid(1, 2) {{
+				setWidget(0, 0, header = new Header(1, "") {{
+				}});
+				setWidget(0, 1, new Anchor(messages.removeImportSourceLink()) {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							removeWithConfirmation.show();
+						}
+					});
+				}});
+			}});
 			add(new Grid(1, 3) {{
 				setStylePrimaryName(ImportingStyles.instance.statusTable());
 				setWidget(0, 0, lastRunStatusImage = new Image(""));
@@ -85,12 +106,12 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 		
 		ValueChangeHandler<?> changeHandler = new ValueChangeHandler<Object>() {
 			public void onValueChange(ValueChangeEvent<Object> event) {
-				importSource.setName(nameTextBox.getText());
-				importSource.setImportUrl(importUrlTextBox.getText());
-				importSource.setIncremental(incrementalCheckBox.getValue());
-				importSource.setSequentialUrl(sequentialCheckBox.getValue());
-				importSource.setOrderedUrl(orderedCheckBox.getValue());
-				storeImportSource(new StoreImportSource(importSource));
+				model.getImportSource().setName(nameTextBox.getText());
+				model.getImportSource().setImportUrl(importUrlTextBox.getText());
+				model.getImportSource().setIncremental(incrementalCheckBox.getValue());
+				model.getImportSource().setSequentialUrl(sequentialCheckBox.getValue());
+				model.getImportSource().setOrderedUrl(orderedCheckBox.getValue());
+				model.store(new StoreImportSource(model.getImportSource()));
 			}
 		};
 		nameTextBox.addValueChangeHandler((ValueChangeHandler<String>) changeHandler);
@@ -100,18 +121,18 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 		orderedCheckBox.addValueChangeHandler((ValueChangeHandler<Boolean>) changeHandler);
 	}
 	
-	public void setImportSource(ImportSource importSource) {
-		this.importSource = importSource;
-		header.setText(importSource.getName());
-		nameTextBox.setText(importSource.getName());
-		importUrlTextBox.setText(importSource.getImportUrl());
-		incrementalCheckBox.setValue(importSource.getIncremental());
-		sequentialCheckBox.setValue(importSource.getSequentialUrl());
-		orderedCheckBox.setValue(importSource.getOrderedUrl());
+	public void render() {
+		removeWithConfirmation.hide();
+		header.setText(model.getImportSource().getName());
+		nameTextBox.setText(model.getImportSource().getName());
+		importUrlTextBox.setText(model.getImportSource().getImportUrl());
+		incrementalCheckBox.setValue(model.getImportSource().getIncremental());
+		sequentialCheckBox.setValue(model.getImportSource().getSequentialUrl());
+		orderedCheckBox.setValue(model.getImportSource().getOrderedUrl());
 		
-		Boolean lastSuccess = importSource.getJob().getLastSuccess();
-		Timestamp lastTime = importSource.getJob().getLastTime();
-		String lastUrl = importSource.getLastImportedUrl();
+		Boolean lastSuccess = model.getImportSource().getJob().getLastSuccess();
+		Timestamp lastTime = model.getImportSource().getJob().getLastTime();
+		String lastUrl = model.getImportSource().getLastImportedUrl();
 		lastRunStatusImage.setResource(lastSuccess == null || lastTime == null ? images.warning() : lastSuccess ? images.ok() : images.error());
 		lastRunTimeHTML.setHTML(lastSuccess == null || lastTime == null ? messages.notRunMessage() : messages.lastRunLabel() + ": <i>" + lastTime.toString() + "</i>");
 		lastRunUrlHTML.setHTML(lastSuccess == null || lastUrl == null ? "" : messages.lastRunUrlLabel() + ": <i>" + lastUrl.toString() + "</i>");
@@ -122,7 +143,7 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 		if (uploader == null || uploader.getStatus() == Status.SUCCESS) {
 			PerformImport performImport = new PerformImport();
 			performImport.catalogId = CatalogManager.getCurrentCatalogId();
-			performImport.importSourceId = importSource.getId();
+			performImport.importSourceId = model.getImportSource().getId();
 			if (uploader != null) {
 				performImport.uploadFieldName = uploader.getServerInfo().field;
 			}
@@ -139,9 +160,4 @@ public abstract class ImportMainPanel extends Composite implements Globals {
 			}); 
 		}
 	}
-	
-	protected abstract void storeImportSource(StoreImportSource command);
-	protected abstract void showFileFormat(ImportRules rules);
-	protected abstract void showImportRules(ImportRules rules);
-	protected abstract void showLastRunLog();
 }

@@ -6,7 +6,6 @@ import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.jpa.importing.ImportRules;
-import claro.jpa.importing.ImportSource;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -25,14 +24,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import easyenterprise.lib.gwt.client.widgets.InlinePanel;
 import easyenterprise.lib.gwt.client.widgets.Table;
 
-public abstract class MultiFileImportPanel extends Composite implements Globals {
+public class MultiFileImportPanel extends Composite implements Globals {
 
-	private ImportSource importSource;
 	private Table multiFileLinks;
 	protected CheckBox isMultiFile;
 	protected FlowPanel tablePanel;
+	private final ImportSoureModel model;
 	
-	public MultiFileImportPanel() {
+	public MultiFileImportPanel(ImportSoureModel model_) {
+		this.model = model_;
 		initWidget(new VerticalPanel() {{
 			setStylePrimaryName("MultiFileImportPanel");
 			add(new FormTable() {{
@@ -40,9 +40,9 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 			}});
 			isMultiFile.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						importSource.setMultiFileImport(isMultiFile.getValue());
+						model.getImportSource().setMultiFileImport(isMultiFile.getValue());
 						tablePanel.setVisible(isMultiFile.getValue());
-						storeImportSource(new StoreImportSource(importSource));
+						model.store(new StoreImportSource(model.getImportSource()));
 					}
 				});
 				add(tablePanel = new FlowPanel() {{
@@ -53,9 +53,9 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								ImportRules rules = new ImportRules();
-								importSource.getRules().add(rules);
+								model.getImportSource().getRules().add(rules);
 								render();
-								storeImportSource(new StoreImportSource(importSource));
+								model.store(new StoreImportSource(model.getImportSource()));
 							}					
 						});
 					}});
@@ -63,20 +63,15 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 		}});
 	}
 	
-	public void setImportSource(ImportSource importSource) {
-		this.importSource = importSource;
-		render();
-	}
-	
-	private void render() {
-		isMultiFile.setValue(importSource.getMultiFileImport());
+	public void render() {
+		isMultiFile.setValue(model.getImportSource().getMultiFileImport());
 		tablePanel.setVisible(isMultiFile.getValue());
-		if (importSource.getMultiFileImport() && importSource.getRules().isEmpty()) {
-			importSource.getRules().add(new ImportRules());
+		if (model.getImportSource().getMultiFileImport() && model.getImportSource().getRules().isEmpty()) {
+			model.getImportSource().getRules().add(new ImportRules());
 		}
-		multiFileLinks.resize(importSource.getRules().size(), 3);
+		multiFileLinks.resize(model.getImportSource().getRules().size(), 3);
 		int row = 0;
-		for (ImportRules rules : importSource.getRules()) {
+		for (ImportRules rules : model.getImportSource().getRules()) {
 			multiFileLinks.setWidget(row, 0, createTextBox(rules));
 			multiFileLinks.setWidget(row, 1, createRemoveImage(rules));
 			multiFileLinks.setWidget(row, 2, createRulesLinks(rules));
@@ -91,7 +86,7 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 			addChangeHandler(new ChangeHandler() {
 				public void onChange(ChangeEvent event) {
 					rules.setRelativeUrl(getValue());
-					storeImportSource(new StoreImportSource(importSource));
+					model.store(new StoreImportSource(model.getImportSource()));
 				}
 			});
 		}};
@@ -103,14 +98,16 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 			new Anchor(messages.fileFormatLink()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						showFileFormat(rules);
+						model.setRules(rules);
+						model.showFileFormat();
 					}
 				});
 			}}, 
 			new Anchor(messages.dataMappingsLink()) {{
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					showDataMapping(rules);
+					model.setRules(rules);
+					model.showDataMapping();
 				}
 			});
 		}});
@@ -120,17 +117,13 @@ public abstract class MultiFileImportPanel extends Composite implements Globals 
 		return new Image(images.removeImmediately()) {{
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					importSource.getRules().remove(rules);
+					model.getImportSource().getRules().remove(rules);
 					render();
-					StoreImportSource command = new StoreImportSource(importSource);
+					StoreImportSource command = new StoreImportSource(model.getImportSource());
 					command.importRulesToBeRemoved = Collections.singletonList(rules);
-					storeImportSource(command);
+					model.store(command);
 				}
 			});
 		}};
 	}
-
-	protected abstract void storeImportSource(StoreImportSource command);
-	protected abstract void showFileFormat(ImportRules rules);
-	protected abstract void showDataMapping(ImportRules rules);
 }

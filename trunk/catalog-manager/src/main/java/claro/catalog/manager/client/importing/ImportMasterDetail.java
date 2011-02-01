@@ -1,23 +1,17 @@
 package claro.catalog.manager.client.importing;
 
-import static com.google.common.base.Objects.equal;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
-import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
-import claro.jpa.importing.ImportJobResult;
-import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
 import claro.jpa.jobs.Job;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -30,7 +24,7 @@ import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 import easyenterprise.lib.gwt.client.widgets.Table;
 
-public abstract class ImportMasterDetail extends MasterDetail implements Globals {
+public class ImportMasterDetail extends MasterDetail implements Globals {
 
 	private static final int NAME_COL = 0;
 	private static final int LASTRUN_COL = 1;
@@ -45,10 +39,6 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		public Image health;
 	}
 
-	private List<ImportSource> importSources = new ArrayList<ImportSource>();
-	private ImportSource currentImportSource = null;
-	private ImportRules currentRules = null;
-	
 	private List<RowWidgets> tableWidgets = new ArrayList<RowWidgets>();
 	private ImportMainPanel importSourceMainPanel;
 	private MultiFileImportPanel multiFilePanel;
@@ -58,71 +48,56 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 	private ImportLogPanel logPanel;
 
 	private PullUpTabs tabs;
+	private ImportSoureModel model;
 	
 	public ImportMasterDetail(int headerSize, int footerSize) {
 		super(headerSize, footerSize);
+		this.model = new ImportSoureModel() {
+			
+			@Override
+			protected void renderAll() {
+				if (model.getImportSource() == null) {
+					closeDetail(false);
+				} else {
+					importSourceMainPanel.render();
+					multiFilePanel.render();
+					fileFormatPanel.render();
+					propertyMappingPanel.render();
+					historyPanel.render();
+					logPanel.render();
+				}
+				renderTable();
+			}
+
+			@Override
+			protected void showFileFormat() {
+				tabs.showTab(fileFormatPanel);
+			}
+
+			@Override
+			protected void showDataMapping() {
+				tabs.showTab(propertyMappingPanel);
+			}
+
+			@Override
+			protected void showLog() {
+				tabs.showTab(logPanel);
+			}
+		};
 	}
 
 	public void setImportSources(List<ImportSource> importSources) {
-		this.importSources = importSources;
+		model.setImportSources(importSources);
 		if (getDetailOpen()) {
-			int index = importSources.indexOf(currentImportSource);
+			int index = importSources.indexOf(model.getImportSource());
 			if (index < 0) {
-				currentImportSource = null;
+				model.setImportSource(null);
 				closeDetail(false);
 			} else {
 				openDetail(index);
 			}
 		}
 		renderTable();
-	}
-	
-	public void importSourceChanged(ImportSource original, ImportSource importSource) {
-		int row = importSources.indexOf(original);
-		if (row >= 0) {
-			importSources.set(row, importSource);
-			renderTable();
-		}
-		if (currentImportSource != null && equal(currentImportSource.getId(), importSource.getId())) {
-			currentImportSource = importSource;
-			multiFilePanel.setImportSource(currentImportSource);
-			importSourceMainPanel.setImportSource(currentImportSource);
-			historyPanel.setImportSource(currentImportSource);
-			logPanel.setImportSource(currentImportSource);
-			setImportRules(currentRules);
-		} else {
-			setImportRules(null);
-		}
-	}
-	
-	protected abstract void updateImportSource(ImportSource importSource);
-	protected abstract void storeImportSource(StoreImportSource command);
-
-	private void setImportRules(ImportRules rules) {
-		if (currentImportSource == null) return;
-		currentRules = rules;
-		if (currentRules == null) {
-			for (ImportRules r : currentImportSource.getRules()) {
-				if (currentRules == null || currentRules.getRelativeUrl().compareTo(r.getRelativeUrl()) > 0) {
-					currentRules = r;
-				}
-			}
-		} else {
-			for (ImportRules r : currentImportSource.getRules()) {
-				if (r.getId().equals(currentRules.getId())) {
-					currentRules = r;
-					break;
-				}
-			}
-		}
-		if (currentRules == null) {
-			currentRules = new ImportRules();
-		}
-		if (!currentImportSource.getRules().contains(currentRules)) {
-			currentImportSource.getRules().add(currentRules);
-		}
-		fileFormatPanel.setImportSourceAndRules(currentImportSource, currentRules);
-		propertyMappingPanel.setImportRules(currentImportSource, currentRules);
 	}
 	
 	@Override
@@ -141,6 +116,7 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						createImportSource();
+						event.stopPropagation();
 					}
 				});
 			}});
@@ -167,82 +143,12 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 //				setStylePrimaryName(GlobalStylesEnum.detailPanelCloseButton.toString());
 //			}});
 			add(tabs = new PullUpTabs(26, 5) {{
-				setMainWidget(importSourceMainPanel = new ImportMainPanel() {
-					protected void storeImportSource(StoreImportSource command) {
-						ImportMasterDetail.this.storeImportSource(command);
-					}
-					@Override
-					protected void showFileFormat(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(fileFormatPanel);
-					}
-					@Override
-					protected void showImportRules(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(propertyMappingPanel);
-					}
-					protected void showLastRunLog() {
-						new Timer() {
-							public void run() {
-								tabs.showTab(logPanel);
-							}
-						}.schedule(1);
-					};
-				});
-				addTab(new EEButton(messages.multiFileTab()), 100, multiFilePanel = new MultiFileImportPanel() {
-					
-					@Override
-					protected void storeImportSource(StoreImportSource command) {
-						ImportMasterDetail.this.storeImportSource(command);
-					}
-					
-					@Override
-					protected void showDataMapping(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(propertyMappingPanel);
-					}
-					
-					@Override
-					protected void showFileFormat(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(fileFormatPanel);
-					}
-				});
-				addTab(new EEButton(messages.fileFormatTab()), 110, fileFormatPanel = new ImportFileFormatPanel() {
-					
-					@Override
-					protected void storeImportSource(StoreImportSource command) {
-						ImportMasterDetail.this.storeImportSource(command);
-					}
-					
-					@Override
-					protected void showDataMapping(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(propertyMappingPanel);
-					}
-					
-					@Override
-					protected void showFileFormat(ImportRules rules) {
-						setImportRules(rules);
-						tabs.showTab(fileFormatPanel);
-					}
-				});
-				addTab(new EEButton(messages.dataMappingTab()), 140, propertyMappingPanel = new ImportDataMappingPanel() {
-					protected void storeImportSource(StoreImportSource command) {
-						ImportMasterDetail.this.storeImportSource(command);
-					}
-					@Override
-					protected void currentImportRulesChanged(ImportRules importRules) {
-						ImportMasterDetail.this.setImportRules(importRules);
-					}
-				});
-				addTab(new EEButton(messages.history()), 100, historyPanel = new ImportHistoryPanel2() {
-					protected void showLog(ImportJobResult jobResult) {
-						logPanel.setJobResult(jobResult);
-						tabs.showTab(logPanel);
-					}
-				});
-				addTab(new EEButton(messages.log()), 80, logPanel = new ImportLogPanel());
+				setMainWidget(importSourceMainPanel = new ImportMainPanel(model));
+				addTab(new EEButton(messages.multiFileTab()), 100, multiFilePanel = new MultiFileImportPanel(model));
+				addTab(new EEButton(messages.fileFormatTab()), 110, fileFormatPanel = new ImportFileFormatPanel(model));
+				addTab(new EEButton(messages.dataMappingTab()), 140, propertyMappingPanel = new ImportDataMappingPanel(model));
+				addTab(new EEButton(messages.history()), 100, historyPanel = new ImportHistoryPanel2(model));
+				addTab(new EEButton(messages.log()), 80, logPanel = new ImportLogPanel(model));
 			}});
 		}});
 		//ruud
@@ -252,15 +158,15 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 
 	private void renderTable() {
 		Table masterTable = getMasterTable();
-		masterTable.resizeRows(importSources.size());
+		masterTable.resizeRows(model.getImportSources().size());
 		
 		// Delete old rows:
-		while (tableWidgets.size() > importSources.size()) {
+		while (tableWidgets.size() > model.getImportSources().size()) {
 			tableWidgets.remove(tableWidgets.size() - 1);
 		}
 		
 		// Create new Rows
-		while (tableWidgets.size() < importSources.size()) {
+		while (tableWidgets.size() < model.getImportSources().size()) {
 			final int row = tableWidgets.size();
 			final RowWidgets rowWidgets = new RowWidgets();
 			tableWidgets.add(rowWidgets);
@@ -291,13 +197,13 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 		}
 		
 		// render all rows
-		for (int row = 0; row < importSources.size(); row++) {
+		for (int row = 0; row < model.getImportSources().size(); row++) {
 			renderRow(row);
 		}
 	}
 	
 	private void renderRow(int row) {
-		ImportSource importSource = importSources.get(row);
+		ImportSource importSource = model.getImportSources().get(row);
 		RowWidgets rowWidgets = tableWidgets.get(row);
 		rowWidgets.name.setText(importSource.getName());
 		
@@ -329,17 +235,15 @@ public abstract class ImportMasterDetail extends MasterDetail implements Globals
 
 	private void selectRow(int row) {
 		openDetail(row);
-		currentImportSource = importSources.get(row);
-		currentRules = null;
-		importSourceChanged(currentImportSource, currentImportSource);
+		model.setImportSource(model.getImportSources().get(row));
 	}
 	
 	final protected void createImportSource() {
-			ImportSource importSource = new ImportSource();
-			importSource.setName("new import source");
-			importSource.setJob(new Job());
-			importSources.add(0, importSource);
-			renderTable();
-			selectRow(0);
+		ImportSource importSource = new ImportSource();
+		importSource.setName("new import source");
+		importSource.setJob(new Job());
+		model.getImportSources().add(0, importSource);
+		renderTable();
+		selectRow(0);
 	}
 }
