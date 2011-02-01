@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Template implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name = "";
     private String language;
     private String templateXml = "";
@@ -18,9 +18,6 @@ public class Template implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

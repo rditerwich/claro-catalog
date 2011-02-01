@@ -9,7 +9,7 @@ import claro.jpa.party.User;
 
 @SuppressWarnings("serial")
 public class OrderHistory implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private User user;
     private OrderStatus newStatus;
     private String comment = "";
@@ -20,9 +20,6 @@ public class OrderHistory implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

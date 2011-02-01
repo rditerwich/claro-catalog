@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class ImportCategory implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private ImportProducts importProducts;
     private String categoryExpression = "";
 
@@ -16,9 +16,6 @@ public class ImportCategory implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

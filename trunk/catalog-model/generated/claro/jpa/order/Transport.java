@@ -8,7 +8,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Transport implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String desciption = "";
     private String transportCompany = "";
     private Integer deliveryTime = 0;
@@ -18,9 +18,6 @@ public class Transport implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

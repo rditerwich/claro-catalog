@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class ImportRules implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String relativeUrl;
     private ImportFileFormat fileFormat;
     private String languageExpression;
@@ -20,9 +20,6 @@ public class ImportRules implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

@@ -10,7 +10,7 @@ import claro.jpa.catalog.Template;
 
 @SuppressWarnings("serial")
 public class Promotion implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Date startDate;
     private Date endDate;
     private Shop shop;
@@ -21,9 +21,6 @@ public class Promotion implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

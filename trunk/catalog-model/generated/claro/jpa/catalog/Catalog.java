@@ -9,7 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Catalog implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name;
     private List<Item> items;
     private Category root;
@@ -23,9 +23,6 @@ public class Catalog implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

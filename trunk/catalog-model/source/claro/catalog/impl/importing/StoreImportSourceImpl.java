@@ -34,7 +34,10 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		validateCommand(em);
 		Result result = new Result();
 		if (removeImportSource) {
-			em.remove(importSource);
+			if (importSource.getId() != null) {
+				importSource = em.find(ImportSource.class, importSource.getId());
+				em.remove(importSource);
+			}
 		} else {
 
 			// store changes to import source

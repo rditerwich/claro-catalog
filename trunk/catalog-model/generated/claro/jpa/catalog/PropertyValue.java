@@ -10,7 +10,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class PropertyValue implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Property property;
     private String language;
     private StagingArea stagingArea;
@@ -33,9 +33,6 @@ public class PropertyValue implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

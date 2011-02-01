@@ -13,7 +13,7 @@ import claro.jpa.shop.Shop;
 
 @SuppressWarnings("serial")
 public class Order implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Shop shop;
     private Date orderDate;
     private List<ProductOrder> productOrders;
@@ -29,9 +29,6 @@ public class Order implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

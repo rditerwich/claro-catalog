@@ -12,7 +12,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Job implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name = "";
     private Timestamp firstRun;
     private Frequency runFrequency;
@@ -26,9 +26,6 @@ public class Job implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

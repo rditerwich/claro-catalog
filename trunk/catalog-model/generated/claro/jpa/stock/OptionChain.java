@@ -9,7 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class OptionChain implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Exchange exchange;
     private Underlying underlying;
     private String symbol = "";
@@ -20,9 +20,6 @@ public class OptionChain implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

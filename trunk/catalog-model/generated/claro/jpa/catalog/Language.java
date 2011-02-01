@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Language implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name = "";
     private String displayName = "";
 
@@ -16,9 +16,6 @@ public class Language implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

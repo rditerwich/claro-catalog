@@ -11,7 +11,7 @@ import claro.jpa.shop.Promotion;
 
 @SuppressWarnings("serial")
 public class ProductOrder implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Product product;
     private Promotion promotion;
     private Integer volume = 0;
@@ -24,9 +24,6 @@ public class ProductOrder implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

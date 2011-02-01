@@ -9,7 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class OutputChannel implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name = "";
     private Catalog catalog;
     private String defaultLanguage;
@@ -21,9 +21,6 @@ public class OutputChannel implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

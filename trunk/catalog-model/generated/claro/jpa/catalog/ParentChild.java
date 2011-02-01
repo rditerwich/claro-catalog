@@ -7,7 +7,7 @@ import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class ParentChild implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Item parent;
     private Item child;
     private Integer index = 0;
@@ -17,9 +17,6 @@ public class ParentChild implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

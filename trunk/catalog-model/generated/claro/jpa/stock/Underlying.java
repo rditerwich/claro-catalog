@@ -6,16 +6,13 @@ import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class Underlying implements Serializable {
-    private Long id = 0l;
+    private Long id;
 
     public Long getId() {
         return id;
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

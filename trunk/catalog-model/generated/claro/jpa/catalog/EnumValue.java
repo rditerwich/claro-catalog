@@ -9,7 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class EnumValue implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Integer value = 0;
     private List<Label> labels;
     private Property property;
@@ -19,9 +19,6 @@ public class EnumValue implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

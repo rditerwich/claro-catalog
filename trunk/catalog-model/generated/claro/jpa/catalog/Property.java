@@ -9,7 +9,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Property implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private List<Label> labels;
     private Boolean categoryProperty = false;
     private Item item;
@@ -22,9 +22,6 @@ public class Property implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

@@ -10,7 +10,7 @@ import claro.jpa.catalog.Category;
 
 @SuppressWarnings("serial")
 public class Navigation implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Category category;
     private Integer index = 0;
     private List<Navigation> subNavigation;
@@ -22,9 +22,6 @@ public class Navigation implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

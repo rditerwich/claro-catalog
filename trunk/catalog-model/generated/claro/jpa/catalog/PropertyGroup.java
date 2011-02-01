@@ -8,7 +8,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class PropertyGroup implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private List<Label> labels;
     private Catalog catalog;
 
@@ -17,9 +17,6 @@ public class PropertyGroup implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

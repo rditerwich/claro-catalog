@@ -10,7 +10,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Option implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Date expirationDate;
     private Double strike = 0.0;
     private List<OptionId> ids;
@@ -20,9 +20,6 @@ public class Option implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

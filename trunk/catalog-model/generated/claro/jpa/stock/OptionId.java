@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class OptionId implements Serializable {
-    private Long id2 = 0l;
+    private Long id2;
     private OptionIdType type;
     private String id = "";
 
@@ -16,9 +16,6 @@ public class OptionId implements Serializable {
     }
 
     public void setId2(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id2 = value;
     }
 

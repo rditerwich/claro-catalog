@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 
 @SuppressWarnings("serial")
 public class JobResult implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Job job;
     private Boolean success = false;
     private Timestamp startTime;
@@ -21,9 +21,6 @@ public class JobResult implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

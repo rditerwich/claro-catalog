@@ -8,7 +8,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class User implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String email = "";
     private String password = "";
     private Party party;
@@ -20,9 +20,6 @@ public class User implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

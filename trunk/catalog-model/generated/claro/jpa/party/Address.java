@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Address implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String address1 = "";
     private String address2;
     private String town = "";
@@ -19,9 +19,6 @@ public class Address implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

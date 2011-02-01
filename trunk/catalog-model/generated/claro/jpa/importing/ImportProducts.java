@@ -10,7 +10,7 @@ import claro.jpa.catalog.Property;
 
 @SuppressWarnings("serial")
 public class ImportProducts implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Property matchProperty;
     private String outputChannelExpression = "";
     private List<ImportCategory> categories;
@@ -22,9 +22,6 @@ public class ImportProducts implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Label implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String language;
     private String label = "";
     private Property property;
@@ -19,9 +19,6 @@ public class Label implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class Item implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private Catalog catalog;
     private List<ParentChild> parents;
     private List<ParentChild> children;
@@ -21,9 +21,6 @@ public class Item implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

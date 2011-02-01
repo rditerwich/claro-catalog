@@ -7,7 +7,7 @@ import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Party implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private String name = "";
     private String phoneNumber = "";
     private String website;
@@ -22,9 +22,6 @@ public class Party implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 

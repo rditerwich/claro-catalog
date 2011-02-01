@@ -8,7 +8,7 @@ import claro.jpa.catalog.Property;
 
 @SuppressWarnings("serial")
 public class ImportProperty implements Serializable {
-    private Long id = 0l;
+    private Long id;
     private ImportProducts importProducts;
     private Property property;
     private String valueExpression = "";
@@ -18,9 +18,6 @@ public class ImportProperty implements Serializable {
     }
 
     public void setId(Long value) {
-        if (value == null) {
-            value = 0l;
-        }
         this.id = value;
     }
 
