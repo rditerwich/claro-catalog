@@ -103,6 +103,7 @@ Package {
                     type = importing:ImportProducts
                     lower = 0
                     isComposite = true
+                    opposite = importing:ImportProducts/attributes:rules
                 }
                 Attribute {
                     name = importSource
@@ -139,6 +140,11 @@ Package {
                     upper = {}
                     isComposite = true
                     opposite = importing:ImportProperty/attributes:importProducts
+                }
+                Attribute {
+                    name = rules
+                    type = importing:ImportRules
+                    opposite = importing:ImportRules/attributes:importProducts
                 }
             }
         }

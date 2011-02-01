@@ -192,7 +192,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace(log);
+			e.printStackTrace();
 			throw new CommandException(e);
 		}
 		Result result = new Result();
@@ -435,6 +435,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 
 		// no category set -> skip product
 		if (categories.isEmpty()) {
+			categories.add(CatalogModelService.getCatalogModel(catalogId).getRootItem());
 			log.println("No category specified, skipping product with " + matchPropertyLabel + " " + matchValue);
 		}
 		log.println("Importing product with " + matchPropertyLabel + " " + matchValue);

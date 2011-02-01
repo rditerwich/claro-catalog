@@ -36,7 +36,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 		if (removeImportSource) {
 			em.remove(importSource);
 		} else {
-			
+
 			// store changes to import source
 			result.importSource = em.merge(importSource);
 			
@@ -45,8 +45,10 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			
 			// set parent pointers
 			for (ImportRules rules : result.importSource.getRules()) {
-				rules.setImportSource(result.importSource);
+				rules.setImportSource(result.importSource); 
 				if (rules.getImportProducts() != null) {
+					if (rules.getImportProducts().getMatchProperty() != null)
+					rules.getImportProducts().setRules(rules);
 					for (ImportCategory cat : rules.getImportProducts().getCategories()) {
 						cat.setImportProducts(rules.getImportProducts());
 					}
@@ -165,7 +167,5 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 				}
 			}
 		}
-		
-		
 	}
 }

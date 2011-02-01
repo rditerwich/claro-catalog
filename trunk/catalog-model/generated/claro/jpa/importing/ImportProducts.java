@@ -15,6 +15,7 @@ public class ImportProducts implements Serializable {
     private String outputChannelExpression = "";
     private List<ImportCategory> categories;
     private List<ImportProperty> properties;
+    private ImportRules rules;
 
     public Long getId() {
         return id;
@@ -66,6 +67,14 @@ public class ImportProducts implements Serializable {
 
     public void setProperties(List<ImportProperty> value) {
         this.properties = value;
+    }
+
+    public ImportRules getRules() {
+        return rules;
+    }
+
+    public void setRules(ImportRules value) {
+        this.rules = value;
     }
 
     @Override
