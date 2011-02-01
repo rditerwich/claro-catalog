@@ -47,6 +47,7 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 			for (ImportRules rules : result.importSource.getRules()) {
 				rules.setImportSource(result.importSource); 
 				if (rules.getImportProducts() != null) {
+					rules.getImportProducts().setRules(rules);
 					if (rules.getImportProducts().getMatchProperty() != null)
 					rules.getImportProducts().setRules(rules);
 					for (ImportCategory cat : rules.getImportProducts().getCategories()) {
