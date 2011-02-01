@@ -16,6 +16,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -324,7 +325,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;
 		
-		switch (property.type) {
+		switch (property.getType()) {
 		case Boolean:
 			if (oldWidget instanceof CheckBox) {
 				result = oldWidget;
@@ -400,7 +401,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 
 	private void setValue(Widget widget, Object value, PropertyInfo property) {
-		switch (property.type) {
+		switch (property.getType()) {
 		case Boolean:
 			CheckBox checkBox = (CheckBox) widget;
 			checkBox.setValue((Boolean) value);
@@ -422,7 +423,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			break;
 		default:
 			TextBox textBox = (TextBox) widget;
-			textBox.setText(value != null? propertyStringConverter.toString(property.type, value) : null);
+			textBox.setText(value != null? propertyStringConverter.toString(property.getType(), value) : null);
 		}
 	}
 

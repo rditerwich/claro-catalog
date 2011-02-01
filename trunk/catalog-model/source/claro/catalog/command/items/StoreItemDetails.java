@@ -74,7 +74,7 @@ public class StoreItemDetails implements Command<StoreItemDetails.Result> {
 		
 		for (PropertyInfo property : CollectionUtil.notNull(propertiesToSet)) {
 			// New properties require a type.
-			validate(property.propertyId != null || property.type != null);
+			validate(property.propertyId != null || property.getType() != null);
 			
 			// Make sure we are not also throwing them away:  // TODO This could arguably be correct.
 			validate(!CollectionUtil.notNull(propertiesToRemove).contains(property));

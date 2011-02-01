@@ -332,7 +332,7 @@ public abstract class PropertyModel {
 		PropertyInfo info = new PropertyInfo(); 
 		info.ownerItemId = ownerItem.getItemId();
 		info.propertyId = entity.getId();
-		info.type = entity.getType();
+		info.setType(entity.getType());
 		info.isMany = entity.getIsMany() != null ? entity.getIsMany() : false;
 		info.isDangling = isDangling;
 		for (Label label : entity.getLabels()) {

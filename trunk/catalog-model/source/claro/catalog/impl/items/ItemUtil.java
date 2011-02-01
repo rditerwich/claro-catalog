@@ -88,7 +88,8 @@ public class ItemUtil {
 //			    propertyData.sourceValues = SMap.create(channel, property.getSourceValues(null)));
 				
 				PropertyInfo propertyInfo = property.getPropertyInfo();
-				System.out.println("property " + propertyInfo.propertyId + " type " + propertyInfo.type + " ord: " + propertyInfo.type.ordinal());
+//				System.out.println("property " + propertyInfo.propertyId + " type " + propertyInfo.type + " ord: " + propertyInfo.type.ordinal());
+//				System.out.println("property " + propertyInfo.propertyId + " type " + propertyInfo.type + " ord: " + propertyInfo.type);//.ordinal());
 				properties = properties.add(propertyInfo, propertyData);
 			}
 			resultPropertyData = resultPropertyData.add(group, properties);

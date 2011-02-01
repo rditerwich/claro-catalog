@@ -13,11 +13,23 @@ public class PropertyInfo implements Serializable {
 	
 	public Long ownerItemId;
 	public Long propertyId;
-	public PropertyType type;
+	private String type;
 	public boolean isMany = false;
 	public boolean isDangling = false;
 	public SMap<String, String> labels = SMap.empty();
 	public SMap<Integer, SMap<String, String>> enumValues = SMap.empty();
+	
+	public PropertyType getType() {
+		return type != null? PropertyType.valueOf(type) : null;
+	}
+	
+	public void setType(PropertyType type) {
+		if (type != null) {
+			this.type = type.name();
+		} else {
+			this.type = null;
+		}
+	}
 	
 	@Override
 	public boolean equals(Object obj) {

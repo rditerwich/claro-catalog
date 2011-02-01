@@ -193,7 +193,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				propertyValueWidgets.nameWidget.setText(propertyName);
 				
 				// set type
-				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.type, typeComparator)); 
+				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.getType(), typeComparator)); 
 				
 				Widget valueWidget = null;
 				if (false) {
@@ -272,7 +272,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;
 		
-		switch (property.type) {
+		switch (property.getType()) {
 		case Boolean:
 			if (oldWidget instanceof CheckBox) {
 				result = oldWidget;
@@ -346,7 +346,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	}
 
 	private void setValue(Widget widget, Object value, PropertyInfo property) {
-		switch (property.type) {
+		switch (property.getType()) {
 		case Boolean:
 			CheckBox checkBox = (CheckBox) widget;
 			checkBox.setValue((Boolean) value);
@@ -368,7 +368,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			break;
 		default:
 			TextBox textBox = (TextBox) widget;
-			textBox.setText(value != null? propertyStringConverter.toString(property.type, value) : null);
+			textBox.setText(value != null? propertyStringConverter.toString(property.getType(), value) : null);
 		}
 	}
 

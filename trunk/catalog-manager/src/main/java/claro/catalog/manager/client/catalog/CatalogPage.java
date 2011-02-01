@@ -161,7 +161,8 @@ public class CatalogPage extends Page {
 				for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : result.propertyData) {
 					for (Entry<PropertyInfo, PropertyData> propertyEntry : group.getValue()) {
 						PropertyInfo property = propertyEntry.getKey();
-						alert("property + " + property.propertyId + " type " + property.type + " ord: " + property.type.ordinal());
+//						alert("property + " + property.propertyId + " type " + property.type + " ord: " + property.type.ordinal());
+//						alert("property + " + property.propertyId + " type " + property.getType() + " ord: " + property.getType().ordinal());
 					}
 				}
 

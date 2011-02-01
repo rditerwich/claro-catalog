@@ -324,7 +324,7 @@ public class ItemModel {
 			}
 			
 			// Type
-			if (newType != null && !property.getPropertyInfo().type.equals(newType)) {
+			if (newType != null && !property.getPropertyInfo().getType().equals(newType)) {
 				property.getEntity().setType(newType);
 				
 				changed = true;
@@ -506,14 +506,14 @@ public class ItemModel {
 					}
 					
 					// Merge property info.
-					if (mergeProperty(property, propertyInfo.labels, propertyInfo.type, propertyInfo.isMany, propertyInfo.enumValues)) {
+					if (mergeProperty(property, propertyInfo.labels, propertyInfo.getType(), propertyInfo.isMany, propertyInfo.enumValues)) {
 						changed = true;
 					}
 				}
 				
 				// New property.
 				else {
-					PropertyModel createdProperty = createProperty(propertyInfo.labels, propertyInfo.type, propertyInfo.isMany, propertyInfo.enumValues, null);
+					PropertyModel createdProperty = createProperty(propertyInfo.labels, propertyInfo.getType(), propertyInfo.isMany, propertyInfo.enumValues, null);
 					propertyInfo.propertyId = createdProperty.getPropertyId(); // TODO Isn't this a bit too magical??
 					changed = true;
 				}

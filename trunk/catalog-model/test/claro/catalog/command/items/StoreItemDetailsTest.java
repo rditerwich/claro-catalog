@@ -92,7 +92,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		cmd.itemId = inkCatId;
 		PropertyInfo colorProperty = new PropertyInfo();
 		colorProperty.labels = SMap.create(null, "color");
-		colorProperty.type = PropertyType.String;
+		colorProperty.setType(PropertyType.String);
 		cmd.propertiesToSet = Collections.singletonList(colorProperty);
 		
 		Result result = executeCommand(cmd);
