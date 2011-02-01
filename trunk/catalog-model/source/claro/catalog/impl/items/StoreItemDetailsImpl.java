@@ -81,7 +81,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 					categories.add(categoryModel);
 				}
 				
-				// Mare sure the product has a parent:
+				// Mare sure the item has a parent:
 				if (categories.isEmpty()) {
 					categories.add(catalogModel.getRootItem());
 				}

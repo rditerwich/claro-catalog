@@ -19,6 +19,7 @@ import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
+import com.google.common.base.Objects;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -57,7 +58,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 
 	
 	
-	private List<Long> productKeys = new ArrayList<Long>();
+	private List<ProductRow> productRows = new ArrayList<ProductRow>();
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
 	private String language;
 	private String filterString;
@@ -113,8 +114,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 	public void setProducts(SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products) {
 		this.products = products;
-		this.productKeys.clear();
-		this.productKeys.addAll(products.getKeys());
+		this.productRows = convertProductKeys(products.getKeys());
 		
 		render();
 	}
@@ -147,35 +147,6 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	}
 	
 
-	
-	public void updateProduct(Long previousProductId, Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
-		// Update product list:
-		products = products.set(productId, masterValues);
-		
-		// Determine row to update
-		int itemRow = productKeys.indexOf(previousProductId);
-		if (itemRow != -1) {
-			// update row
-			productKeys.set(itemRow, productId);
-			
-			Table productTable = getMasterTable();
-			if (setChangedStyle) {
-				StyleUtil.add(productTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
-			}
-			
-			render(itemRow, productId);
-			
-			// Update details:
-			if (getCurrentRow() == itemRow) {
-				details.setItemData(productId, categories, propertyValues);
-			}
-			openDetail(itemRow);  // Redraw selection if necessary.
-			
-		} else {
-			productKeys.add(productId);
-		}
-	}
-	
 	@Override
 	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
 		Table productTable = getMasterTable();
@@ -278,7 +249,35 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			});
 		}});
 	}
-
+	
+	
+	protected void updateProduct(Long previousProductId, Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
+		// Update product list:
+		products = products.set(productId, masterValues);
+		
+		// Determine row to update
+		int itemRow = productRows.indexOf(new ProductRow(previousProductId));
+		if (itemRow != -1) {
+			// update row
+			ProductRow productRow = productRows.get(itemRow);
+			productRow.productId = productId;
+			productRow.isChanged = true;
+			
+			render(itemRow, productRow);
+		} else {
+			itemRow = 0;
+			productRows.add(itemRow, new ProductRow(productId, true));
+			
+			render();
+		}
+		
+		// Update details:
+		if (getCurrentRow() == itemRow) {
+			openDetail(itemRow);  // Redraw selection if necessary.
+			details.setItemData(productId, categories, propertyValues);
+		}
+	}
+	
 	
 	private void render() {
 		
@@ -290,13 +289,13 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 		Table productTable = getMasterTable();
 		
-		if (productKeys.isEmpty()) {
+		if (productRows.isEmpty()) {
 			masterRoundedPanel.setWidget(noProductsFoundLabel);
 		} else {
 			masterRoundedPanel.setWidget(getMasterTable());
 		}
 		
-		noProductsFoundLabel.setVisible(productKeys.isEmpty());
+		noProductsFoundLabel.setVisible(productRows.isEmpty());
 		updateFilterLabel();
 
 
@@ -306,13 +305,13 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		// Delete old rows:
 		// TODO What if selected row is deleted?  maybe close detail?
 		
-		productTable.resizeRows(productKeys.size());
-		for (int i = tableWidgets.size() - 1; i >= productKeys.size(); i--) {
+		productTable.resizeRows(productRows.size());
+		for (int i = tableWidgets.size() - 1; i >= productRows.size(); i--) {
 			tableWidgets.remove(i);
 		}
 		
 		// Create new Rows
-		for (int i = oldRowCount; i < productKeys.size(); i++) {
+		for (int i = oldRowCount; i < productRows.size(); i++) {
 			final RowWidgets rowWidgets = new RowWidgets();
 			tableWidgets.add(rowWidgets);
 			final int row = i;
@@ -358,19 +357,18 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		
 		
 		int i = 0;
-		for (Long productId : productKeys) {
-			StyleUtil.remove(productTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+		for (ProductRow productRow : productRows) {
 
-			render(i, productId);
+			render(i, productRow);
 			
 			i++;
 		}
 	}
 
-	private void render(int i, Long productId) {
+	private void render(int i, ProductRow productRow) {
 		RowWidgets rowWidgets = tableWidgets.get(i);
 		
-		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productId);
+		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productRow.productId);
 		
 		// image
 		Object image = properties.getOrEmpty(smallImageProperty).tryGet(language, null);
@@ -380,14 +378,13 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		if (image instanceof MediaValue) {
 			final MediaValue value = (MediaValue)image;
 			rowWidgets.imageWidget.setData(value.propertyValueId, value.mimeType, value.filename);
-			
 		} else {
 			rowWidgets.imageWidget.setData(null, null, null);  // Clear any previous images.
 		}
 		
 		// product
-		final Object productName = properties.getOrEmpty(nameProperty).tryGet(language, null);
-		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "");
+		Object productName = properties.getOrEmpty(nameProperty).tryGet(language, null);
+		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "<" + messages.noProductNameSet() + ">");
 		
 		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(language, null);
 		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");
@@ -406,10 +403,22 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		} else {
 			rowWidgets.priceLabel.setText("");
 		}
+
+		if (productRow.isChanged) {
+			StyleUtil.add(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+		} else {
+			StyleUtil.remove(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+		}
+	}
+	
+
+	public void productCreated(Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
+		updateProduct(null, productId, masterValues, categories, propertyValues);
+		setSelectedProduct(productId, categories, propertyValues);
 	}
 	
 	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
-		int row = productKeys.indexOf(productId);
+		int row = productRows.indexOf(new ProductRow(productId));
 
 		int oldRow = getCurrentRow();
 		
@@ -424,16 +433,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	
 
 	private void closeDetail() {
-		int currentRow = getCurrentRow();
-
 		closeDetail(true);
-		
-		Long selectedCategory = productKeys.get(currentRow);
-		if (selectedCategory == null) {
-			productKeys.remove(null);
-			render();
-		}
-		
 	}
 
 	
@@ -468,75 +468,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 		}
 	}
 
-	protected void createProduct(Long productParent, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
-		
-		// Update name property
-		final Object newProductText = messages.newProduct();
-		PropertyData namePropertyData = propertyValues.get(generalGroup).get(nameProperty);
-		Object parentName = namePropertyData.values.get(outputChannel).tryGet(language, null);
-		namePropertyData.values = namePropertyData.values.set(outputChannel, SMap.create(language, newProductText));
-		
-		// Parents
-		if (parentName != null) {
-			parents = parents.set(productParent, SMap.create(language, parentName.toString()));
-		}
-
-		// Update products for master table
-		if (!productKeys.contains(null)) {
-			// Only add new product once...
-			productKeys.add(0, null);
-		}
-		products = products.set(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
-		
-		render();
-
-		// UPdate selection
-		newProductCategories = parents;
-		newProductPropertyValues = propertyValues;
-		setSelectedProduct(null, parents, propertyValues);
-	}
-
-	@SuppressWarnings("serial")
-	@Deprecated
-	private void createNewProduct() {
-		// TODO Maybe replace with server roundtrip???
-
-		newProductCategories = SMap.empty();
-		
-		final Object newProductText = messages.newProduct();
-		
-		SMap<PropertyInfo, PropertyData> propertyMap = SMap.empty();
-		propertyMap = propertyMap.add(nameProperty, new PropertyData() {{
-			values = SMap.create(outputChannel, SMap.create(language, newProductText));
-		}});
-		propertyMap = propertyMap.add(variantProperty, new PropertyData());
-		propertyMap = propertyMap.add(descriptionProperty, new PropertyData());
-		propertyMap = propertyMap.add(artNoProperty, new PropertyData());
-		propertyMap = propertyMap.add(priceProperty, new PropertyData());
-		propertyMap = propertyMap.add(imageProperty, new PropertyData());
-		propertyMap = propertyMap.add(smallImageProperty, new PropertyData());
-		
-		if (!productKeys.contains(null)) {
-			// Only add new product once...
-			productKeys.add(0, null);
-		}
-		products = products.set(null, SMap.create(nameProperty, SMap.create(language, newProductText)));
-		
-		render();
-
-		newProductPropertyValues = SMap.create(generalGroup, propertyMap);
-		setSelectedProduct(null, newProductCategories, newProductPropertyValues);
-	}
-	
 	private void rowSelected(int row) {
 
-		Long productId = productKeys.get(row);
-		if (productId == null) {
-			// New product selected, only update locally.
-			setSelectedProduct(null, newProductCategories, newProductPropertyValues);
-		} else {
-			productSelected(productId);
-		}
+		ProductRow product = productRows.get(row);
+		productSelected(product.productId);
 	}
 	
 	private void addRowSelectionListener(HasClickHandlers widget, final int row) {
@@ -547,6 +482,43 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 				event.stopPropagation();
 			}
 		});
+	}
+	
+	
+	private static List<ProductRow> convertProductKeys(List<Long> keys) {
+		List<ProductRow> result = new ArrayList<ProductRow>();
+		for (Long key : keys) {
+			result.add(new ProductRow(key, false));
+		}
+		return result;
+	}
+	
+	
+	private static class ProductRow {
+		public Long productId;
+		public boolean isChanged;
+		
+		public ProductRow(Long productId) {
+			this(productId, false);
+		}
+		public ProductRow(Long productId, boolean isChanged) {
+			this.productId = productId;
+			this.isChanged = isChanged;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof ProductRow) {
+				ProductRow other = (ProductRow) obj;
+				return Objects.equal(this.productId, other.productId);
+			}
+			return super.equals(obj);
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(productId);
+		}
 	}
 
 	private class RowWidgets {

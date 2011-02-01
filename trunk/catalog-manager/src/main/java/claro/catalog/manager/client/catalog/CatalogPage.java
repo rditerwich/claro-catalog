@@ -2,13 +2,17 @@ package claro.catalog.manager.client.catalog;
 
 
 import java.util.Collections;
+import java.util.Map.Entry;
 
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.FindItems;
+import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.items.StoreItemDetails.Result;
+import claro.catalog.data.PropertyData;
+import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
@@ -22,6 +26,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.util.SMap;
 
 public class CatalogPage extends Page {
 
@@ -113,24 +118,32 @@ public class CatalogPage extends Page {
 	}
 
 	private void createNewProduct(final Long parentId) {
-//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
-		// TODO Useful message???
+		final StoreItemDetails cmd = new StoreItemDetails();
 		
-		ItemDetailsCommand cmd = new ItemDetailsCommand();
+		cmd.itemType = ItemType.product;
+		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(productMasterDetail.getLanguage(), (Object)messages.newProduct()));
+		cmd.parentsToSet = Collections.singletonList(parentId);
+		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.itemId = parentId;
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
-		cmd.language = productMasterDetail.getLanguage();
 		
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
-			public void onSuccess(ItemDetailsCommand.Result result) {
-//				loadingMessage.cancel();
-				productMasterDetail.createProduct(parentId, result.parents, result.propertyData);
+		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
+			public void onFailure(Throwable caught) {
+//				savingMessage.cancel();
+				StatusMessage.showError(messages.savingCategoryDetailsFailedStatus(), caught);
+			}
+
+			public void onSuccess(Result result) {
+//				savingMessage.cancel();
+//				StatusMessage.show(messages.savingCategoryDetailsSuccessStatus());
+				// TODO Proper status messages.
+				
+				productMasterDetail.productCreated(result.storedItemId, result.masterValues, result.parents, result.propertyData);
 			}
 		});
-		
-		// TODO See whether it was cached 
+
 	}
+
 	
 	private void updateProductSelection(final Long productId) {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
@@ -141,16 +154,31 @@ public class CatalogPage extends Page {
 		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
 		cmd.language = productMasterDetail.getLanguage();
 		
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
+		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
+
+				for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : result.propertyData) {
+					for (Entry<PropertyInfo, PropertyData> propertyEntry : group.getValue()) {
+						PropertyInfo property = propertyEntry.getKey();
+						alert("property + " + property.propertyId + " type " + property.type + " ord: " + property.type.ordinal());
+					}
+				}
+
+				
 				productMasterDetail.setSelectedProduct(productId, result.parents, result.propertyData);
 			}
 		});
 		
 		// TODO See whether it was cached 
 	}
+
 	
+	public static native void alert(String msg) /*-{
+	  $wnd.alert(msg);
+	}-*/;
+
+
 	private void storeItem(final StoreItemDetails cmd) {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
 		
@@ -167,7 +195,7 @@ public class CatalogPage extends Page {
 				savingMessage.cancel();
 				StatusMessage.show(messages.savingProductDetailsSuccessStatus());
 				
-				productMasterDetail.updateProduct(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.propertyData, true);
+				productMasterDetail.updateProduct(cmd.itemId, result.storedItemId, result.masterValues, result.parents, result.propertyData);
 			}
 		});
 	}

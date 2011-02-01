@@ -106,9 +106,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	
 
 	public void resetTabState() {
-		if (propertyGroupPanel.getWidgetCount() > 0) {
-			propertyGroupPanel.selectTab(0);
-		}
+//		if (propertyGroupPanel.getWidgetCount() > 0) {
+//			propertyGroupPanel.selectTab(0);
+//		}
 	}
 
 	
@@ -195,10 +195,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 					// Real value is added in the bind fase...
 					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
 						StyleUtil.add(this, Styles.clear);
-							final Widget me = this;
 							addClickHandler(new ClickHandler() {
 								public void onClick(ClickEvent event) {
-									clearValue(me);
+									clearValue((Widget) event.getSource());
 								}
 							});
 						}
@@ -321,7 +320,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 
 	// TODO: Enums, Formatted Text.
-	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, final PropertyInfo property) {
+	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, PropertyInfo property) {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;
 		
@@ -330,8 +329,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			if (oldWidget instanceof CheckBox) {
 				result = oldWidget;
 			} else {
-				result = new CheckBox() {{
+				result = new CheckBox() {
 					final CheckBox me = this;
+					{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							valueChanged(me, getValue());
@@ -344,8 +344,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			if (oldWidget instanceof HorizontalPanel && ((HorizontalPanel)oldWidget).getWidgetCount() > 1 && ((HorizontalPanel)oldWidget).getWidget(0) instanceof MediaWidget) {
 				result = oldWidget;
 			} else {
-				result = new HorizontalPanel() {{
+				result = new HorizontalPanel() {
 					final HorizontalPanel me = this;
+					{
 					setVerticalAlignment(ALIGN_MIDDLE);
 					add(new MediaWidget(false, true));
 					add(new SingleUploader() {{
@@ -377,8 +378,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			if (oldWidget instanceof TextBox) {
 				result = oldWidget;
 			} else {
-				result = new TextBox() {{
+				result = new TextBox() {
 					final TextBox me = this; 
+					{
 					addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
 							valueChanged(me, getText());
@@ -432,12 +434,12 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
 	}
 	
-	private class GroupPanelWidgets {
+	private static class GroupPanelWidgets {
 		public Grid panel;
 		public List<PropertyValueWidgets> valueWidgets = new ArrayList<PropertyValueWidgets>();
 	}
 	
-	private class PropertyValueWidgets {
+	private static class PropertyValueWidgets {
 		protected Widget clearValueWidget;
 		public Label nameWidget;
 		public Grid valueParentWidget;

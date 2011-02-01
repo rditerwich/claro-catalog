@@ -16,7 +16,6 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.ActionImage;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.jpa.catalog.OutputChannel;
 
@@ -107,7 +106,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		this.childrenByCategory = children;
 	
 		this.categoryRows = createRows();
-		
 		render();
 	}
 	
@@ -139,36 +137,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	}
 	
 
-	
-	public void updateCategory(Long previousCategoryId, Long categoryId, SMap<String, String> categoryLabels, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, boolean setChangedStyle) {
-		categories = categories.set(categoryId, categoryLabels);
-		
-		// Find row to update
-		int itemRow = categoryRows.indexOf(new CategoryRow(previousCategoryId, false, -1));
-		if (itemRow != -1) {
-			// Update row
-			categoryRows.get(itemRow).categoryId = categoryId;
-			
-			// Mark it changed
-			Table categoryTable = getMasterTable();
-			if (setChangedStyle) {
-				StyleUtil.add(categoryTable.getRowFormatter(), itemRow, CatalogManager.Styles.itemRowChanged);
-			}
-			
-			// Rerender row
-			render(itemRow, categoryRows.get(itemRow));
-			
-			// Update details:
-			if (getCurrentRow() == itemRow) {
-				details.setItemData(categoryId, groups, parentExtentWithSelf, parents, propertyValues);
-			}
-			openDetail(itemRow);  // Redraw selection if necessary.
-
-		} else {
-			categoryRows.add(new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), 1));
-		}
-	}
-	
 	@Override
 	protected final Widget tableCreated(Table table) {
 		table.setStylePrimaryName(GlobalStylesEnum.mainTable.toString());
@@ -225,7 +193,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								createNewCategory(rootCategoryId, 0);
+								createNewCategory(rootCategoryId);
 							}
 						});
 					}});
@@ -264,6 +232,47 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 			});
 		}});
 	}
+	
+	
+	public void updateCategory(Long previousCategoryId, Long categoryId, Long parentId, SMap<String, String> categoryLabels, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
+		categories = categories.set(categoryId, categoryLabels);
+		
+		// Find row to update
+		int itemRow = categoryRows.indexOf(new CategoryRow(previousCategoryId));
+		if (itemRow != -1) {
+			// Update row
+			categoryRows.get(itemRow).categoryId = categoryId;
+			categoryRows.get(itemRow).isChanged = true;
+
+			// Rerender row
+			render(itemRow, categoryRows.get(itemRow));
+		} else {
+			int parentIndex = -1;
+			if (parentId != null) {
+				// Find parent:
+				parentIndex = categoryRows.indexOf(new CategoryRow(parentId));
+			}
+			
+			// Add new category, and set itemRow accordingly
+			if (parentIndex != -1) {
+				itemRow = parentIndex + 1;
+				categoryRows.add(itemRow, new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), categoryRows.get(parentIndex).indentation + 1, true));
+			} else {
+				itemRow = categoryRows.size();
+				categoryRows.add(new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), 1, true));
+			}
+			
+			// Rerender master to add row.
+			render();
+		}
+
+		if (getCurrentRow() == itemRow) {
+			openDetail(itemRow);  // Redraw selection if necessary.
+			details.setItemData(categoryId, groups, parentExtentWithSelf, parents, propertyValues);
+		}
+	}
+	
+
 
 	private void render() {
 		
@@ -316,7 +325,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 					StyleUtil.add(this, Styles.categoryNewSubCategory);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							createNewCategory(categoryRows.get(row).categoryId, row);
+							createNewCategory(categoryRows.get(row).categoryId);
 						}
 					});
 				}});
@@ -328,7 +337,6 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		
 		int i = 0;
 		for (CategoryRow categoryRow : categoryRows) {
-			StyleUtil.remove(categoryTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
 
 			render(i, categoryRow);
 			
@@ -351,40 +359,32 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		
 		// category label
 		String label = categories.getOrEmpty(categoryRow.categoryId).tryGet(language, null);
+		if (label == null) {
+			label = "<" + messages.noCategoryNameSet() + ">";
+		}
 		rowWidgets.categoryName.setText(label);
+		
+		if (categoryRow.isChanged) {
+			StyleUtil.add(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+		} else {
+			StyleUtil.remove(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+		}
 	}
 	
 	private void closeDetail() {
-		int currentRow = getCurrentRow();
-
 		closeDetail(true);
-		
-		CategoryRow selectedCategory = categoryRows.get(currentRow);
-		if (selectedCategory.categoryId == null) {
-			categoryRows.remove(currentRow);
-		
-			render();
-		}
-		
 	}
 	
 	private void rowSelected(int row) {
-
 		CategoryRow selectedCategory = categoryRows.get(row);
-		if (selectedCategory.categoryId == null) {
-			// New category selected, only update locally.
-			setSelectedCategory(null, newCategoryGroups, newCategoryParentExtentWithSelf, newCategoryParents, newCategoryProperties); 
-		} else {
-			categorySelected(selectedCategory.categoryId);
-		}
+		categorySelected(selectedCategory.categoryId);
 	}
 	
-	abstract protected void categorySelected(Long productId);
 
 	
-	public void setSelectedCategory(Long categoryId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
+	protected void setSelectedCategory(Long categoryId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
 		
-		int row = categoryRows.indexOf(new CategoryRow(categoryId, false, 0));
+		int row = categoryRows.indexOf(new CategoryRow(categoryId));
 
 		int oldRow = getCurrentRow();
 		
@@ -398,8 +398,9 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		}
 	}
 	
+	abstract protected void categorySelected(Long productId);
 	
-	abstract protected void createNewCategory(long parentId, int parentRow);
+	abstract protected void createNewCategory(long parentId);
 	
 	abstract protected void updateCategories();
 	
@@ -428,73 +429,11 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		}
 	}
 	
-	protected void createCategory(Long parentId, int parentRow, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
-		// Update name property
-		final Object newCategoryText = messages.newCategory();
-		PropertyData namePropertyData = properties.get(generalGroup).get(nameProperty);
-		Object parentName = namePropertyData.values.get(outputChannel).tryGet(language, null);
-		namePropertyData.values = namePropertyData.values.set(outputChannel, SMap.create(language, newCategoryText));
+	protected void categoryCreated(Long storedItemId, Long parentId, SMap<String, String> categoryLabels, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
+		// insert row
+		updateCategory(null, storedItemId, parentId, categoryLabels, groups, parentExtentWithSelf, parents, properties);
 		
-		// Parents
-		if (parentName != null) {
-			parents = SMap.create(parentId, SMap.create(language, parentName.toString()));
-		}
-		
-		// Parent extent
-		parentExtentWithSelf = parentExtentWithSelf.set(null, SMap.create(language, newCategoryText.toString()));
-		
-		// Insert new row
-		CategoryRow parentCategoryRow = categoryRows.get(parentRow);
-		categoryRows.add(parentRow + 1, new CategoryRow(null, true, parentCategoryRow.indentation + 1));
-
-		// Add to backing collection
-		categories = categories.set(null, SMap.create(language, newCategoryText.toString()));
-		
-		// Redraw master
-		render();
-
-		// Select new category.
-		newCategoryParents = parents;
-		newCategoryGroups = groups;
-		newCategoryProperties = properties;
-		newCategoryParentExtentWithSelf = parentExtentWithSelf;
-		
-		setSelectedCategory(null, newCategoryGroups, null, newCategoryParents, newCategoryProperties); 
-	}
-
-	@SuppressWarnings("serial")
-	@Deprecated
-	private void createNewCategoryOld(int parentRow) {
-		// TODO Maybe replace with server roundtrip???
-
-		newCategoryParents = SMap.empty();
-		
-		if (parentRow == -1) {
-			parentRow = 0;  // Reset to root
-		}
-		
-		// Insert new row
-		CategoryRow parentCategoryRow = categoryRows.get(parentRow);
-		newCategoryParents = SMap.create(parentCategoryRow.categoryId, categories.get(parentCategoryRow.categoryId));
-		categoryRows.add(parentRow + 1, new CategoryRow(null, true, parentCategoryRow.indentation + 1));
-
-		// Set name property
-		final Object newCategoryText = messages.newCategory();
-		SMap<PropertyInfo, PropertyData> propertyMap = SMap.empty();
-		propertyMap = propertyMap.add(nameProperty, new PropertyData() {{
-			values = SMap.create(outputChannel, SMap.create(language, newCategoryText));
-		}});
-		
-		// Add to backing collection
-		categories = categories.set(null, SMap.create(language, newCategoryText.toString()));
-		
-		// Redraw master
-		render();
-
-		// Select new category.
-		newCategoryProperties = SMap.create(generalGroup, propertyMap);
-		newCategoryGroups = SMap.create(generalGroup.propertyGroupId, generalGroup.labels);
-		setSelectedCategory(null, newCategoryGroups, null, newCategoryParents, newCategoryProperties); // TODO What group/parentextent??
+		setSelectedCategory(storedItemId, groups, parentExtentWithSelf, parents, properties); 
 	}
 
 	private List<CategoryRow> createRows() {
@@ -510,7 +449,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 		boolean isLeaf = children == null || children.size() == 0;
 
 		// Add current:
-		result.add(new CategoryRow(currentCategory, isLeaf, indentation));
+		result.add(new CategoryRow(currentCategory, isLeaf, indentation, false));
 		
 		// Sort children:
 		List<Long> sortedChildren = sortChildren(CollectionUtil.notNull(children));
@@ -539,21 +478,27 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	}
 
 
-	private class RowWidgets {
+	private static class RowWidgets {
 		public InlineLabel indentLabel;
 		public Image hasChildrenImage;
 		public Anchor categoryName;
 	}
 	
-	private class CategoryRow {
+	private static class CategoryRow {
 		public boolean isLeaf;
 		public Long categoryId;
 		public int indentation;
+		public boolean isChanged;
 		
-		public CategoryRow(Long categoryId, boolean isLeaf, int indentation) {
+		public CategoryRow(Long categoryId) {
+			this(categoryId, false, -1, false);
+		}
+		
+		public CategoryRow(Long categoryId, boolean isLeaf, int indentation, boolean isChanged) {
 			this.categoryId = categoryId;
 			this.isLeaf = isLeaf;
 			this.indentation = indentation;
+			this.isChanged = isChanged;
 		}
 		
 		@Override

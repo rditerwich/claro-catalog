@@ -1,9 +1,12 @@
 package claro.catalog.manager.client.taxonomy;
 
 
+import java.util.Collections;
+
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.command.items.ItemDetailsCommand;
+import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.items.StoreItemDetails.Result;
 import claro.catalog.data.PropertyInfo;
@@ -19,6 +22,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.util.SMap;
 
 public class TaxonomyPage extends Page {
 
@@ -62,8 +66,8 @@ public class TaxonomyPage extends Page {
 			protected void storeItem(StoreItemDetails cmd) {
 				TaxonomyPage.this.storeItem(cmd);
 			}
-			protected void createNewCategory(long parentId, int parentRow) {
-				TaxonomyPage.this.createNewCategory(parentId, parentRow);
+			protected void createNewCategory(long parentId) {
+				TaxonomyPage.this.createNewCategory(parentId);
 			}
 		});
 		
@@ -99,26 +103,41 @@ public class TaxonomyPage extends Page {
 		});
 	}
 
-	private void createNewCategory(final Long parentId, final int parentRow) {
-//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProductDetails(), 2, 1000);
-		// TODO Useful message???
+	private void createNewCategory(final Long parentId) {
+		final StoreItemDetails cmd = new StoreItemDetails();
 		
-		ItemDetailsCommand cmd = new ItemDetailsCommand();
+		cmd.itemType = ItemType.catagory;
+		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(categoryMasterDetail.getLanguage(), (Object)messages.newCategory()));
+		cmd.parentsToSet = Collections.singletonList(parentId);
+		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.itemId = parentId;
 		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
-		cmd.language = categoryMasterDetail.getLanguage();
 		
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
-			public void onSuccess(ItemDetailsCommand.Result result) {
-//				loadingMessage.cancel();
-				categoryMasterDetail.createCategory(parentId, parentRow, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
+		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
+			public void onFailure(Throwable caught) {
+//				savingMessage.cancel();
+				StatusMessage.showError(messages.savingCategoryDetailsFailedStatus(), caught);
+			}
+
+			public void onSuccess(Result result) {
+//				savingMessage.cancel();
+//				StatusMessage.show(messages.savingCategoryDetailsSuccessStatus());
+				// TODO Proper status messages.
+				
+				// Invalidate cached category tree.
+				GetCategoryTree getTreeCmd = new GetCategoryTree();
+				getTreeCmd.catalogId = cmd.catalogId;
+				getTreeCmd.outputChannelId = cmd.outputChannelId;
+				getTreeCmd.stagingAreaId = cmd.stagingAreaId;
+				
+				GwtCommandFacade.invalidateCache(getTreeCmd);
+				
+				// TODO Another option is to return the entire category tree in command and update the cache rather than invalidate it.
+				categoryMasterDetail.categoryCreated(result.storedItemId, parentId, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
 			}
 		});
-		
-		// TODO See whether it was cached 
+
 	}
-	
 
 	private void updateCategorySelection(final Long productId) {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingCategoryDetails(), 2, 1000);
@@ -129,7 +148,7 @@ public class TaxonomyPage extends Page {
 		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
 		cmd.language = categoryMasterDetail.getLanguage();
 		
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<ItemDetailsCommand.Result>() {
+		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
 				categoryMasterDetail.setSelectedCategory(productId, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
@@ -164,7 +183,7 @@ public class TaxonomyPage extends Page {
 				GwtCommandFacade.invalidateCache(getTreeCmd);
 				
 				// TODO Another option is to return the entire category tree in command and update the cache rather than invalidate it.
-				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData, true);
+				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, null, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
 			}
 		});
 	}

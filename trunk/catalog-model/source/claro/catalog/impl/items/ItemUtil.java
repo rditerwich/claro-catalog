@@ -87,7 +87,9 @@ public class ItemUtil {
 				// TODO How to do this???
 //			    propertyData.sourceValues = SMap.create(channel, property.getSourceValues(null)));
 				
-				properties = properties.add(property.getPropertyInfo(), propertyData);
+				PropertyInfo propertyInfo = property.getPropertyInfo();
+				System.out.println("property " + propertyInfo.propertyId + " type " + propertyInfo.type + " ord: " + propertyInfo.type.ordinal());
+				properties = properties.add(propertyInfo, propertyData);
 			}
 			resultPropertyData = resultPropertyData.add(group, properties);
 			
