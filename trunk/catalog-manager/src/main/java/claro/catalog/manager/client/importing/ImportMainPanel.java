@@ -11,6 +11,7 @@ import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.jpa.jobs.JobResult;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -91,6 +92,19 @@ public class ImportMainPanel extends Composite implements Globals {
 					addOnFinishUploadHandler(new OnFinishUploaderHandler() {
 						public void onFinish(IUploader uploader) {
 							importNow(uploader);
+						}
+					});
+				}});
+				add(new EEButton(messages.removeImportedDataButton()) {{
+					getElement().getStyle().setMarginLeft(-28, Unit.PX); // correct for whitespace right of SingleUpLoader
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							new ConfirmationDialog(messages.removeImportedDataMessage(), images.removeIcon()) {
+								protected void yesPressed() {
+									// TODO Auto-generated method stub
+									model.deleteImportedData();
+								}
+							}.show();
 						}
 					});
 				}});

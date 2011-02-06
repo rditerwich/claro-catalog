@@ -88,8 +88,8 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
 	private SMap<Long, SMap<String, String>> newProductCategories;
-	private RoundedPanel masterRoundedPanel;
 	private Long rootCategory;
+	private Table productTable;
 	
 	public ProductMasterDetail() {
 		super(150);
@@ -148,7 +148,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 
 	protected void createMasterPanel() {
-		Table productTable = new Table();
+		productTable = new Table();
 
 		productTable.resizeColumns(NR_COLS);
 		productTable.setHeaderText(0, 1, messages.product());
@@ -271,13 +271,10 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 			return;
 		}
 		
-		
-		Table productTable = getMasterTable();
-		
 		if (productRows.isEmpty()) {
-			masterRoundedPanel.setWidget(noProductsFoundLabel);
+			setMainWidget(noProductsFoundLabel);
 		} else {
-			masterRoundedPanel.setWidget(getMasterTable());
+			setMaster(productTable);
 		}
 		
 		noProductsFoundLabel.setVisible(productRows.isEmpty());
@@ -390,9 +387,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 
 		if (productRow.isChanged) {
-			StyleUtil.add(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+			StyleUtil.add(productTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
 		} else {
-			StyleUtil.remove(getMasterTable().getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
+			StyleUtil.remove(productTable.getRowFormatter(), i, CatalogManager.Styles.itemRowChanged);
 		}
 	}
 	

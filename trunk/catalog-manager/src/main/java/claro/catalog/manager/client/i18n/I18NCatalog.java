@@ -302,4 +302,6 @@ public interface I18NCatalog extends Messages {
 	String shopNameLabel();
 	String shopUrlLabel();
 	String newWebshopLink();
+	String removeImportedDataMessage();
+	String removeImportedDataButton();
 }

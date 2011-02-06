@@ -62,6 +62,7 @@ public class ImportSourceMaster extends TableWithObjects<ImportSource> implement
 		for (int row = 0; row < model.getImportSources().size(); row++) {
 			renderRow(row);
 		}
+
 	}
 	
 	public void renderRow(int row) {
@@ -73,9 +74,9 @@ public class ImportSourceMaster extends TableWithObjects<ImportSource> implement
 		
 		// status
 		if (importSource.getJob() != null && importSource.getJob().getLastSuccess() != null) {
-			((Image) getWidget(row, STATUS_COL)).setResource(importSource.getJob().getLastSuccess() ? images.ok() : images.error());
+			setWidget(row, STATUS_COL, new Image(importSource.getJob().getLastSuccess() ? images.ok() : images.error()));
 		} else {
-			((Image) getWidget(row, STATUS_COL)).setResource(images.warning());
+			setWidget(row, STATUS_COL, new Image(images.warning()));
 		}
 		
 		// lastrun
@@ -84,18 +85,17 @@ public class ImportSourceMaster extends TableWithObjects<ImportSource> implement
 		}
 		
 		// health
-		Image healthWidget = (Image) getWidget(row, WEATHER_COL);
 		int health = 0;
 		if (importSource.getJob() != null && importSource.getJob().getHealthPerc() != null) {
 			health = importSource.getJob().getHealthPerc() / 20;
 		}
 		switch (health) {
-		case 0: healthWidget.setResource(images.health0()); break;
-		case 1: healthWidget.setResource(images.health1()); break;
-		case 2: healthWidget.setResource(images.health2()); break;
-		case 3: healthWidget.setResource(images.health3()); break;
-		case 4: healthWidget.setResource(images.health4()); break;
-		default: healthWidget.setResource(images.health0()); break;
+		case 0: setWidget(row, WEATHER_COL, new Image(images.health0())); break;
+		case 1: setWidget(row, WEATHER_COL, new Image(images.health1())); break;
+		case 2: setWidget(row, WEATHER_COL, new Image(images.health2())); break;
+		case 3: setWidget(row, WEATHER_COL, new Image(images.health3())); break;
+		case 4: setWidget(row, WEATHER_COL, new Image(images.health4())); break;
+		default: setWidget(row, WEATHER_COL, new Image(images.health0())); break;
 		}
 	}
 }

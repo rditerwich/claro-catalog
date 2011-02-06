@@ -3,6 +3,8 @@ package claro.catalog.manager.client.importing;
 import java.util.ArrayList;
 import java.util.List;
 
+import claro.catalog.command.importing.DeleteImportedData;
+import claro.catalog.command.importing.DeleteImportedData.Result;
 import claro.catalog.command.importing.GetImportSources;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.catalog.manager.client.Globals;
@@ -11,6 +13,8 @@ import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
+import claro.jpa.importing.TabularFileFormat;
+import claro.jpa.importing.XmlFileFormat;
 import claro.jpa.jobs.Job;
 import claro.jpa.jobs.JobResult;
 
@@ -113,7 +117,32 @@ public abstract class ImportSoureModel implements Globals {
 		return null;
 	}
 	
-
+	public TabularFileFormat getCSVFileFormat() {
+		ImportRules rules = getRules();
+		if (rules != null) {
+			TabularFileFormat fileFormat = rules.getTabularFileFormat();
+			if (fileFormat == null) {
+				fileFormat = new TabularFileFormat();
+				rules.setTabularFileFormat(fileFormat);
+			}
+			return fileFormat;
+		}
+		return null;
+	}
+	
+	public XmlFileFormat getXMLFileFormat() {
+		ImportRules rules = getRules();
+		if (rules != null) {
+			XmlFileFormat fileFormat = rules.getXmlFileFormat();
+			if (fileFormat == null) {
+				fileFormat = new XmlFileFormat();
+				rules.setXmlFileFormat(fileFormat);
+			}
+			return fileFormat;
+		}
+		return null;
+	}
+	
 	public void setJobResult(ImportJobResult jobResult) {
 		if (this.jobResult != jobResult) {
 			this.jobResult = jobResult;
@@ -163,6 +192,7 @@ public abstract class ImportSoureModel implements Globals {
 		importSource.setJob(new Job());
 		getImportSources().add(0, importSource);
 		setImportSource(importSource);
+		openDetail();
 	}
 
 	public void fetchImportSources() {
@@ -189,5 +219,14 @@ public abstract class ImportSoureModel implements Globals {
 	protected abstract void renderAll();
 	protected abstract void showFileFormat();
 	protected abstract void showDataMapping();
+	protected abstract void openDetail();
 	protected abstract void showLog();
+
+	public void deleteImportedData() {
+		GwtCommandFacade.execute(new DeleteImportedData(importSource), new StatusCallback<DeleteImportedData.Result>() {
+			public void onSuccess(Result result) {
+			}
+		});
+	}
+
 }

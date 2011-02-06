@@ -43,6 +43,7 @@ public class ImportPage extends Page {
 			protected void renderAll() {
 				if (getImportSource() == null) {
 					masterDetail.closeDetail(false);
+					master.render();
 				} else {
 					importSourceMainPanel.render();
 					multiFilePanel.render();
@@ -50,9 +51,10 @@ public class ImportPage extends Page {
 					propertyMappingPanel.render();
 					historyPanel.render();
 					logPanel.render();
+					master.render();
+					// must render master first!
 					masterDetail.setCurrentRow(master.findObject(getImportSource()));
 				}
-				master.render();
 			}
 
 			@Override
@@ -65,6 +67,11 @@ public class ImportPage extends Page {
 				tabs.showTab(propertyMappingPanel);
 			}
 
+			@Override
+			protected void openDetail() {
+				masterDetail.openDetail();
+			}
+			
 			@Override
 			protected void showLog() {
 				tabs.showTab(logPanel);
