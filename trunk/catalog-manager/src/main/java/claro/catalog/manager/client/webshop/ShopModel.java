@@ -17,16 +17,21 @@ public abstract class ShopModel {
 	public Shop getShop() {
 		return shop;
 	}
+
+	public void setShops(List<Shop> shops) {
+		this.shops = shops;
+		renderAll();
+	}
 	
 	public void setShop(Shop shop) {
 		this.shop = shop;
+		renderAll();
 	}
 
 	public void createWebshop() {
 		Shop shop = new Shop();
 		shop.setName("new shop");
 		getShops().add(0, shop);
-		renderAll();
 		setShop(shop);
 	}
 

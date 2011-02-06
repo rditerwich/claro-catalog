@@ -28,12 +28,7 @@ public class WebshopPage extends Page {
 
 		@Override
 		protected void renderAll() {
-			if (masterDetail.isDetailOpen()) {
-			int row = master.findObject(getShop());
-				if (row >= 0) {
-					masterDetail.openDetail(row);
-				}
-			}
+			masterDetail.setCurrentRow(master.findObject(getShop()));
 			master.render();
 			detail.render();
 		}
