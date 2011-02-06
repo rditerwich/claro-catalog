@@ -291,7 +291,7 @@ public class ItemModel {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
 			property = createProperty(SMap.create(language, propertyLabel), type, group);
-			property.setValue(null, null, language, initialValue);
+			property.setValue(null, null, null, language, initialValue);
 		}
 		return property;
 	}
@@ -527,6 +527,15 @@ public class ItemModel {
 		
 	}
 	
+	void invalidateParentExtent(boolean includeSelf) {
+		// TODO Do we need synchronization?
+		
+		catalog.invalidate(parentExtent);
+		if (includeSelf) {
+			catalog.invalidate(this);
+		}
+	}
+
 	void invalidateChildExtent(boolean includeSelf) {
 		// TODO Do we need synchronization?
 		
@@ -535,7 +544,7 @@ public class ItemModel {
 			catalog.invalidate(this);
 		}
 	}
-
+	
 	/**
 	 * Only called from CatalogAccess, do not call!
 	 */

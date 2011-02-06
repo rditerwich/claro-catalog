@@ -29,6 +29,7 @@ import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
+import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportJobResult_;
@@ -86,36 +87,43 @@ public class CatalogDao {
 		return entityManager.find(Property.class, id);
 	}
 
-	public PropertyValue getPropertyValue(Item item, Property property, StagingArea stagingArea, OutputChannel outputChannel, String language) {
+	public PropertyValue getPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
 		
 		ParameterExpression<Item> itemParam = cb.parameter(Item.class);
 		ParameterExpression<Property> propertyParam = cb.parameter(Property.class);
+		ParameterExpression<Source> sourceParam = source != null ? cb.parameter(Source.class) : null;
 		ParameterExpression<StagingArea> stagingParam = stagingArea != null ? cb.parameter(StagingArea.class) : null;
 		ParameterExpression<OutputChannel> outputChannelParam = outputChannel != null ? cb.parameter(OutputChannel.class) : null;
 		ParameterExpression<String> languageParam = language != null ? cb.parameter(String.class) : null;
 		
 		Root<PropertyValue> root = c.from(PropertyValue.class);
-		Expression<?> property1 = root.get(PropertyValue_.stagingArea);
-		Expression<?> property2 = root.get(PropertyValue_.outputChannel);
-		Expression<?> property3 = root.get(PropertyValue_.language);
+		Expression<?> property1 = root.get(PropertyValue_.source);
+		Expression<?> property2 = root.get(PropertyValue_.stagingArea);
+		Expression<?> property3 = root.get(PropertyValue_.outputChannel);
+		Expression<?> property4 = root.get(PropertyValue_.language);
 		c.select(root).where(
 				cb.equal(root.get(PropertyValue_.item), itemParam),
 				cb.equal(root.get(PropertyValue_.property), propertyParam),
+				sourceParam == null ?
+						cb.isNull(property1) :
+						cb.equal(property1, sourceParam),
 				stagingParam == null ? 
-					cb.isNull(property1) :
-					cb.equal(property1, stagingParam),
-				outputChannelParam == null ? 
 					cb.isNull(property2) :
-					cb.equal(property2, outputChannelParam),
-				languageParam == null ? 
+					cb.equal(property2, stagingParam),
+				outputChannelParam == null ? 
 					cb.isNull(property3) :
-					cb.equal(property3, languageParam));
+					cb.equal(property3, outputChannelParam),
+				languageParam == null ? 
+					cb.isNull(property4) :
+					cb.equal(property4, languageParam));
 		
 		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
 		query.setParameter(itemParam, item);
 		query.setParameter(propertyParam, property);
+		if (source != null)
+			query.setParameter(sourceParam, source);
 		if (stagingArea != null)
 				query.setParameter(stagingParam, stagingArea);
 		if (outputChannel != null)
@@ -347,6 +355,15 @@ public class CatalogDao {
 		return query.getResultList();
 	}
 
+	public List<PropertyValue> getPropertyValuesBySource(Source source) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
+		Root<PropertyValue> root = c.from(PropertyValue.class);
+		c.where(cb.equal(root.get(PropertyValue_.source), source));
+		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
+		return query.getResultList();
+	}
+	
 	public StagingArea getStagingArea(Long stagingAreaId) {
 		return entityManager.find(StagingArea.class, stagingAreaId);
 	}
@@ -354,7 +371,6 @@ public class CatalogDao {
 	public List<JobResult> getLastJobResults(Job job, int count) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<JobResult> c = cb.createQuery(JobResult.class);
-		ParameterExpression<Job> jobParam = cb.parameter(Job.class);
 		Root<JobResult> root = c.from(JobResult.class);
 		c.where(cb.equal(root.get(JobResult_.job), job));
 		c.orderBy(cb.desc(root.get(JobResult_.endTime)));

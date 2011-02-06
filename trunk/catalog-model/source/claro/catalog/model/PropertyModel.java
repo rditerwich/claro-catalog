@@ -117,13 +117,14 @@ public abstract class PropertyModel {
 		return CatalogDao.get().getProperty(getPropertyId());
 	}
 	
-	public void setValue(StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
+	public void setValue(Source source, StagingArea stagingArea, OutputChannel outputChannel, String language, Object value) {
+		if (source != null && stagingArea != null) throw new IllegalArgumentException("Can't have both a source and a staging area");
 		synchronized(getItem().catalog) {
 
 			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
+			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
 				
 				// Are we changing anything?
@@ -144,8 +145,10 @@ public abstract class PropertyModel {
 				propertyValue.setItem(itemEntity);
 				
 				propertyValue.setProperty(propertyEntity);
+				propertyValue.setSource(source);
 				propertyValue.setStagingArea(stagingArea);
 				propertyValue.setOutputChannel(outputChannel);
+				propertyValue.setLanguage(language);
 				
 				// Set the actual value.
 				setTypedValue(propertyValue, value);
@@ -158,13 +161,13 @@ public abstract class PropertyModel {
 		}
 	}
 	
-	public void removeValue(StagingArea stagingArea, OutputChannel outputChannel, String language) {
+	public void removeValue(Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
 		synchronized(getItem().catalog) {
 
 			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, stagingArea, outputChannel, language);
+			PropertyValue propertyValue = CatalogDao.get().getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
 				JpaService.getEntityManager().remove(propertyValue);
 				// Item has changed:

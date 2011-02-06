@@ -10,6 +10,7 @@ import static easyenterprise.lib.util.FileUtil.createTempDir;
 import static easyenterprise.lib.util.ObjectUtil.orElse;
 import static easyenterprise.lib.util.StringUtil.afterLast;
 import static easyenterprise.lib.util.ZipUtil.unzip;
+import static org.hsqldb.lib.StringUtil.isEmpty;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.hsqldb.lib.StringUtil;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
@@ -320,6 +322,9 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		// file format
 		ImportFileFormat fileFormat = rules.getFileFormat();
 		if (fileFormat == null) {
+			fileFormat = rules.getTabularFileFormat();
+		}
+		if (fileFormat == null) {
 			fileFormat = new TabularFileFormat();
 		}
 		if (fileFormat instanceof TabularFileFormat) {
@@ -333,8 +338,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// separator chars
 		String separators = fileFormat.getSeparatorChars();
-		if (separators == null) {
-			separators = ",";
+		if (isEmpty(separators)) {
+			separators = ",;\t";
 		}
 		
 		Map<String, String> nameValues = new HashMap<String, String>();
@@ -397,6 +402,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 
 		// determine match value
 		String matchValue = orElse(propertyValues.get(matchProperty), "");
+		if (StringUtil.isEmpty(matchValue)) return;
 		
 		// determine data language
 		String language = languageExpression.evaluate(exprContext).trim();
@@ -456,7 +462,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 					visited.add(product);
 					PropertyModel property = item.findProperty(matchProperty.getId(), true);
 					if (property != null) { 
-						Object typedValue = property.getValues(null, outputChannel).get(language);
+						Object typedValue = property.getEffectiveValues(null, outputChannel).get(language);
 						if (typedValue != null) {
 							Object typedMatchValue = stringConverter.fromString(property.getEntity().getType(), matchValue);
 							if (equal(typedValue, typedMatchValue)) {
@@ -504,14 +510,14 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 			// remove value
 			if (value.getValue().trim().equals("")) {
 				if (!dryRun) {
-					property.removeValue(null, outputChannel, language);
+					property.removeValue(importSource, null, outputChannel, language);
 				}
 			} 
 			// set value
 			else {
 				Object typedValue = stringConverter.fromString(property.getEntity().getType(), value.getValue());
 				if (!dryRun) {
-					property.setValue(null, outputChannel, language, typedValue);
+					property.setValue(importSource, null, outputChannel, language, typedValue);
 				}
 			}
 		}

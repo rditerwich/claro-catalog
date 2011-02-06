@@ -57,7 +57,7 @@ public class PerformImportTest extends CatalogTestBase {
 		ItemModel category = model.createCategory();
 		category.setParents(singleton(model.getRootItem()));
 		PropertyModel property = category.findProperty(model.nameProperty.getEntity(), true);
-		property.setValue(null, null, null, categoryName);
+		property.setValue(importSource, null, null, null, categoryName);
 		
 		ImportCategory importCat = new ImportCategory();
 		importCat.setCategoryExpression(Constant.constant(categoryName));

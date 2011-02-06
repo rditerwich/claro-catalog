@@ -113,7 +113,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			for (Entry<PropertyInfo, List<String>> value : CollectionUtil.notNull(valuesToRemove)) {
 				PropertyModel propertyModel = itemModel.findProperty(value.getKey().propertyId, true);
 				for (String language : value.getValue()) {
-					propertyModel.removeValue(stagingArea, outputChannel, language);
+					propertyModel.removeValue(null, stagingArea, outputChannel, language);
 				}
 			}
 			
@@ -129,7 +129,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 							typedValue = mv;
 						}
 					}
-					propertyModel.setValue(stagingArea, outputChannel, languageValue.getKey(), typedValue);
+					propertyModel.setValue(null, stagingArea, outputChannel, languageValue.getKey(), typedValue);
 				}
 			}
 			

@@ -49,6 +49,8 @@ CREATE TABLE catalog.importrules (
     defaultcurrency      VARCHAR,
     id                   SERIAL NOT NULL,
     fileformat_id        INTEGER,
+    tabularfileformat_id INTEGER,
+    xmlfileformat_id     INTEGER,
     importsource_id      INTEGER NOT NULL,
     PRIMARY KEY (id) 
 );
@@ -82,103 +84,6 @@ CREATE TABLE catalog.importproperty (
     valueexpression      VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
     property_id          INTEGER NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.navigation (
-    index                INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
-    category_id          INTEGER,
-    parentshop_id        INTEGER,
-    parentnavigation_id  INTEGER,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.promotion (
-    type                 VARCHAR NOT NULL,
-    startdate            DATE NOT NULL,
-    enddate              DATE NOT NULL,
-    id                   SERIAL NOT NULL,
-    price                FLOAT,
-    pricecurrency        VARCHAR,
-    volumediscount       INTEGER,
-    shop_id              INTEGER NOT NULL,
-    product_id           INTEGER,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.frequency (
-    id                   VARCHAR NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.job (
-    name                 VARCHAR NOT NULL,
-    firstrun             TIMESTAMP,
-    runfrequency_id      VARCHAR NOT NULL,
-    healthperc           INTEGER,
-    lastsuccess          BOOLEAN,
-    lasttime             TIMESTAMP,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.jobresult (
-    type                 VARCHAR NOT NULL,
-    job_id               INTEGER NOT NULL,
-    success              BOOLEAN NOT NULL,
-    starttime            TIMESTAMP NOT NULL,
-    endtime              TIMESTAMP NOT NULL,
-    log                  VARCHAR NOT NULL,
-    id                   SERIAL NOT NULL,
-    importsource_id      INTEGER,
-    url                  VARCHAR,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.orderstatus (
-    id                   VARCHAR NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.order (
-    orderdate            DATE NOT NULL,
-    deliveryaddress_id   INTEGER,
-    user_id              INTEGER NOT NULL,
-    status_id            VARCHAR NOT NULL,
-    amountpaid           FLOAT NOT NULL,
-    id                   SERIAL NOT NULL,
-    shop_id              INTEGER NOT NULL,
-    transport_id         INTEGER NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.productorder (
-    promotion_id         INTEGER,
-    volume               INTEGER NOT NULL,
-    price                FLOAT NOT NULL,
-    pricecurrency        VARCHAR NOT NULL,
-    order_id             INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
-    product_id           INTEGER NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.transport (
-    desciption           VARCHAR NOT NULL,
-    transportcompany     VARCHAR NOT NULL,
-    deliverytime         INTEGER NOT NULL,
-    id                   SERIAL NOT NULL,
-    PRIMARY KEY (id) 
-);
-
-CREATE TABLE catalog.orderhistory (
-    user_id              INTEGER NOT NULL,
-    newstatus_id         VARCHAR NOT NULL,
-    comment              VARCHAR NOT NULL,
-    date                 DATE NOT NULL,
-    id                   SERIAL NOT NULL,
-    order_id             INTEGER,
     PRIMARY KEY (id) 
 );
 
@@ -376,11 +281,85 @@ CREATE TABLE catalog.query (
     type                 VARCHAR NOT NULL,
     id                   SERIAL NOT NULL,
     stringvalue          VARCHAR,
-    shop_id              INTEGER,
     category_id          INTEGER,
     stringvalue2         VARCHAR,
+    shop_id              INTEGER,
     shop_id2             INTEGER,
     PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.orderstatus (
+    id                   VARCHAR NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.order (
+    orderdate            DATE NOT NULL,
+    deliveryaddress_id   INTEGER,
+    user_id              INTEGER NOT NULL,
+    status_id            VARCHAR NOT NULL,
+    amountpaid           FLOAT NOT NULL,
+    id                   SERIAL NOT NULL,
+    shop_id              INTEGER NOT NULL,
+    transport_id         INTEGER NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.productorder (
+    product_id           INTEGER NOT NULL,
+    volume               INTEGER NOT NULL,
+    price                FLOAT NOT NULL,
+    pricecurrency        VARCHAR NOT NULL,
+    order_id             INTEGER NOT NULL,
+    id                   SERIAL NOT NULL,
+    promotion_id         INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.transport (
+    desciption           VARCHAR NOT NULL,
+    transportcompany     VARCHAR NOT NULL,
+    deliverytime         INTEGER NOT NULL,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.orderhistory (
+    user_id              INTEGER NOT NULL,
+    newstatus_id         VARCHAR NOT NULL,
+    comment              VARCHAR NOT NULL,
+    date                 DATE NOT NULL,
+    id                   SERIAL NOT NULL,
+    order_id             INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.navigation (
+    category_id          INTEGER,
+    index                INTEGER NOT NULL,
+    parentshop_id        INTEGER,
+    id                   SERIAL NOT NULL,
+    parentnavigation_id  INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.promotion (
+    type                 VARCHAR NOT NULL,
+    startdate            DATE NOT NULL,
+    enddate              DATE NOT NULL,
+    shop_id              INTEGER NOT NULL,
+    id                   SERIAL NOT NULL,
+    product_id           INTEGER,
+    price                FLOAT,
+    pricecurrency        VARCHAR,
+    volumediscount       INTEGER,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.promotion_templates (
+    templates_id         INTEGER,
+    promotion_id         INTEGER
+     
 );
 
 CREATE TABLE catalog.berth (
@@ -398,10 +377,33 @@ CREATE TABLE catalog.label2 (
     PRIMARY KEY (id) 
 );
 
-CREATE TABLE catalog.promotion_templates (
-    templates_id         INTEGER,
-    promotion_id         INTEGER
-     
+CREATE TABLE catalog.frequency (
+    id                   VARCHAR NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.job (
+    name                 VARCHAR NOT NULL,
+    firstrun             TIMESTAMP,
+    runfrequency_id      VARCHAR NOT NULL,
+    healthperc           INTEGER,
+    lastsuccess          BOOLEAN,
+    lasttime             TIMESTAMP,
+    id                   SERIAL NOT NULL,
+    PRIMARY KEY (id) 
+);
+
+CREATE TABLE catalog.jobresult (
+    type                 VARCHAR NOT NULL,
+    job_id               INTEGER NOT NULL,
+    success              BOOLEAN NOT NULL,
+    starttime            TIMESTAMP NOT NULL,
+    endtime              TIMESTAMP NOT NULL,
+    log                  VARCHAR NOT NULL,
+    id                   SERIAL NOT NULL,
+    importsource_id      INTEGER,
+    url                  VARCHAR,
+    PRIMARY KEY (id) 
 );
 
 CREATE TABLE catalog.catalog_templates (
@@ -432,6 +434,8 @@ ALTER TABLE catalog.party ADD CONSTRAINT fk_billingaddress FOREIGN KEY (billinga
 ALTER TABLE catalog.user ADD CONSTRAINT fk_party FOREIGN KEY (party_id) REFERENCES catalog.party (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.importrules ADD CONSTRAINT fk_fileformat FOREIGN KEY (fileformat_id) REFERENCES catalog.importfileformat (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importrules ADD CONSTRAINT fk_tabularfileformat FOREIGN KEY (tabularfileformat_id) REFERENCES catalog.importfileformat (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.importrules ADD CONSTRAINT fk_xmlfileformat FOREIGN KEY (xmlfileformat_id) REFERENCES catalog.importfileformat (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.importrules ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.importproducts ADD CONSTRAINT fk_rules FOREIGN KEY (rules_id) REFERENCES catalog.importrules (id) DEFERRABLE INITIALLY DEFERRED;
@@ -441,32 +445,6 @@ ALTER TABLE catalog.importcategory ADD CONSTRAINT fk_importproducts FOREIGN KEY 
 
 ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_importproducts FOREIGN KEY (importproducts_id) REFERENCES catalog.importproducts (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.importproperty ADD CONSTRAINT fk_property FOREIGN KEY (property_id) REFERENCES catalog.property (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentnavigation FOREIGN KEY (parentnavigation_id) REFERENCES catalog.navigation (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.promotion ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.job ADD CONSTRAINT fk_frequency FOREIGN KEY (runfrequency_id) REFERENCES catalog.frequency (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES catalog.job (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.catalog ADD CONSTRAINT fk_root FOREIGN KEY (root_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 
@@ -518,15 +496,41 @@ ALTER TABLE catalog.option ADD CONSTRAINT fk_optionchain FOREIGN KEY (optionchai
 ALTER TABLE catalog.optionid ADD CONSTRAINT fk_type FOREIGN KEY (type_id) REFERENCES catalog.optionidtype (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.optionid ADD CONSTRAINT fk_option FOREIGN KEY (option_id) REFERENCES catalog.option (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.query ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.query ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.query ADD CONSTRAINT fk_shop2 FOREIGN KEY (shop_id2) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.order ADD CONSTRAINT fk_deliveryaddress FOREIGN KEY (deliveryaddress_id) REFERENCES catalog.address (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_orderstatus FOREIGN KEY (status_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.order ADD CONSTRAINT fk_transport FOREIGN KEY (transport_id) REFERENCES catalog.transport (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.productorder ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES catalog.user (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_orderstatus FOREIGN KEY (newstatus_id) REFERENCES catalog.orderstatus (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.orderhistory ADD CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES catalog.order (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentshop FOREIGN KEY (parentshop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.navigation ADD CONSTRAINT fk_parentnavigation FOREIGN KEY (parentnavigation_id) REFERENCES catalog.navigation (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.promotion ADD CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES catalog.outputchannel (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.promotion ADD CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.berth ADD CONSTRAINT fk_description2 FOREIGN KEY (description2_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.berth ADD CONSTRAINT fk_profile FOREIGN KEY (profile_id) REFERENCES catalog.label2 (id) DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE catalog.promotion_templates ADD CONSTRAINT fk_promotion FOREIGN KEY (promotion_id) REFERENCES catalog.promotion (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.job ADD CONSTRAINT fk_frequency FOREIGN KEY (runfrequency_id) REFERENCES catalog.frequency (id) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_job FOREIGN KEY (job_id) REFERENCES catalog.job (id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE catalog.jobresult ADD CONSTRAINT fk_importsource FOREIGN KEY (importsource_id) REFERENCES catalog.source (id) DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.catalog_templates ADD CONSTRAINT fk_catalog FOREIGN KEY (catalog_id) REFERENCES catalog.catalog (id) DEFERRABLE INITIALLY DEFERRED;
@@ -537,26 +541,6 @@ ALTER TABLE catalog.catalog_languages ADD CONSTRAINT fk_catalog FOREIGN KEY (cat
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_template FOREIGN KEY (templates_id) REFERENCES catalog.template (id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE catalog.product_templates ADD CONSTRAINT fk_item FOREIGN KEY (product_id) REFERENCES catalog.item (id) DEFERRABLE INITIALLY DEFERRED;
 
-
--- Insert initial content in frequency
-INSERT INTO catalog.frequency (id) VALUES ('never');
-INSERT INTO catalog.frequency (id) VALUES ('hourly');
-INSERT INTO catalog.frequency (id) VALUES ('daily');
-INSERT INTO catalog.frequency (id) VALUES ('weekDays');
-INSERT INTO catalog.frequency (id) VALUES ('weekly');
-INSERT INTO catalog.frequency (id) VALUES ('monthly');
-INSERT INTO catalog.frequency (id) VALUES ('yearly');
-
--- Insert initial content in orderstatus
-INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
-INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
-INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
-INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
-INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
-INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
-INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
-INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
-INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
 
 -- Insert initial content in propertytype
 INSERT INTO catalog.propertytype (id) VALUES ('String');
@@ -584,4 +568,24 @@ INSERT INTO catalog.propertytype (id) VALUES ('Volume');
 INSERT INTO catalog.propertytype (id) VALUES ('Velocity');
 INSERT INTO catalog.propertytype (id) VALUES ('Acceleration');
 INSERT INTO catalog.propertytype (id) VALUES ('Item');
+
+-- Insert initial content in orderstatus
+INSERT INTO catalog.orderstatus (id) VALUES ('InShoppingCart');
+INSERT INTO catalog.orderstatus (id) VALUES ('PendingPayment');
+INSERT INTO catalog.orderstatus (id) VALUES ('ReceivedPayment');
+INSERT INTO catalog.orderstatus (id) VALUES ('Processing');
+INSERT INTO catalog.orderstatus (id) VALUES ('Shipped');
+INSERT INTO catalog.orderstatus (id) VALUES ('OnHold');
+INSERT INTO catalog.orderstatus (id) VALUES ('Complete');
+INSERT INTO catalog.orderstatus (id) VALUES ('Closed');
+INSERT INTO catalog.orderstatus (id) VALUES ('Canceled');
+
+-- Insert initial content in frequency
+INSERT INTO catalog.frequency (id) VALUES ('never');
+INSERT INTO catalog.frequency (id) VALUES ('hourly');
+INSERT INTO catalog.frequency (id) VALUES ('daily');
+INSERT INTO catalog.frequency (id) VALUES ('weekDays');
+INSERT INTO catalog.frequency (id) VALUES ('weekly');
+INSERT INTO catalog.frequency (id) VALUES ('monthly');
+INSERT INTO catalog.frequency (id) VALUES ('yearly');
 

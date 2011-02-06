@@ -86,6 +86,17 @@ Package {
                     name = fileFormat
                     type = importing:ImportFileFormat
                     lower = 0
+                }
+                Attribute {
+                    name = tabularFileFormat
+                    type = importing:TabularFileFormat
+                    lower = 0
+                    isComposite = true
+                }
+                Attribute {
+                    name = xmlFileFormat
+                    type = importing:XmlFileFormat
+                    lower = 0
                     isComposite = true
                 }
                 Attribute {

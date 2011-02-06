@@ -16,6 +16,7 @@ import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
+import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
@@ -25,6 +26,7 @@ import easyenterprise.lib.util.SMap;
 public class CatalogModel {
 
 	public final Catalog catalog;
+	public final ItemModel root;
 	public final PropertyGroup generalPropertyGroup;
 	public final PropertyModel nameProperty;
 	public final PropertyModel variantProperty;
@@ -49,7 +51,7 @@ public class CatalogModel {
 
 	public CatalogModel(Long id) {
 		this.catalog = findOrCreateCatalog(id);
-		ItemModel root = findOrCreateRootCategory();
+		this.root = findOrCreateRootCategory();
 		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
 		this.imagesPropertyGroup = findOrCreatePropertyGroup(RootProperties.IMAGES, null);
 		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup, RootProperties.ROOTCATEGORY_NAME);
@@ -99,6 +101,8 @@ public class CatalogModel {
 		if (itemData != null) {
 			item = itemData.getEntity();
 			itemData.invalidateChildExtent(true);
+			itemData.invalidateParentExtent(false);
+			root.doInvalidate();
 			items.remove(itemData);
 		} else {
 			item = CatalogDao.get().getItem(id);
@@ -221,5 +225,9 @@ public class CatalogModel {
 				item.doInvalidate();
 			}
 		}
+	}
+
+	public void flush() {
+		invalidate(items.values());
 	}
 }

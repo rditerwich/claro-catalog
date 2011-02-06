@@ -10,6 +10,8 @@ public class ImportRules implements Serializable {
     private Long id;
     private String relativeUrl;
     private ImportFileFormat fileFormat;
+    private TabularFileFormat tabularFileFormat;
+    private XmlFileFormat xmlFileFormat;
     private String languageExpression;
     private String defaultCurrency;
     private ImportProducts importProducts;
@@ -37,6 +39,22 @@ public class ImportRules implements Serializable {
 
     public void setFileFormat(ImportFileFormat value) {
         this.fileFormat = value;
+    }
+
+    public TabularFileFormat getTabularFileFormat() {
+        return tabularFileFormat;
+    }
+
+    public void setTabularFileFormat(TabularFileFormat value) {
+        this.tabularFileFormat = value;
+    }
+
+    public XmlFileFormat getXmlFileFormat() {
+        return xmlFileFormat;
+    }
+
+    public void setXmlFileFormat(XmlFileFormat value) {
+        this.xmlFileFormat = value;
     }
 
     public String getLanguageExpression() {
