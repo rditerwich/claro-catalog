@@ -17,7 +17,6 @@ import easyenterprise.lib.gwt.client.widgets.EEButtonBar;
 public abstract class ConfirmationDialog extends DialogBox implements Globals {
 
 	public ConfirmationDialog(final String message, final ImageResource icon) {
-		hide();
 		setModal(true);
 		setWidget(new VerticalPanel() {{
 			add(new HorizontalPanel() {{
@@ -43,6 +42,7 @@ public abstract class ConfirmationDialog extends DialogBox implements Globals {
 			}});
 		}});
 		center();
+		hide();
 	}
 	
 	protected abstract void yesPressed();

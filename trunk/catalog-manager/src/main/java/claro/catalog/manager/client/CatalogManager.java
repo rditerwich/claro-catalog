@@ -4,13 +4,12 @@ package claro.catalog.manager.client;
 import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.manager.client.taxonomy.TaxonomyPage;
+import claro.catalog.manager.client.webshop.WebshopPage;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.party.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
@@ -23,7 +22,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
@@ -100,7 +98,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				setWidth("100%");
 				getElement().getStyle().setHeight(100, Unit.PC);
 				add(new Image(rb.logo()) {{
-					StyleUtil.add(this, Styles.headerimage);
+					StyleUtil.addStyle(this, Styles.headerimage);
 				}});
 //				add(username = new Label());
 //				add(new Anchor("Login...") {{
@@ -132,13 +130,14 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 					setStylePrimaryName(GlobalStylesEnum.menu.toString());
 					addPage(new CatalogPage(placeController), messages.catalogMenu());
 					addPage(new TaxonomyPage(placeController), messages.taxonomyMenu());
-					addPage(new EmptyPage(placeController, messages.webshopMenu()), messages.webshopMenu());
-					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
-					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
+					addPage(new WebshopPage(placeController, messages.webshopMenu()), messages.webshopMenu());
+//					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
+//					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
+					addPage(new EmptyPage(placeController, "Orders"), "Orders");
 					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
-					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
-//					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
-//					addPage(new TearupTabsTestPage(placeController), "TabTest");
+//					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
+					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
+					addPage(new TearupTabsTestPage(placeController), "TabTest");
 
 				}});
 //			topPanel.add(choices);
@@ -147,9 +146,9 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 
 			// footer
 			addSouth(new FlowPanel() {{
-				StyleUtil.add(this, Styles.footer);
+				StyleUtil.addStyle(this, Styles.footer);
 				add(new HorizontalPanel() {{
-					StyleUtil.add(this, Styles.links);
+					StyleUtil.addStyle(this, Styles.links);
 					add(new Label("Powered By AgileXS"));
 					add(new Label("|"));
 					add(new Anchor("Privacy Policy"));
@@ -161,32 +160,32 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				
 			}}, 40);
 			add(pageContainer);
-			
-			if (false)
-			add(new TabLayoutPanel(50, Unit.PX) {{
-				this.addStyleName("mainTabPanel");
-				
-				add(new CatalogPage(placeController), "Catalog");
-				add(new ImportPage(placeController), "Import");
-				
-				add(new MasterDetailTestPage(placeController), "MasterDetail");
-				add(new TearupTabsTestPage(placeController), "TabTest");
-//		tabPanel.add(catalog.getView(), i18n.catalog());
-//		tabPanel.add(taxonomies.getView(), i18n.taxonomy());
-//		tabPanel.add(navigation.getView(), i18n.navigation());
-//		tabPanel.add(promotions.getView(), i18n.promotions());
-//		tabPanel.add(orders.getView().asWidget(), i18n.orders());
-//		tabPanel.add(settings.getView().asWidget(), i18n.settings());
-				addSelectionHandler(new SelectionHandler<Integer>() {
-					@Override
-					public void onSelection(SelectionEvent<Integer> event) {
-						currentPage = (Page)(getWidget(event.getSelectedItem()));
-						currentPage.onResize();
-						currentPage.show();
-					}
-				});
-				selectTab(0);
-			}});
+//			
+//			if (false)
+//			add(new TabLayoutPanel(50, Unit.PX) {{
+//				this.addStyleName("mainTabPanel");
+//				
+//				add(new CatalogPage(placeController), "Catalog");
+//				add(new ImportPage(placeController), "Import");
+//				
+//				add(new MasterDetailTestPage(placeController), "MasterDetail");
+//				add(new TearupTabsTestPage(placeController), "TabTest");
+////		tabPanel.add(catalog.getView(), i18n.catalog());
+////		tabPanel.add(taxonomies.getView(), i18n.taxonomy());
+////		tabPanel.add(navigation.getView(), i18n.navigation());
+////		tabPanel.add(promotions.getView(), i18n.promotions());
+////		tabPanel.add(orders.getView().asWidget(), i18n.orders());
+////		tabPanel.add(settings.getView().asWidget(), i18n.settings());
+//				addSelectionHandler(new SelectionHandler<Integer>() {
+//					@Override
+//					public void onSelection(SelectionEvent<Integer> event) {
+//						currentPage = (Page)(getWidget(event.getSelectedItem()));
+//						currentPage.onResize();
+//						currentPage.show();
+//					}
+//				});
+//				selectTab(0);
+//			}});
 		}});
 		History.fireCurrentHistoryState();
 	}

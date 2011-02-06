@@ -66,16 +66,16 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		this.imageProperty = imageProperty;
 		
 		initWidget(pullups = new PullUpTabs(30, 5) {{
-			StyleUtil.add(this, Styles.categoryDetails);
+			StyleUtil.addStyle(this, Styles.categoryDetails);
 			setMainWidget(new ScrollPanel(new FlowPanel() {{
 				
 //			add(new Trail());
 				
 				// Title
 				add(new Grid(1, 2) {{
-					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
+					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
 					setWidget(0, 0, (Widget)(categoryNameBox = new TextBox() {{
-						StyleUtil.add(this, Styles.categoryname);
+						StyleUtil.addStyle(this, Styles.categoryname);
 						addChangeHandler(new ChangeHandler() {
 							public void onChange(ChangeEvent event) {
 								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, language, categoryNameBox.getText());

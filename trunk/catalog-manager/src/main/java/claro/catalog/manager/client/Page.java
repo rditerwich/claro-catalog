@@ -5,12 +5,10 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Page extends Composite implements RequiresResize, ProvidesResize, Globals {
 	private final PlaceController placeController;
 
-	public abstract Place getPlace();
 	public abstract void show();
 	
 	public Page(PlaceController placeController) {

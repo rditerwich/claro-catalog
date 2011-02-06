@@ -299,4 +299,7 @@ public interface I18NCatalog extends Messages {
 	String removeImportSourceConfirmationMessage();
 	String noProductNameSet();
 	String noCategoryNameSet();
+	String shopNameLabel();
+	String shopUrlLabel();
+	String newWebshopLink();
 }

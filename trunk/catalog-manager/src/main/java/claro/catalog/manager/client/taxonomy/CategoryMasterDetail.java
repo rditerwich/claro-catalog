@@ -1,5 +1,7 @@
 package claro.catalog.manager.client.taxonomy;
 
+import static easyenterprise.lib.gwt.client.StyleUtil.createStyle;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +18,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.jpa.catalog.OutputChannel;
 
@@ -34,17 +37,16 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
-abstract public class CategoryMasterDetail extends MasterDetail implements Globals {
+abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail implements Globals {
 	enum Styles implements Style { productMasterDetail, productprice, categoryname, product, productTD, productpanel, categoryNewSubCategory }
 
 	private String language;
@@ -82,9 +84,10 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 
 
 	public CategoryMasterDetail() {
-		super(126, 0);
-		StyleUtil.add(this, Styles.productMasterDetail);
-		
+		super(126);
+		StyleUtil.addStyle(this, Styles.productMasterDetail);
+		createMasterPanel();
+		createDetailPanel();
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
@@ -137,31 +140,19 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 	}
 	
 
-	@Override
-	protected final Widget tableCreated(Table table) {
-		table.setStylePrimaryName(GlobalStylesEnum.mainTable.toString());
-		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-		}};
-		return masterRoundedPanel;
-	}
 
-
-	@Override
-	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
-		Table productTable = getMasterTable();
+	private void createMasterPanel() {
+		Table productTable = new Table();
+		setMaster(productTable);
 
 		productTable.resizeColumns(1);
 		
 		// search panel
-		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-			
-			add(new VerticalPanel() {{
+		setHeader(new VerticalPanel() {{
 				add(new Grid(2, 3) {{
-					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
+					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
 					setWidget(0, 0, new ListBox() {{
-						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Shop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
+						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Plantin Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option><option>&nbsp;&nbsp;Tetterode Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
 					}});
 //					setWidget(0, 1, new TextBox() {{
 //						addChangeHandler(new ChangeHandler() {
@@ -211,13 +202,11 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 						setVisible(false); 
 					}});
 				}});
-			}}); 
 		}});
 	}
 	
-	@Override
-	protected void detailPanelCreated(LayoutPanel detailPanel) {
-		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
+	private void createDetailPanel() {
+		setDetail(new DockLayoutPanel(Unit.PX) {{
 			addNorth(new Anchor("Close") {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
@@ -313,7 +302,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 				
 				// Anchor
 				add(rowWidgets.categoryName = new Anchor() {{
-					StyleUtil.add(this, Styles.categoryname);
+					StyleUtil.addStyle(this, Styles.categoryname);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							rowSelected(row);
@@ -322,7 +311,7 @@ abstract public class CategoryMasterDetail extends MasterDetail implements Globa
 				}});
 				
 				add(new Anchor(messages.newChildCategory()) {{
-					StyleUtil.add(this, Styles.categoryNewSubCategory);
+					StyleUtil.addStyle(this, Styles.categoryNewSubCategory);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							createNewCategory(categoryRows.get(row).categoryId);

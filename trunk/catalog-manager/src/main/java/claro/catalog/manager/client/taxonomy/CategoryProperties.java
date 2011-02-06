@@ -82,7 +82,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		this.outputChannel = outputChannel;
 		
 		initWidget(new VerticalPanel() {{
-			StyleUtil.add(this, Styles.categoryProperties);
+			StyleUtil.addStyle(this, Styles.categoryProperties);
 			add(new Anchor("Define new property...")); // TODO i18n.
 			add(propertyPanel = new Grid(0, NR_COLS));
 		}});
@@ -154,10 +154,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			if (false) {
 			// Value + Clear button
 			propertyPanel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
-				StyleUtil.add(this, Styles.valueParent);
+				StyleUtil.addStyle(this, Styles.valueParent);
 				// Real value is added in the bind fase...
 				setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
-					StyleUtil.add(this, Styles.clear);
+					StyleUtil.addStyle(this, Styles.clear);
 					final Widget me = this;
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
@@ -259,7 +259,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		setValue(widget, value, property);
 		
 		if (isDerived) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
+			StyleUtil.addStyle(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		} else {
 			// TODO Maybe changelistener to remove derived?
 			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
@@ -340,7 +340,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			propertyValueWidgets.valueParentWidget.setWidget(0, 0, result);
 		}
 		
-		StyleUtil.add(result, Styles.valueWidget);
+		StyleUtil.addStyle(result, Styles.valueWidget);
 		
 		return result;
 	}

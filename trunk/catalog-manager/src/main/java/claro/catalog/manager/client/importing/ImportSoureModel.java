@@ -3,12 +3,15 @@ package claro.catalog.manager.client.importing;
 import java.util.ArrayList;
 import java.util.List;
 
+import claro.catalog.command.importing.GetImportSources;
 import claro.catalog.command.importing.StoreImportSource;
+import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportRules;
 import claro.jpa.importing.ImportSource;
+import claro.jpa.jobs.Job;
 import claro.jpa.jobs.JobResult;
 
 import com.google.common.base.Objects;
@@ -17,7 +20,7 @@ import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.ObjectUtil;
 
-public abstract class ImportSoureModel {
+public abstract class ImportSoureModel implements Globals {
 
 	private List<ImportSource> importSources = new ArrayList<ImportSource>();
 	private ImportSource importSource;
@@ -31,6 +34,7 @@ public abstract class ImportSoureModel {
 	
 	public void setImportSources(List<ImportSource> importSources) {
 		this.importSources = importSources;
+		renderAll();
 	}
 	
 	public void setImportSource(ImportSource importSource) {
@@ -142,8 +146,46 @@ public abstract class ImportSoureModel {
 				setImportSource(result.importSource);
 			}
 		});
-
 	}
+
+//	protected void createImportSource() {
+//		StoreImportSource command = new StoreImportSource(new ImportSource());
+//		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<StoreImportSource.Result>(messages.creatingImportSourceMessage()) {
+//			public void onSuccess(StoreImportSource.Result result) {
+//			}
+//		});
+//	}
+	
+
+	final protected void createImportSource() {
+		ImportSource importSource = new ImportSource();
+		importSource.setName("new import source");
+		importSource.setJob(new Job());
+		getImportSources().add(0, importSource);
+		setImportSource(importSource);
+	}
+
+	public void fetchImportSources() {
+		GetImportSources command = new GetImportSources();
+		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>(messages.loadingImportSourcesMessage()) {
+			public void onSuccess(GetImportSources.Result result) {
+				setImportSources(result.importSources);
+			}
+		});
+	}
+//		
+//	protected void getImportSource(final ImportSource importSource) {
+//		GetImportSources command = new GetImportSources();
+//		command.importSourceId = importSource.getId();
+//		command.includeDefinitionDetails = true;
+//		GwtCommandFacade.executeWithRetry(command, 3, new StatusCallback<GetImportSources.Result>() {
+//			public void onSuccess(GetImportSources.Result result) {
+//				setImportSource(importSource);
+////				masterDetail.importSourceChanged(importSource, firstOrNull(result.importSources));
+//			}
+//		});
+//	}
+
 	protected abstract void renderAll();
 	protected abstract void showFileFormat();
 	protected abstract void showDataMapping();

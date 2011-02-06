@@ -73,7 +73,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		this.showPropertySources = showPropertySources;
 		
 		propertyGroupPanel = new TabPanel();
-		StyleUtil.add(propertyGroupPanel, Styles.itemPropertyValues);
+		StyleUtil.addStyle(propertyGroupPanel, Styles.itemPropertyValues);
 		initWidget(propertyGroupPanel);
 	}
 	
@@ -184,7 +184,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 					// property source
 					if (showPropertySources) {
 						setWidget(0, 1, propertyValueWidgets.propertySourceWidget = new Label() {{
-							StyleUtil.add(this, Styles.source);
+							StyleUtil.addStyle(this, Styles.source);
 						}});
 					}
 					
@@ -192,10 +192,10 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
-					StyleUtil.add(this, Styles.valueParent);
+					StyleUtil.addStyle(this, Styles.valueParent);
 					// Real value is added in the bind fase...
 					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
-						StyleUtil.add(this, Styles.clear);
+						StyleUtil.addStyle(this, Styles.clear);
 							addClickHandler(new ClickHandler() {
 								public void onClick(ClickEvent event) {
 									clearValue((Widget) event.getSource());
@@ -247,7 +247,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 					String groupName = CollectionUtil.notNull(groups).getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
 					propertyValueWidgets.propertyGroupsWidget.setText(groupName);
 					if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
-						StyleUtil.add(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
+						StyleUtil.addStyle(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
 					} else {
 						StyleUtil.remove(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
 					}
@@ -307,7 +307,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		setValue(widget, value, property);
 		
 		if (isHerited) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
+			StyleUtil.addStyle(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 //			StyleUtil.remove(propertyValueWidgets.valueParentWidget, Styles.overridden);
 		} else {
 			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
@@ -395,7 +395,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			propertyValueWidgets.valueParentWidget.setWidget(0, 0, result);
 		}
 		
-		StyleUtil.add(result, Styles.valueWidget);
+		StyleUtil.addStyle(result, Styles.valueWidget);
 		
 		return result;
 	}

@@ -16,7 +16,6 @@ import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.catalog.manager.client.widgets.StatusMessage;
 
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -37,12 +36,6 @@ public class TaxonomyPage extends Page {
 		super(placeController);
 		
 		initWidget(mainPanel = new LayoutPanel());
-	}
-
-	@Override
-	public Place getPlace() {
-		// TODO implement
-		return null;
 	}
 
 	public void show() {

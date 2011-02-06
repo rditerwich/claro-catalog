@@ -56,7 +56,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	public CategoriesWidget(boolean canSelect) {
 		this.canSelect = canSelect;
 		initWidget(mainPanel = new FlowPanel() {{
-			StyleUtil.add(this, Styles.categoryStyle);
+			StyleUtil.addStyle(this, Styles.categoryStyle);
 		}});
 	}
 	
@@ -81,7 +81,7 @@ public class CategoriesWidget extends Composite implements Globals {
 			final String categoryName = categories.getOrEmpty(categoryId).tryGet(language, null);
 			mainPanel.add(new Grid(1, lastCategory ? 3 : 2) {{
 				setWidget(0, 0, new Anchor(categoryName) {{
-					StyleUtil.add(this, Styles.categoryName);
+					StyleUtil.addStyle(this, Styles.categoryName);
 					setTitle(getCategoryTooltip(categoryName));
 					if (canSelect) {
 						addHoverStyles(this);
@@ -117,14 +117,14 @@ public class CategoriesWidget extends Composite implements Globals {
 
 	private Anchor createAddAnchor(String addCategoryText) {
 		return new Anchor(addCategoryText) {{ // TODO Use image instead?
-			StyleUtil.add(this, Styles.categoryAdd);
+			StyleUtil.addStyle(this, Styles.categoryAdd);
 			setTitle(getAddCategoryTooltip());
 			addHoverStyles(this);
 			addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					if (addCategoryPanel == null) {
 						addCategoryPanel = new PopupPanel(true) {{
-							StyleUtil.add(this, Styles.categoryTree);
+							StyleUtil.addStyle(this, Styles.categoryTree);
 							setWidget(new ScrollPanel(new Label(messages.loading())));
 						}};
 					}
@@ -196,7 +196,7 @@ public class CategoriesWidget extends Composite implements Globals {
 		for (final Long root : rootCategories) {
 			String categoryName = categories.getOrEmpty(root).tryGet(CatalogManager.getUiLanguage(), null);
 			result.addItem(new TreeItem(categoryName) {{
-				StyleUtil.add(this, Styles.categoryName);
+				StyleUtil.addStyle(this, Styles.categoryName);
 				setUserObject(root);
 				addItem(""); // uninitialized marker.
 			}});
@@ -213,7 +213,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					for (final Long child : childCategories) {
 						String categoryName = categories.getOrEmpty(child).tryGet(CatalogManager.getUiLanguage(), null);
 						target.addItem(new TreeItem(categoryName) {{
-							StyleUtil.add(this, Styles.categoryName);
+							StyleUtil.addStyle(this, Styles.categoryName);
 							setUserObject(child);
 							addItem(""); // uninitialized marker.
 						}});
@@ -250,7 +250,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	private void addHoverStyles(final Anchor anchor) {
 		anchor.addMouseOverHandler(new MouseOverHandler() {
 			public void onMouseOver(MouseOverEvent event) {
-				StyleUtil.add(anchor, Styles.mouseOverStyle);
+				StyleUtil.addStyle(anchor, Styles.mouseOverStyle);
 			}
 		});
 		anchor.addMouseOutHandler(new MouseOutHandler() {

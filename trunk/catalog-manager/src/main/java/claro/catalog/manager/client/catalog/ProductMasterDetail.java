@@ -1,5 +1,7 @@
 package claro.catalog.manager.client.catalog;
 
+import static easyenterprise.lib.gwt.client.StyleUtil.createStyle;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,8 +15,8 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
-import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
@@ -34,21 +36,18 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
-abstract public class ProductMasterDetail extends MasterDetail implements Globals {
+abstract public class ProductMasterDetail extends CatalogManagerMasterDetail implements Globals {
 	enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel }
 	private static final int IMAGE_COL = 0;
 	private static final int PRODUCT_COL = 1;
@@ -93,9 +92,10 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	private Long rootCategory;
 	
 	public ProductMasterDetail() {
-		super(126, 0);
-		StyleUtil.add(this, Styles.productMasterDetail);
-		
+		super(150);
+		StyleUtil.addStyle(this, Styles.productMasterDetail);
+		createMasterPanel();
+		createDetailPanel();
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
@@ -147,94 +147,79 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 	}
 	
 
-	@Override
-	protected void masterPanelCreated(DockLayoutPanel masterPanel2) {
-		Table productTable = getMasterTable();
+	protected void createMasterPanel() {
+		Table productTable = new Table();
 
 		productTable.resizeColumns(NR_COLS);
 		productTable.setHeaderText(0, 1, messages.product());
 		productTable.setHeaderText(0, 2, messages.price());
+		setMaster(productTable);
 		
 		// search panel
-		getMasterHeader().add(new RoundedPanel( RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-			
-			add(new VerticalPanel() {{
-				add(new Grid(2, 3) {{
-					StyleUtil.add(this, CatalogManager.Styles.filterpanel);
-					setWidget(0, 0, new ListBox() {{
-						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Shop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
-					}});
-					setWidget(0, 1, new TextBox() {{
-						addChangeHandler(new ChangeHandler() {
-							public void onChange(ChangeEvent event) {
-								filterString = getText();
-								updateFilterLabel();
-								updateProductList();
-							}
-						});
-					}});
-					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-							setData(SMap.<Long, SMap<String, String>>empty(), language);
-						}
-						protected String getAddCategoryLabel() {
-							return messages.addCategoriesLink();
-						};
-						protected String getAddCategoryTooltip() {
-							return messages.addCategoryFilter();
-						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
-							return messages.removeCategoryFilterTooltip(categoryName);
-						}
-						protected void removeCategory(Long categoryId) {
-							super.removeCategory(categoryId);
-							updateProductList();
-						}
-						protected void addCategory(Long categoryId, SMap<String, String> labels) {
-							super.addCategory(categoryId, labels);
+		setHeader(new VerticalPanel() {{
+			add(new Grid(2, 3) {{
+				StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
+				setWidget(0, 0, new ListBox() {{
+					DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Plantin Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option><option>&nbsp;&nbsp;Tetterode Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
+				}});
+				setWidget(0, 1, new TextBox() {{
+					addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							filterString = getText();
+							updateFilterLabel();
 							updateProductList();
 						}
 					});
-					setWidget(1, 0, new Anchor(messages.newProduct()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								createNewProduct(rootCategory);
-							}
-						});
-					}});
-					setWidget(1, 1, new Anchor(messages.refresh()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								updateProductList();
-							}
-						});
-					}});
 				}});
-				add(new FlowPanel() {{
-					add(filterLabel = new HTML() {{
-						setVisible(false); 
-					}});
+				setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
+						setData(SMap.<Long, SMap<String, String>>empty(), language);
+					}
+					protected String getAddCategoryLabel() {
+						return messages.addCategoriesLink();
+					};
+					protected String getAddCategoryTooltip() {
+						return messages.addCategoryFilter();
+					}
+					protected String getRemoveCategoryTooltip(String categoryName) {
+						return messages.removeCategoryFilterTooltip(categoryName);
+					}
+					protected void removeCategory(Long categoryId) {
+						super.removeCategory(categoryId);
+						updateProductList();
+					}
+					protected void addCategory(Long categoryId, SMap<String, String> labels) {
+						super.addCategory(categoryId, labels);
+						updateProductList();
+					}
+				});
+				setWidget(1, 0, new Anchor(messages.newProduct()) {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							createNewProduct(rootCategory);
+						}
+					});
 				}});
-			}}); 
-		}});
+				setWidget(1, 1, new Anchor(messages.refresh()) {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							updateProductList();
+						}
+					});
+				}});
+			}});
+			add(new FlowPanel() {{
+				add(filterLabel = new HTML() {{
+					setVisible(false); 
+				}});
+			}});
+		}}); 
 		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
 			setVisible(false);
 		}};
 	}
 	
-	@Override
-	protected final Widget tableCreated(Table table) {
-		table.setStylePrimaryName(GlobalStylesEnum.mainTable.toString());
-		masterRoundedPanel = new RoundedPanel(table, RoundedPanel.ALL, 4) {{
-			setBorderColor("white");
-		}};
-		return masterRoundedPanel;
-	}
-
-	
-	@Override
-	protected void detailPanelCreated(LayoutPanel detailPanel) {
-		detailPanel.add(new DockLayoutPanel(Unit.PX) {{
+	protected void createDetailPanel() {
+		setDetail(new DockLayoutPanel(Unit.PX) {{
 			addNorth(new Anchor("Close") {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
@@ -323,15 +308,15 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			
 			// Product
 			productTable.setWidget(i, PRODUCT_COL, new VerticalPanel() {{
-				StyleUtil.add(this, Styles.product);
+				StyleUtil.addStyle(this, Styles.product);
 				// .title -> name
 				add(rowWidgets.productNameLabel = new Anchor() {{
-					StyleUtil.add(this, Styles.productname);
+					StyleUtil.addStyle(this, Styles.productname);
 					addRowSelectionListener(this, row);
 				}});
 				// .subtitle -> variant
 				add(rowWidgets.productVariantLabel = new InlineLabel() {{
-					StyleUtil.add(this, CatalogManager.Styles.productvariant);
+					StyleUtil.addStyle(this, CatalogManager.Styles.productvariant);
 					addRowSelectionListener(this, row);
 				}});
 				
@@ -347,7 +332,7 @@ abstract public class ProductMasterDetail extends MasterDetail implements Global
 			productTable.getWidget(i, PRODUCT_COL).getElement().getParentElement().addClassName(Styles.productTD.toString());
 			// Price
 			productTable.setWidget(i, PRICE_COL, rowWidgets.priceLabel = new Label() {{
-				StyleUtil.add(this, Styles.productprice);
+				StyleUtil.addStyle(this, Styles.productprice);
 				addRowSelectionListener(this, row);
 			}});
 		}

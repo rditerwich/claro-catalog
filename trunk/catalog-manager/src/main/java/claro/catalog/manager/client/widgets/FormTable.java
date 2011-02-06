@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
+import easyenterprise.lib.gwt.client.StyleUtil;
 
 public class FormTable extends Composite implements Globals {
 
@@ -121,7 +122,7 @@ public class FormTable extends Composite implements Globals {
 	
 	private void showHelp(int row, Widget widget, String help) {
 		if (currentHelpRow != -1) {
-			setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "");
+			StyleUtil.setBackGround(table.getWidget(currentHelpRow, 1).getElement(), "");
 			table.getWidget(currentHelpRow, 1).getElement();
 			helpText.setHTML("");
 			table.getFlexCellFormatter().setColSpan(currentHelpRow, 1, 1);
@@ -131,7 +132,7 @@ public class FormTable extends Composite implements Globals {
 		if (widget != null && help != null && !help.toString().equals("")) {
 			currentHelpRow = row;
 			Element dashElement = table.getWidget(currentHelpRow, 1).getElement();
-			setBackGround(dashElement, "images/dash.png");
+			StyleUtil.setBackGround(dashElement, "images/dash.png");
 
 			helpText.setHTML(help);
 			
@@ -158,11 +159,4 @@ public class FormTable extends Composite implements Globals {
 			}
 		}
 	}
-	
-	public native static void setBackGround(
-      Element panel, String imgPath) /*-{
-if(panel != null) {
-panel.style.background  = " transparent url(" + imgPath + ") repeat-x 20px 10px";
-}	
-}-*/;
 }

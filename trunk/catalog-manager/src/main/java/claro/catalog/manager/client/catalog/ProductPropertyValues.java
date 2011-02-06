@@ -170,10 +170,10 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 
 				// Value + Clear button
 				groupPanelWidgets.panel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
-					StyleUtil.add(this, Styles.valueParent);
+					StyleUtil.addStyle(this, Styles.valueParent);
 					// Real value is added in the bind fase...
 					setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
-						StyleUtil.add(this, Styles.clear);
+						StyleUtil.addStyle(this, Styles.clear);
 							final Widget me = this;
 							addClickHandler(new ClickHandler() {
 								public void onClick(ClickEvent event) {
@@ -240,7 +240,7 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 		setValue(widget, value, property);
 		
 		if (isDerived) {
-			StyleUtil.add(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
+			StyleUtil.addStyle(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 		} else {
 			// TODO Maybe changelistener to remove derived?
 			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
@@ -322,7 +322,7 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 			propertyValueWidgets.valueParentWidget.setWidget(0, 0, result);
 		}
 		
-		StyleUtil.add(result, Styles.valueWidget);
+		StyleUtil.addStyle(result, Styles.valueWidget);
 		
 		return result;
 	}

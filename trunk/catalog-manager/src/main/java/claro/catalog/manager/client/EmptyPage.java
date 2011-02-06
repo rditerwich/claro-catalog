@@ -17,16 +17,10 @@ public class EmptyPage extends Page {
 	public EmptyPage(PlaceController placeController, final String title) {
 		super(placeController);
 		initWidget(new RoundedPanel( RoundedPanel.ALL, 4) {{
-			StyleUtil.add(this, Styles.emptyPage);
+			StyleUtil.addStyle(this, Styles.emptyPage);
 			setBorderColor("white");
 			setWidget(new Header(1, title));
 		}});
-	}
-
-	@Override
-	public Place getPlace() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

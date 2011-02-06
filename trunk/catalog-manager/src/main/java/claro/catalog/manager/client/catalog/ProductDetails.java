@@ -60,15 +60,15 @@ abstract public class ProductDetails extends Composite implements Globals {
 		this.imageProperty = imageProperty;
 		
 		initWidget(new ScrollPanel(new FlowPanel() {{
-			StyleUtil.add(this, Styles.productDetails);
+			StyleUtil.addStyle(this, Styles.productDetails);
 			
 //			add(new Trail());
 				
 				// Title
 				add(new Grid(1, 2) {{
-					StyleUtil.add(this, CatalogManager.Styles.productDetailsTitle);
+					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
 					setWidget(0, 0, productNameBox = new Header(1, "") {{
-						StyleUtil.add(this, ProductMasterDetail.Styles.productname);
+						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productname);
 					}});
 					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
 						protected String getAddCategoryTooltip() {
@@ -91,11 +91,11 @@ abstract public class ProductDetails extends Composite implements Globals {
 				
 				// Image, Price
 				add(new HorizontalPanel(){{
-					StyleUtil.add(this, Styles.imagePrice);
+					StyleUtil.addStyle(this, Styles.imagePrice);
 					setVerticalAlignment(ALIGN_MIDDLE);
 					add(productImage = new MediaWidget(false, true));
 					add(productPrice = new Label() {{
-						StyleUtil.add(this, ProductMasterDetail.Styles.productprice);
+						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productprice);
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 					}});
 					productImage.setImageSize("125px", "125px");

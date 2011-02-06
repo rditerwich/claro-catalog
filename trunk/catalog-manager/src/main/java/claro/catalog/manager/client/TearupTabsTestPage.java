@@ -1,6 +1,5 @@
 package claro.catalog.manager.client;
 
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,11 +20,6 @@ public class TearupTabsTestPage extends Page {
 		}});
 	}
 	
-	@Override
-	public Place getPlace() {
-		return null;
-	}
-
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
