@@ -1,10 +1,9 @@
 package claro.jpa.shop;
 
 import java.io.Serializable;
-import java.lang.Override;
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
+
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Template;
 

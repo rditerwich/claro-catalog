@@ -1,10 +1,6 @@
 package claro.jpa.order;
 
 import java.io.Serializable;
-import java.lang.Integer;
-import java.lang.Long;
-import java.lang.Override;
-import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Transport implements Serializable {

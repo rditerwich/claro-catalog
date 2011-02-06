@@ -1,6 +1,5 @@
 package claro.jpa.directberth;
 
-import claro.jpa.directberth.Label2;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

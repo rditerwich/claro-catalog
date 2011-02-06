@@ -1,7 +1,5 @@
 package claro.jpa.importing;
 
-import java.lang.Override;
-import java.lang.String;
 
 public class Constant extends ImportingExpression {
     private String value;

@@ -1,7 +1,5 @@
 package claro.catalog.impl;
 
-import org.openid4java.discovery.Identifier;
-
 import claro.catalog.command.Login;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;

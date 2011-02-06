@@ -1,9 +1,6 @@
 package claro.jpa.directberth;
 
 import java.io.Serializable;
-import java.lang.Long;
-import java.lang.Override;
-import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Berth implements Serializable {

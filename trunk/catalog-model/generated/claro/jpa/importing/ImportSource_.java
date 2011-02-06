@@ -1,12 +1,12 @@
 package claro.jpa.importing;
 
-import claro.jpa.catalog.Source_;
-import claro.jpa.importing.ImportRules;
-import claro.jpa.jobs.Job;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
+
+import claro.jpa.catalog.Source_;
+import claro.jpa.jobs.Job;
 
 @Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-06T20:51:27")
 @StaticMetamodel(ImportSource.class)

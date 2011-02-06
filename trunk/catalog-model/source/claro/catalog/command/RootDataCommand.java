@@ -1,13 +1,12 @@
 package claro.catalog.command;
 
+import static easyenterprise.lib.command.CommandValidationException.validate;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.SMap;
-
-import static easyenterprise.lib.command.CommandValidationException.validate;
 
 public class RootDataCommand implements Command<RootDataCommand.Result> {
 	private static final long serialVersionUID = 1L;

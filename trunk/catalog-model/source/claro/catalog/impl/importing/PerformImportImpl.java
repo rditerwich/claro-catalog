@@ -2,6 +2,7 @@ package claro.catalog.impl.importing;
 
 import static claro.catalog.util.CatalogModelUtil.propertyLabel;
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Iterables.concat;
 import static easyenterprise.lib.util.CollectionUtil.unique;
@@ -10,7 +11,6 @@ import static easyenterprise.lib.util.FileUtil.createTempDir;
 import static easyenterprise.lib.util.ObjectUtil.orElse;
 import static easyenterprise.lib.util.StringUtil.afterLast;
 import static easyenterprise.lib.util.ZipUtil.unzip;
-import static org.hsqldb.lib.StringUtil.isEmpty;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -338,7 +338,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 		
 		// separator chars
 		String separators = fileFormat.getSeparatorChars();
-		if (isEmpty(separators)) {
+		if (isNullOrEmpty(separators)) {
 			separators = ",;\t";
 		}
 		

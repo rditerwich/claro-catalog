@@ -4,7 +4,6 @@ import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
-import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;

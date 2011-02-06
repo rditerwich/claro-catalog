@@ -1,8 +1,6 @@
 package claro.jpa.stock;
 
 import java.io.Serializable;
-import java.lang.Long;
-import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class Underlying implements Serializable {

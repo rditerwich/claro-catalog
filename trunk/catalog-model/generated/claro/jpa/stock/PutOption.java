@@ -1,7 +1,6 @@
 package claro.jpa.stock;
 
 import java.io.Serializable;
-import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class PutOption extends Option implements Serializable {

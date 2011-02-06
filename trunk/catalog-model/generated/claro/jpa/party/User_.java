@@ -1,6 +1,5 @@
 package claro.jpa.party;
 
-import claro.jpa.party.Party;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

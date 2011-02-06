@@ -1,7 +1,7 @@
 package claro.jpa.stock;
 
-import claro.jpa.stock.OptionId;
 import java.util.Date;
+
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;

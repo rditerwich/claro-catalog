@@ -4,9 +4,10 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.List;
 
+import claro.catalog.data.PropertyInfo;
+
 import com.google.common.base.Objects;
 
-import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;

@@ -1,9 +1,6 @@
 package claro.jpa.stock;
 
 import java.io.Serializable;
-import java.lang.Double;
-import java.lang.Long;
-import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

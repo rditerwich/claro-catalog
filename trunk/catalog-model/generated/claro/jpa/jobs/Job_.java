@@ -1,8 +1,7 @@
 package claro.jpa.jobs;
 
-import claro.jpa.jobs.Frequency;
-import claro.jpa.jobs.JobResult;
 import java.sql.Timestamp;
+
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;

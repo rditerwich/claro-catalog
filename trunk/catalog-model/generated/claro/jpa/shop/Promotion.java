@@ -1,11 +1,10 @@
 package claro.jpa.shop;
 
 import java.io.Serializable;
-import java.lang.Long;
-import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import claro.jpa.catalog.Template;
 
 @SuppressWarnings("serial")

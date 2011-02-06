@@ -1,9 +1,9 @@
 package claro.catalog.command.items;
 
-import java.util.List;
-
 import static easyenterprise.lib.command.CommandValidationException.validate;
 import static easyenterprise.lib.util.CollectionUtil.isEmpty;
+
+import java.util.List;
 
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;

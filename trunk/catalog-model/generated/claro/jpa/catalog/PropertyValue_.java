@@ -1,10 +1,5 @@
 package claro.jpa.catalog;
 
-import claro.jpa.catalog.Item;
-import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.Property;
-import claro.jpa.catalog.Source;
-import claro.jpa.catalog.StagingArea;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

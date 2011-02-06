@@ -11,7 +11,6 @@ import claro.catalog.command.importing.DeleteImportedData;
 import claro.catalog.model.CatalogModel;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Item;
-import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.importing.ImportSource;
 import easyenterprise.lib.cloner.BasicView;

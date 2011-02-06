@@ -1,13 +1,13 @@
 package claro.catalog.util;
 
-import java.util.Collection;
-
-import com.google.common.base.Objects;
-
 import static com.google.common.base.Objects.equal;
+
+import java.util.Collection;
 
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Property;
+
+import com.google.common.base.Objects;
 
 public class CatalogModelUtil {
 	public static Label find(Collection<Label> labels, String label, String language) {

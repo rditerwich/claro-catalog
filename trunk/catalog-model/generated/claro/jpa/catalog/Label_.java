@@ -1,8 +1,5 @@
 package claro.jpa.catalog;
 
-import claro.jpa.catalog.EnumValue;
-import claro.jpa.catalog.Property;
-import claro.jpa.catalog.PropertyGroup;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

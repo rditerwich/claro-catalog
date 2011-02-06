@@ -1,10 +1,5 @@
 package claro.jpa.importing;
 
-import claro.jpa.importing.ImportFileFormat;
-import claro.jpa.importing.ImportProducts;
-import claro.jpa.importing.ImportSource;
-import claro.jpa.importing.TabularFileFormat;
-import claro.jpa.importing.XmlFileFormat;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

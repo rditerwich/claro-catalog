@@ -1,6 +1,5 @@
 package claro.jpa.stock;
 
-import claro.jpa.stock.OptionIdType;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

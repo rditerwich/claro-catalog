@@ -1,11 +1,5 @@
 package claro.jpa.catalog;
 
-import claro.jpa.catalog.Category;
-import claro.jpa.catalog.Item;
-import claro.jpa.catalog.Language;
-import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.PropertyGroup;
-import claro.jpa.catalog.Template;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;

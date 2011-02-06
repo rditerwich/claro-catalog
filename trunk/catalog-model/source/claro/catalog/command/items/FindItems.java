@@ -1,7 +1,6 @@
 package claro.catalog.command.items;
 
 import java.util.List;
-import java.util.Map;
 
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;

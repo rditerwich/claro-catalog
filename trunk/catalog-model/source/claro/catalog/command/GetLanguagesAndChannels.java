@@ -1,11 +1,10 @@
 package claro.catalog.command;
 
+import static easyenterprise.lib.command.CommandValidationException.validate;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.SMap;
-
-import static easyenterprise.lib.command.CommandValidationException.validate;
 
 
 public class GetLanguagesAndChannels implements Command<GetLanguagesAndChannels.Result> {

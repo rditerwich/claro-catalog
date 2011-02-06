@@ -3,8 +3,6 @@ package claro.catalog.impl.items;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.base.Objects;
-
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.OutputChannel;

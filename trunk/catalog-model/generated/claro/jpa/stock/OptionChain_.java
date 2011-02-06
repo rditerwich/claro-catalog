@@ -1,8 +1,5 @@
 package claro.jpa.stock;
 
-import claro.jpa.stock.Exchange;
-import claro.jpa.stock.Option;
-import claro.jpa.stock.Underlying;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;

@@ -2,8 +2,8 @@ package claro.catalog.command.items;
 
 
 import static claro.catalog.model.CatalogModelTestUtil.addCategory;
-import static claro.catalog.model.CatalogModelTestUtil.addProduct;
 import static claro.catalog.model.CatalogModelTestUtil.addGroup;
+import static claro.catalog.model.CatalogModelTestUtil.addProduct;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -25,7 +25,6 @@ import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
-import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
 import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;

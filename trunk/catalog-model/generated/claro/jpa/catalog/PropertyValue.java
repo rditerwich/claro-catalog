@@ -1,12 +1,6 @@
 package claro.jpa.catalog;
 
 import java.io.Serializable;
-import java.lang.Boolean;
-import java.lang.Double;
-import java.lang.Integer;
-import java.lang.Long;
-import java.lang.Override;
-import java.lang.String;
 
 @SuppressWarnings("serial")
 public class PropertyValue implements Serializable {

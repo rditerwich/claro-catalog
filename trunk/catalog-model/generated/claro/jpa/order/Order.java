@@ -1,12 +1,10 @@
 package claro.jpa.order;
 
 import java.io.Serializable;
-import java.lang.Double;
-import java.lang.Long;
-import java.lang.Override;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import claro.jpa.party.Address;
 import claro.jpa.party.User;
 import claro.jpa.shop.Shop;

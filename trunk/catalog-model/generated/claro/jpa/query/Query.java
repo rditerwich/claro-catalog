@@ -1,8 +1,6 @@
 package claro.jpa.query;
 
 import java.io.Serializable;
-import java.lang.Long;
-import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class Query implements Serializable {

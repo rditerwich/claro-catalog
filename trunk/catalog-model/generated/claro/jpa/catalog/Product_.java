@@ -1,6 +1,5 @@
 package claro.jpa.catalog;
 
-import claro.jpa.catalog.Template;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.StaticMetamodel;

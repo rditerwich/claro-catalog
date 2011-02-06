@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import claro.catalog.model.test.util.CatalogTestBase;
