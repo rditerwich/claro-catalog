@@ -37,7 +37,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
-import org.hsqldb.lib.StringUtil;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
@@ -63,6 +62,7 @@ import claro.jpa.importing.TabularFileFormat;
 import claro.jpa.jobs.JobResult;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 
 import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.Cloner;
@@ -402,7 +402,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 
 		// determine match value
 		String matchValue = orElse(propertyValues.get(matchProperty), "");
-		if (StringUtil.isEmpty(matchValue)) return;
+		if (Strings.isNullOrEmpty(matchValue)) return;
 		
 		// determine data language
 		String language = languageExpression.evaluate(exprContext).trim();
