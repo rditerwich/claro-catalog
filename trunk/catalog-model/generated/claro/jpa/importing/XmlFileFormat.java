@@ -1,6 +1,7 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
+import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class XmlFileFormat extends ImportFileFormat implements Serializable {

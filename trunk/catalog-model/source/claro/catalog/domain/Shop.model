@@ -27,6 +27,13 @@ Package {
                     type = primitive:String
                     lower = 0
                 }
+                Attribute {
+                    name = languages
+                    type = catalog:Language
+                    isOrdered = true
+                    lower = 0
+                    upper = {}
+                }
                 /**
                  * IETF language tag. See http://en.wikipedia.org/wiki/IETF_language_tag.
                  * When not specified (null), denotes a default value applicable for all languages.

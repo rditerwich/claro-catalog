@@ -1,6 +1,9 @@
 package claro.jpa.party;
 
 import java.io.Serializable;
+import java.lang.Long;
+import java.lang.Override;
+import java.lang.String;
 
 @SuppressWarnings("serial")
 public class Party implements Serializable {

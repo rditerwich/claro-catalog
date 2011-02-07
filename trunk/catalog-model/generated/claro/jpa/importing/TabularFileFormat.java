@@ -1,6 +1,9 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
+import java.lang.Boolean;
+import java.lang.Override;
+import java.lang.String;
 
 @SuppressWarnings("serial")
 public class TabularFileFormat extends ImportFileFormat implements Serializable {

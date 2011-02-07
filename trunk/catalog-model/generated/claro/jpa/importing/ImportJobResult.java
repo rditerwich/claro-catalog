@@ -1,7 +1,8 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
-
+import java.lang.Override;
+import java.lang.String;
 import claro.jpa.jobs.JobResult;
 
 @SuppressWarnings("serial")

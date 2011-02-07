@@ -1,11 +1,17 @@
 package claro.jpa.catalog;
 
+import claro.jpa.catalog.Category;
+import claro.jpa.catalog.Item;
+import claro.jpa.catalog.Language;
+import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.PropertyGroup;
+import claro.jpa.catalog.Template;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-06T20:51:27")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-07T14:18:39")
 @StaticMetamodel(Catalog.class)
 public class Catalog_ { 
 

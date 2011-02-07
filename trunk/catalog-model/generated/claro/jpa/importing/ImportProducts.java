@@ -1,9 +1,11 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
+import java.lang.Long;
+import java.lang.Override;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
-
 import claro.jpa.catalog.Property;
 
 @SuppressWarnings("serial")

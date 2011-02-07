@@ -1,6 +1,8 @@
 package claro.jpa.importing;
 
 import java.io.Serializable;
+import java.lang.Long;
+import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class ImportFileFormat implements Serializable {

@@ -1,6 +1,9 @@
 package claro.jpa.catalog;
 
 import java.io.Serializable;
+import java.lang.Integer;
+import java.lang.Long;
+import java.lang.Override;
 
 @SuppressWarnings("serial")
 public class ParentChild implements Serializable {

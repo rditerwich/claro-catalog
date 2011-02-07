@@ -1,13 +1,15 @@
 package claro.jpa.importing;
 
+import claro.jpa.catalog.Property;
+import claro.jpa.importing.ImportCategory;
+import claro.jpa.importing.ImportProperty;
+import claro.jpa.importing.ImportRules;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-import claro.jpa.catalog.Property;
-
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-06T20:51:27")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-07T14:18:39")
 @StaticMetamodel(ImportProducts.class)
 public class ImportProducts_ { 
 

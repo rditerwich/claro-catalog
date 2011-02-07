@@ -1,7 +1,10 @@
 package claro.jpa.shop;
 
 import java.io.Serializable;
-
+import java.lang.Double;
+import java.lang.Integer;
+import java.lang.Override;
+import java.lang.String;
 import claro.jpa.catalog.Product;
 
 @SuppressWarnings("serial")

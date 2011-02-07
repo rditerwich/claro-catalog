@@ -1,6 +1,9 @@
 package claro.jpa.catalog;
 
 import java.io.Serializable;
+import java.lang.Long;
+import java.lang.Override;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 
