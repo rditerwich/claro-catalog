@@ -20,17 +20,24 @@ public class WebshopPage extends Page {
 	private ShopModel model = new ShopModel() {
 
 		public void setShop(claro.jpa.shop.Shop shop) {
+			super.setShop(shop);
 		};
 		
-		protected void showRow(int row) {
-			masterDetail.openDetail(row);
-		};
-
 		@Override
 		protected void renderAll() {
-			masterDetail.setCurrentRow(master.findObject(getShop()));
-			master.render();
-			detail.render();
+			if (getShop() != null) {
+				master.render();
+				detail.render();
+				masterDetail.setCurrentRow(master.findObject(getShop()));
+			} else {
+				master.render();
+				masterDetail.closeDetail(false);
+			}
+		}
+
+		@Override
+		protected void openDetail() {
+			masterDetail.openDetail();
 		}
 	};
 	
@@ -43,6 +50,7 @@ public class WebshopPage extends Page {
 
 	@Override
 	public void show() {
+		// TODO: Do not refresh data every time this page is shown?
 		model.fetchShops();
 	}
 
@@ -58,6 +66,7 @@ public class WebshopPage extends Page {
 				}});
 			}});
 		}});
+		
 	}
 }
 

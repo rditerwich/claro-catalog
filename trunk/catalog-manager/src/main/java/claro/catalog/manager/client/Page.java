@@ -21,7 +21,7 @@ public abstract class Page extends Composite implements RequiresResize, Provides
 	
 	@Override
 	public void onResize() {
-		if (this == CatalogManager.currentPage && getWidget() instanceof RequiresResize) {
+		if (MainMenu.isCurrentPage(this) && getWidget() instanceof RequiresResize) {
 			((RequiresResize) getWidget()).onResize();
 		}
 	}

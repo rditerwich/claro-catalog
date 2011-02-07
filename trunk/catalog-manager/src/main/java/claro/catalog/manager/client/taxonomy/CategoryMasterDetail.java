@@ -139,6 +139,15 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		return filterString;
 	}
 	
+//	@Override
+//	protected int getExtraTableWidth() {
+//		return 24; // Compensation for the rounded panels
+//	}
+//	
+//	@Override
+//	protected int getExtraTableHeight() {
+//		return 48; // Compensation for the rounded panels
+//	}
 
 
 	private void createMasterPanel() {
@@ -235,6 +244,8 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 			// Rerender row
 			render(itemRow, categoryRows.get(itemRow));
+
+//			masterChanged();
 		} else {
 			int parentIndex = -1;
 			if (parentId != null) {
@@ -331,6 +342,8 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			
 			i++;
 		}
+
+//		masterChanged();
 	}
 
 	private void render(int i, CategoryRow categoryRow) {

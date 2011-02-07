@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,7 +35,7 @@ import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 
-abstract public class CategoryDetails extends Composite implements Globals {
+abstract public class CategoryDetails extends Composite implements Globals, RequiresResize {
 	private enum Styles implements Style { categoryDetails, imagePrice, categoryname }
 	
 	private HasText categoryNameBox;
@@ -175,7 +176,7 @@ abstract public class CategoryDetails extends Composite implements Globals {
 		
 		inheritedPropertyValuesComponent.setItemData(itemId, groups, parentExtentWithSelf, inheritedPropertyValues);
 		
-		render();
+		render();	
 	}
 	
 
@@ -185,6 +186,9 @@ abstract public class CategoryDetails extends Composite implements Globals {
 	}
 
 
+	public void onResize() {
+		pullups.onResize();
+	}
 	
 	private static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> splitValues(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values, Long itemId, boolean inheritedProperty) {
 		SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> result = SMap.empty();

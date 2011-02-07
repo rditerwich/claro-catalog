@@ -54,20 +54,8 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 		productDetailsTitle
 	}
 
-//	private final static I18NCatalogXS i18n = GWT.create(I18NCatalogXS.class);
-
-//	private GlobalChoices choices = new GlobalChoices();
-//	private final ProductsPresenter catalog = new ProductsPresenter();
-//	private final TaxonomiesPresenter taxonomies = new TaxonomiesPresenter();
-//	// private final CatalogPresenter cp = new CatalogPresenter();
-//	private final NavigationPresenter navigation = new NavigationPresenter();
-//	private final PromotionPresenter promotions = new PromotionPresenter();
-//	private final OrderPresenter orders = new OrderPresenter();
-//	private final SettingsPresenter settings = new SettingsPresenter();
-
 	public static PropertyStringConverter propertyStringConverter = new PropertyStringConverter();
 	
-	public static Page currentPage;
 	private static User currentUser;
 	private Label username;
 	
@@ -160,7 +148,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				
 			}}, 40);
 			add(pageContainer);
-//			
+			
 //			if (false)
 //			add(new TabLayoutPanel(50, Unit.PX) {{
 //				this.addStyleName("mainTabPanel");

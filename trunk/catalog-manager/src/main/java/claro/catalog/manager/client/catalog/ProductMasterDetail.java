@@ -146,6 +146,15 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		return filterString;
 	}
 	
+//	@Override
+//	protected int getExtraTableWidth() {
+//		return 24; // Compensation for the rounded panel
+//	}
+//	
+//	@Override
+//	protected int getExtraTableHeight() {
+//		return 48; // Compensation for the rounded panel
+//	}
 
 	protected void createMasterPanel() {
 		productTable = new Table();
@@ -249,6 +258,8 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 			productRow.isChanged = true;
 			
 			render(itemRow, productRow);
+			
+//			masterChanged();
 		} else {
 			itemRow = 0;
 			productRows.add(itemRow, new ProductRow(productId, true));
@@ -345,6 +356,8 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 			
 			i++;
 		}
+		
+//		masterChanged();
 	}
 
 	private void render(int i, ProductRow productRow) {

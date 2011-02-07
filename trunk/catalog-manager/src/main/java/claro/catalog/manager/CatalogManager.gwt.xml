@@ -5,6 +5,7 @@
   <inherits name="com.google.gwt.resources.Resources" />
   <inherits name="com.google.gwt.place.Place" /> 
   <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="com.google.gwt.i18n.CldrLocales"/>
   <inherits name="com.google.gwt.user.datepicker.DatePicker"/>
   <inherits name="com.google.gwt.user.ImageBundle"/>
     
@@ -20,7 +21,11 @@
   <inherits name='claro.catalog-server'/>
   <inherits name='org.cobogw.gwt.user.User' />
 
-
+  <!-- i18n -->
+  <extend-property name="locale" values="en"/>
+  <extend-property name="locale" values="de"/>
+  <extend-property name="locale" values="fr"/>
+  
   <!-- Specify the app entry point class.                         -->
   <entry-point class='claro.catalog.manager.client.CatalogManager'/>
 

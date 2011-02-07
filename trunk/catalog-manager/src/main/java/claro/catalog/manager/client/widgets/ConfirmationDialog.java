@@ -15,13 +15,20 @@ import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.EEButtonBar;
 
 public abstract class ConfirmationDialog extends DialogBox implements Globals {
+	private Label messageLabel;
+	private final String message;
 
+	
+	public ConfirmationDialog(final ImageResource icon) {
+		this(null, icon);
+	}
 	public ConfirmationDialog(final String message, final ImageResource icon) {
+		this.message = message;
 		setModal(true);
 		setWidget(new VerticalPanel() {{
 			add(new HorizontalPanel() {{
 				add(new Image(icon));
-				add(new Label(message));
+				add(messageLabel = new Label());
 			}});
 			add(new EEButtonBar() {{
 				add(new EEButton(messages.yesButton()) {{
@@ -45,5 +52,18 @@ public abstract class ConfirmationDialog extends DialogBox implements Globals {
 		hide();
 	}
 	
+	@Override
+	public void show() {
+		if (message != null) {
+			messageLabel.setText(message);
+		} else {
+			messageLabel.setText(getMessage());
+		}
+		super.show();
+	}
+	
+	protected String getMessage() {
+		return "Are you sure?";
+	}
 	protected abstract void yesPressed();
 }

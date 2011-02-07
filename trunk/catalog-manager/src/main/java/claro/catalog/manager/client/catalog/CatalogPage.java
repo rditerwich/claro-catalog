@@ -31,8 +31,6 @@ public class CatalogPage extends Page {
 	private LayoutPanel mainPanel;
 	private ProductMasterDetail productMasterDetail;
 
-	private boolean initialized;
-	
 	private PropertyInfo nameProperty;
 	
 	public CatalogPage(PlaceController placeController) {
@@ -42,16 +40,11 @@ public class CatalogPage extends Page {
 	}
 
 	public void show() {
-		initializeMainPanel();
+		// TODO Currently does not update anything... should it?
 	}
 	
-	private void initializeMainPanel() {
-		if (initialized) {
-			return;
-		}
-
-		initialized = true;
-		
+	@Override
+	protected void initialize() {
 		mainPanel.add(productMasterDetail = new ProductMasterDetail() {
 			protected void productSelected(final Long productId) {
 				updateProductSelection(productId);

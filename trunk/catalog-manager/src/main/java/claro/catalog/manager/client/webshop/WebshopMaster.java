@@ -52,10 +52,12 @@ public class WebshopMaster extends TableWithObjects<Shop> implements Globals {
 		for (int row = 0; row < model.getShops().size(); row++) {
 			renderRow(row);
 		}
+		
 	}
 	
 	public void renderRow(int row) {
 		Shop shop = model.getShops().get(row);
+		setObject(row, shop);
 		((HasText) getWidget(row, NAME_COL)).setText(shop.getName());
 		((HasText) getWidget(row, URL_COL)).setText(orElse(shop.getUrlPrefix(), ""));
 	}

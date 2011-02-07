@@ -397,9 +397,20 @@ ol li .send {
 
 /** master detail styles */
 
-.ee-MasterDetailDetailContainer { background-color: #E0E7FC; border: 3px solid #2E3242; margin-top: 12px; margin-bottom: 12px; margin-right: 12px; }
+.ee-MasterDetailDetailContainer { background-color: #E0E7FC; border: 3px solid #2E3242; margin-top: 12px; margin-bottom: 12px; margin-right: 12px; margin-left: 6px;
+-moz-box-shadow: 0 0 3px 3px #888;
+-webkit-box-shadow: 0 0 3px 3px #888;
+box-shadow: 0 0 3px 3px #888;
+-moz-border-radius: 15px;
+border-radius: 15px;
+}
 .ee-MasterDetailErasePanel { background-color: #E0E7FC;}
-.ee-MasterDetailSelectionPanel { border: 3px solid #2E3242;}
+.ee-MasterDetailSelectionPanel { border: 3px solid #2E3242; margin: 6px;
+-moz-box-shadow: 0 0 3px 3px #888;
+-webkit-box-shadow: 0 0 3px 3px #888;
+box-shadow: 0 0 3px 3px #888;
+
+}
 .ee-MasterDetailSelectionPanelContent { border-left: 14px solid #E0E7FC; }
 .ee-MasterDetail table.ee-masterDetailTable td { padding: 0px; margin: 0px; padding-right: 12px; }
 .ee-MasterDetailSelection td { background-color: #E0E7FC;}
@@ -736,6 +747,58 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	padding-right: 6px;
 }
 .categoryTree .gwt-TreeItem:hover {
+#	color: #DEE5F2;
+	color: white;
+	background-color: #5A6986;
+}
+
+/** Languages component */
+.languageStyle {
+	margin-left: 10px;
+}
+.languageStyle table {
+	border-spacing: 0px;
+}
+.languageStyle table td {
+	border-collapse: collapse;
+	padding: 0px;
+}
+.languageStyle a {
+	font-size: x-small;
+	text-decoration: none;
+	color: #5A6986;
+#	background-color: #DEE5F2;
+	background-color: white;
+	padding-bottom: 1px;
+	padding-left: 4px;
+	padding-right : 4px;
+}
+.languageStyle a:hover {
+#	color: #DEE5F2;
+	color: white;
+	background-color: #5A6986;
+}
+
+.languageStyle a.languageName {
+	border-right: 1px solid black;
+	padding-right: 6px;
+}
+
+.languageStyle a.languageAdd {
+	margin-left: 10px;
+}
+
+.languageList .gwt-Label {
+	font-size: x-small;
+	text-decoration: none;
+	color: #5A6986;
+#	background-color: #DEE5F2;
+	background-color: white;
+	padding-bottom: 1px;
+	padding-left: 4px;
+	padding-right: 6px;
+}
+.languageList .gwt-TreeItem:hover {
 #	color: #DEE5F2;
 	color: white;
 	background-color: #5A6986;

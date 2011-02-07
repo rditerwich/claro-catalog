@@ -16,12 +16,16 @@ import javax.persistence.criteria.Root;
 
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
+import claro.jpa.catalog.Catalog_;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Category_;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Label_;
+import claro.jpa.catalog.Language;
+import claro.jpa.catalog.Language_;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.OutputChannel_;
 import claro.jpa.catalog.ParentChild;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyGroup;
@@ -38,6 +42,7 @@ import claro.jpa.importing.ImportSource_;
 import claro.jpa.jobs.Job;
 import claro.jpa.jobs.JobResult;
 import claro.jpa.jobs.JobResult_;
+import claro.jpa.shop.Shop;
 
 import com.google.common.base.Objects;
 
@@ -402,5 +407,27 @@ public class CatalogDao {
 			entityManager.remove(label);
 		}
 		entityManager.remove(entity);
+	}
+
+	public List<Shop> getShops(Long catalogId, Paging paging) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<Shop> cQuery = cb.createQuery(Shop.class);
+		
+		Root<Shop> shops = cQuery.from(Shop.class);
+		Path<Long> catalogIdAttr = shops.get(OutputChannel_.catalog).get(Catalog_.id);
+
+		cQuery
+			.select(shops)
+			.where(cb.equal(catalogIdAttr, catalogId))
+			.orderBy(cb.asc(shops.get(OutputChannel_.name)));
+		
+		
+		TypedQuery<Shop> query = entityManager.createQuery(cQuery);
+		if (paging.shouldPage()) {
+			query.setFirstResult(paging.getPageStart());
+			query.setMaxResults(paging.getPageSize());
+		}
+		
+		return query.getResultList();
 	}
 }

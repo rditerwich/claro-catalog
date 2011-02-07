@@ -28,8 +28,6 @@ public class TaxonomyPage extends Page {
 	private LayoutPanel mainPanel;
 	private CategoryMasterDetail categoryMasterDetail;
 
-	private boolean initialized;
-	
 	private PropertyInfo nameProperty;
 	
 	public TaxonomyPage(PlaceController placeController) {
@@ -39,16 +37,10 @@ public class TaxonomyPage extends Page {
 	}
 
 	public void show() {
-		initializeMainPanel();
 	}
 	
-	private void initializeMainPanel() {
-		if (initialized) {
-			return;
-		}
-
-		initialized = true;
-		
+	@Override
+	protected void initialize() {
 		mainPanel.add(categoryMasterDetail = new CategoryMasterDetail() {
 			protected void categorySelected(final Long categoryId) {
 				updateCategorySelection(categoryId);

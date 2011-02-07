@@ -304,4 +304,19 @@ public interface I18NCatalog extends Messages {
 	String newWebshopLink();
 	String removeImportedDataMessage();
 	String removeImportedDataButton();
+	
+	String loadingWebShopsMessage();
+	String addLanguageLink();
+	String noLanguagesAvailable();
+	String shopNameHelp();
+	String shopUrlPrefixLabel();
+	String urlPrefixHelp();
+	String defaultlanguageLabel();
+	String defaultLanguageHelp();
+	String shopLanguagesLabel();
+	String shopLanguagesHelp();
+	String removeShopConfirmationMessage(String name);
+	String removeShopLink();
+	String loadingWebShopsAction();
+	String defaultLanguageName();
 }

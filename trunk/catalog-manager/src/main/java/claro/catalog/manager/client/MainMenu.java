@@ -18,7 +18,7 @@ public class MainMenu extends Composite {
 
 	private Map<String, PageWrapper> pages = new HashMap<String, MainMenu.PageWrapper>();
 	
-	private static PageWrapper currentPage;
+	public static PageWrapper currentPage;
 
 	private final HasWidgets panelContainer;
 	private final HorizontalPanel menuPanel;
@@ -41,6 +41,10 @@ public class MainMenu extends Composite {
 		wrapper.link = new Hyperlink("<span><span>" + menuText + "</span></span>", true, wrapper.token);
 		menuPanel.add(wrapper.link);
 		pages.put(wrapper.token, wrapper);
+	}
+	
+	public static boolean isCurrentPage(Page page) {
+		return currentPage != null && currentPage.page == page;
 	}
 	
 	private void showPage(String historyToken) {

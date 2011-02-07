@@ -125,7 +125,9 @@ public class CategoriesWidget extends Composite implements Globals {
 					if (addCategoryPanel == null) {
 						addCategoryPanel = new PopupPanel(true) {{
 							StyleUtil.addStyle(this, Styles.categoryTree);
-							setWidget(new ScrollPanel(new Label(messages.loading())));
+							setWidget(new ScrollPanel(new Label(messages.loading())) {{
+								setPixelSize(200, 400);
+							}});
 						}};
 					}
 
