@@ -30,7 +30,7 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 		} else {
 			
 			// Check languages before merging
-			XXX
+//			XXX
 			List<Language> languages = new ArrayList();
 			for (Language language : result.shop.getLanguages()) {
 				languages.add(em.find(Language.class, language));
