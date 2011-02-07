@@ -63,7 +63,7 @@ public class CatalogModel {
 		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
-		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup);
+		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup, true);
   }
 	
 	public Catalog getCatalog() {
