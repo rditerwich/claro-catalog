@@ -36,6 +36,7 @@ public class CatalogModel {
 	public final PropertyModel priceProperty;
 	public final PropertyModel supplierProperty;
 	public final PropertyModel supplierArticleNumberProperty;
+	public final PropertyModel visibleProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
 	private PropertyGroup imagesPropertyGroup;
@@ -62,6 +63,7 @@ public class CatalogModel {
 		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
+		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup);
   }
 	
 	public Catalog getCatalog() {
