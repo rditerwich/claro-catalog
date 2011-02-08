@@ -14,8 +14,6 @@ object Cms {
   val components = RulesSeq[() => Component]
   val logger = Logger("CMS")
 
-  def entityManager = Website.instance.entityManagerFactory("claro.jpa.catalog").createEntityManager
-
   val debugMode : Boolean = System.getProperties().isSet("claro.cms.debug")
   
   def caching = !debugMode
@@ -26,6 +24,11 @@ object Cms {
   components.append(() => new claro.cms.components.MenuComponent)
 
   object locale extends RequestVar[Locale](Website.instance.defaultLocale)
+  
+  def previewMode = S.request match {
+  	case Full(request) => request.uri.startsWith("preview-") || request.uri.startsWith("preview.")
+  	case _ => false
+  }
   
   if (debugMode) {
   	println("Claro CMS started in DEBUG mode")

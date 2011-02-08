@@ -1,29 +1,32 @@
 package claro.cms.webshop
-
-import net.liftweb.http.{ RequestVar, SessionVar, Req, S }
-import net.liftweb.common.{ Box, Full }
-import java.util.{ Locale, LinkedHashSet }
-
-import scala.xml.NodeSeq
-import scala.xml.Text
-import scala.collection.{ mutable, immutable, Set }
-import scala.collection.JavaConversions._
-
 import claro.jpa
-import claro.common.util.{ Delegate, Lazy, KeywordMap, Locales, ProjectionMap }
+import claro.catalog.CatalogDao
+import claro.catalog.data.MediaValue
+import claro.catalog.model.{PropertyModel, ItemModel, CatalogModel}
+import claro.cms.Cms
+import claro.common.util.{Delegate, KeywordMap, Locales, ProjectionMap}
 import claro.common.util.Conversions._
-import claro.cms.Website
+import easyenterprise.lib.util.{Money}
+import java.util.Locale
+import net.liftweb.http.{RequestVar, SessionVar, LiftRules}
+import net.liftweb.http.provider.servlet.HTTPServletContext
+import scala.collection.{mutable, immutable, Set}
+import scala.collection.JavaConversions._
 
 object WebshopModel {
 
-  var shopCache = Lazy(new WebshopCache)
-  object shop extends RequestVar[Shop](shopCache.get.shopsByName(rich(Website.instance.config.properties)("shop.name", "Shop")))
+	lazy val dao = new CatalogDao(LiftRules.context match {
+    case context: HTTPServletContext => Map(context.initParams:_*)
+    case _ => Map[String,String]()
+  })
+	
+  object shop extends RequestVar[Shop](WebshopCache(Cms.previewMode, Cms.locale.getISO3Language))
 
   object currentProductVar extends RequestVar[Option[String]](None)
   object currentCategoryVar extends RequestVar[Option[String]](None)
   object currentSearchStringVar extends RequestVar[Option[String]](None)
   object currentUserVar extends SessionVar[Option[jpa.party.User]](None)
-  object currentOrder extends SessionVar[Order](new Order(new jpa.order.Order, shop.mapping))
+  object currentOrder extends SessionVar[Order](new Order(new jpa.order.Order, shop.cacheData, shop.mapping))
 
   def currentProduct: Option[Product] = currentProductVar.is match {
     case Some(id) => Some(shop.productsById(id.toLong))
@@ -68,18 +71,12 @@ object WebshopModel {
       case None => false
     }
   }
-
-  def flush = {
-    shopCache.reset
-    shop.remove()
-    shop.get
-  }
 }
 
 class Mapping(product: Option[Product], cacheData: WebshopData) {
-  lazy val categories = ProjectionMap((c: jpa.catalog.Category) => new Category(c, c, product, cacheData, this))
-  lazy val products = ProjectionMap((p: jpa.catalog.Product) => new Product(p, p, cacheData, this))
-  lazy val properties = ProjectionMap((p: jpa.catalog.Property) => new Property(p, noPropertyValue, product, cacheData, this))
+  lazy val categories = ProjectionMap((item : ItemModel) => new Category(item, cacheData, this))
+  lazy val products = ProjectionMap((item : ItemModel) => new Product(item, cacheData, this))
+  lazy val properties = ProjectionMap((property : PropertyModel) => new Property(property, cacheData, this))
   lazy val promotions = ProjectionMap((p: jpa.shop.Promotion) => p match {
     case p: jpa.shop.VolumeDiscountPromotion => new VolumeDiscountPromotion(p, cacheData, this)
     case _ => new Promotion(p, cacheData, this)
@@ -98,22 +95,19 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
   val defaultLanguage = shop.getDefaultLanguage getOrElse "en"
 
   val topLevelCategories: Seq[Seq[Category]] =
-    cacheData.topLevelNavigation.map(_.map(n => mapping.categories(n.getCategory)))
-
-  val excludedProperties: Set[Property] =
-    cacheData.excludedProperties map (mapping.properties) toSet
+    cacheData.topLevelNavigation.map(_.map(n => mapping.categories(cacheData.item(n.getCategory))))
 
   val promotions: Set[Promotion] =
     cacheData.promotions map (mapping.promotions) toSet
 
   val categories: Set[Category] =
-    cacheData.categories map (mapping.categories) toSet
-
-  val categoriesById: collection.Map[Long, Category] =
-    categories mapBy (_.id)
+    cacheData.items.filter(_.isCategory) map (mapping.categories) toSet
 
   val products: Set[Product] =
-    cacheData.products map (mapping.products) toSet
+  	cacheData.items.filter(_.isProduct) map (mapping.products) toSet
+    	
+  val categoriesById: collection.Map[Long, Category] =
+    categories mapBy (_.id)
 
   val productsById: Map[Long, Product] =
     products mapBy (_.id)
@@ -132,33 +126,33 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
 }
 
 trait Item {
-	val item : jpa.catalog.Item
+	val item : ItemModel
 	val cacheData: WebshopData
 	val mapping: Mapping
   
-	// terminate recursion
-	item match {
-		case product : jpa.catalog.Product => mapping.products(product) = this.asInstanceOf[Product]
-		case category : jpa.catalog.Category => mapping.categories(category) = this.asInstanceOf[Category]
-	}
+	val isCategory = item.isCategory
+	val isProduct = item.isProduct
 	
-	val id = item.getId.longValue
-	val parentCategories : Seq[Category] = item.getParents.toSeq.map(_.getParent).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-	val parentProducts : Seq[Product] = item.getParents.toSeq.map(_.getParent).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
+	// terminate recursion
+	if (isCategory) mapping.categories(item) = this.asInstanceOf[Category]
+	if (isProduct) mapping.products(item) = this.asInstanceOf[Product]
+	
+	val id = item.getItemId.longValue
+	val parentCategories : Seq[Category] = item.getParents.toSeq.filter(_.isCategory).map(mapping.categories)
+	val parentProducts : Seq[Product] = item.getParents.toSeq.filter(_.isProduct).map(mapping.products)
 	val parents : Seq[Item] = parentCategories ++ parentProducts
-	val parentCategoryExtent : Seq[Category] = cacheData.itemParentExtent(item).toSeq.classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-	val parentProductExtent : Seq[Product] = cacheData.itemParentExtent(item).toSeq.classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
+	val parentCategoryExtent : Seq[Category] = item.getParentExtent.toSeq.filter(_.isCategory).map(mapping.categories)
+	val parentProductExtent : Seq[Product] = item.getParentExtent.toSeq.filter(_.isProduct).map(mapping.products)
 	val parentExtent : Seq[Item] = parentCategoryExtent ++ parentProductExtent
-  val childCategories : Seq[Category] = item.getChildren.toSeq.map(_.getChild).classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-  val childProducts : Seq[Product] = item.getChildren.toSeq.map(_.getChild).classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
-  val children : Seq[Item] = childCategories ++ childProducts
-  val childCategoryExtent : Seq[Category] = cacheData.itemChildExtent(item).toSeq.classFilter(classOf[jpa.catalog.Category]).map(mapping.categories)
-  val childProductExtent : Seq[Product] = cacheData.itemChildExtent(item).toSeq.classFilter(classOf[jpa.catalog.Product]).map(mapping.products)
-  val childExtent : Seq[Item] = childCategoryExtent ++ childProductExtent
+	val childCategories : Seq[Category] = item.getChildren.toSeq.filter(_.isCategory).map(mapping.categories)
+	val childProducts : Seq[Product] = item.getChildren.toSeq.filter(_.isProduct).map(mapping.products)
+	val children : Seq[Item] = childCategories ++ childProducts
+	val childCategoryExtent : Seq[Category] = item.getChildExtent.toSeq.filter(_.isCategory).map(mapping.categories)
+	val childProductExtent : Seq[Product] = item.getChildExtent.toSeq.filter(_.isProduct).map(mapping.products)
+	val childExtent : Seq[Item] = childCategoryExtent ++ childProductExtent
 
   val properties: Seq[Property] =
-    cacheData.itemPropertyValues(item) map (v =>
-      new Property(v.getProperty, v, Some(this), cacheData, mapping))
+  	item.getPropertyExtent.toSeq.map(_.getValue).filterNot(cacheData.isExcluded(_)) map (mapping.properties)
 
   val propertyNames: Set[String] =
     properties.map(_.name).toSet
@@ -183,12 +177,12 @@ trait Item {
 		case None => relatedProducts
 	}
 	
-  val name: String =
-    propertiesByLocaleName.get(Locales.empty, "Name") match {
-      case Some(property) => property.value.getStringValue
-      case None => ""
-    }
-
+	def nameProperty = item.findProperty(item.getCatalog.nameProperty.getPropertyId, true)
+	
+  val name: String = nameProperty match {
+		case null => ""
+		case property => mapping.properties(property).valueAsString
+	}
 
   val urlName: String = name.replace(" ", "").toLowerCase
 
@@ -207,7 +201,7 @@ trait Item {
   override def toString = name
 }
 
-class Category(category: jpa.catalog.Category, val item : jpa.catalog.Item, val productqwer: Option[Product], val cacheData: WebshopData, val mapping: Mapping) extends Delegate(category) with Item {
+class Category(val item : ItemModel, val cacheData: WebshopData, val mapping: Mapping) extends Delegate(item) with Item {
 	
   val products = childProducts.toSet
   val productExtent = childProductExtent.toSet
@@ -241,7 +235,7 @@ class Category(category: jpa.catalog.Category, val item : jpa.catalog.Item, val 
   }
 }
 
-class Product(product: jpa.catalog.Product, val item : jpa.catalog.Item, val cacheData: WebshopData, val mapping: Mapping) extends Delegate(product) with Item {
+class Product(val item : ItemModel, val cacheData: WebshopData, val mapping: Mapping) extends Delegate(item) with Item {
 
   val categories = parentCategories.toSet
   val categoryExtent = parentCategoryExtent.toSet
@@ -249,63 +243,83 @@ class Product(product: jpa.catalog.Product, val item : jpa.catalog.Item, val cac
   val priceProperty: Option[Property] = property(Locales.empty, "Price")
 }
 
-class Property(property: jpa.catalog.Property, val value: jpa.catalog.PropertyValue, val item: Option[Item], cacheData: WebshopData, mapping: Mapping) extends Delegate(property) {
-  // terminate recursion
+class Property(property: PropertyModel, cacheData: WebshopData, mapping: Mapping) extends Delegate(property) {
+
+	// terminate recursion
   mapping.properties(property) = this
 
-  val id: Long = property.getId.longValue
-  val propertyType: jpa.catalog.PropertyType = property.getType
+  val info = property.getPropertyInfo
+  val id: Long = property.getPropertyId.longValue
+  val propertyType: jpa.catalog.PropertyType = info.getType
 
   val namesByLanguage: Map[Option[String], String] =
-    Map(property.getLabels.toSeq map (l => (l.getLanguage asOption, l.getLabel)): _*)
+    Map(info.labels.toSeq map (l => (l.getKey asOption, l.getValue)): _*)
 
-  val name: String = namesByLanguage.get(None) getOrElse ""
+  val name : String = info.labels.tryGet(cacheData.language, null)
+  val value : Any = property.getEffectiveValues(cacheData.staging, cacheData.shop).tryGet(cacheData.language, null)
 
-  val valueId: Long = value.getId.longValue
-  val mimeType: String = value.getMimeType getOrElse ""
-  val mediaValue: Array[Byte] = value.getMediaValue
-  val moneyValue: Double = value.getMoneyValue.getOrElse(0)
-  val moneyCurrency: String = value.getMoneyCurrency
+  val valueId : Long = value match {
+  	case media : MediaValue => media.propertyValueId.longValue
+  	case _ => -1
+  }
+  val mimeType : String = value match {
+	  case media : MediaValue => media.mimeType
+	  case _ => ""
+	}
+  val mediaValue : Array[Byte] = value match {
+	  case media : MediaValue => media.content
+	  case _ => Array()
+	}
+  val fileName : String = value match {
+	  case media : MediaValue => media.filename
+	  case _ => ""
+	}
+  val moneyValue : Double = value match {
+	  case money : Money => money.value.doubleValue
+	  case _ => 0
+	}
+  val moneyCurrency : String = value match {
+	  case money : Money => money.currency
+	  case _ => ""
+	}
 
-  val locale = Locales(value.getLanguage)
+  val locale = Locales(cacheData.language)
 
   def hasValue = value != noPropertyValue
 
   //FIXME: check should not be on null check but on property type
-  val valueAsString =
-    if (value.getStringValue != null) value.getStringValue
-    else if (value.getBooleanValue != null) value.getBooleanValue.toString
-    else if (value.getEnumValue != null) value.getEnumValue.toString
-    else if (value.getIntegerValue != null) value.getIntegerValue.toString
-    else if (value.getMoneyValue != null) "&euro; " + value.getMoneyValue.toString
-    else if (value.getRealValue != null) value.getRealValue.toString
-    else ""
+  val valueAsString = if (value == null) "" else propertyType match {
+  	case jpa.catalog.PropertyType.String => value.toString 
+  	case jpa.catalog.PropertyType.Boolean => if (value == java.lang.Boolean.TRUE) "yes" else "false"
+  	case jpa.catalog.PropertyType.Enum => value.toString 
+  	case jpa.catalog.PropertyType.Money => moneyValue + " " + moneyCurrency
+  	case jpa.catalog.PropertyType.Real => value.toString
+  	case _ => value.toString 
+  }
 
   override def toString = name
 }
 
-object groupByLocale {
-
-  def apply(properties: Seq[Property]): Map[Locale, Seq[Property]] = {
-    val loc_prop: Set[(Locale, Property)] = Set(properties.map(p => Locales(p.value.getLanguage getOrElse ("")) -> p): _*)
-    val all_loc_prop = new mutable.ArrayBuffer[(Locale, Property)]
-    for ((locale, property) <- loc_prop) {
-      all_loc_prop += ((locale, property))
-      var alt = Locales.getAlternatives(locale).tail
-      while (alt != Nil && !loc_prop.contains((alt.head, property))) {
-        all_loc_prop += ((alt.head, property))
-        alt = alt.tail
-      }
-    }
-    all_loc_prop.map(_._2).groupBy(p => Locales(p.value.getLanguage)).toMap
-  }
-}
+//object groupByLocale {
+//
+//  def apply(properties: Seq[Property]): Map[Locale, Seq[Property]] = {
+//    val loc_prop: Set[(Locale, Property)] = Set(properties.map(p => Locales(p.value.getLanguage getOrElse ("")) -> p): _*)
+//    val all_loc_prop = new mutable.ArrayBuffer[(Locale, Property)]
+//    for ((locale, property) <- loc_prop) {
+//      all_loc_prop += ((locale, property))
+//      var alt = Locales.getAlternatives(locale).tail
+//      while (alt != Nil && !loc_prop.contains((alt.head, property))) {
+//        all_loc_prop += ((alt.head, property))
+//        alt = alt.tail
+//      }
+//    }
+//    all_loc_prop.map(_._2).groupBy(p => Locales(p.value.getLanguage)).toMap
+//  }
+//}
 
 object noPropertyValue extends jpa.catalog.PropertyValue {
   setId(-1l)
 }
-
-case class Money(amount: Double, currency: String) {}
 
 class Promotion(promotion: jpa.shop.Promotion, cacheData: WebshopData, mapping: Mapping) extends Delegate(promotion) {
   // terminate recursion
@@ -320,16 +334,16 @@ class VolumeDiscountPromotion(promotion: jpa.shop.VolumeDiscountPromotion, cache
   val price = promotion.getPrice.getOrElse(0)
   val priceCurrency = promotion.getPriceCurrency
   val volumeDiscount = promotion.getVolumeDiscount.getOrElse(0)
-  val product = mapping.products(promotion.getProduct)
+  val product = mapping.products(cacheData.item(promotion.getProduct))
   override def products = Set(product)
 }
 
 //FIXME calculate promotion price when calculating new price
 
-class Order(val order: jpa.order.Order, mapping: Mapping) extends Delegate(order) {
+class Order(val order: jpa.order.Order, cacheData: WebshopData, mapping: Mapping) extends Delegate(order) {
 
   def productOrders: Seq[ProductOrder] =
-    order.getProductOrders map (new ProductOrder(_, this, mapping)) toSeq
+    order.getProductOrders map (new ProductOrder(_, this, cacheData, mapping)) toSeq
 
   def clear = delegate.getProductOrders.clear
 
@@ -349,11 +363,11 @@ class Order(val order: jpa.order.Order, mapping: Mapping) extends Delegate(order
     (0.0 /: productOrders.filter(_.currency == currency).map(_.totalPrice))(_ + _)
   }
 
-  def totalPrices: Seq[Money] = currencies.toSeq map (c => Money(totalPrice(c), c))
+  def totalPrices: Seq[Money] = currencies.toSeq map (c => new Money(totalPrice(c), c))
 
-  var shippingCosts = Money(15, "EUR")
+  var shippingCosts = new Money(15, "EUR")
 
-  def totalPricesPlusShipping: Seq[Money] = totalPrices.map(m => if (m.currency == shippingCosts.currency) Money(m.amount + shippingCosts.amount, m.currency) else m)
+  def totalPricesPlusShipping: Seq[Money] = totalPrices.map(m => if (m.currency == shippingCosts.currency) new Money(m.value.doubleValue + shippingCosts.value.doubleValue, m.currency) else m)
 
   /**
    * Adds a product to the order list. If the product already is present update
@@ -364,7 +378,7 @@ class Order(val order: jpa.order.Order, mapping: Mapping) extends Delegate(order
       case Some(productOrder) => productOrder.volume += volume
       case None =>
         val productOrder = new jpa.order.ProductOrder
-        productOrder.setProduct(product.delegate)
+        productOrder.setProduct(product.delegate.getEntity.asInstanceOf[jpa.catalog.Product])
         productOrder.setVolume(volume)
         product.priceProperty match {
           case Some(property) =>
@@ -379,8 +393,8 @@ class Order(val order: jpa.order.Order, mapping: Mapping) extends Delegate(order
   }
 }
 
-class ProductOrder(val productOrder: jpa.order.ProductOrder, val order: Order, mapping: Mapping) extends Delegate(productOrder) {
-  val product = mapping.products(productOrder.getProduct)
+class ProductOrder(val productOrder: jpa.order.ProductOrder, val order: Order, cacheData: WebshopData, mapping: Mapping) extends Delegate(productOrder) {
+  val product = mapping.products(cacheData.item(productOrder.getProduct))
   def price = productOrder.getPrice.getOrElse(0)
   def totalPrice = price * volume
   def currency = productOrder.getPriceCurrency

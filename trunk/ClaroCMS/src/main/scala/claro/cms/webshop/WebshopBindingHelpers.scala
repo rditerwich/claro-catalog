@@ -7,6 +7,7 @@ import claro.cms.jscmds.ReloadPage
 import claro.common.util.Conversions._
 import net.liftweb.http.{S, SHtml}
 import net.liftweb.http.js.{JsCmds}
+import easyenterprise.lib.util.Money
 
 trait WebshopBindingHelpers extends BindingHelpers {
 
@@ -30,7 +31,7 @@ trait WebshopBindingHelpers extends BindingHelpers {
     }, xml) % currentAttributes()
   }
 
-  implicit def format(money : Money) = new XmlBinding(_ => formatMoney(money.amount, money.currency))
+  implicit def format(money : Money) = new XmlBinding(_ => formatMoney(money.value.doubleValue, money.currency))
   
   private def propertyValue(property : Option[Property]) = {
     property match { 
@@ -46,8 +47,8 @@ trait WebshopBindingHelpers extends BindingHelpers {
 	          <img src={"/catalog/media/" + property.valueId} /> % currentAttributes()
 	         else
   		       Text(property.mediaValue.toString());
-        case jpa.catalog.PropertyType.Money if (property.value != null && property.value.getMoneyValue != null) =>
-            formatMoney(property.value.getMoneyValue.getOrElse(0), property.value.getMoneyCurrency)
+        case jpa.catalog.PropertyType.Money =>
+            formatMoney(property.moneyValue, property.moneyCurrency)
         case _ => Text(property.valueAsString)
       }
       case None => Text("")

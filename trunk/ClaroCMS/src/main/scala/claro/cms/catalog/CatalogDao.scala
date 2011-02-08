@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 object CatalogDao extends Dao {
   
-  val dataSource = "claro.jpa.catalog"
+  val dataSource = claro.catalog.CatalogDao.PERSISTENCE_UNIT_NAME
 
   private object currentCatalog extends ThreadGlobal[Catalog]
 

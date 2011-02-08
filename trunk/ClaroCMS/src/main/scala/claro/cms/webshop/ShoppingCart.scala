@@ -1,15 +1,11 @@
 package claro.cms.webshop
-
-import collection.mutable
-import javax.servlet.http.HttpServletRequest
-import net.liftweb.http.{RequestVar,SessionVar,S,SHtml}
-import net.liftweb.http.js.{JsCmd,JsCmds}
-import net.liftweb.http.js.JsCmds.SetHtml
-import net.liftweb.http.js.JsCmd
-import scala.xml.{Node,NodeSeq, Text}
-import claro.common.util.Conversions._
 import claro.jpa
-import claro.cms.{Bindable,Redrawable,CurrentRedraws}
+import claro.cms.{Bindable, Redrawable, CurrentRedraws}
+import claro.common.util.Conversions._
+import net.liftweb.http.{SessionVar, S, SHtml}
+import net.liftweb.http.js.{JsCmd}
+import scala.xml.{Node, NodeSeq, Text}
+import easyenterprise.lib.util.Money
 
 //TODO correctly calculate promotion prices, currently the original product price is calculated.
 //TODO add button "next step"
@@ -74,7 +70,7 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
       case _ => xml => NodeSeq.Empty
     }
   }  
-  def shippingCosts = Money(15, "EUR")
+  def shippingCosts = new Money(15, "EUR")
   
   def proceedOrderLink = (xml : NodeSeq) => 
     <a href="/shipping">{xml}</a> % currentAttributes()

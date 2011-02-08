@@ -6,6 +6,7 @@ import claro.cms.{Cms,Component,Template,ResourceLocator,Scope,Paging}
 import scala.xml.{Node,NodeSeq,Text}
 import claro.jpa
 import claro.common.util.Conversions._
+import easyenterprise.lib.util.Money
 
 class WebshopComponent extends Component with WebshopBindingHelpers {
   
@@ -54,7 +55,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "volume-discount" -> promotion.volumeDiscount.asInstanceOf[Long],
       "add-to-cart-link" -> ShoppingCart.addPromotion(promotion),
       "product" -> promotion.product -> "product")
-    
+
     case product : Product => Map(   
       "id" -> product.id,
       "properties" -> product.properties -> "property",
@@ -192,7 +193,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "value" -> value(property))
     
     case money : Money => Map(
-      "amount" -> money.amount.toString,
+      "amount" -> money.value.toString,
       "currency" -> money.currency,
       "format" -> format(money))
   }
@@ -232,7 +233,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
     case "search" :: s :: Nil => WebshopModel.currentSearchStringVar(Some(s)); "search" :: Nil
     case "cart" :: Nil => "cart" :: Nil
     case "flushcache" :: Nil => 
-      WebshopModel.flush 
+//      WebshopModel.flush 
       "index" :: Nil
     case path => path
   }

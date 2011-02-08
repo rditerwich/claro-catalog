@@ -6,7 +6,7 @@ import net.liftweb.util.Mailer.{To,Subject,PlainMailBodyType}
 import xml.{Node, NodeSeq, MetaData}
 import claro.jpa
 import claro.cms.{Form,Mail,Website}
-
+import easyenterprise.lib.util.Money
 object ShippingOptionsForm extends RequestVar[ShippingOptionsForm](new ShippingOptionsForm) 
 
 class SelectedShippingOption(var checked : Boolean, val option : ShippingOption) {
@@ -18,8 +18,8 @@ class ShippingOptionsForm extends Form {
   def order = WebshopModel.currentOrder.get
 
   def shippingOptions = List(
-    new SelectedShippingOption(false, ShippingOption("Normal delivery", Money(15, "EUR"))),
-    new SelectedShippingOption(false, ShippingOption("Express delivery", Money(45, "EUR")))
+    new SelectedShippingOption(false, ShippingOption("Normal delivery", new Money(15, "EUR"))),
+    new SelectedShippingOption(false, ShippingOption("Express delivery", new Money(45, "EUR")))
   )
   
   var shippingOption : Option[ShippingOption] = None
