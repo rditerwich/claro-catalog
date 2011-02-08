@@ -174,7 +174,7 @@ public class CatalogModel {
   }	
 	
 	private void findOrCreateStagingArea(String name) {
-		StagingArea staging = dao.getStagingAreaByName(name);
+		StagingArea staging = dao.findStagingAreaByName(name);
 		if (staging == null) {
 			staging = new StagingArea();
 			staging.setName(name);

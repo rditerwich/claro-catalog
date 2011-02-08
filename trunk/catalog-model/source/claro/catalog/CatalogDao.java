@@ -167,12 +167,16 @@ public class CatalogDao extends AbstractDao {
 		
 	}
 	
-	public StagingArea getStagingAreaByName(String name) {
+	public StagingArea findStagingAreaByName(String name) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<StagingArea> c = cb.createQuery(StagingArea.class);
 		Root<StagingArea> root = c.from(StagingArea.class);
 		c.select(root).where(cb.equal(root.get(StagingArea_.name), name));
-		return getEntityManager().createQuery(c).getSingleResult();
+		List<StagingArea> result = getEntityManager().createQuery(c).getResultList();
+		if (!result.isEmpty()) {
+			return result.get(0);
+		}
+		return null;
 	}
 	
 	public boolean setItemParents(Item item, List<Item> parents) {
