@@ -19,11 +19,15 @@ import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
-import easyenterprise.lib.command.jpa.JpaService;
+import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
+	public static final String STAGING_AREA_PREVIEW = "preview";
+	public static final String STAGING_AREA_PUBLISHED = "published";
+	
+	public final CatalogDao dao;
 	public final Catalog catalog;
 	public final ItemModel root;
 	public final PropertyGroup generalPropertyGroup;
@@ -49,7 +53,8 @@ public class CatalogModel {
 		CatalogAccess.endOperation();
 	}
 
-	public CatalogModel(Long id) {
+	public CatalogModel(Long id, CatalogDao dao) {
+		this.dao = dao;
 		this.catalog = findOrCreateCatalog(id);
 		this.root = findOrCreateRootCategory();
 		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
@@ -64,6 +69,8 @@ public class CatalogModel {
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
 		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup, true);
+		findOrCreateStagingArea(STAGING_AREA_PREVIEW);
+		findOrCreateStagingArea(STAGING_AREA_PUBLISHED);
   }
 	
 	public Catalog getCatalog() {
@@ -77,7 +84,7 @@ public class CatalogModel {
 	public synchronized ItemModel getItem(Long id) throws ItemNotFoundException {
 		ItemModel itemData = items.get(id);
 		if (itemData == null) {
-			Item item = CatalogDao.get().getItem(id);
+			Item item = dao.getItem(id);
 			if (item != null) {
 				itemData = new ItemModel(this, id);
 				items.put(id, itemData);
@@ -106,20 +113,20 @@ public class CatalogModel {
 			root.doInvalidate();
 			items.remove(itemData);
 		} else {
-			item = CatalogDao.get().getItem(id);
+			item = dao.getItem(id);
 		}
 		
 		if (item == null) {
 			throw new ItemNotFoundException(id);
 		}
 		
-		CatalogDao.get().removeItem(item); // TODO It is more efficient in the context of a transaction rollback to move this to the beginning
+		dao.removeItem(item); // TODO It is more efficient in the context of a transaction rollback to move this to the beginning
 	}
 	
 	public synchronized PropertyGroupInfo findPropertyGroupInfo(Long id) {
 		PropertyGroupInfo result = propertyGroupInfos.get(id);
 		if (result == null) {
-			PropertyGroup group = JpaService.getEntityManager().find(PropertyGroup.class, id);
+			PropertyGroup group = dao.getEntityManager().find(PropertyGroup.class, id);
 			if (group != null) {
 				result = findOrCreatePropertyGroupInfo(group);
 			}
@@ -143,7 +150,7 @@ public class CatalogModel {
 	}
 	
 	private Catalog findOrCreateCatalog(Long id) {
-		EntityManager em = JpaService.getEntityManager();
+		EntityManager em = dao.getEntityManager();
 		Catalog catalog = em.find(Catalog.class, id);
 		if (catalog == null) {
 			catalog = new Catalog();
@@ -166,6 +173,15 @@ public class CatalogModel {
 	  return root;
   }	
 	
+	private void findOrCreateStagingArea(String name) {
+		StagingArea staging = dao.getStagingAreaByName(name);
+		if (staging == null) {
+			staging = new StagingArea();
+			staging.setName(name);
+			dao.getEntityManager().persist(staging);
+		}
+	}
+	
 	private PropertyGroup findOrCreatePropertyGroup(String propertyGroupLabel, String language) {
 		for (PropertyGroup group : catalog.getPropertyGroups()) {
 			if (CatalogModelUtil.find(group.getLabels(), propertyGroupLabel, language) != null) {
@@ -186,7 +202,7 @@ public class CatalogModel {
 				label.setPropertyGroup(propertyGroup);
 				propertyGroup.getLabels().add(label);
 			}
-			JpaService.getEntityManager().persist(propertyGroup);
+			dao.getEntityManager().persist(propertyGroup);
 			assert propertyGroup.getId() != null;
 			catalog.getPropertyGroups().add(propertyGroup);
 			propertyGroup.setCatalog(catalog);
@@ -202,7 +218,7 @@ public class CatalogModel {
 		Product product = new Product();
 		product.setCatalog(catalog);
 		catalog.getItems().add(product);
-		JpaService.getEntityManager().persist(product);
+		dao.getEntityManager().persist(product);
 		return getItem(product.getId());
 	}
 	
@@ -210,7 +226,7 @@ public class CatalogModel {
 		Category category = new Category();
 		category.setCatalog(catalog);
 		catalog.getItems().add(category);
-		JpaService.getEntityManager().persist(category);
+		dao.getEntityManager().persist(category);
 		return getItem(category.getId());
 	}
 	

@@ -19,16 +19,18 @@ import claro.jpa.catalog.Category;
 import claro.jpa.catalog.EnumValue;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
+import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.ParentChild;
+import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
+import claro.jpa.catalog.StagingArea;
 
 import com.google.common.collect.ImmutableSet;
 
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
@@ -50,6 +52,10 @@ public class ItemModel {
 		this.itemId = id;
   }
 
+	public CatalogModel getCatalog() {
+		return catalog;
+	}
+	
 	public Long getItemId() {
 		return itemId;
 	}
@@ -63,6 +69,23 @@ public class ItemModel {
 		}
 	}
 
+	public boolean isProduct() {
+		return getEntity() instanceof Product;
+	}
+	
+	public boolean isCategory() {
+		return getEntity() instanceof Category;
+	}
+	
+	public boolean isVisible(StagingArea stagingArea, OutputChannel outputChannel, String language) {
+		PropertyModel property = findProperty(catalog.visibleProperty.getEntity(), true);
+		if (property != null) {
+			Object value = property.getEffectiveValues(stagingArea, outputChannel).tryGet(language, null);
+			return Boolean.TRUE.equals(value);
+		}
+		return false;
+	}
+	
 	/**
 	 * Returns the parents of this item, in order (linked hash map).
 	 * @return
@@ -99,7 +122,7 @@ public class ItemModel {
 		for (ItemModel parent : parents) {
 			items.add(parent.getEntity());
 		}
-		CatalogDao dao = CatalogDao.get();
+		CatalogDao dao = catalog.dao;
 		if (dao.setItemParents(getEntity(), items)) {
 			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
 			invalidItems.addAll(getChildExtent());
@@ -115,7 +138,7 @@ public class ItemModel {
 	}
 
 	public Item getEntity() {
-	  return CatalogDao.get().getItem(itemId);
+	  return catalog.dao.getItem(itemId);
   }
 	
 	/**
@@ -314,7 +337,7 @@ public class ItemModel {
 					label.setLabel(newLabel.getValue());
 					label.setProperty(property.getEntity());
 					property.getEntity().getLabels().add(label);
-					JpaService.getEntityManager().persist(label);
+					catalog.dao.getEntityManager().persist(label);
 
 					changed = true;
 				} else if (!existingLabel.equals(newLabel.getValue())) {
@@ -359,7 +382,7 @@ public class ItemModel {
 				label.setProperty(property);
 				property.getLabels().add(label);
 			}
-			JpaService.getEntityManager().persist(property);
+			catalog.dao.getEntityManager().persist(property);
 			assert property.getId() != null;
 			Item entity = getEntity();
 			entity.getProperties().add(property);
@@ -379,13 +402,13 @@ public class ItemModel {
 						label.setEnumValue(newValue);
 						
 					}
-					JpaService.getEntityManager().persist(newValue);
+					catalog.dao.getEntityManager().persist(newValue);
 				}
 			}
 			
 			if (group != null) {
 				assert entity instanceof Category;
-				CatalogDao.get().createGroupAssignment(property, group, (Category) entity);
+				catalog.dao.createGroupAssignment(property, group, (Category) entity);
 			}
 			invalidateChildExtent(true);
 			return PropertyModel.createRoot(property.getId(), false, this, group != null? entity.getId() : null);
@@ -450,7 +473,7 @@ public class ItemModel {
 					ItemModel groupAssignmentCategory = catalog.getItem(groupAssignment.getCategory().getId());
 					groupAssignmentCategory.invalidateChildExtent(true);
 					
-					CatalogDao.get().removeGroupAssignment(groupAssignment);
+					catalog.dao.removeGroupAssignment(groupAssignment);
 					
 				}
 			}
@@ -470,8 +493,8 @@ public class ItemModel {
 				}
 				PropertyGroupAssignment groupAssignment = findGroupAssignment(property.getEntity());
 				if (groupAssignment == null || !groupAssignment.getPropertyGroup().getId().equals(group.getValue().propertyGroupId)) {
-					PropertyGroup groupEntity = JpaService.getEntityManager().find(PropertyGroup.class, group.getValue().propertyGroupId);
-					CatalogDao.get().createGroupAssignment(property.getEntity(), groupEntity, (Category)getEntity());
+					PropertyGroup groupEntity = catalog.dao.getEntityManager().find(PropertyGroup.class, group.getValue().propertyGroupId);
+					catalog.dao.createGroupAssignment(property.getEntity(), groupEntity, (Category)getEntity());
 					
 					invalidateChildExtent(true);
 				}
@@ -487,7 +510,7 @@ public class ItemModel {
 					throw new PropertyNotFoundException(propertyId);
 				}
 				
-				CatalogDao.get().removeProperty(property.getEntity());
+				catalog.dao.removeProperty(property.getEntity());
 
 				invalidateChildExtent(true);
 			}

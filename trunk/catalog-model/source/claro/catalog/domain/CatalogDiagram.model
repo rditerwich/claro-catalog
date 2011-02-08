@@ -115,17 +115,6 @@ DomainDiagram {
         DiagramClass {
             bounds = {
                 Rectangle {
-                    x = 37
-                    y = -53
-                    width = -1
-                    height = -1
-                }
-            }
-            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:Language
-        }
-        DiagramClass {
-            bounds = {
-                Rectangle {
                     x = 34
                     y = 127
                     width = 155
@@ -188,6 +177,17 @@ DomainDiagram {
                 }
             }
             domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:PropertyGroupAssignment
+        }
+        DiagramClass {
+            bounds = {
+                Rectangle {
+                    x = 683
+                    y = 24
+                    width = -1
+                    height = -1
+                }
+            }
+            domainClass = /packages:Claro/packages:Domain/packages:Catalog/types:StagingStatus
         }
     }
     enumerations = {
@@ -388,6 +388,12 @@ DomainDiagram {
         }
         Reference {
             sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:Category/attributes:propertyGroupAssignments
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:StagingStatus/attributes:catalog
+        }
+        Reference {
+            sourceAttribute = /packages:Claro/packages:Domain/packages:Catalog/types:StagingStatus/attributes:stagingArea
         }
     }
     superClassReferences = {

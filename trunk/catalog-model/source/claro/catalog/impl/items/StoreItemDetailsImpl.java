@@ -26,7 +26,6 @@ import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
@@ -44,7 +43,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 	@Override
 	public Result execute() throws CommandException {
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
-		EntityManager em = JpaService.getEntityManager();
+		EntityManager em = catalogModel.dao.getEntityManager();
 		
 		if (stagingAreaId != null) {
 			stagingArea = em.find(StagingArea.class, stagingAreaId);

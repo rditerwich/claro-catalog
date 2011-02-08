@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.servlet.ServletConfig;
 
 import claro.jpa.catalog.Catalog;
@@ -17,7 +15,6 @@ import easyenterprise.lib.command.CommandExecutor;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandServer;
 import easyenterprise.lib.command.RegisteredCommands;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.DBScript;
 
 public class CatalogServer implements CommandExecutor {
@@ -25,9 +22,10 @@ public class CatalogServer implements CommandExecutor {
 	private final RegisteredCommands registeredCommands = RegisteredCommands.create(
 			new RegisteredModelCommands());
 
-	private final EntityManagerFactory entityManagerFactory;
+	private final CatalogDao dao;
 	private final CommandExecutor executor;
 
+	private final CatalogDaoService catalogDaoService;
 	private final CatalogModelService catalogModelService;
 	
 	public CatalogServer(ServletConfig config) throws SQLException {
@@ -35,10 +33,11 @@ public class CatalogServer implements CommandExecutor {
 	}
 
 	public CatalogServer(Map<String, String> properties) throws SQLException {
-		entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", properties);
+		this.dao = new CatalogDao(properties);
 		CommandServer server = new CommandServer(registeredCommands);
-		catalogModelService = new CatalogModelService(server);
-		executor = new JpaService(catalogModelService, entityManagerFactory);
+		this.catalogDaoService = new CatalogDaoService(dao, server);
+		this.catalogModelService = new CatalogModelService(this, catalogDaoService);
+		executor = catalogModelService;
 		createDatabase();
 	}
 	
@@ -48,12 +47,12 @@ public class CatalogServer implements CommandExecutor {
 		return executor.execute(command);
 	}
 	
-	public CatalogModelService getCatalogModelService() {
-		return catalogModelService;
+	public CatalogDao getCatalogDao() {
+		return dao;
 	}
 	
 	protected void createDatabase() throws SQLException {
-		EntityManager em = entityManagerFactory.createEntityManager();
+		EntityManager em = dao.getEntityManagerFactory().createEntityManager();
 		try {
 			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
 			script = new DBScript(Catalog.class.getResourceAsStream("/CreateSchema.sql"));

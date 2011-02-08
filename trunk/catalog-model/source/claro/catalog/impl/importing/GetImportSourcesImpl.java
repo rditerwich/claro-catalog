@@ -3,13 +3,13 @@ package claro.catalog.impl.importing;
 import java.util.Collections;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.command.importing.GetImportSources;
 import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class GetImportSourcesImpl extends GetImportSources implements CommandImpl<GetImportSources.Result>{
 
@@ -20,8 +20,8 @@ public class GetImportSourcesImpl extends GetImportSources implements CommandImp
 	public Result execute() throws CommandException {
 		checkValid();
 		
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
 		Result result = new Result();
-		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
 		if (importSourceId != null) {
 			result.importSources = Collections.singletonList(dao.getImportSourceById(importSourceId));
 		} else if (ImportSourceName != null) {

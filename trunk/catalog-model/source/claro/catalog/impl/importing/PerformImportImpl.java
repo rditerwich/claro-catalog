@@ -69,7 +69,6 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.sexpr.DefaultContext;
 import easyenterprise.lib.sexpr.SExpr;
@@ -106,8 +105,8 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 	@Override
 	public Result execute() throws CommandException {
 		checkValid();
-		this.dao = new CatalogDao(JpaService.getEntityManager());
 		this.model = CatalogModelService.getCatalogModel(catalogId);
+		this.dao = model.dao;
 		this.cache = new CategoryCache();
 		
 		List<JobResult> results = new ArrayList<JobResult>();

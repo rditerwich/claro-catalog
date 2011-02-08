@@ -6,8 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.EntityManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,7 +20,6 @@ import claro.jpa.catalog.Catalog;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandResult;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.DBScript;
 
 public class CatalogTestBase {
@@ -33,6 +31,7 @@ public class CatalogTestBase {
 	private static CatalogServer server;
 	private static boolean databaseCreated;
 
+	private CatalogDao catalogDao;
 	private CatalogModel catalogModel;
 
 	protected static Map<String, String> getProperties() {
@@ -89,23 +88,26 @@ public class CatalogTestBase {
 		return server;
   }
 	
-	protected static <T extends CommandResult> T executeCommand(Command<T> command) throws SQLException, CommandException {
-		JpaService.commit();
+	protected <T extends CommandResult> T executeCommand(Command<T> command) throws SQLException, CommandException {
+		catalogDao.startTransaction();
 		try {
 			T result = getServer().execute(command);
-			JpaService.commit();
+			catalogDao.commitTransaction();
 			return result;
 		} catch (SQLException e) {
-			JpaService.rollback();
+			catalogDao.rollbackTransaction();
 			throw e;
 		} catch (CommandException e) {
-			JpaService.rollback();
+			catalogDao.rollbackTransaction();
 			throw e;
 		}
 	}
 	
 	protected CatalogDao getCatalogDao() throws SQLException {
-		return new CatalogDao(JpaService.getEntityManager());
+		if (catalogDao == null) {
+			catalogDao = new CatalogDao(getProperties());
+		}
+		return catalogDao;
 	}
 	
 	protected CatalogModel getCatalogModel() throws SQLException {
@@ -113,12 +115,14 @@ public class CatalogTestBase {
 		return CatalogModelService.getCatalogModel(TEST_CATALOG_ID);
 	}
 	
+	protected EntityManager getEntityManager() {
+		return catalogDao.getEntityManager();
+	}
+	
 	@BeforeClass
 	public static void initializeClass() {
 		server = null;
 		CatalogModelService.clearCatalogModel(TEST_CATALOG_ID);
-		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", getProperties());
-		JpaService.setGlobalEntityManagerFactory(entityManagerFactory);
 	}
 	
 	@Before
@@ -131,6 +135,6 @@ public class CatalogTestBase {
 		if (catalogModel != null) { 
 			CatalogModel.endOperation();
 		}
-		JpaService.commit();
+		catalogDao.commitTransaction();
 	}
 }

@@ -54,10 +54,7 @@ Package {
                 }
                 Attribute {
                     name = languages
-                    type = catalog:Language
-                    isOrdered = true
-                    lower = 0
-                    upper = {}
+                    type = primitive:String
                 }
                 Attribute {
                     name = propertyGroups
@@ -253,6 +250,29 @@ Package {
         }
         Class {
             name = StagingArea
+            attributes = {
+                Attribute {
+                    name = name
+                    type = primitive:String
+                }
+            }
+        }
+        Class {
+            name = StagingStatus
+            attributes = {
+                Attribute {
+                    name = catalog
+                    type = catalog:Catalog
+                }
+                Attribute {
+                    name = stagingArea
+                    type = catalog:StagingArea
+                }
+                Attribute {
+                    name = updateSequenceNr
+                    type = primitive:Integer
+                }
+            }
         }
         Class {
             name = EnumValue
@@ -466,19 +486,6 @@ Package {
                     type = catalog:Item
                     lower = 0
                     opposite = catalog:Item/attributes:templates
-                }
-            }
-        }
-        Class {
-            name = Language
-            attributes = {
-                Attribute {
-                    name = name
-                    type = primitive:String
-                }
-                Attribute {
-                    name = displayName
-                    type = primitive:String
                 }
             }
         }
@@ -786,13 +793,6 @@ Package {
                     type = catalog:Item
                 }
             }
-        }
-        Operation {
-            name = getAllLanguages
-            type = catalog:Language
-            lower = 0
-            upper = {}
-            isOrdered = true
         }
         Operation {
             name = publish

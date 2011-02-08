@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.importing.DeleteImportedData;
 import claro.catalog.model.CatalogModel;
@@ -17,7 +18,6 @@ import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class DeleteImportedDataImpl extends DeleteImportedData implements CommandImpl<DeleteImportedData.Result>{
 
@@ -29,7 +29,7 @@ public class DeleteImportedDataImpl extends DeleteImportedData implements Comman
 		checkValid();
 		
 		Result result = new Result();
-		CatalogDao dao = new CatalogDao(JpaService.getEntityManager());
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
 		ImportSource importSource = dao.getImportSourceById(importSourceId);
 		validate(importSource != null);
 		Set<PropertyValue> values = new HashSet<PropertyValue>(dao.getPropertyValuesBySource(importSource));

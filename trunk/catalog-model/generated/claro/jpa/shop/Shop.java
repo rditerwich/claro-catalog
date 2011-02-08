@@ -5,14 +5,13 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
-import claro.jpa.catalog.Language;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Template;
 
 @SuppressWarnings("serial")
 public class Shop extends OutputChannel implements Serializable {
     private String urlPrefix;
-    private List<Language> languages;
+    private String languages = "";
     private List<Navigation> navigation;
     private List<Promotion> promotions;
     private List<Template> templates;
@@ -25,14 +24,14 @@ public class Shop extends OutputChannel implements Serializable {
         this.urlPrefix = value;
     }
 
-    public List<Language> getLanguages() {
-        if (languages == null) {
-            languages = new ArrayList<Language>();
-        }
+    public String getLanguages() {
         return languages;
     }
 
-    public void setLanguages(List<Language> value) {
+    public void setLanguages(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.languages = value;
     }
 

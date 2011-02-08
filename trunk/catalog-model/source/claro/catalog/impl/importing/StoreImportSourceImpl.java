@@ -9,6 +9,8 @@ import static java.util.Collections.singleton;
 
 import javax.persistence.EntityManager;
 
+import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.command.importing.StoreImportSource;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProducts;
@@ -21,7 +23,6 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 
 public class StoreImportSourceImpl extends StoreImportSource implements CommandImpl<StoreImportSource.Result> {
@@ -30,7 +31,8 @@ public class StoreImportSourceImpl extends StoreImportSource implements CommandI
 	
 	@Override
 	public Result execute() throws CommandException {
-		EntityManager em = JpaService.getEntityManager();
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
+		EntityManager em = dao.getEntityManager();
 		validateCommand(em);
 		Result result = new Result();
 		if (removeImportSource) {

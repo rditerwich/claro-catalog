@@ -29,10 +29,7 @@ Package {
                 }
                 Attribute {
                     name = languages
-                    type = catalog:Language
-                    isOrdered = true
-                    lower = 0
-                    upper = {}
+                    type = primitive:String
                 }
                 /**
                  * IETF language tag. See http://en.wikipedia.org/wiki/IETF_language_tag.

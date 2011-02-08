@@ -11,24 +11,22 @@ import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandWrapper;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class CatalogModelService extends CommandWrapper {
 
-	private static final ThreadLocal<State> stateLocal = new ThreadLocal<State>() {
-		protected State initialValue() {
-			return new State();
-		};
-	};
+	private static final ThreadLocal<State> stateLocal = new ThreadLocal<State>();
 
-	private static Map<Long, CatalogModel> catalogModels = new MapMaker().makeComputingMap(new Function<Long, CatalogModel>() {
-		public CatalogModel apply(Long id) {
-				return new CatalogModel(id);
+	private Map<Long, CatalogModel> catalogModels = new MapMaker().makeComputingMap(new Function<Long, CatalogModel>() {
+		public CatalogModel apply(Long catalogId) {
+				return new CatalogModel(catalogId, server.getCatalogDao());
 		}
 	});
+
+	private final CatalogServer server;
 	
-	public CatalogModelService(CommandWrapper delegate) {
+	public CatalogModelService(CatalogServer server, CommandWrapper delegate) {
 		super(delegate);
+		this.server = server;
 	}
 	
 	/**
@@ -41,24 +39,31 @@ public class CatalogModelService extends CommandWrapper {
 			throw new RuntimeException("No catalog id specified");
 		}
 		State state = stateLocal.get();
+		if (state == null) {
+			throw new RuntimeException("Catalog server not running.");
+		}
+		CatalogModel catalogModel = state.service.catalogModels.get(catalogId);
+		
 		if (!state.operationStarted && !state.parentHasStartedOperation) {
-			CatalogModel.startOperation(createDao());
+			// TODO startOpertion not static
+			CatalogModel.startOperation(catalogModel.dao);
 			state.operationStarted = true;
 		}
-		return catalogModels.get(catalogId);
+		return catalogModel;
 	}
 	
+	// TODO dirty, do differently
 	public static void clearCatalogModel(Long catalogId) {
-		catalogModels.remove(catalogId);
-	}
-
-	private static CatalogDao createDao() {
-		return new CatalogDao(JpaService.getEntityManager());
+			State state = stateLocal.get();
+			if (state != null) {
+				state.service.catalogModels.remove(catalogId);
+			}
 	}
 
 	public <T extends CommandResult, I extends CommandImpl<T>> T executeImpl(I command) throws CommandException {
 		State oldState = stateLocal.get();
 		State state = new State();
+		state.service = this;
 		state.parentHasStartedOperation = oldState.operationStarted;
 		stateLocal.set(state);
 		try {
@@ -73,7 +78,9 @@ public class CatalogModelService extends CommandWrapper {
 	}
 	
 	public static class State {
+		CatalogModelService service;
 		boolean parentHasStartedOperation;
 		boolean operationStarted;
+		
 	}
 }

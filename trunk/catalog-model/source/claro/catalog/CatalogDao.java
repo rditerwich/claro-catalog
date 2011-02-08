@@ -2,10 +2,10 @@ package claro.catalog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,8 +23,6 @@ import claro.jpa.catalog.Category_;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Label_;
-import claro.jpa.catalog.Language;
-import claro.jpa.catalog.Language_;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.OutputChannel_;
 import claro.jpa.catalog.ParentChild;
@@ -36,6 +34,7 @@ import claro.jpa.catalog.PropertyValue_;
 import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.catalog.StagingArea_;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportJobResult_;
 import claro.jpa.importing.ImportSource;
@@ -47,31 +46,22 @@ import claro.jpa.shop.Shop;
 
 import com.google.common.base.Objects;
 
-import easyenterprise.lib.command.jpa.JpaService;
+import easyenterprise.lib.jpa.AbstractDao;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Paging;
 
-public class CatalogDao {
-
-	private final EntityManager entityManager;
-
-	public static CatalogDao get() {
-		return new CatalogDao(JpaService.getEntityManager());
-	}
+public class CatalogDao extends AbstractDao {
 	
-	public CatalogDao(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
-	
-	public EntityManager getEntityManager() {
-		return entityManager;
+	public CatalogDao(Map<String, String> properties) {
+		super("claro.jpa.catalog", properties);
 	}
 	
 	public CriteriaBuilder getCriteriaBuilder() {
-		return entityManager.getCriteriaBuilder();
+		return getEntityManager().getCriteriaBuilder();
 	}
 	
 	public <T> T findOrCreate(Class<T> type, Long id) {
+		EntityManager entityManager = getEntityManager();
 		if (id != null) {
 			return entityManager.find(type, id);
 		} else {
@@ -86,11 +76,11 @@ public class CatalogDao {
 	}
 
 	public Item getItem(Long id) {
-		return entityManager.find(Item.class, id);
+		return getEntityManager().find(Item.class, id);
 	}
 
 	public Property getProperty(Long id) {
-		return entityManager.find(Property.class, id);
+		return getEntityManager().find(Property.class, id);
 	}
 
 	public PropertyValue getPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
@@ -125,7 +115,7 @@ public class CatalogDao {
 					cb.isNull(property4) :
 					cb.equal(property4, languageParam));
 		
-		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
+		TypedQuery<PropertyValue> query = getEntityManager().createQuery(c);
 		query.setParameter(itemParam, item);
 		query.setParameter(propertyParam, property);
 		if (source != null)
@@ -152,7 +142,7 @@ public class CatalogDao {
   	lbl.setProperty(property);
   	property.getLabels().add(lbl);
   	
-  	entityManager.persist(lbl);
+  	getEntityManager().persist(lbl);
   	
   	return lbl;
   }
@@ -173,8 +163,16 @@ public class CatalogDao {
 			cb.equal(labelsJoin.get(Label_.label), RootProperties.NAME),
 			cb.equal(valuesJoin.get(PropertyValue_.stringValue), nameParam)));
 		
-		return entityManager.createQuery(c).setParameter(nameParam, name).getSingleResult();
+		return getEntityManager().createQuery(c).setParameter(nameParam, name).getSingleResult();
 		
+	}
+	
+	public StagingArea getStagingAreaByName(String name) {
+		CriteriaBuilder cb = getCriteriaBuilder();
+		CriteriaQuery<StagingArea> c = cb.createQuery(StagingArea.class);
+		Root<StagingArea> root = c.from(StagingArea.class);
+		c.select(root).where(cb.equal(root.get(StagingArea_.name), name));
+		return getEntityManager().createQuery(c).getSingleResult();
 	}
 	
 	public boolean setItemParents(Item item, List<Item> parents) {
@@ -186,7 +184,7 @@ public class CatalogDao {
 				if (!parents.contains(parent)) {
 					parent.getChildren().remove(parentChild);
 					item.getParents().remove(parentChild);
-					entityManager.remove(parentChild);
+					getEntityManager().remove(parentChild);
 					changed = true;
 				}
 			}
@@ -205,7 +203,7 @@ public class CatalogDao {
 				parentChild.setChild(item);
 				parent.getChildren().add(parentChild);
 				item.getParents().add(parentChild);
-				entityManager.persist(parentChild);
+				getEntityManager().persist(parentChild);
 				changed = true;
 			}
 		}
@@ -221,6 +219,7 @@ public class CatalogDao {
 	}
 	
 	public void removeItem(Item item) {
+		EntityManager entityManager = getEntityManager();
 		// Clear parents, but remember the first parent
 		Item firstParent = item.getParents().iterator().next().getParent();
 		for (ParentChild parent : item.getParents()) {
@@ -286,7 +285,7 @@ public class CatalogDao {
 			queryString.append(" and not exists(select channel from OutputChannel channel where channel.excludedItems contains :channel)");
 		}
 		
-		TypedQuery<Item> query = entityManager.createQuery(queryString.toString(), Item.class);
+		TypedQuery<Item> query = getEntityManager().createQuery(queryString.toString(), Item.class);
 		query.setParameter("catalog", catalog);
 		if (outputChannel != null) {
 			query.setParameter("outputChannel", outputChannel);
@@ -296,7 +295,7 @@ public class CatalogDao {
 	}
 	
 	public OutputChannel getOutputChannel(Long outputChannelId) {
-		return entityManager.find(OutputChannel.class, outputChannelId);
+		return getEntityManager().find(OutputChannel.class, outputChannelId);
 	}
 
 	public List<ImportSource> getImportSources(Paging paging) {
@@ -305,7 +304,7 @@ public class CatalogDao {
 		Root<ImportSource> importSource = c.from(ImportSource.class);
 		c.select(importSource).orderBy(cb.asc(importSource.get(ImportSource_.name)));
 		
-		TypedQuery<ImportSource> query = entityManager.createQuery(c);
+		TypedQuery<ImportSource> query = getEntityManager().createQuery(c);
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
@@ -321,7 +320,7 @@ public class CatalogDao {
 		Path<Long> idAttr = ImportSource.get(ImportSource_.id);
 		c.select(ImportSource).where(cb.equal(idAttr, idParam));
 		
-		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(idParam, id);
+		TypedQuery<ImportSource> query = getEntityManager().createQuery(c).setParameter(idParam, id);
 		return query.getSingleResult();
 	}
 	
@@ -335,7 +334,7 @@ public class CatalogDao {
 			where(cb.equal(importSourceIdAttr, importSourceId)).
 		  orderBy(cb.desc(jobResult.get(JobResult_.endTime)));
 		
-		TypedQuery<ImportJobResult> query = entityManager.createQuery(c);
+		TypedQuery<ImportJobResult> query = getEntityManager().createQuery(c);
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
@@ -353,7 +352,7 @@ public class CatalogDao {
 			where(cb.like(nameAttr, nameParam)).
 			orderBy(cb.asc(nameAttr));
 
-		TypedQuery<ImportSource> query = entityManager.createQuery(c).setParameter(nameParam, "%" + name + "%");
+		TypedQuery<ImportSource> query = getEntityManager().createQuery(c).setParameter(nameParam, "%" + name + "%");
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
@@ -366,12 +365,12 @@ public class CatalogDao {
 		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
 		Root<PropertyValue> root = c.from(PropertyValue.class);
 		c.where(cb.equal(root.get(PropertyValue_.source), source));
-		TypedQuery<PropertyValue> query = entityManager.createQuery(c);
+		TypedQuery<PropertyValue> query = getEntityManager().createQuery(c);
 		return query.getResultList();
 	}
 	
 	public StagingArea getStagingArea(Long stagingAreaId) {
-		return entityManager.find(StagingArea.class, stagingAreaId);
+		return getEntityManager().find(StagingArea.class, stagingAreaId);
 	}
 
 	public List<JobResult> getLastJobResults(Job job, int count) {
@@ -380,14 +379,14 @@ public class CatalogDao {
 		Root<JobResult> root = c.from(JobResult.class);
 		c.where(cb.equal(root.get(JobResult_.job), job));
 		c.orderBy(cb.desc(root.get(JobResult_.endTime)));
-		TypedQuery<JobResult> query = entityManager.createQuery(c);//.setParameter(jobParam, job);
+		TypedQuery<JobResult> query = getEntityManager().createQuery(c);//.setParameter(jobParam, job);
 		query.setMaxResults(count);
 		return query.getResultList();
 	}
 
 	public void removeGroupAssignment(PropertyGroupAssignment groupAssignment) {
 		groupAssignment.getCategory().getPropertyGroupAssignments().remove(groupAssignment);
-		entityManager.remove(groupAssignment);
+		getEntityManager().remove(groupAssignment);
 	}
 
 	public PropertyGroupAssignment createGroupAssignment(Property property, PropertyGroup group, Category item) {
@@ -398,16 +397,16 @@ public class CatalogDao {
 		result.setPropertyGroup(group);
 		item.getPropertyGroupAssignments().add(result);
 		
-		entityManager.persist(result);
+		getEntityManager().persist(result);
 		
 		return result;
 	}
 
 	public void removeProperty(Property entity) {
 		for (Label label : entity.getLabels()) {
-			entityManager.remove(label);
+			getEntityManager().remove(label);
 		}
-		entityManager.remove(entity);
+		getEntityManager().remove(entity);
 	}
 
 	public List<Shop> getShops(Long catalogId, Paging paging) {
@@ -423,28 +422,12 @@ public class CatalogDao {
 			.orderBy(cb.asc(shops.get(OutputChannel_.name)));
 		
 		
-		TypedQuery<Shop> query = entityManager.createQuery(cQuery);
+		TypedQuery<Shop> query = getEntityManager().createQuery(cQuery);
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());
 			query.setMaxResults(paging.getPageSize());
 		}
 		
 		return query.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	public Language findLanguageByName(String name) {
-		Query query = entityManager.createQuery("select from Language l where l.name = :name");
-		query.setParameter("name", name);
-		
-		List<Language> results = query.getResultList();
-		if (results.size() == 1) {
-			return results.get(0);
-		} 
-		if (results.size() > 1) {
-			throw new IllegalStateException("Multiple results found");
-		}
-		
-		return null;
 	}
 }

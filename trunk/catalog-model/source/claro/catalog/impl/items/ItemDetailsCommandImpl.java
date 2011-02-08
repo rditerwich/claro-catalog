@@ -1,5 +1,8 @@
 package claro.catalog.impl.items;
 
+import javax.persistence.EntityManager;
+
+import claro.catalog.CatalogDaoService;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.model.CatalogModel;
@@ -9,7 +12,6 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class ItemDetailsCommandImpl extends ItemDetailsCommand implements CommandImpl<ItemDetailsCommand.Result>, CatalogCommand {
 
@@ -18,10 +20,11 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 	public ItemDetailsCommand.Result execute() throws CommandException {
 		
 		// Obtain entities for input:
+		EntityManager entityManager = CatalogDaoService.getCatalogDao().getEntityManager();
 		
 		StagingArea area = null;
 		if (stagingAreaId != null) {
-			area = JpaService.getEntityManager().find(StagingArea.class, stagingAreaId);
+			area = entityManager.find(StagingArea.class, stagingAreaId);
 			if (area == null) {
 				throw new CommandException("Area not found");
 			}
@@ -29,7 +32,7 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 
 		OutputChannel channel = null;
 		if (outputChannelId != null) {
-			channel = JpaService.getEntityManager().find(OutputChannel.class, outputChannelId);
+			channel = entityManager.find(OutputChannel.class, outputChannelId);
 			if (channel == null) {
 				throw new CommandException("Channel not found");
 			}

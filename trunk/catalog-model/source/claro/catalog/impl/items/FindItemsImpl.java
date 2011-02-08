@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindItems;
 import claro.catalog.command.items.ItemType;
@@ -23,7 +25,6 @@ import claro.jpa.catalog.Property;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.SMap;
 
 public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Result> {
@@ -42,11 +43,12 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		FindItems.Result result = new FindItems.Result();
 		
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
-
+		EntityManager entityManager = catalogModel.dao.getEntityManager();
+		
 		// Initialize parameter entities:
 		stagingArea = null;
 		if (stagingAreaId != null) {  
-			stagingArea = JpaService.getEntityManager().find(StagingArea.class, stagingAreaId);
+			stagingArea = entityManager.find(StagingArea.class, stagingAreaId);
 			if (stagingArea == null) {
 				throw new CommandException("Area not found");
 			}
@@ -54,7 +56,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 
 		outputChannel = null;
 		if (outputChannelId != null) {
-			outputChannel = JpaService.getEntityManager().find(OutputChannel.class, outputChannelId);
+			outputChannel = entityManager.find(OutputChannel.class, outputChannelId);
 			if (outputChannel == null) {
 				throw new CommandException("Channel not found");
 			}
@@ -64,7 +66,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		if (categoryIds != null) {
 			categories = new ArrayList<Category>();
 			for (Long categoryId : categoryIds) {
-				Category category = JpaService.getEntityManager().find(Category.class, categoryId);
+				Category category = entityManager.find(Category.class, categoryId);
 				if (category != null) {
 					categories.add(category);
 				} else {
@@ -76,7 +78,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		if (orderByIds != null) {
 			orderBy = new ArrayList<Property>();
 			for (Long propertyId : orderByIds) {
-				Property property = JpaService.getEntityManager().find(Property.class, propertyId);
+				Property property = entityManager.find(Property.class, propertyId);
 				if (property != null) {
 					orderBy.add(property);
 				} else {

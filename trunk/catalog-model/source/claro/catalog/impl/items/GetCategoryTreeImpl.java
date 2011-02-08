@@ -1,5 +1,7 @@
 package claro.catalog.impl.items;
 
+import javax.persistence.EntityManager;
+
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.model.CatalogModel;
@@ -9,7 +11,6 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.SMap;
 
 public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<GetCategoryTree.Result> {
@@ -25,11 +26,12 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 	public Result execute() throws CommandException {
 		
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
-
+		EntityManager entityManager = catalogModel.dao.getEntityManager();
+		
 		// Initialize parameter entities:
 		stagingArea = null;
 		if (stagingAreaId != null) {  
-			stagingArea = JpaService.getEntityManager().find(StagingArea.class, stagingAreaId);
+			stagingArea = entityManager.find(StagingArea.class, stagingAreaId);
 			if (stagingArea == null) {
 				throw new CommandException("Area not found");
 			}
@@ -37,7 +39,7 @@ public class GetCategoryTreeImpl extends GetCategoryTree implements CommandImpl<
 
 		outputChannel = null;
 		if (outputChannelId != null) {
-			outputChannel = JpaService.getEntityManager().find(OutputChannel.class, outputChannelId);
+			outputChannel = entityManager.find(OutputChannel.class, outputChannelId);
 			if (outputChannel == null) {
 				throw new CommandException("Channel not found");
 			}

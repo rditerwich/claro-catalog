@@ -3,6 +3,7 @@ package claro.catalog.impl.importing;
 import java.util.Collections;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.command.importing.GetImportSourceHistory;
 import claro.jpa.importing.ImportJobResult;
 import easyenterprise.lib.cloner.BasicView;
@@ -10,7 +11,6 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class GetImportSourceHistoryImpl extends GetImportSourceHistory implements CommandImpl<GetImportSourceHistory.Result> {
 
@@ -20,12 +20,13 @@ public class GetImportSourceHistoryImpl extends GetImportSourceHistory implement
 	@Override
 	public Result execute() throws CommandException {
 		
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
 		Result result = new Result();
 		
 		if (jobResultId != null) {
-			result.jobResults = Collections.singletonList(JpaService.getEntityManager().find(ImportJobResult.class, jobResultId));
+			result.jobResults = Collections.singletonList(dao.getEntityManager().find(ImportJobResult.class, jobResultId));
 		} else {
-			result.jobResults = CatalogDao.get().getImportSourceHistory(importSourceId, paging);
+			result.jobResults = dao.getImportSourceHistory(importSourceId, paging);
 		}
 		
 		result.jobResults = Cloner.clone(result.jobResults, view);

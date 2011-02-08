@@ -15,7 +15,7 @@ public class Catalog implements Serializable {
     private Category root;
     private List<OutputChannel> outputChannels;
     private List<Template> templates;
-    private List<Language> languages;
+    private String languages = "";
     private List<PropertyGroup> propertyGroups;
 
     public Long getId() {
@@ -75,14 +75,14 @@ public class Catalog implements Serializable {
         this.templates = value;
     }
 
-    public List<Language> getLanguages() {
-        if (languages == null) {
-            languages = new ArrayList<Language>();
-        }
+    public String getLanguages() {
         return languages;
     }
 
-    public void setLanguages(List<Language> value) {
+    public void setLanguages(String value) {
+        if (value == null) {
+            value = "";
+        }
         this.languages = value;
     }
 
