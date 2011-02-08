@@ -31,6 +31,7 @@ public class CatalogDaoService extends CommandWrapper {
 		}
 		finally {
 			daoPerThread.set(originalDao);
+			dao.commitTransaction();
 		}
 	}
 }
