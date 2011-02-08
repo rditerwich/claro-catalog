@@ -1,47 +1,30 @@
 package claro.catalog.manager.server;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import claro.catalog.CatalogServer;
+import claro.catalog.CatalogDao;
 import claro.jpa.catalog.PropertyValue;
-import easyenterprise.lib.command.jpa.JpaService;
 
 public class DownloadMediaServlet extends HttpServlet {
     private static final long serialVersionUID = 0L;
 
-	private EntityManagerFactory entityManagerFactory;
+    private CatalogDao dao;
 
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		org.eclipse.persistence.Version.getVersion();
-		try {
-			setConfig(config);
-		} catch (SQLException e) {
-			throw new ServletException(e);
-		}
-	}
-
-	public void setConfig(ServletConfig config) throws SQLException {
-		setConfig(collectProperties(config));
-	}
-
-	public void setConfig(Map<String, String> properties) throws SQLException {
-		entityManagerFactory = Persistence.createEntityManagerFactory("claro.jpa.catalog", properties);
-		JpaService.setGlobalEntityManagerFactory(entityManagerFactory);
+		dao = new CatalogDao(collectProperties(config));
 	}
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -72,7 +55,7 @@ public class DownloadMediaServlet extends HttpServlet {
 
         try {
             final Long pvId = Long.valueOf(req.getParameter("pvId"));
-            final PropertyValue pv = JpaService.getEntityManager().find(PropertyValue.class, pvId);
+            final PropertyValue pv = dao.getEntityManager().find(PropertyValue.class, pvId);
 
             if (pv != null) {
                 resp.addHeader("Content-disposition", "attachment; filename=" + pv.getStringValue());
