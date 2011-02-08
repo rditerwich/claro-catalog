@@ -138,7 +138,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 //	protected int getExtraTableHeight() {
 //		return 48; // Compensation for the rounded panel
 //	}
-
 	protected void createMasterPanel() {
 		productTable = new Table();
 

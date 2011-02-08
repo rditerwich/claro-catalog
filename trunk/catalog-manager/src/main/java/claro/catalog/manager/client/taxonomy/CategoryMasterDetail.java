@@ -20,6 +20,7 @@ import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
@@ -65,6 +66,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	// Widgets
 	private CategoriesWidget filterCategories;
+	private LanguageAndShopSelector languageSelection;
 	private List<RowWidgets> tableWidgets = new ArrayList<CategoryMasterDetail.RowWidgets>();
 
 	protected HTML filterLabel;
@@ -160,36 +162,11 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		setHeader(new VerticalPanel() {{
 				add(new Grid(2, 3) {{
 					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
-					setWidget(0, 0, new ListBox() {{
-						DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Plantin Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option><option>&nbsp;&nbsp;Tetterode Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
-					}});
-//					setWidget(0, 1, new TextBox() {{
-//						addChangeHandler(new ChangeHandler() {
-//							public void onChange(ChangeEvent event) {
-//								filterString = getText();
-//								updateFilterLabel();
-//								updateCategories();
-//							}
-//						});
-//					}});
-//					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-//							setData(SMap.<Long, SMap<String, String>>empty(), language);
-//						}
-//						protected String getAddCategoryTooltip() {
-//							return messages.addCategoryFilter();
-//						}
-//						protected String getRemoveCategoryTooltip(String categoryName) {
-//							return messages.removeCategoryFilterTooltip(categoryName);
-//						}
-//						protected void removeCategory(Long categoryId) {
-//							super.removeCategory(categoryId);
-//							updateCategories();
-//						}
-//						protected void addCategory(Long categoryId, SMap<String, String> labels) {
-//							super.addCategory(categoryId, labels);
-//							updateCategories();
-//						}
-//					});
+					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
+						protected void selectionChanged() {
+							updateCategories();
+						}
+					});
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {

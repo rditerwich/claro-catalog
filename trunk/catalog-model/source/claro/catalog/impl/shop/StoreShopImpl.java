@@ -3,15 +3,11 @@ package claro.catalog.impl.shop;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogDaoService;
 import claro.catalog.command.shop.StoreShop;
-import claro.jpa.catalog.Language;
 import claro.jpa.catalog.Template;
 import claro.jpa.shop.Navigation;
 import claro.jpa.shop.Promotion;
@@ -39,16 +35,6 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 			}
 		} else {
 			
-			// Check languages before merging
-			List<Language> languages = new ArrayList<Language>();
-			for (Language language : CollectionUtil.notNull(shop.getLanguages())) {
-				Language languageEntity = dao.findLanguageByName(language.getName());
-				if (languageEntity != null) {
-					languages.add(languageEntity);
-				}
-			}
-			shop.setLanguages(languages);
-
 			// store changes to shop
 			result.shop = em.merge(shop);
 

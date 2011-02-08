@@ -58,9 +58,6 @@ public class TaxonomyPage extends Page {
 		
 		// Read Root properties
 		updateRootProperties();		
-		
-		// TODO update OuputChannels and Languages. 
-		
 	}
 
 	private void updateRootProperties() {
@@ -81,6 +78,8 @@ public class TaxonomyPage extends Page {
 		c.catalogId = CatalogManager.getCurrentCatalogId();
 		c.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
 
+		invalidateCategoryTree(c.catalogId, c.outputChannelId);
+		
 		GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
 			public void onSuccess(GetCategoryTree.Result result) {
 				categoryMasterDetail.setCategoriesTree(result.root, result.children, result.categories);
@@ -110,12 +109,7 @@ public class TaxonomyPage extends Page {
 				// TODO Proper status messages.
 				
 				// Invalidate cached category tree.
-				GetCategoryTree getTreeCmd = new GetCategoryTree();
-				getTreeCmd.catalogId = cmd.catalogId;
-				getTreeCmd.outputChannelId = cmd.outputChannelId;
-				getTreeCmd.stagingAreaId = cmd.stagingAreaId;
-				
-				GwtCommandFacade.invalidateCache(getTreeCmd);
+				invalidateCategoryTree(cmd.catalogId, cmd.outputChannelId);
 				
 				// TODO Another option is to return the entire category tree in command and update the cache rather than invalidate it.
 				categoryMasterDetail.categoryCreated(result.storedItemId, parentId, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
@@ -160,16 +154,20 @@ public class TaxonomyPage extends Page {
 				StatusMessage.show(messages.savingCategoryDetailsSuccessStatus());
 				
 				// Invalidate cached category tree.
-				GetCategoryTree getTreeCmd = new GetCategoryTree();
-				getTreeCmd.catalogId = cmd.catalogId;
-				getTreeCmd.outputChannelId = cmd.outputChannelId;
-				getTreeCmd.stagingAreaId = cmd.stagingAreaId;
-				
-				GwtCommandFacade.invalidateCache(getTreeCmd);
+				invalidateCategoryTree(cmd.catalogId, cmd.outputChannelId);
 				
 				// TODO Another option is to return the entire category tree in command and update the cache rather than invalidate it.
 				categoryMasterDetail.updateCategory(cmd.itemId, result.storedItemId, null, result.categoryLabels, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
 			}
 		});
+	}
+
+	private void invalidateCategoryTree(Long catalogId, Long outputChannelId) {
+		GetCategoryTree getTreeCmd = new GetCategoryTree();
+		getTreeCmd.catalogId = catalogId;
+		getTreeCmd.outputChannelId = outputChannelId;
+		getTreeCmd.stagingAreaId = null;
+		
+		GwtCommandFacade.invalidateCache(getTreeCmd);
 	}
 }

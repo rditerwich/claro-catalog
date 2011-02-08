@@ -9,8 +9,8 @@ import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.catalog.manager.client.widgets.LanguagesWidget;
-import claro.jpa.catalog.Language;
 
+import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -113,26 +113,25 @@ public class WebshopDetail extends Composite implements Globals {
 		model.store(new StoreShop(model.getShop()));
 	}
 	
-	private void setSelectedLanguages(List<Language> languages) {
+	private void setSelectedLanguages(String languages) {
 		List<String> selectedLanguages = new ArrayList<String>();
 		
-		for (Language language : languages) {
-			selectedLanguages.add(language.getName());
+		for (String language : Objects.firstNonNull(languages, "").split(",")) {
+			selectedLanguages.add(language);
 		}
 		
 		languagesWidget.setData(selectedLanguages);
 	}
 	
-	private List<Language> getSelectedLanguages() {
-		List<Language> result = new ArrayList<Language>();
-		
+	private String getSelectedLanguages() {
+		StringBuilder result = new StringBuilder();
+		String sep = "";
 		for (String language : languagesWidget.getLanguages()) {
-			Language lang = new Language();
-			lang.setName(language);
-			result.add(lang);
+			result.append(sep); sep = ",";
+			result.append(language);
 		}
 		
-		return result;
+		return result.toString();
 	}
 
 	private String getSelectedDefaultLanguage() {

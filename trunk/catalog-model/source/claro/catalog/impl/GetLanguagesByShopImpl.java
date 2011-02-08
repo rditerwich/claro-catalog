@@ -1,9 +1,13 @@
 package claro.catalog.impl;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import com.google.common.base.Objects;
+
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.GetLanguagesByShop;
 import claro.catalog.model.CatalogModel;
-import claro.jpa.catalog.Language;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.shop.Shop;
 import easyenterprise.lib.cloner.BasicView;
@@ -27,20 +31,31 @@ public class GetLanguagesByShopImpl extends GetLanguagesByShop implements Comman
 
 		result.languages = SMap.empty();
 		result.languages = result.languages.set(null, null); // Add default language
-		for (Language language : catalogModel.getCatalog().getLanguages()) {
-			result.languages = result.languages.add(null, language.getName());
-		}
+		
+		// TODO We should iterate over catalog languages, but use union of shop languages instead.
+//		for (String language : catalogModel.getCatalog().getLanguages().split(",") {
+//			result.languages = result.languages.add(null, language);
+//		}
+		
+		Set<String> languages = new LinkedHashSet<String>();
 		
 		for (OutputChannel channel : catalogModel.getCatalog().getOutputChannels()) {
 			if (channel instanceof Shop) {
 				Shop shop = Cloner.clone((Shop) channel, view);
 				
 				result.languages = result.languages.set(shop, null); // Add default language
-				for (Language language : shop.getLanguages()) {
-					result.languages = result.languages.add(shop, language.getName());
+				for (String language : Objects.firstNonNull(shop.getLanguages(), "").split(",")) {
+					result.languages = result.languages.add(shop, language);
+					languages.add(language);
 				}
 			}
 		}
+		
+		// TODO See TODO above
+		for (String language : languages) {
+			result.languages = result.languages.add(null, language);
+		}
+		
 		return result;
 	}
 }
