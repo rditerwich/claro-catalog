@@ -92,6 +92,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
 		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
 		
+		if (details != null) {
+			details.setRootProperties(rootProperties);
+		}
 		render();
 	}
 	
@@ -195,7 +198,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 				setWidget(1, 1, new Anchor(messages.refresh()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							languageSelection.refreshData();
 							updateProductList();
 						}
 					});

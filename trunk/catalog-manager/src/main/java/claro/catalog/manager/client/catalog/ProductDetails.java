@@ -9,6 +9,7 @@ import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
@@ -45,10 +46,10 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> categories;
 	private Long itemId;
-	private final PropertyInfo nameProperty;
-	private final PropertyInfo variantProperty;
-	private final PropertyInfo priceProperty;
-	private final PropertyInfo imageProperty;
+	private PropertyInfo nameProperty;
+	private PropertyInfo variantProperty;
+	private PropertyInfo priceProperty;
+	private PropertyInfo imageProperty;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	
 	public ProductDetails(final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
@@ -114,6 +115,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 			// TODO Add a popup panel at the bottom with property definitions (+ values??).
 			// TODO add a popup panel at the bottom with property groups?
 			// TODO add a popup panel with dangling properties.
+	}
+	
+	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
+		this.nameProperty = rootProperties.get(RootProperties.NAME);
+		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
+		this.priceProperty = rootProperties.get(RootProperties.PRICE);
+		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
 	}
 	
 	public void setLanguage(String language) {
@@ -219,6 +227,14 @@ abstract public class ProductDetails extends Composite implements Globals {
 	}
 	
 	private void render() {
+		// Make sure we have the root properties:
+		if (nameProperty == null) {
+			return;
+		}
+		
+		if (values == null) {
+			return;
+		}
 		
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
 

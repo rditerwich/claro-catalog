@@ -117,7 +117,9 @@ public class WebshopDetail extends Composite implements Globals {
 		List<String> selectedLanguages = new ArrayList<String>();
 		
 		for (String language : Objects.firstNonNull(languages, "").split(",")) {
-			selectedLanguages.add(language);
+			if (language != null && !language.trim().equals("")) {
+				selectedLanguages.add(language);
+			}
 		}
 		
 		languagesWidget.setData(selectedLanguages);

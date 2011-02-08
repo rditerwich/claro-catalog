@@ -8,6 +8,7 @@ import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
+import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
@@ -48,10 +49,10 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> parents;
 	private Long itemId;
-	private final PropertyInfo nameProperty;
-	private final PropertyInfo variantProperty;
-	private final PropertyInfo priceProperty;
-	private final PropertyInfo imageProperty;
+	private PropertyInfo nameProperty;
+	private PropertyInfo variantProperty;
+	private PropertyInfo priceProperty;
+	private PropertyInfo imageProperty;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> inheritedPropertyValues;
 	protected CategoryProperties propertiesComponent;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues;
@@ -141,6 +142,16 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			
 			// TODO add a popup panel with dangling properties.
 	}
+	
+	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
+		this.nameProperty = rootProperties.get(RootProperties.NAME);
+		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
+		this.priceProperty = rootProperties.get(RootProperties.PRICE);
+		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
+		
+		render();
+	}
+
 	
 	public void setLanguage(String language) {
 		this.language = language;
@@ -274,6 +285,14 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	}
 	
 	private void render() {
+		// Make sure we have the root properties:
+		if (nameProperty == null) {
+			return;
+		}
+		
+		if (inheritedPropertyValues == null) {
+			return;
+		}
 		
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(inheritedPropertyValues);
 

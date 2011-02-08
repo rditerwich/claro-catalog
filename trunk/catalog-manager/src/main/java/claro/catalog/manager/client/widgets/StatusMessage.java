@@ -1,10 +1,15 @@
 package claro.catalog.manager.client.widgets;
 
+import claro.catalog.manager.client.Globals;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 
 /**
@@ -13,7 +18,7 @@ import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
  * Use with default timeout of 15 seconds: StatusMessage.get().show("message");
  * Or with custom timeout (in seconds): StatusMessage.get().show("message", 20);
  */
-public class StatusMessage {
+public class StatusMessage implements Globals {
 
 	private static final int DEFAULT_TIMEOUT = 15;
 
@@ -21,7 +26,15 @@ public class StatusMessage {
 	private static DecoratedPopupPanel status = new DecoratedPopupPanel(false, false) {{
 		// set animation after initial show+hide
 		setAnimationEnabled(true);
-		setWidget(statusPanel);
+		setWidget(new HorizontalPanel() {{
+			setVerticalAlignment(ALIGN_TOP);
+			add(statusPanel);
+			add(new ActionImage(images.closeBlue(), new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					status.hide();
+				}
+			}));
+		}});
 	}};
 
 	private boolean canceled;

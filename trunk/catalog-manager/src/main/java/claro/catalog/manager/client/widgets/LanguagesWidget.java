@@ -176,7 +176,7 @@ public class LanguagesWidget extends Composite implements Globals {
 		for (int i = 0; i < allLanguages.length; i++) {
 			if (!allLanguages[i].equals("default")) {
 				// DisplayName first to be able to sort.
-				newLanguages.add(Tuple.create(LanguageUtil.displayName(allLanguages[i]), allLanguages[i]));
+				newLanguages.add(Tuple.create(displayName(allLanguages[i]), allLanguages[i]));
 			}
 		}
 		
@@ -202,6 +202,13 @@ public class LanguagesWidget extends Composite implements Globals {
 				}
 			});
 		}};
+	}
+
+	private String displayName(final String language) {
+		if (language == null) {
+			return messages.defaultLanguageName();
+		}
+		return LanguageUtil.displayName(language);
 	}
 	
 	private void addHoverStyles(final Anchor anchor) {

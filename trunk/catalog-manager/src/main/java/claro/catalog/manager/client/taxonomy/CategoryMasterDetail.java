@@ -101,7 +101,9 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		this.artNoProperty = rootProperties.get(RootProperties.ARTICLENUMBER);
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
 		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
-		
+		if (details != null) {
+			details.setRootProperties(rootProperties);
+		}
 		render();
 	}
 	
@@ -121,11 +123,17 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	public String getLanguage() {
-		return language;
+		if (languageSelection != null) {
+			return languageSelection.getSelectedLanguage();
+		}
+		return null;
 	}
 	
 	public OutputChannel getOutputChannel() {
-		return outputChannel;
+		if (languageSelection != null) {
+			return languageSelection.getSelectedShop();
+		}
+		return null;
 	}
 	
 	

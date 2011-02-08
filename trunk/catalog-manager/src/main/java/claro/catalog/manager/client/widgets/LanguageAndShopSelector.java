@@ -48,8 +48,7 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 		refreshData();
 	}
 
-	// TODO when to call this???
-	public void refreshData() {
+	private void refreshData() {
 		GetLanguagesByShop cmd = new GetLanguagesByShop();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		
