@@ -55,7 +55,7 @@ public class CatalogServer implements CommandExecutor {
 		EntityManager em = dao.getEntityManagerFactory().createEntityManager();
 		try {
 			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
-			script = new DBScript(Catalog.class.getResourceAsStream("/CreateSchema.sql"));
+			script = new DBScript(Catalog.class.getResourceAsStream("/UpdateSchema.sql"));
 			script.execute(em);
 		} catch (Throwable e) {
 			throw new SQLException("Couldn't create catalog schema. Did you forget to create the catalog database?", e);
