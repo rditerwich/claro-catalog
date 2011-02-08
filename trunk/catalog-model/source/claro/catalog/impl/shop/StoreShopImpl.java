@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.command.shop.StoreShop;
 import claro.jpa.catalog.Language;
 import claro.jpa.catalog.Template;
@@ -27,9 +28,9 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 
 	@Override
 	public Result execute() throws CommandException {
-		EntityManager em = JpaService.getEntityManager();
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
+		EntityManager em = dao.getEntityManager();
 		validateCommand(em);
-		CatalogDao dao = new CatalogDao(em);
 
 		Result result = new Result();
 		if (removeShop) {
