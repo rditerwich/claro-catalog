@@ -184,6 +184,7 @@ public interface I18NCatalog extends Messages {
 	String containedProducts(int nr);
 	String failureRetryingMessage(String action, int retryNr);
 	String failureMessage(String action);
+	String successMessage(String action);
 	String filterMessage(String filter);
 	String internalFailureRetryingMessage(int retryNr);
 	String internalFailureMessage();
@@ -319,4 +320,5 @@ public interface I18NCatalog extends Messages {
 	String removeShopLink();
 	String loadingWebShopsAction();
 	String defaultLanguageName();
+	String savingWebShopsAction();
 }

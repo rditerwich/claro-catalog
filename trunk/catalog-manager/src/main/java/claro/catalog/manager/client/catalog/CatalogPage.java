@@ -93,10 +93,11 @@ public class CatalogPage extends Page {
 		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
 		cmd.orderByIds = Collections.singletonList(nameProperty.propertyId); 
 
-		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProducts(), 2, 1000);
+//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProducts(), 2, 1000);
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
-				loadingMessage.cancel();
+//				loadingMessage.cancel();
+				super.onSuccess(result);
 				productMasterDetail.setProducts(result.items);
 			}
 		});
@@ -142,6 +143,7 @@ public class CatalogPage extends Page {
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
+				super.onSuccess(result);
 
 				for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : result.propertyData) {
 					for (Entry<PropertyInfo, PropertyData> propertyEntry : group.getValue()) {

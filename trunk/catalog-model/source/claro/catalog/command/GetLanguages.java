@@ -1,13 +1,10 @@
 package claro.catalog.command;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
-
-import java.util.List;
-
-import claro.jpa.catalog.Language;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
+import easyenterprise.lib.util.SMap;
 
 
 public class GetLanguages implements Command<GetLanguages.Result> {
@@ -23,6 +20,6 @@ public class GetLanguages implements Command<GetLanguages.Result> {
 	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
 
-		public List<Language> languages;
+		public SMap<String, SMap<String,String>> languages;
 	}
 }

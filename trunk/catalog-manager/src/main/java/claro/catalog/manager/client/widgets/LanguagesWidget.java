@@ -1,6 +1,7 @@
 package claro.catalog.manager.client.widgets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import claro.catalog.manager.client.Globals;
@@ -23,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.util.Tuple;
 
 public class LanguagesWidget extends Composite implements Globals {
 	
@@ -170,18 +172,21 @@ public class LanguagesWidget extends Composite implements Globals {
 			return null;
 		}
 		
-		final List<String> newLanguages = new ArrayList<String>();
+		final List<Tuple<String,String>> newLanguages = new ArrayList<Tuple<String,String>>();
 		for (int i = 0; i < allLanguages.length; i++) {
 			if (!allLanguages[i].equals("default")) {
-				newLanguages.add(allLanguages[i]);
+				// DisplayName first to be able to sort.
+				newLanguages.add(Tuple.create(LanguageUtil.displayName(allLanguages[i]), allLanguages[i]));
 			}
 		}
+		
+		Collections.sort(newLanguages);
 		
 		return new Grid(newLanguages.size(), 1) {{
 			// Fill it
 			for (int i = 0; i < newLanguages.size(); i++) {
 				System.out.println("Lang: " + newLanguages.get(i));
-				setWidget(i, 0,  new Label(LanguageUtil.displayName(newLanguages.get(i))));
+				setWidget(i, 0,  new Label(newLanguages.get(i).getFirst()));
 			}
 			
 			// Selections:
@@ -189,9 +194,9 @@ public class LanguagesWidget extends Composite implements Globals {
 				public void onClick(ClickEvent event) {
 					Cell cell = getCellForEvent(event);
 					if (cell != null) {
-						String selectedLanguage = newLanguages.get(cell.getRowIndex());
-						if (!languages.contains(selectedLanguage)) {
-							addLanguage(selectedLanguage);
+						Tuple<String, String> selectedLanguage = newLanguages.get(cell.getRowIndex());
+						if (!languages.contains(selectedLanguage.getSecond())) {
+							addLanguage(selectedLanguage.getSecond());
 						}
 					}
 				}

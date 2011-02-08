@@ -500,12 +500,12 @@ td.ee-FormTableHelp {
 /** catalogpage styles */
 
 .productMasterDetail .cbg-RPContainer { background-color: white; }
-.productMasterDetail table.mainTable { width: 100%; }
-.productMasterDetail table.mainTable tr.itemRowChanged td { font-style: italic; }
-.productMasterDetail table.mainTable table.product { width: 100%; cursor: pointer;}
-.productMasterDetail table.mainTable table.product td { border: none;}
-.productMasterDetail table.mainTable td.productTD { width: 100%; padding-left: 5px; padding-right: 5px;}
-.productMasterDetail table.mainTable .productprice { text-align: right; }
+.productMasterDetail table.ee-MasterDetailTable { width: 100%; }
+.productMasterDetail table.ee-MasterDetailTable tr.itemRowChanged td { font-style: italic; }
+.productMasterDetail table.ee-MasterDetailTable table.product { width: 100%; cursor: hand;}
+.productMasterDetail table.ee-MasterDetailTable table.product td { border: none;}
+.productMasterDetail table.ee-MasterDetailTable td.productTD { width: 100%; padding-left: 5px; padding-right: 5px;}
+.productMasterDetail table.ee-MasterDetailTable .productprice { text-align: right; }
 
 
 

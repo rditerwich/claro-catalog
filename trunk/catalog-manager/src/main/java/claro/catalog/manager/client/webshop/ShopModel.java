@@ -3,14 +3,13 @@ package claro.catalog.manager.client.webshop;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import claro.catalog.command.importing.GetImportSources;
+import claro.catalog.command.GetLanguagesByShop;
 import claro.catalog.command.shop.GetShops;
 import claro.catalog.command.shop.StoreShop;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
+import claro.jpa.catalog.Catalog;
 import claro.jpa.shop.Shop;
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
 
@@ -43,6 +42,9 @@ public abstract class ShopModel implements Globals {
 
 	public void createWebshop() {
 		Shop shop = new Shop();
+		Catalog catalog = new Catalog();
+		catalog.setId(CatalogManager.getCurrentCatalogId());
+		shop.setCatalog(catalog);
 		shop.setName("new shop");
 		getShops().add(0, shop);
 		setShop(shop);
@@ -79,6 +81,7 @@ public abstract class ShopModel implements Globals {
 		command.catalogId = CatalogManager.getCurrentCatalogId();
 		GwtCommandFacade.execute(command, new StatusCallback<GetShops.Result>(messages.loadingWebShopsMessage()) {
 			public void onSuccess(GetShops.Result result) {
+				super.onSuccess(result);
 				setShops(result.shops);
 			}
 		});
@@ -102,8 +105,14 @@ public abstract class ShopModel implements Globals {
 	}
 	
 	public void store(StoreShop command) {
-		// TODO Auto-generated method stub
-		// TODO Invalidate languagesByShops command.
+		command.catalogId = CatalogManager.getCurrentCatalogId();
+		GwtCommandFacade.execute(command, new StatusCallback<StoreShop.Result>(messages.savingWebShopsAction(), false) {
+			public void onSuccess(StoreShop.Result result) {
+				super.onSuccess(result);
+				setShop(result.shop);
+				GwtCommandFacade.invalidateCache(new GetLanguagesByShop());
+			}
+		});
 	}
 
 	protected abstract void openDetail();

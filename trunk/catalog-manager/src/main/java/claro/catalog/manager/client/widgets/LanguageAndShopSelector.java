@@ -1,5 +1,6 @@
 package claro.catalog.manager.client.widgets;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -12,6 +13,8 @@ import claro.jpa.shop.Shop;
 import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
@@ -24,7 +27,7 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 	private static final String INDENT = "&nbsp;&nbsp;&nbsp;";
 	private Shop selectedShop;
 	private String selectedLanguage;
-	List<Tuple<Shop, String>> shopsAndLanguages;
+	List<Tuple<Shop, String>> shopsAndLanguages = new ArrayList<Tuple<Shop,String>>();
 	
 	private ListBox listBox;
 
@@ -33,6 +36,11 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 			addChangeHandler(new ChangeHandler() {
 				public void onChange(ChangeEvent event) {
 					updateSelection(listBox.getSelectedIndex());
+				}
+			});
+			addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					refreshData();
 				}
 			});
 		}});
@@ -47,18 +55,37 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 		
 		GwtCommandFacade.executeCached(cmd, 1000 * 60 * 60 , new StatusCallback<GetLanguagesByShop.Result>(messages.loadingWebShopsAction()) {
 			public void onSuccess(GetLanguagesByShop.Result result) {
+				super.onSuccess(result);
 				updateLanguages(result.languages);
 			}
 		});
 	}
 	
+	public String getSelectedLanguage() {
+		return selectedLanguage;
+	}
+	
+	public Shop getSelectedShop() {
+		return selectedShop;
+	}
+	
+	protected void selectionChanged() {
+		
+	}
+	
 	private void updateSelection(int selectedIndex) {
+		Shop oldShop = selectedShop;
+		String oldLanguage = selectedLanguage;
 		if (listBox.getSelectedIndex() >= 0) {
 			selectedShop = shopsAndLanguages.get(selectedIndex).getFirst();
 			selectedLanguage = shopsAndLanguages.get(selectedIndex).getSecond();
 		} else {
 			selectedShop = null;
 			selectedLanguage = null;
+		}
+		
+		if (!Objects.equal(oldShop, selectedShop) || !Objects.equal(oldLanguage, selectedLanguage)) {
+			selectionChanged();
 		}
 	}
 	

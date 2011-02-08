@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -429,5 +430,21 @@ public class CatalogDao {
 		}
 		
 		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public Language findLanguageByName(String name) {
+		Query query = entityManager.createQuery("select from Language l where l.name = :name");
+		query.setParameter("name", name);
+		
+		List<Language> results = query.getResultList();
+		if (results.size() == 1) {
+			return results.get(0);
+		} 
+		if (results.size() > 1) {
+			throw new IllegalStateException("Multiple results found");
+		}
+		
+		return null;
 	}
 }

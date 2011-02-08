@@ -1,12 +1,8 @@
 package claro.catalog.manager.client.catalog;
 
-import static easyenterprise.lib.gwt.client.StyleUtil.createStyle;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.MediaValue;
@@ -18,6 +14,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
 
@@ -28,7 +25,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,7 +32,6 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -55,18 +50,10 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 
 	private static final int NR_COLS = 3;
 
-	
-	
 	private List<ProductRow> productRows = new ArrayList<ProductRow>();
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
-	private String language;
 	private String filterString;
 	
-
-	private OutputChannel outputChannel;
-
-
-
 	private PropertyInfo nameProperty;
 	private PropertyInfo variantProperty;
 	private PropertyInfo descriptionProperty;
@@ -78,16 +65,13 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	// Widgets
 	private CategoriesWidget filterCategories;
+	private LanguageAndShopSelector languageSelection;
 	private List<RowWidgets> tableWidgets = new ArrayList<ProductMasterDetail.RowWidgets>();
 
 	private Label noProductsFoundLabel;
 	protected HTML filterLabel;
 	private ProductDetails details;
 	
-	private PropertyGroupInfo generalGroup;
-	
-	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newProductPropertyValues;
-	private SMap<Long, SMap<String, String>> newProductCategories;
 	private Long rootCategory;
 	private Table productTable;
 	
@@ -99,7 +83,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
-		this.generalGroup = generalGroup;
 		this.rootCategory = rootCategory;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
@@ -119,18 +102,18 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		render();
 	}
 	
-	public void setLanguage(String newLanguage) {
-		language = newLanguage;
-		
-		render(); 
-	}
-	
 	public String getLanguage() {
-		return language;
+		if (languageSelection != null) {
+			return languageSelection.getSelectedLanguage();
+		}
+		return null;
 	}
 	
 	public OutputChannel getOutputChannel() {
-		return outputChannel;
+		if (languageSelection != null) {
+			return languageSelection.getSelectedShop();
+		}
+		return null;
 	}
 	
 	
@@ -168,9 +151,11 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		setHeader(new VerticalPanel() {{
 			add(new Grid(2, 3) {{
 				StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
-				setWidget(0, 0, new ListBox() {{
-					DOM.setInnerHTML(getElement(), "<option>Default</option><option>English</option><option>French</option><option>&nbsp;&nbsp;Plantin Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option><option>&nbsp;&nbsp;Tetterode Webshop</option><option>&nbsp;&nbsp;&nbsp;&nbsp;English</option><option>&nbsp;&nbsp;&nbsp;&nbsp;French</option>");
-				}});
+				setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
+					protected void selectionChanged() {
+						updateProductList();
+					}
+				});
 				setWidget(0, 1, new TextBox() {{
 					addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
@@ -181,7 +166,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					});
 				}});
 				setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-						setData(SMap.<Long, SMap<String, String>>empty(), language);
+						setData(SMap.<Long, SMap<String, String>>empty(), getLanguage());
 					}
 					protected String getAddCategoryLabel() {
 						return messages.addCategoriesLink();
@@ -211,6 +196,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 				setWidget(1, 1, new Anchor(messages.refresh()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
+							languageSelection.refreshData();
 							updateProductList();
 						}
 					});
@@ -236,7 +222,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					}
 				});
 			}}, 40);
-			add(details = new ProductDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
+			add(details = new ProductDetails(getLanguage(), getOutputChannel(), nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					ProductMasterDetail.this.storeItem(cmd);
 				}
@@ -366,9 +352,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productRow.productId);
 		
 		// image
-		Object image = properties.getOrEmpty(smallImageProperty).tryGet(language, null);
+		Object image = properties.getOrEmpty(smallImageProperty).tryGet(getLanguage(), null);
 		if (image == null) {
-			image = properties.getOrEmpty(imageProperty).tryGet(language, null);
+			image = properties.getOrEmpty(imageProperty).tryGet(getLanguage(), null);
 		}
 		if (image instanceof MediaValue) {
 			final MediaValue value = (MediaValue)image;
@@ -378,20 +364,20 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 		
 		// product
-		Object productName = properties.getOrEmpty(nameProperty).tryGet(language, null);
+		Object productName = properties.getOrEmpty(nameProperty).tryGet(getLanguage(), null);
 		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "<" + messages.noProductNameSet() + ">");
 		
-		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(language, null);
+		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(getLanguage(), null);
 		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");
 		
-		final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(language, null);
+		final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(getLanguage(), null);
 		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
 		
-		final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(language, null);
+		final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(getLanguage(), null);
 		rowWidgets.productDescriptionLabel.setText(productDescription instanceof String ? productDescription.toString() : "");
 		
 		// price
-		final Object price = properties.getOrEmpty(priceProperty).tryGet(language, null);
+		final Object price = properties.getOrEmpty(priceProperty).tryGet(getLanguage(), null);
 		if (price != null) {
 			// TODO Use locale in the following format??
 			rowWidgets.priceLabel.setText(MoneyFormatUtil.full((Money) price));
@@ -453,7 +439,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 		for (Entry<Long, SMap<String, String>> category : filterCategories.getCategories()) {
 			filterText.append(sep); sep = ", ";
-			filterText.append(category.getValue().tryGet(language, null));
+			filterText.append(category.getValue().tryGet(getLanguage(), null));
 		}
 		if (filterText.length() > 0) {
 			filterLabel.setHTML(messages.filterMessage(filterText.toString())); 

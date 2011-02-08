@@ -14,9 +14,14 @@ import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.StagingArea;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Cloner;
+import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.util.SMap;
 
 public class ItemUtil {
+	static View view = new BasicView();
+
 	public static SMap<String, String> getNameLabels(ItemModel item, CatalogModel catalogModel, OutputChannel outputChannel, StagingArea stagingArea) {
 		SMap<String, String> result = SMap.empty();
 		
@@ -56,7 +61,8 @@ public class ItemUtil {
 
 	public static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData(CatalogModel catalogModel, ItemModel itemModel, StagingArea area, OutputChannel channel) {
 		SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> resultPropertyData = SMap.empty();
-		
+		area = Cloner.clone(area, view);
+		channel = Cloner.clone(channel, view);
 		// Obtain groups
 		// TODO Is there no property hiding???
 		

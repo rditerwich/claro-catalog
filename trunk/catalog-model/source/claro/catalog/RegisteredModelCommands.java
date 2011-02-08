@@ -1,5 +1,6 @@
 package claro.catalog;
 
+import claro.catalog.impl.GetLanguagesByShopImpl;
 import claro.catalog.impl.GetLanguagesImpl;
 import claro.catalog.impl.LoginImpl;
 import claro.catalog.impl.RootDataCommandImpl;
@@ -14,6 +15,7 @@ import claro.catalog.impl.items.GetCategoryTreeImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
 import claro.catalog.impl.items.StoreItemDetailsImpl;
 import claro.catalog.impl.shop.GetShopsImpl;
+import claro.catalog.impl.shop.StoreShopImpl;
 import easyenterprise.lib.command.RegisteredCommands;
 
 public class RegisteredModelCommands extends RegisteredCommands {
@@ -30,7 +32,9 @@ public class RegisteredModelCommands extends RegisteredCommands {
 		register(DeleteImportedDataImpl.class);
 		register(PerformImportImpl.class);
 		register(GetLanguagesImpl.class);
+		register(GetLanguagesByShopImpl.class);
 		register(GetShopsImpl.class);
+		register(StoreShopImpl.class);
 		register(LoginImpl.class);
 	}
 }

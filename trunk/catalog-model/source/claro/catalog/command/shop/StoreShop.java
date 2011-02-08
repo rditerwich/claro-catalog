@@ -26,6 +26,11 @@ public class StoreShop implements Command<Result> {
 	}
 	
 	/**
+	 * Only necessary for new shops
+	 */
+	public Long catalogId;
+	
+	/**
 	 * Import source to be stored, recursively. Deleted children are not detected, please
 	 * use ...ToBeRemoved collections
 	 */
@@ -42,7 +47,8 @@ public class StoreShop implements Command<Result> {
 	public List<Template> templatesToBeRemoved;
 	
 	public void checkValid() throws CommandValidationException {
-		validate (shop != null, "No import source specified");
+		validate (shop != null, "No shop specified");
+		validate (shop.getId() != null || catalogId != null, "CatalogId is required for new shops");
 		if (removeShop) validate(isEmpty(navigationsToBeRemoved), "Nested removes are redundant");
 		if (removeShop) validate(isEmpty(promotionsToBeRemoved), "Nested removes are redundant");
 		if (removeShop) validate(isEmpty(templatesToBeRemoved), "Nested removes are redundant");
