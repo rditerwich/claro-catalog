@@ -172,7 +172,7 @@
         <executions>
           <execution>
             <id>copy-dependencies</id>
-            <phase>install</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
