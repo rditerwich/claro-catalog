@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -433,5 +434,12 @@ public class CatalogDao extends AbstractDao {
 		}
 		
 		return query.getResultList();
+	}
+
+	public void removeAllStagingValues(StagingArea to) {
+		if (to == null || to.getId() == null) throw new IllegalArgumentException("to must not be null");
+		EntityManager entityManager = getEntityManager();
+		Query query = entityManager.createQuery("DELETE FROM PropertyValue WHERE stagingArea=:stagingArea").setParameter("stagingAreao", to);
+		query.executeUpdate();
 	}
 }

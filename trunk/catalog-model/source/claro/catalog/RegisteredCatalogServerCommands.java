@@ -13,13 +13,14 @@ import claro.catalog.impl.items.FindItemsImpl;
 import claro.catalog.impl.items.FindPropertiesImpl;
 import claro.catalog.impl.items.GetCategoryTreeImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
+import claro.catalog.impl.items.PerformStagingImpl;
 import claro.catalog.impl.items.StoreItemDetailsImpl;
 import claro.catalog.impl.shop.GetShopsImpl;
 import claro.catalog.impl.shop.StoreShopImpl;
 import easyenterprise.lib.command.RegisteredCommands;
 
-public class RegisteredModelCommands extends RegisteredCommands {
-	public RegisteredModelCommands() {
+public class RegisteredCatalogServerCommands extends RegisteredCommands {
+	public RegisteredCatalogServerCommands() {
 		register(GetCategoryTreeImpl.class);
 		register(ItemDetailsCommandImpl.class);
 		register(FindItemsImpl.class);
@@ -36,5 +37,6 @@ public class RegisteredModelCommands extends RegisteredCommands {
 		register(GetShopsImpl.class);
 		register(StoreShopImpl.class);
 		register(LoginImpl.class);
+		register(PerformStagingImpl.class);
 	}
 }
