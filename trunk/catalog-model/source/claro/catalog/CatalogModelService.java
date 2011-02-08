@@ -64,7 +64,7 @@ public class CatalogModelService extends CommandWrapper {
 		State oldState = stateLocal.get();
 		State state = new State();
 		state.service = this;
-		state.parentHasStartedOperation = oldState.operationStarted;
+		state.parentHasStartedOperation = oldState != null && oldState.operationStarted;
 		stateLocal.set(state);
 		try {
 			return super.executeImpl(command);
