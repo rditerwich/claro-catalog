@@ -6,7 +6,7 @@ public class LanguageUtil {
 	public static String displayName(String language) {
 		String displayName = LocaleInfo.getLocaleNativeDisplayName(language);
 		if (displayName == null) {
-			displayName = "<unknown language>";
+			displayName = language;
 		}
 		return displayName;
 	}

@@ -240,6 +240,7 @@ public class CategoriesWidget extends Composite implements Globals {
 				Object categoryId = event.getSelectedItem().getUserObject();
 				if (categoryId != null) {
 					addCategory((Long)categoryId, categories.get((Long)categoryId));
+					addCategoryPanel.hide();
 				}
 			}
 		});

@@ -1,7 +1,5 @@
 package claro.catalog.manager.client.taxonomy;
 
-import static easyenterprise.lib.gwt.client.StyleUtil.createStyle;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,7 +14,6 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
-import claro.catalog.manager.client.GlobalStylesEnum;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
@@ -27,7 +24,6 @@ import com.google.common.base.Objects;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,9 +32,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.Style;
@@ -48,7 +41,7 @@ import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail implements Globals {
-	enum Styles implements Style { productMasterDetail, productprice, categoryname, product, productTD, productpanel, categoryNewSubCategory }
+	enum Styles implements Style { categoryMasterDetail, categoryprice, categoryname, category, categoryTD, categorypanel, categoryNewSubCategory }
 
 	private String language;
 	private String filterString;
@@ -87,7 +80,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 	public CategoryMasterDetail() {
 		super(126);
-		StyleUtil.addStyle(this, Styles.productMasterDetail);
+		StyleUtil.addStyle(this, Styles.categoryMasterDetail);
 		createMasterPanel();
 		createDetailPanel();
 	}
@@ -185,7 +178,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 					setWidget(1, 1, new Anchor(messages.refresh()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								// TODO Invalidate cache.
 								updateCategories();
 							}
 						});
@@ -290,11 +282,15 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			final int row = i;
 			
 			categoryTable.setWidget(i, 0, new HorizontalPanel() {{
+				StyleUtil.addStyle(this, Styles.category);
+
 				// Indent label
 				add(rowWidgets.indentLabel = new InlineLabel());
 				
 				// Image
-				add(rowWidgets.hasChildrenImage = new Image(images.nonLeafImage()));
+				add(rowWidgets.hasChildrenImage = new Image(images.nonLeafImage()) {{
+					setWidth("10px");
+				}});
 				
 				// Anchor
 				add(rowWidgets.categoryName = new Anchor() {{
@@ -456,7 +452,12 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 				String category2Label = categories.getOrEmpty(o2).tryGet(language, null);
 				
 				// TODO what if labels are not available?
-				
+				if (category1Label == null) {
+					return 1;
+				}
+				if (category2Label == null) {
+					return -1;
+				}
 				return category1Label.compareTo(category2Label);
 			}
 		});

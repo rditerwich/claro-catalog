@@ -502,7 +502,7 @@ td.ee-FormTableHelp {
 .productMasterDetail .cbg-RPContainer { background-color: white; }
 .productMasterDetail table.ee-MasterDetailTable { width: 100%; }
 .productMasterDetail table.ee-MasterDetailTable tr.itemRowChanged td { font-style: italic; }
-.productMasterDetail table.ee-MasterDetailTable table.product { width: 100%; cursor: hand;}
+.productMasterDetail table.ee-MasterDetailTable table.product { width: 100%; cursor: pointer;}
 .productMasterDetail table.ee-MasterDetailTable table.product td { border: none;}
 .productMasterDetail table.ee-MasterDetailTable td.productTD { width: 100%; padding-left: 5px; padding-right: 5px;}
 .productMasterDetail table.ee-MasterDetailTable .productprice { text-align: right; }
@@ -687,6 +687,15 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 
 /** Taxonomy Page */
 
+.categoryMasterDetail .cbg-RPContainer { background-color: white; }
+.categoryMasterDetail table.ee-MasterDetailTable { width: 100%; }
+.categoryMasterDetail table.ee-MasterDetailTable tr.itemRowChanged td { font-style: italic; }
+.categoryMasterDetail table.ee-MasterDetailTable table.category { cursor: pointer;}
+.categoryMasterDetail table.ee-MasterDetailTable table.category td { border: none;}
+.categoryMasterDetail table.ee-MasterDetailTable td.categoryTD { width: 100%; padding-left: 5px; padding-right: 5px;}
+.categoryMasterDetail table.ee-MasterDetailTable .categoryprice { text-align: right; }
+
+
 table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	cursor: hand;
 }
@@ -798,7 +807,7 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	padding-left: 4px;
 	padding-right: 6px;
 }
-.languageList .gwt-TreeItem:hover {
+.languageList .gwt-Label:hover {
 #	color: #DEE5F2;
 	color: white;
 	background-color: #5A6986;

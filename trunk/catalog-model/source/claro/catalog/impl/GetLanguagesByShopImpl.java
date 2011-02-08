@@ -3,11 +3,11 @@ package claro.catalog.impl;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.google.common.base.Objects;
-
-import claro.catalog.CatalogModelService;
+import claro.catalog.CatalogDao;
+import claro.catalog.CatalogDaoService;
 import claro.catalog.command.GetLanguagesByShop;
-import claro.catalog.model.CatalogModel;
+import claro.catalog.util.CatalogModelUtil;
+import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.shop.Shop;
 import easyenterprise.lib.cloner.BasicView;
@@ -15,6 +15,7 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 public class GetLanguagesByShopImpl extends GetLanguagesByShop implements CommandImpl<GetLanguagesByShop.Result>{
@@ -27,7 +28,8 @@ public class GetLanguagesByShopImpl extends GetLanguagesByShop implements Comman
 		checkValid();
 		
 		Result result = new Result();
-		CatalogModel catalogModel = CatalogModelService.getCatalogModel(catalogId);
+		CatalogDao dao = CatalogDaoService.getCatalogDao();
+		Catalog catalog = dao.getEntityManager().find(Catalog.class, catalogId);
 
 		result.languages = SMap.empty();
 		result.languages = result.languages.set(null, null); // Add default language
@@ -39,12 +41,12 @@ public class GetLanguagesByShopImpl extends GetLanguagesByShop implements Comman
 		
 		Set<String> languages = new LinkedHashSet<String>();
 		
-		for (OutputChannel channel : catalogModel.getCatalog().getOutputChannels()) {
+		for (OutputChannel channel : CollectionUtil.notNull(catalog.getOutputChannels())) {
 			if (channel instanceof Shop) {
 				Shop shop = Cloner.clone((Shop) channel, view);
 				
 				result.languages = result.languages.set(shop, null); // Add default language
-				for (String language : Objects.firstNonNull(shop.getLanguages(), "").split(",")) {
+				for (String language : CatalogModelUtil.splitLanguages(shop.getLanguages())) {
 					result.languages = result.languages.add(shop, language);
 					languages.add(language);
 				}

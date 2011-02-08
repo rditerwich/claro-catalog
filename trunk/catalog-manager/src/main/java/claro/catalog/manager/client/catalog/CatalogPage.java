@@ -40,7 +40,9 @@ public class CatalogPage extends Page {
 	}
 
 	public void show() {
-		// TODO Currently does not update anything... should it?
+		if (productMasterDetail != null) {
+			productMasterDetail.refreshLanguages();
+		}
 	}
 	
 	@Override

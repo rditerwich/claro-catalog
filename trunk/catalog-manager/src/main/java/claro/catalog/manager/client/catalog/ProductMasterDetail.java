@@ -127,6 +127,15 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		return SMap.empty();
 	}
 	
+
+	public void refreshLanguages() {
+		if (languageSelection != null) {
+			languageSelection.refreshData();
+		}
+	}
+	
+
+	
 	public String getFilter() {
 		// TODO add drop down filter options:
 		return filterString;
@@ -198,6 +207,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 				setWidget(1, 1, new Anchor(messages.refresh()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
+							languageSelection.refreshData();
 							updateProductList();
 						}
 					});
@@ -512,5 +522,4 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		public Label productDescriptionLabel;
 		
 	}
-	
 }

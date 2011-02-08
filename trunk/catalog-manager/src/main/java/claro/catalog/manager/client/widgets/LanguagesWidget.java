@@ -197,6 +197,7 @@ public class LanguagesWidget extends Composite implements Globals {
 						Tuple<String, String> selectedLanguage = newLanguages.get(cell.getRowIndex());
 						if (!languages.contains(selectedLanguage.getSecond())) {
 							addLanguage(selectedLanguage.getSecond());
+							addCategoryPanel.hide();
 						}
 					}
 				}

@@ -306,6 +306,11 @@ public abstract class PropertyModel {
 				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MoneyValue");
 			}
 			break;
+		case Boolean: propertyValue.setBooleanValue((Boolean) value); break;
+		case Enum: propertyValue.setEnumValue((Integer) value); break;
+		case Integer: propertyValue.setIntegerValue((Integer) value); break;
+		case Item: propertyValue.setItemValue((Item) value); break;
+		case Real: propertyValue.setRealValue((Double) value);break;
 			
 		// TODO add other non-string values
 		default:

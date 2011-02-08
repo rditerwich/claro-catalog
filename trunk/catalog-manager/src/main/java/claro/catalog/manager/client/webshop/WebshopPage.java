@@ -3,6 +3,8 @@ package claro.catalog.manager.client.webshop;
 import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
@@ -64,6 +66,12 @@ public class WebshopPage extends Page {
 					setMainWidget(detail = new WebshopDetail(model));
 //					addTab(new EEButton(messages.campaignsTab()), 100, campaignsPanel = new WebshopCampaignsPanel(model));
 				}});
+				setRowChangedHandler(new ValueChangeHandler<Integer>() {
+					public void onValueChange(ValueChangeEvent<Integer> event) {
+						model.setShop(model.getShops().get(masterDetail.getCurrentRow()));
+					}
+				});
+
 			}});
 		}});
 		

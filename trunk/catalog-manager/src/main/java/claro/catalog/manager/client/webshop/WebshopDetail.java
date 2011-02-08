@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.xerces.impl.dtd.models.CMUniOp;
+
 import claro.catalog.command.shop.StoreShop;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.catalog.manager.client.widgets.LanguagesWidget;
+import claro.catalog.util.CatalogModelUtil;
 
 import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -108,7 +111,7 @@ public class WebshopDetail extends Composite implements Globals {
 		model.getShop().setName(nameTextBox.getText());
 		model.getShop().setUrlPrefix(urlPrefixTextBox.getText());
 		model.getShop().setDefaultLanguage(getSelectedDefaultLanguage());
-		model.getShop().setLanguages(getSelectedLanguages());
+		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getLanguages()));
 		
 		model.store(new StoreShop(model.getShop()));
 	}
@@ -116,10 +119,8 @@ public class WebshopDetail extends Composite implements Globals {
 	private void setSelectedLanguages(String languages) {
 		List<String> selectedLanguages = new ArrayList<String>();
 		
-		for (String language : Objects.firstNonNull(languages, "").split(",")) {
-			if (language != null && !language.trim().equals("")) {
-				selectedLanguages.add(language);
-			}
+		for (String language : CatalogModelUtil.splitLanguages(languages)) {
+			selectedLanguages.add(language);
 		}
 		
 		languagesWidget.setData(selectedLanguages);

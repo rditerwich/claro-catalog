@@ -12,6 +12,7 @@ import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.shop.Shop;
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.util.CollectionUtil;
 
 public abstract class ShopModel implements Globals {
 	public static int REQUESTED_PAGESIZE;
@@ -104,13 +105,21 @@ public abstract class ShopModel implements Globals {
 		return lastPage;
 	}
 	
-	public void store(StoreShop command) {
+	public void store(final StoreShop command) {
 		command.catalogId = CatalogManager.getCurrentCatalogId();
 		GwtCommandFacade.execute(command, new StatusCallback<StoreShop.Result>(messages.savingWebShopsAction(), false) {
 			public void onSuccess(StoreShop.Result result) {
 				super.onSuccess(result);
+				if (result.shop != null) {
+					int index = CollectionUtil.indexOfRef(shops, command.shop);
+					if (index != -1) {
+						shops.set(index, result.shop);
+					}
+				} else {
+					shops.remove(command.shop);
+				}
 				setShop(result.shop);
-				GwtCommandFacade.invalidateCache(new GetLanguagesByShop());
+				GwtCommandFacade.invalidateCache(new GetLanguagesByShop(CatalogManager.getCurrentCatalogId()));
 			}
 		});
 	}

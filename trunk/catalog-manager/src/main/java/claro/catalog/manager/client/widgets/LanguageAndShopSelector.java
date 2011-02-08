@@ -15,6 +15,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
@@ -38,17 +40,12 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 					updateSelection(listBox.getSelectedIndex());
 				}
 			});
-			addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					refreshData();
-				}
-			});
 		}});
 		
 		refreshData();
 	}
 
-	private void refreshData() {
+	public void refreshData() {
 		GetLanguagesByShop cmd = new GetLanguagesByShop();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		
@@ -75,12 +72,16 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 	private void updateSelection(int selectedIndex) {
 		Shop oldShop = selectedShop;
 		String oldLanguage = selectedLanguage;
-		if (listBox.getSelectedIndex() >= 0) {
+		if (selectedIndex >= 0) {
 			selectedShop = shopsAndLanguages.get(selectedIndex).getFirst();
 			selectedLanguage = shopsAndLanguages.get(selectedIndex).getSecond();
 		} else {
 			selectedShop = null;
 			selectedLanguage = null;
+		}
+		
+		if (listBox.getSelectedIndex() != selectedIndex) {
+			listBox.setSelectedIndex(selectedIndex);
 		}
 		
 		if (!Objects.equal(oldShop, selectedShop) || !Objects.equal(oldLanguage, selectedLanguage)) {

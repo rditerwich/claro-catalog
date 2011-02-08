@@ -16,6 +16,13 @@ public class GetLanguagesByShop implements Command<GetLanguagesByShop.Result> {
 
 	public Long catalogId;
 	
+	public GetLanguagesByShop() {
+	}
+	
+	public GetLanguagesByShop(Long catalogId) {
+		this.catalogId = catalogId;
+	}
+	
 	@Override
 	public void checkValid() throws CommandValidationException {
 		validate (catalogId != null);
