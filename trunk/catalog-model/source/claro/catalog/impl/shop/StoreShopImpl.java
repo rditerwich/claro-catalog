@@ -20,7 +20,6 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.command.jpa.JpaService;
 import easyenterprise.lib.util.CollectionUtil;
 
 public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Result> {
