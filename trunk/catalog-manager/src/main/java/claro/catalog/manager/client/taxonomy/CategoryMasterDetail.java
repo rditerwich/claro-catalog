@@ -32,6 +32,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.Style;
@@ -76,6 +77,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private List<claro.catalog.manager.client.taxonomy.CategoryMasterDetail.CategoryRow> categoryRows = Collections.emptyList();
 	private SMap<Long, SMap<String, String>> newCategoryGroups;
 	private SMap<Long, SMap<String, String>> newCategoryParentExtentWithSelf;
+	protected Label pleaseWaitLabel;
 
 
 	public CategoryMasterDetail() {
@@ -188,6 +190,10 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 						setVisible(false); 
 					}});
 				}});
+				add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
+					setVisible(true);
+				}});
+				
 		}});
 	}
 	
@@ -254,6 +260,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private void render() {
 		
 		// Make sure we have the root properties:
+		pleaseWaitLabel.setVisible(nameProperty == null);
 		if (nameProperty == null) {
 			return;
 		}

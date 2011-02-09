@@ -93,7 +93,7 @@ public class CatalogPage extends Page {
 		
 		cmd.filter = productMasterDetail.getFilter();
 		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
-		cmd.orderByIds = Collections.singletonList(nameProperty.propertyId); 
+		cmd.orderByIds = productMasterDetail.getOrderByIds(); 
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts(), false) {
 			public void onSuccess(FindItems.Result result) {

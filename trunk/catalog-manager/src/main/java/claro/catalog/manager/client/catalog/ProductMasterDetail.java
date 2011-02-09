@@ -1,6 +1,7 @@
 package claro.catalog.manager.client.catalog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -74,6 +75,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	private Long rootCategory;
 	private Table productTable;
+	private Label pleaseWaitLabel;
 	
 	public ProductMasterDetail() {
 		super(150);
@@ -140,6 +142,14 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		// TODO add drop down filter options:
 		return filterString;
 	}
+	
+	public List<Long> getOrderByIds() {
+		if (nameProperty != null) {
+			return Collections.singletonList(nameProperty.propertyId);
+		}
+		return Collections.emptyList();
+	}
+
 	
 //	@Override
 //	protected int getExtraTableWidth() {
@@ -218,6 +228,10 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					setVisible(false); 
 				}});
 			}});
+			add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
+				setVisible(true);
+			}});
+			
 		}}); 
 		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
 			setVisible(false);
@@ -275,6 +289,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	private void render() {
 		
 		// Make sure we have the root properties:
+		pleaseWaitLabel.setVisible(nameProperty == null);
 		if (nameProperty == null) {
 			return;
 		}
@@ -522,4 +537,5 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		public Label productDescriptionLabel;
 		
 	}
+
 }
