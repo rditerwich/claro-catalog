@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import claro.catalog.command.items.PerformStaging;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
@@ -13,8 +14,10 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.command.StatusCallback;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
@@ -31,13 +34,16 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.Money;
@@ -169,70 +175,105 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		setMaster(productTable);
 		
 		// search panel
-		setHeader(new VerticalPanel() {{
-			add(new Grid(2, 3) {{
-				StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
-				setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
-					protected void selectionChanged() {
-						updateProductList();
-					}
-				});
-				setWidget(0, 1, new TextBox() {{
-					addChangeHandler(new ChangeHandler() {
-						public void onChange(ChangeEvent event) {
-							filterString = getText();
-							updateFilterLabel();
+		setHeader(new HorizontalPanel() {{
+			add(new VerticalPanel() {{
+				add(new Grid(2, 3) {{
+					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
+					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
+						protected void selectionChanged() {
 							updateProductList();
 						}
 					});
-				}});
-				setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-						setData(SMap.<Long, SMap<String, String>>empty(), getLanguage());
-					}
-					protected String getAddCategoryLabel() {
-						return messages.addCategoriesLink();
-					};
-					protected String getAddCategoryTooltip() {
-						return messages.addCategoryFilter();
-					}
-					protected String getRemoveCategoryTooltip(String categoryName) {
-						return messages.removeCategoryFilterTooltip(categoryName);
-					}
-					protected void removeCategory(Long categoryId) {
-						super.removeCategory(categoryId);
-						updateProductList();
-					}
-					protected void addCategory(Long categoryId, SMap<String, String> labels) {
-						super.addCategory(categoryId, labels);
-						updateProductList();
-					}
-				});
-				setWidget(1, 0, new Anchor(messages.newProduct()) {{
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							createNewProduct(rootCategory);
+					setWidget(0, 1, new TextBox() {{
+						addChangeHandler(new ChangeHandler() {
+							public void onChange(ChangeEvent event) {
+								filterString = getText();
+								updateFilterLabel();
+								updateProductList();
+							}
+						});
+					}});
+					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
+							setData(SMap.<Long, SMap<String, String>>empty(), getLanguage());
 						}
-					});
-				}});
-				setWidget(1, 1, new Anchor(messages.refresh()) {{
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							languageSelection.refreshData();
+						protected String getAddCategoryLabel() {
+							return messages.addCategoriesLink();
+						};
+						protected String getAddCategoryTooltip() {
+							return messages.addCategoryFilter();
+						}
+						protected String getRemoveCategoryTooltip(String categoryName) {
+							return messages.removeCategoryFilterTooltip(categoryName);
+						}
+						protected void removeCategory(Long categoryId) {
+							super.removeCategory(categoryId);
+							updateProductList();
+						}
+						protected void addCategory(Long categoryId, SMap<String, String> labels) {
+							super.addCategory(categoryId, labels);
 							updateProductList();
 						}
 					});
+					setWidget(1, 0, new Anchor(messages.newProduct()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								createNewProduct(rootCategory);
+							}
+						});
+					}});
+					setWidget(1, 1, new Anchor(messages.refresh()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								languageSelection.refreshData();
+								updateProductList();
+							}
+						});
+					}});
+				}});
+				add(new FlowPanel() {{
+					add(filterLabel = new HTML() {{
+						setVisible(false); 
+					}});
+				}});
+				add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
+					setVisible(true);
+				}});
+				
+			}}); 
+			add(new VerticalPanel() {{
+				add(new EEButton(messages.publishToPreviewButton()) {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							new ConfirmationDialog(messages.publishToPreviewConfirmation(), images.warning()) {
+								@Override
+								protected void yesPressed() {
+									PerformStaging command = new PerformStaging();
+									command.catalogId = CatalogManager.getCurrentCatalogId();
+									command.toStagingName = PerformStaging.STAGING_AREA_PREVIEW;
+									GwtCommandFacade.execute(command, new StatusCallback<PerformStaging.Result>() {});
+								}
+							}.show();
+						}
+					});
+				}});
+				add(new EEButton(messages.publishPreviewToProductionButton()) {{
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							new ConfirmationDialog(messages.publishPreviewToProductionConfirmation(), images.warning()) {
+								@Override
+								protected void yesPressed() {
+									PerformStaging command = new PerformStaging();
+									command.catalogId = CatalogManager.getCurrentCatalogId();
+									command.fromStagingName = PerformStaging.STAGING_AREA_PREVIEW;
+									command.toStagingName = PerformStaging.STAGING_AREA_PUBLISHED;
+									GwtCommandFacade.execute(command, new StatusCallback<PerformStaging.Result>() {});
+								}
+							}.show();
+						}
+					});
 				}});
 			}});
-			add(new FlowPanel() {{
-				add(filterLabel = new HTML() {{
-					setVisible(false); 
-				}});
-			}});
-			add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
-				setVisible(true);
-			}});
-			
-		}}); 
+		}});
 		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
 			setVisible(false);
 		}};

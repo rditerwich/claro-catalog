@@ -350,4 +350,8 @@ public interface I18NCatalog extends Messages {
 	String orderProductOrderTab();
 	String orderHistoryTab();
 	String orderFilter();
+	String publishToPreviewButton();
+	String publishToPreviewConfirmation();
+	String publishPreviewToProductionButton();
+	String publishPreviewToProductionConfirmation();
 }
