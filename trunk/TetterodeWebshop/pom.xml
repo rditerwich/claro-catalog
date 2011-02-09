@@ -58,6 +58,7 @@
 		  <groupId>org.mortbay.jetty</groupId>
 		  <artifactId>jetty-maven-plugin</artifactId>
 		</plugin>
+		<!-- 
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-server</artifactId>
@@ -67,6 +68,7 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
         </configuration>
       </plugin>
+		 -->
       <plugin>
         <groupId>net.sf.alchim</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
