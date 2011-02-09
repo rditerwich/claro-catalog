@@ -51,13 +51,6 @@ Package {
                     isComposite = true
                     opposite = shop:Promotion/attributes:shop
                 }
-                Attribute {
-                    name = templates
-                    type = catalog:Template
-                    lower = 0
-                    upper = {}
-                    isComposite = true
-                }
             }
         }
         Class {

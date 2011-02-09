@@ -46,6 +46,11 @@ public class StoreShop implements Command<Result> {
 	public List<Promotion> promotionsToBeRemoved;
 	public List<Template> templatesToBeRemoved;
 	
+	/**
+	 * When set, shop navigation is filled with these categories
+	 */
+	public List<Long> topLevelCategoryIds;
+	
 	public void checkValid() throws CommandValidationException {
 		validate (shop != null, "No shop specified");
 		validate (shop.getId() != null || catalogId != null, "CatalogId is required for new shops");

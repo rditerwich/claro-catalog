@@ -462,6 +462,9 @@ public class CatalogDao extends AbstractDao {
 			return result.get(0);
 		}
 		StagingStatus status = new StagingStatus();
+		status.setCatalog(catalog);
+		status.setStagingArea(stagingArea);
+		status.setUpdateSequenceNr(0);
 		getEntityManager().persist(status);
 		return status;
 	}

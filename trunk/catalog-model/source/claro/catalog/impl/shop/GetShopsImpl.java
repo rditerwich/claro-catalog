@@ -12,7 +12,7 @@ import easyenterprise.lib.command.CommandImpl;
 public class GetShopsImpl extends GetShops implements CommandImpl<GetShops.Result>{
 
 	private static final long serialVersionUID = 1L;
-	static View view = new BasicView("catalog", "navigation", "navigation/subNavigation", "promotions", "promotions/templates", "excludedItems", "excludedProperties");
+	static View view = new BasicView("catalog", "navigation", "navigation/subNavigation", "navigation/category", "promotions", "promotions/templates", "excludedItems", "excludedProperties");
 
 	@Override
 	public Result execute() throws CommandException {

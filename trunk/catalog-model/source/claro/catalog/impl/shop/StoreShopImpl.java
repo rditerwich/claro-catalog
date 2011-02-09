@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogDaoService;
 import claro.catalog.command.shop.StoreShop;
+import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Template;
 import claro.jpa.shop.Navigation;
 import claro.jpa.shop.Promotion;
@@ -51,6 +52,18 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 				// TODO
 			}
 			
+			// 
+			if (topLevelCategoryIds != null) {
+				result.shop.getNavigation().clear();
+				for (Long id : topLevelCategoryIds) {
+					Category category = em.find(Category.class, id);
+					if (category != null) {
+						Navigation navigation = new Navigation();
+						navigation.setCategory(category);
+						result.shop.getNavigation().add(navigation);
+					}
+				}
+			}
 			
 			// clone result
 			result.shop = Cloner.clone(result.shop, GetShopsImpl.view);
@@ -85,7 +98,6 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 		for (Template t : CollectionUtil.notNull(templatesToBeRemoved)) {
 			Template attachedTemplate = em.find(Template.class, t.getId());
 			validate(attachedTemplate != null);
-			validate(attachedShop.getTemplates().contains(attachedTemplate));
 		}
 	}
 }
