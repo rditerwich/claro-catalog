@@ -277,6 +277,7 @@ public interface I18NCatalog extends Messages {
 	String taxonomyMenu();
 	String dataExchangeMenu();
 	String webshopMenu();
+	String ordersMenu();
 	String campaignsMenu();
 	String contentLibraryMenu();
 	String reportAndAnalysisMenu();
@@ -321,4 +322,29 @@ public interface I18NCatalog extends Messages {
 	String loadingWebShopsAction();
 	String defaultLanguageName();
 	String savingWebShopsAction();
+
+	String orderCanceledStatus();
+    String orderClosedStatus();
+    String orderCompleteStatus();
+    String orderInShoppingCartStatus();
+    String orderOnHoldStatus();
+    String orderPendingPaymentStatus();
+    String orderProcessingStatus();
+    String orderReceivedPaymentStatus();
+    String orderShippedStatus();
+    
+	String orderShopNameLabel();
+	String orderDateLabel();
+	String orderStatusLabel();
+	String loadingOrdersMessage();
+	String removeOrderConfirmationMessage(String name);
+	String removeOrderLink();
+	String loadingOrdersAction();
+	String savingOrdersAction();
+	String newOrderLink();
+	String orderUserLabel();
+	String orderAmountPaidLabel();
+	String orderProductOrderTab();
+	String orderHistoryTab();
+
 }

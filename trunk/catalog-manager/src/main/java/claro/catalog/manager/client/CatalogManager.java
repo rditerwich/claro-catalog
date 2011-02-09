@@ -3,6 +3,7 @@ package claro.catalog.manager.client;
 
 import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
+import claro.catalog.manager.client.orders.OrderPage;
 import claro.catalog.manager.client.taxonomy.TaxonomyPage;
 import claro.catalog.manager.client.webshop.WebshopPage;
 import claro.catalog.util.PropertyStringConverter;
@@ -119,9 +120,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 					addPage(new CatalogPage(placeController), messages.catalogMenu());
 					addPage(new TaxonomyPage(placeController), messages.taxonomyMenu());
 					addPage(new WebshopPage(placeController, messages.webshopMenu()), messages.webshopMenu());
+					addPage(new OrderPage(placeController, messages.ordersMenu()), messages.ordersMenu());
 //					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
 //					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
-					addPage(new EmptyPage(placeController, "Orders"), "Orders");
+//					addPage(new EmptyPage(placeController, "Orders"), "Orders");
 					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
 //					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
 					addPage(new MasterDetailTestPage(placeController), "MasterDetail");

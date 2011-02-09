@@ -15,6 +15,7 @@ import claro.catalog.impl.items.GetCategoryTreeImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
 import claro.catalog.impl.items.PerformStagingImpl;
 import claro.catalog.impl.items.StoreItemDetailsImpl;
+import claro.catalog.impl.order.GetOrdersImpl;
 import claro.catalog.impl.shop.GetShopsImpl;
 import claro.catalog.impl.shop.StoreShopImpl;
 import easyenterprise.lib.command.RegisteredCommands;
@@ -36,6 +37,7 @@ public class RegisteredCatalogServerCommands extends RegisteredCommands {
 		register(GetLanguagesByShopImpl.class);
 		register(GetShopsImpl.class);
 		register(StoreShopImpl.class);
+		register(GetOrdersImpl.class);
 		register(LoginImpl.class);
 		register(PerformStagingImpl.class);
 	}

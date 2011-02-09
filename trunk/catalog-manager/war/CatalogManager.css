@@ -411,7 +411,7 @@ border-radius: 15px;
 box-shadow: 0 0 3px 3px #888;
 
 }
-.ee-MasterDetailSelectionPanelContent { border-left: 14px solid #E0E7FC; }
+.ee-MasterDetailSelectionPanelContent { border-left: 8px solid #E0E7FC; }
 .ee-MasterDetail table.ee-masterDetailTable td { padding: 0px; margin: 0px; padding-right: 12px; }
 .ee-MasterDetailSelection td { background-color: #E0E7FC;}
 

@@ -28,6 +28,7 @@ public class StatusMessage implements Globals {
 		setAnimationEnabled(true);
 		setWidget(new HorizontalPanel() {{
 			setVerticalAlignment(ALIGN_TOP);
+			setSpacing(3);
 			add(statusPanel);
 			add(new ActionImage(images.closeBlue(), new ClickHandler() {
 				public void onClick(ClickEvent event) {

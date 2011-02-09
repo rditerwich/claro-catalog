@@ -78,6 +78,10 @@ public class FormTable extends Composite implements Globals {
 		return add((Widget) null, widget, help);
 	}
 	
+	public <T extends Widget> T add(String label, final T widget) {
+		return add(label, widget, null);
+	}
+	
 	public <T extends Widget> T add(String label, final T widget, final String help) {
 		return add(new Label(label), widget, help);
 	}
