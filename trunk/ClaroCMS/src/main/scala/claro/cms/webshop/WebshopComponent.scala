@@ -2,6 +2,7 @@ package claro.cms.webshop
 
 import net.liftweb.http.{RequestVar,Req,S,SHtml,LiftRules,RewriteRequest,RewriteResponse,ParsePath,InMemoryResponse,NotFoundResponse}
 import net.liftweb.common.Full
+import net.liftweb.util.LoanWrapper
 import claro.cms.{Cms,Component,Template,ResourceLocator,Scope,Paging}
 import scala.xml.{Node,NodeSeq,Text}
 import claro.jpa
@@ -12,6 +13,21 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
   
   val prefix = "webshop"
     
+  override def boot {
+   S.addAround( new LoanWrapper {
+    	def apply[T](f: => T): T = {
+    		try {
+//	WebshopModel.dao.getEntityManager.getDelegate.asInstanceOf[org.eclipse.persistence.jpa.JpaEntityManager].getServerSession().getIdentityMapAccessor().invalidateAll();
+    			val result = f // Let Lift do normal request processing.
+    			WebshopModel.dao.commitTransaction
+    			result
+    		} catch {
+    			case e => WebshopModel.dao.rollbackTransaction; throw e
+    		}
+    	}}
+    )
+  }
+  	
   bindings.append {
     case _ : WebshopComponent => Map (
       "id" -> WebshopModel.shop.get.id,

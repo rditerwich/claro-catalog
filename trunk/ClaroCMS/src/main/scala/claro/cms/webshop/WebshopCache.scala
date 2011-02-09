@@ -6,6 +6,7 @@ import scala.xml.NodeSeq
 import java.util.Locale
 import java.util.concurrent.ConcurrentMap
 import claro.catalog.model.CatalogModel
+import claro.catalog.command.items.PerformStaging
 import claro.catalog.model.ItemModel
 import claro.catalog.model.PropertyModel
 
@@ -21,15 +22,16 @@ object WebshopCache {
 
 	val shopName = rich(Website.instance.config.properties)("shop.name", "Shop")
 	val catalogName = rich(Website.instance.config.properties)("catalog.name", "Catalog")
-	lazy val catalogModel = new CatalogModel(findAllCatalogs.find(_.getName == catalogName).get.getId, WebshopModel.dao)
+	lazy val catalog = findAllCatalogs.find(_.getName == catalogName).get
+	def catalogModel = new CatalogModel(catalog.getId, WebshopModel.dao)
 	
   private val map : ConcurrentMap[(Boolean, String), Shop] = MapMaker(10, MapMaker.STRONG, MapMaker.SOFT, key => {
-  	val stagingAreaName = if (key._1) CatalogModel.STAGING_AREA_PREVIEW else CatalogModel.STAGING_AREA_PUBLISHED
+  	val stagingAreaName = if (key._1) PerformStaging.STAGING_AREA_PREVIEW else PerformStaging.STAGING_AREA_PUBLISHED
   	val stagingArea = findAllStagingAreas.find(_.getName == stagingAreaName).get
   	val language = key._2
   	val shop = findAllShops.find(_.getName == shopName).get
   	new Shop(new WebshopData(catalogModel, shop, stagingArea, language))
-  })
+  }) 
 
   private var previewSequenceNr = 0
   private var publishedSequenceNr = 0
@@ -45,22 +47,25 @@ object WebshopCache {
 	  WebshopModel.dao.getEntityManager.createQuery("select staging from StagingArea staging").getResultList.asInstanceOf[java.util.List[jpa.catalog.StagingArea]]
 	
 	def checkValid = {
-		val catalog = catalogModel.getCatalog
-		findAllStagingAreas.find(_.getName == CatalogModel.STAGING_AREA_PREVIEW) match {
+		findAllStagingAreas.find(_.getName == PerformStaging.STAGING_AREA_PREVIEW) match {
 			case Some(sa) => 
 				val sequenceNr : Int = WebshopModel.dao.getOrCreateStagingStatus(catalog, sa).getUpdateSequenceNr.intValue
 				if (previewSequenceNr != sequenceNr) {
+					println("Clearing shop cache");
 					previewSequenceNr = sequenceNr
-					map.clear();
+					map.clear()
+//					WebshopModel.dao.getEntityManagerFactory().getCache().evictAll();
 				}
 			case _ =>
 		}
-		findAllStagingAreas.find(_.getName == CatalogModel.STAGING_AREA_PUBLISHED) match {
+		findAllStagingAreas.find(_.getName == PerformStaging.STAGING_AREA_PUBLISHED) match {
 			case Some(sa) => 
 				val sequenceNr : Int = WebshopModel.dao.getOrCreateStagingStatus(catalog, sa).getUpdateSequenceNr.intValue
 				if (publishedSequenceNr != sequenceNr) {
+					println("Clearing shop cache");
 					publishedSequenceNr = sequenceNr
-					map.clear();
+					map.clear()
+//					WebshopModel.dao.getEntityManagerFactory().getCache().evictAll();
 				}
 			case _ =>
 		}
@@ -89,6 +94,9 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
   val items : Set[ItemModel] = 
   	catalog.root.getChildExtent.toSet filter (_.isVisible(staging, shop, language))
   
+  val itemsEntities : Set[jpa.catalog.Item] = 
+  	items.map(_.getEntity)
+  
   def item(item : jpa.catalog.Item) = catalog.getItem(item.getId)
   
   val excludedProperties : Set[jpa.catalog.Property] = 
@@ -101,9 +109,9 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
     
   private def navigation(nav : Iterable[jpa.shop.Navigation]) : Seq[Seq[jpa.shop.Navigation]] = {
     val sorted = nav.toSeq.sortBy(_.getIndex.getOrElse(0))
-    val filled = sorted.filter(_.getCategory != null)
-    val filledSeq = if (filled.isEmpty) Seq() else Seq(sorted.filter(_.getCategory != null))
-    val empty = sorted.filter(_.getCategory == null)
+    val filled = sorted.filter(nav => itemsEntities.contains(nav.getCategory))
+    val filledSeq = if (filled.isEmpty) Seq() else Seq(sorted.filter(nav => itemsEntities.contains(nav.getCategory)))
+    val empty = sorted.filter(nav => !itemsEntities.contains(nav.getCategory))
     if (empty.isEmpty) filledSeq
     else filledSeq ++ empty.flatMap(nav => navigation(nav.getSubNavigation))
   }
@@ -111,7 +119,7 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
   def topLevelNavigation = navigation(shop.getNavigation)
   
   def topLevelCategories : Set[jpa.catalog.Category] = 
-  	topLevelNavigation.flatMap(_.map(_.getCategory)).toSet
+  	topLevelNavigation.flatMap(_.map(_.getCategory)).toSet.filter(itemsEntities)
 
   def allItemEntities : Set[jpa.catalog.Item] = 
   	items.map(_.getEntity)

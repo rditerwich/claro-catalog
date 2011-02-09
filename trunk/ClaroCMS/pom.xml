@@ -58,35 +58,40 @@
       <version>2.5</version>
       <scope>provided</scope>
     </dependency>
+    <!--  
     <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>
+     -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- 
     <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>[6.1.6,)</version>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>7.3.0.v20110203</version>
       <scope>test</scope>
     </dependency>
-    <!-- for LiftConsole -->
+     -->
+    <!-- for LiftConsole
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-compiler</artifactId>
       <version>${scala.version}</version>
       <scope>test</scope>
     </dependency>
+     -->
     <dependency>
-      <groupId>com.google.collections</groupId>
-      <artifactId>google-collections</artifactId>
-      <version>1.0</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>r07</version>
     </dependency>
      <dependency>
       <groupId>claro</groupId>
@@ -115,6 +120,7 @@
           <jvmArgs><jvmArg>-Xmx700m</jvmArg></jvmArgs>
         </configuration>
       </plugin>
+      <!-- 
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>maven-jetty-plugin</artifactId>
@@ -123,6 +129,7 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
         </configuration>
       </plugin>
+       -->
       <!-- 
       <plugin>
         <groupId>net.sf.alchim</groupId>

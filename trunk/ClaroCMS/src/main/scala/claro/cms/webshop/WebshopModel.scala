@@ -94,8 +94,8 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
   val prefixPath: List[String] = (shop.getUrlPrefix getOrElse ("") split ("/") toList) drop (0)
   val defaultLanguage = shop.getDefaultLanguage getOrElse "en"
 
-  val topLevelCategories: Seq[Seq[Category]] =
-    cacheData.topLevelNavigation.map(_.map(n => mapping.categories(cacheData.item(n.getCategory))))
+  val topLevelCategories: Seq[Seq[Category]] = 
+  	cacheData.topLevelNavigation.map(_.map(n => mapping.categories(cacheData.item(n.getCategory))))
 
   val promotions: Set[Promotion] =
     cacheData.promotions map (mapping.promotions) toSet
@@ -105,7 +105,7 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
 
   val products: Set[Product] =
   	cacheData.items.filter(_.isProduct) map (mapping.products) toSet
-    	
+    
   val categoriesById: collection.Map[Long, Category] =
     categories mapBy (_.id)
 
@@ -275,7 +275,7 @@ class Property(property: PropertyModel, cacheData: WebshopData, mapping: Mapping
 	  case _ => ""
 	}
   val moneyValue : Double = value match {
-	  case money : Money => money.value.doubleValue
+	  case money : Money => if (money.value != null) money.value.doubleValue else 0
 	  case _ => 0
 	}
   val moneyCurrency : String = value match {

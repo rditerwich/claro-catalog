@@ -8,8 +8,8 @@ trait Component extends BindingHelpers {
   val dispatch = RulesSeq[PartialFunction[(List[String],String),LiftResponse]]
   val rewrite = RulesSeq[Function[List[String],List[String]]]
   val templateLocators = RulesSeq[PartialFunction[Template,ResourceLocator]]
-  def boot : Any = null
-
+  def boot {}
+  
   implicit def toList(a : Scope) = List(a)
 
 }
