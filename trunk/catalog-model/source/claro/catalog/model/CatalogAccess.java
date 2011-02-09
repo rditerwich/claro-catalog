@@ -40,8 +40,10 @@ public class CatalogAccess {
 	static void endOperation() {
 		CatalogAccess accessInfo = threadInstance.get();
 		threadInstance.set(null);
-		for (ItemModel item : accessInfo.invalidItems) {
-			item.doInvalidate();
+		if (accessInfo != null) {
+			for (ItemModel item : accessInfo.invalidItems) {
+				item.doInvalidate();
+			}
 		}
 	}
 }

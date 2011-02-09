@@ -16,6 +16,9 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import org.eclipse.persistence.config.CacheUsage;
+import org.eclipse.persistence.config.QueryHints;
+
 import claro.catalog.data.RootProperties;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Catalog_;
@@ -36,6 +39,7 @@ import claro.jpa.catalog.Property_;
 import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.catalog.StagingArea_;
+import claro.jpa.catalog.StagingStatus;
 import claro.jpa.importing.ImportJobResult;
 import claro.jpa.importing.ImportJobResult_;
 import claro.jpa.importing.ImportSource;
@@ -53,8 +57,10 @@ import easyenterprise.lib.util.Paging;
 
 public class CatalogDao extends AbstractDao {
 	
+	public static final String PERSISTENCE_UNIT_NAME = "claro.jpa.catalog";
+
 	public CatalogDao(Map<String, String> properties) {
-		super("claro.jpa.catalog", properties);
+		super(PERSISTENCE_UNIT_NAME, properties);
 	}
 	
 	public CriteriaBuilder getCriteriaBuilder() {
@@ -439,7 +445,22 @@ public class CatalogDao extends AbstractDao {
 	public void removeAllStagingValues(StagingArea to) {
 		if (to == null || to.getId() == null) throw new IllegalArgumentException("to must not be null");
 		EntityManager entityManager = getEntityManager();
-		Query query = entityManager.createQuery("DELETE FROM PropertyValue WHERE stagingArea=:stagingArea").setParameter("stagingAreao", to);
+		Query query = entityManager.createQuery("DELETE FROM PropertyValue v WHERE v.stagingArea=:stagingArea").setParameter("stagingAreao", to);
 		query.executeUpdate();
+	}
+	
+	public StagingStatus getOrCreateStagingStatus(Catalog catalog, StagingArea stagingArea) {
+		@SuppressWarnings("unchecked")
+		List<StagingStatus> result = getEntityManager().createQuery("SELECT s FROM StagingStatus s WHERE s.catalog=:catalog AND s.stagingArea=:stagingArea").
+			setHint(QueryHints.CACHE_USAGE, CacheUsage.DoNotCheckCache).
+			setParameter("catalog", catalog).
+			setParameter("stagingArea", stagingArea).
+			getResultList();
+		if (!result.isEmpty()) {
+			return result.get(0);
+		}
+		StagingStatus status = new StagingStatus();
+		getEntityManager().persist(status);
+		return status;
 	}
 }

@@ -38,7 +38,7 @@ public class CatalogTestBase {
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("javax.persistence.jdbc.driver", "org.postgresql.Driver");
 		properties.put("javax.persistence.jdbc.url", "jdbc:postgresql:" + TEST_DATABASE_NAME);
-		properties.put("javax.persistence.jdbc.user", "postgres");;
+		properties.put("javax.persistence.jdbc.user", "postgres");
 		properties.put("javax.persistence.jdbc.password", "postgres");
 		properties.put("eclipselink.ddl-generation", "none");
 		properties.put("eclipselink.ddl-generation.output-mode", "none");
@@ -83,6 +83,7 @@ public class CatalogTestBase {
 	
 	protected static CatalogServer getServer() throws SQLException {
 		if (server == null) {
+			ensureDatabaseCreated();
 			server = new CatalogServer(getProperties());
 		}
 		return server;
@@ -105,14 +106,17 @@ public class CatalogTestBase {
 	
 	protected CatalogDao getCatalogDao() throws SQLException {
 		if (catalogDao == null) {
+			ensureDatabaseCreated();
 			catalogDao = new CatalogDao(getProperties());
 		}
 		return catalogDao;
 	}
 	
 	protected CatalogModel getCatalogModel() throws SQLException {
-		getServer(); // Ensure that the server is initialized.
-		return CatalogModelService.getCatalogModel(TEST_CATALOG_ID);
+		if (catalogModel == null) {
+			catalogModel = new CatalogModel(TEST_CATALOG_ID, getCatalogDao());
+		}
+		return catalogModel;
 	}
 	
 	protected EntityManager getEntityManager() {

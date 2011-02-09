@@ -14,6 +14,7 @@ import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.catalog.StagingStatus;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.util.SMap;
@@ -64,6 +65,10 @@ public class PerformStagingImpl extends PerformStaging implements CommandImpl<Pe
 				}
 			}
 		}
+		
+		// update staging status
+		StagingStatus status = model.dao.getOrCreateStagingStatus(model.getCatalog(), to);
+		status.setUpdateSequenceNr(status.getUpdateSequenceNr());
 		
 		return new Result();
 	}

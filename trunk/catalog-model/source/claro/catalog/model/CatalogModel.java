@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+import com.google.common.base.Strings;
+
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.RootProperties;
@@ -21,6 +23,7 @@ import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.util.SMap;
+import easyenterprise.lib.util.StringUtil;
 
 public class CatalogModel {
 
@@ -155,9 +158,11 @@ public class CatalogModel {
 		if (catalog == null) {
 			catalog = new Catalog();
 			catalog.setId(id);
-			catalog.setName(""); 
 			em.persist(catalog);
 			em.flush(); // Force id generation, because there is an interdependency between catalog and the root category.
+		}
+		if (Strings.isNullOrEmpty(catalog.getName())) {
+			catalog.setName("Catalog");
 		}
 		return catalog;
   }
