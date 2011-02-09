@@ -55,10 +55,9 @@ public class LanguagesWidget extends Composite implements Globals {
 	
 	public void setData(List<String> languages) {
 		
+		this.languages.clear();
 		if (languages != null) {
 			this.languages.addAll(languages);
-		} else {
-			 this.languages.clear();
 		}
 		
 		render();
@@ -72,10 +71,10 @@ public class LanguagesWidget extends Composite implements Globals {
 		mainPanel.clear();
 		int i = 0;
 		for (String language : languages) {
-			final boolean lastCategory = i++ == languages.size() - 1;
+			final boolean lastLanguage = i++ == languages.size() - 1;
 			final String lang = language;
 			final String languageName = LanguageUtil.displayName(language);
-			mainPanel.add(new Grid(1, lastCategory && allowMultiple ? 3 : 2) {{
+			mainPanel.add(new Grid(1, lastLanguage && allowMultiple ? 3 : 2) {{
 				setWidget(0, 0, new Anchor(languageName) {{
 					StyleUtil.addStyle(this, Styles.languageName);
 					setTitle(getLanguageTooltip(languageName));
@@ -98,7 +97,7 @@ public class LanguagesWidget extends Composite implements Globals {
 						}
 					});
 				}});
-				if (lastCategory && allowMultiple) {
+				if (lastLanguage && allowMultiple) {
 					setWidget(0, 2, createAddAnchor("+"));
 				}
 			}});

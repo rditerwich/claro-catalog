@@ -25,6 +25,7 @@ import easyenterprise.lib.util.SMap;
 
 public class TaxonomyPage extends Page {
 
+	private TaxonomyModel model = new TaxonomyModel();
 	private LayoutPanel mainPanel;
 	private CategoryMasterDetail categoryMasterDetail;
 
@@ -37,11 +38,14 @@ public class TaxonomyPage extends Page {
 	}
 
 	public void show() {
+		if (categoryMasterDetail != null) {
+			categoryMasterDetail.refreshLanguages();
+		}
 	}
 	
 	@Override
 	protected void initialize() {
-		mainPanel.add(categoryMasterDetail = new CategoryMasterDetail() {
+		mainPanel.add(categoryMasterDetail = new CategoryMasterDetail(model) {
 			protected void categorySelected(final Long categoryId) {
 				updateCategorySelection(categoryId);
 			}
@@ -76,7 +80,7 @@ public class TaxonomyPage extends Page {
 	private void updateCategories() {
 		GetCategoryTree c = new GetCategoryTree();
 		c.catalogId = CatalogManager.getCurrentCatalogId();
-		c.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
+		c.outputChannelId = model.getSelectedShopId();
 
 		invalidateCategoryTree(c.catalogId, c.outputChannelId);
 		
@@ -91,11 +95,11 @@ public class TaxonomyPage extends Page {
 		final StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemType = ItemType.catagory;
-		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(categoryMasterDetail.getLanguage(), (Object)messages.newCategory()));
+		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(model.getSelectedLanguage(), (Object)messages.newCategory()));
 		cmd.parentsToSet = Collections.singletonList(parentId);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
+		cmd.outputChannelId = model.getSelectedShopId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
@@ -124,8 +128,8 @@ public class TaxonomyPage extends Page {
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.itemId = productId;
-		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
-		cmd.language = categoryMasterDetail.getLanguage();
+		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.language = model.getSelectedLanguage();
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
@@ -141,7 +145,7 @@ public class TaxonomyPage extends Page {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingCategoryDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = categoryMasterDetail.getOutputChannel() != null? categoryMasterDetail.getOutputChannel().getId() : null;
+		cmd.outputChannelId = model.getSelectedShopId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {

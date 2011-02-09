@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
@@ -14,9 +13,10 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.catalog.CatalogPageModel;
+import claro.catalog.manager.client.items.ItemPageModel;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,16 +58,13 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	private Long itemId;
-	private String language;
-	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> groups;
 	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
 	private final boolean showPropertySources;
 	private final boolean canReassignGroups;
+	private ItemPageModel model;
 	
-	public ItemPropertyValues(String language, OutputChannel outputChannel, final boolean canReassignGroups, boolean showPropertySources) {
-		this.language = language;
-		this.outputChannel = outputChannel;
+	public ItemPropertyValues(final boolean canReassignGroups, boolean showPropertySources) {
 		this.canReassignGroups = canReassignGroups;
 		this.showPropertySources = showPropertySources;
 		
@@ -77,16 +73,9 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		initWidget(propertyGroupPanel);
 	}
 	
-	public void setLanguage(String language) {
-		this.language = language;
-		
-		render();
-	}
-	
-	public void setOutputChannel(OutputChannel outputChannel) {
-		this.outputChannel = outputChannel;
-		
-		render();
+
+	public void setModel(ItemPageModel m) {
+		this.model = m;
 	}
 	
 	/**
@@ -244,7 +233,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 //				}
 				
 				if (canReassignGroups) {
-					String groupName = CollectionUtil.notNull(groups).getOrEmpty(propertyGroup.propertyGroupId).tryGet(language, null);
+					String groupName = CollectionUtil.notNull(groups).getOrEmpty(propertyGroup.propertyGroupId).tryGet(model.getSelectedLanguage(), null);
 					propertyValueWidgets.propertyGroupsWidget.setText(groupName);
 					if (itemId != null && itemId != propertyData.groupAssignmentItemId) {
 						StyleUtil.addStyle(propertyValueWidgets.propertyGroupsWidget, Styles.groupInherited);
@@ -255,7 +244,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				
 				// property source
 				if (showPropertySources) {
-					String sourceName = CollectionUtil.notNull(parentExtentWithSelf).getOrEmpty(property.ownerItemId).tryGet(language, null);
+					String sourceName = CollectionUtil.notNull(parentExtentWithSelf).getOrEmpty(property.ownerItemId).tryGet(model.getSelectedLanguage(), null);
 					if (sourceName != null) {
 						propertyValueWidgets.propertySourceWidget.setText("(" + sourceName + ")");
 						propertyValueWidgets.propertySourceWidget.setTitle(messages.propertySourceTooltip(propertyName, sourceName));
@@ -289,24 +278,24 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		// TODO what about overriding values to null?  Use undefined in the code below?
 		// TODO many multiplicity properties.
 		
-		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(outputChannel); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
-		Object value = values.tryGet(language, null);
-		boolean isHerited = false;
+		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
+		Object value = values.tryGet(model.getSelectedLanguage(), null);
+		boolean isInherited = false;
 
 		SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
-		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
-		Object inheritedValue = effectiveLanguageValues.tryGet(language, null);
+		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
+		Object inheritedValue = effectiveLanguageValues.tryGet(model.getSelectedLanguage(), null);
 
 		if (value == null) {
 			value = inheritedValue;
 			if (value != null) {
-				isHerited = true; 
+				isInherited = true; 
 			}
 		}
 		
 		setValue(widget, value, property);
 		
-		if (isHerited) {
+		if (isInherited) {
 			StyleUtil.addStyle(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
 //			StyleUtil.remove(propertyValueWidgets.valueParentWidget, Styles.overridden);
 		} else {
@@ -428,11 +417,11 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 
 	private void valueChanged(Widget widget, Object newValue) {
-		propertyValueSet(itemId, propertyByValueWidget.get(widget), language, newValue);
+		propertyValueSet(itemId, propertyByValueWidget.get(widget), model.getSelectedLanguage(), newValue);
 	}
 	
 	private void clearValue(Widget eraseButton) {
-		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
+		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), model.getSelectedLanguage());
 	}
 	
 	private static class GroupPanelWidgets {
@@ -441,7 +430,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 	
 	private static class PropertyValueWidgets {
-		protected Widget clearValueWidget;
+		protected Image clearValueWidget;
 		public Label nameWidget;
 		public Grid valueParentWidget;
 		public Label propertyGroupsWidget;

@@ -78,10 +78,12 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private SMap<Long, SMap<String, String>> newCategoryGroups;
 	private SMap<Long, SMap<String, String>> newCategoryParentExtentWithSelf;
 	protected Label pleaseWaitLabel;
+	private final TaxonomyModel model;
 
 
-	public CategoryMasterDetail() {
+	public CategoryMasterDetail(TaxonomyModel model) {
 		super(126);
+		this.model = model;
 		StyleUtil.addStyle(this, Styles.categoryMasterDetail);
 		createMasterPanel();
 		createDetailPanel();
@@ -111,27 +113,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		render();
 	}
 	
-	public void setLanguage(String newLanguage) {
-		language = newLanguage;
-		
-		render(); 
-	}
-	
-	public String getLanguage() {
-		if (languageSelection != null) {
-			return languageSelection.getSelectedLanguage();
-		}
-		return null;
-	}
-	
-	public OutputChannel getOutputChannel() {
-		if (languageSelection != null) {
-			return languageSelection.getSelectedShop();
-		}
-		return null;
-	}
-	
-	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
 		if (filterCategories != null) {
 			return filterCategories.getCategories();
@@ -143,7 +124,15 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		// TODO add drop down filter options:
 		return filterString;
 	}
+
+
+	public void refreshLanguages() {
+		if (languageSelection != null) {
+			languageSelection.refreshData();
+		}
+	}
 	
+
 //	@Override
 //	protected int getExtraTableWidth() {
 //		return 24; // Compensation for the rounded panels
@@ -167,6 +156,8 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
 					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
 						protected void selectionChanged() {
+							model.setSelectedLanguage(getSelectedLanguage());
+							model.setSelectedShop(getSelectedShop());
 							updateCategories();
 						}
 					});
@@ -206,12 +197,13 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 					}
 				});
 			}}, 40);
-			add(details = new CategoryDetails(language, outputChannel, nameProperty, variantProperty, priceProperty, imageProperty) {
+			add(details = new CategoryDetails(nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);
 				}
 			});
 		}});
+		details.setModel(model);
 	}
 	
 	

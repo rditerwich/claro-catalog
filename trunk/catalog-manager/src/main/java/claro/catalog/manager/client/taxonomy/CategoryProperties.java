@@ -71,15 +71,12 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	private Long itemId;
-	private String language;
-	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> groups;
 	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
 	private Grid propertyPanel;
+	private TaxonomyModel model;
 	
-	public CategoryProperties(String language, OutputChannel outputChannel) {
-		this.language = language;
-		this.outputChannel = outputChannel;
+	public CategoryProperties() {
 		
 		initWidget(new VerticalPanel() {{
 			StyleUtil.addStyle(this, Styles.categoryProperties);
@@ -88,16 +85,8 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		}});
 	}
 	
-	public void setLanguage(String language) {
-		this.language = language;
-		
-		render();
-	}
-	
-	public void setOutputChannel(OutputChannel outputChannel) {
-		this.outputChannel = outputChannel;
-		
-		render();
+	public void setModel(TaxonomyModel model) {
+		this.model = model;
 	}
 	
 	/**
@@ -206,7 +195,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				int j = 0;
 				for (Entry<Long, SMap<String, String>> group : groups) {
 					// add item
-					String groupName = group.getValue().tryGet(language, null);
+					String groupName = group.getValue().tryGet(model.getSelectedLanguage(), null);
 					propertyValueWidgets.propertyGroupsWidget.addItem(groupName);
 					
 					// check selection
@@ -244,15 +233,15 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		// TODO what about overriding values to null?  Use undefined in the code below?
 		// TODO many multiplicity properties.
 		
-		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(outputChannel); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
-		Object value = values.tryGet(language, null);
+		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
+		Object value = values.tryGet(model.getSelectedLanguage(), null);
 		boolean isDerived = false;
 
 		if (value == null) {
 			SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
-			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(outputChannel, null));
+			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
 			
-			value = effectiveLanguageValues.tryGet(language, null);
+			value = effectiveLanguageValues.tryGet(model.getSelectedLanguage(), null);
 			isDerived = true; 
 		}
 		
@@ -373,11 +362,11 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	}
 
 	private void valueChanged(Widget widget, Object newValue) {
-		propertyValueSet(itemId, propertyByValueWidget.get(widget), language, newValue);
+		propertyValueSet(itemId, propertyByValueWidget.get(widget), model.getSelectedLanguage(), newValue);
 	}
 	
 	private void clearValue(Widget eraseButton) {
-		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), language);
+		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), model.getSelectedLanguage());
 	}
 	
 	private class PropertyValueWidgets {

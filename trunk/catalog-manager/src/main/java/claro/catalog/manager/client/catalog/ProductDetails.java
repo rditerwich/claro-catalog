@@ -15,7 +15,6 @@ import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,8 +41,6 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private MediaWidget productImage;
 	
 	private ItemPropertyValues propertyValues;
-	private String language;
-	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> categories;
 	private Long itemId;
 	private PropertyInfo nameProperty;
@@ -51,10 +48,9 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private PropertyInfo priceProperty;
 	private PropertyInfo imageProperty;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
+	private CatalogPageModel model;
 	
-	public ProductDetails(final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
-		this.language = language;
-		this.outputChannel = outputChannel;
+	public ProductDetails(PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.nameProperty = nameProperty;
 		this.variantProperty = variantProperty;
 		this.priceProperty = priceProperty;
@@ -102,7 +98,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 					productImage.setImageSize("125px", "125px");
 				}});
 				
-				add(propertyValues = new ItemPropertyValues(language, outputChannel, false, false) {
+				add(propertyValues = new ItemPropertyValues(false, false) {
 					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 						ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 					}
@@ -117,27 +113,17 @@ abstract public class ProductDetails extends Composite implements Globals {
 			// TODO add a popup panel with dangling properties.
 	}
 	
+	public void setModel(CatalogPageModel m) {
+		this.model = m;
+		propertyValues.setModel(m);
+	}
+	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.priceProperty = rootProperties.get(RootProperties.PRICE);
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
 	}
-	
-	public void setLanguage(String language) {
-		this.language = language;
-		propertyValues.setLanguage(language);
-		
-		render();
-	}
-	
-	public void setOutputChannel(OutputChannel outputChannel) {
-		this.outputChannel = outputChannel;
-		propertyValues.setOutputChannel(outputChannel);
-		
-		render();
-	}
-
 	
 	/**
 	 * set the item data and (re)render.
@@ -213,7 +199,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void addNamePropertyValue(StoreItemDetails cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
 		Object productName = getValue(nameProperty, properties);
-		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
+		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(model.getSelectedLanguage(), productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {
@@ -267,24 +253,24 @@ abstract public class ProductDetails extends Composite implements Globals {
 			productPrice.setText("");
 		}
 
-		categoryPanel.setData(categories, language);
+		categoryPanel.setData(categories, model.getSelectedLanguage());
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
 		PropertyData data = properties.get(property);
 		if (data != null) {
-			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(outputChannel, null);
+			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedShop(), null);
 			if (channelValues != null) {
-				Object candidate = channelValues.tryGet(language, null);
+				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
 					return candidate;
 				}
 			}
 			
 			// Fall back on effective values
-			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(outputChannel, null);
+			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedShop(), null);
 			if (channelValues != null) {
-				Object candidate = channelValues.tryGet(language, null);
+				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
 					return candidate;
 				}

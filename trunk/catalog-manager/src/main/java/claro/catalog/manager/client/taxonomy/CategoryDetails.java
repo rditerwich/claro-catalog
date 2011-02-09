@@ -12,7 +12,6 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
-import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -45,8 +44,6 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //	private MediaWidget productImage;
 	
 	private ItemPropertyValues inheritedPropertyValuesComponent;
-	private String language;
-	private OutputChannel outputChannel;
 	private SMap<Long, SMap<String, String>> parents;
 	private Long itemId;
 	private PropertyInfo nameProperty;
@@ -58,10 +55,9 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues;
 	private SMap<Long, SMap<String, String>> groups;
 	private PullUpTabs pullups;
+	private TaxonomyModel model;
 	
-	public CategoryDetails(final String language, final OutputChannel outputChannel, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
-		this.language = language;
-		this.outputChannel = outputChannel;
+	public CategoryDetails( PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.nameProperty = nameProperty;
 		this.variantProperty = variantProperty;
 		this.priceProperty = priceProperty;
@@ -80,7 +76,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 						StyleUtil.addStyle(this, Styles.categoryname);
 						addChangeHandler(new ChangeHandler() {
 							public void onChange(ChangeEvent event) {
-								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, language, categoryNameBox.getText());
+								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, model.getSelectedLanguage(), categoryNameBox.getText());
 							}
 						});
 					}}));
@@ -118,7 +114,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //					productImage.setImageSize("125px", "125px");
 //				}});
 				
-				add(propertiesComponent = new CategoryProperties(language, outputChannel) {
+				add(propertiesComponent = new CategoryProperties() {
 					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 						CategoryDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 					}
@@ -127,7 +123,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 					}
 				});	
 			}}));
-			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(language, outputChannel, true, true) {
+			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(true, true) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
 				}
@@ -143,6 +139,12 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			// TODO add a popup panel with dangling properties.
 	}
 	
+	public void setModel(TaxonomyModel model) {
+		this.model = model;
+		propertiesComponent.setModel(model);
+		inheritedPropertyValuesComponent.setModel(model);
+	}
+	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
@@ -152,22 +154,6 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		render();
 	}
 
-	
-	public void setLanguage(String language) {
-		this.language = language;
-		inheritedPropertyValuesComponent.setLanguage(language);
-		
-		render();
-	}
-	
-	public void setOutputChannel(OutputChannel outputChannel) {
-		this.outputChannel = outputChannel;
-		inheritedPropertyValuesComponent.setOutputChannel(outputChannel);
-		
-		render();
-	}
-
-	
 	/**
 	 * set the item data and (re)render.
 	 * 
@@ -271,7 +257,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private void addNamePropertyValue(StoreItemDetails cmd) {
 		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(inheritedPropertyValues);
 		Object productName = getValue(nameProperty, properties);
-		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(language, productName));
+		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(model.getSelectedLanguage(), productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {
@@ -325,24 +311,24 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //			productPrice.setText("");
 //		}
 
-		categoryPanel.setData(parents, language);
+		categoryPanel.setData(parents, model.getSelectedLanguage());
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
 		PropertyData data = properties.get(property);
 		if (data != null) {
-			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(outputChannel, null);
+			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedShop(), null);
 			if (channelValues != null) {
-				Object candidate = channelValues.tryGet(language, null);
+				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
 					return candidate;
 				}
 			}
 			
 			// Fall back on effective values
-			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(outputChannel, null);
+			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedShop(), null);
 			if (channelValues != null) {
-				Object candidate = channelValues.tryGet(language, null);
+				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
 					return candidate;
 				}

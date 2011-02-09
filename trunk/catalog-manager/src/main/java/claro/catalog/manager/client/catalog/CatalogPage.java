@@ -28,6 +28,7 @@ import easyenterprise.lib.util.SMap;
 
 public class CatalogPage extends Page {
 
+	private CatalogPageModel model = new CatalogPageModel();
 	private LayoutPanel mainPanel;
 	private ProductMasterDetail productMasterDetail;
 
@@ -47,7 +48,7 @@ public class CatalogPage extends Page {
 	
 	@Override
 	protected void initialize() {
-		mainPanel.add(productMasterDetail = new ProductMasterDetail() {
+		mainPanel.add(productMasterDetail = new ProductMasterDetail(model) {
 			protected void productSelected(final Long productId) {
 				updateProductSelection(productId);
 			}
@@ -88,8 +89,8 @@ public class CatalogPage extends Page {
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.resultType = ItemType.product;
 		
-		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
-		cmd.language = productMasterDetail.getLanguage();
+		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.language = model.getSelectedLanguage();
 		
 		cmd.filter = productMasterDetail.getFilter();
 		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
@@ -107,11 +108,11 @@ public class CatalogPage extends Page {
 		final StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemType = ItemType.product;
-		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(productMasterDetail.getLanguage(), (Object)messages.newProduct()));
+		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(model.getSelectedLanguage(), (Object)messages.newProduct()));
 		cmd.parentsToSet = Collections.singletonList(parentId);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
+		cmd.outputChannelId = model.getSelectedShopId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
@@ -137,8 +138,8 @@ public class CatalogPage extends Page {
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.itemId = productId;
-		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
-		cmd.language = productMasterDetail.getLanguage();
+		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.language = model.getSelectedLanguage();
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
@@ -171,7 +172,7 @@ public class CatalogPage extends Page {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = productMasterDetail.getOutputChannel() != null? productMasterDetail.getOutputChannel().getId() : null;
+		cmd.outputChannelId = model.getSelectedShopId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {

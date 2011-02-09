@@ -38,6 +38,10 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 			
 			// store changes to shop
 			result.shop = em.merge(shop);
+			
+			// Update catalog opposite
+			result.shop.getCatalog().getOutputChannels().remove(result.shop);
+			result.shop.getCatalog().getOutputChannels().add(result.shop);
 
 			// Remove composites
 			for (Navigation n : CollectionUtil.notNull(navigationsToBeRemoved)) {

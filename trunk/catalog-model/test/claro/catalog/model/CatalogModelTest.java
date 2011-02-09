@@ -41,6 +41,8 @@ public class CatalogModelTest extends CatalogTestBase {
 		EntityManager entityManager = getCatalogDao().getEntityManager();
 		CatalogModel model = getCatalogModel();
 
+		Shop shop = addShop(entityManager, model, "Webshop");
+		
 		Category root = model.catalog.getRoot();
 
 		Category printers = addCategory(entityManager, model, root, "Printers");
@@ -52,6 +54,11 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		SMap<String,Object> effectiveValues = visibleProperty.getEffectiveValues(null, null);
 		Object defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertTrue((Boolean) defaultLanguageValue);
+
+		// It should also be visible for shop:
+		effectiveValues = visibleProperty.getEffectiveValues(null, shop);
+		defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertTrue((Boolean) defaultLanguageValue);
 	}
 	
@@ -90,5 +97,43 @@ public class CatalogModelTest extends CatalogTestBase {
 		effectiveValues = supplierProperty.getEffectiveValues(null, shop);
 		defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertEquals("HP", defaultLanguageValue);
+	}
+	
+	@Test
+	public void testEffectiveValuesOverrideForOutputChannel() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Shop shop = addShop(entityManager, model, "Webshop");
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		
+		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
+		
+		PropertyModel supplierProperty = hpPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+		
+		supplierProperty.setValue(null, null, null, null, "HP");
+		supplierProperty.setValue(null, null, shop, null, "HP For Shop");
+		
+		// Look on hpColorPrinter model
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		
+		supplierProperty = hpColorPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+		
+		// It should only be visible for this shop:
+		SMap<String,Object> effectiveValues = supplierProperty.getEffectiveValues(null, null);
+		Object defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertEquals("HP", defaultLanguageValue);
+		
+		// Do we have it?
+		effectiveValues = supplierProperty.getEffectiveValues(null, shop);
+		defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertEquals("HP For Shop", defaultLanguageValue);
 	}
 }

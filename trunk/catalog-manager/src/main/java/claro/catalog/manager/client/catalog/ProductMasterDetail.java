@@ -20,7 +20,6 @@ import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
 import com.google.gwt.dom.client.Style.Unit;
@@ -82,9 +81,11 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	private Long rootCategory;
 	private Table productTable;
 	private Label pleaseWaitLabel;
+	private final CatalogPageModel model;
 	
-	public ProductMasterDetail() {
+	public ProductMasterDetail(CatalogPageModel model) {
 		super(150);
+		this.model = model;
 		StyleUtil.addStyle(this, Styles.productMasterDetail);
 		createMasterPanel();
 		createDetailPanel();
@@ -113,21 +114,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		render();
 	}
 	
-	public String getLanguage() {
-		if (languageSelection != null) {
-			return languageSelection.getSelectedLanguage();
-		}
-		return null;
-	}
-	
-	public OutputChannel getOutputChannel() {
-		if (languageSelection != null) {
-			return languageSelection.getSelectedShop();
-		}
-		return null;
-	}
-	
-	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
 		if (filterCategories != null) {
 			return filterCategories.getCategories();
@@ -141,8 +127,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 			languageSelection.refreshData();
 		}
 	}
-	
-
 	
 	public String getFilter() {
 		// TODO add drop down filter options:
@@ -181,6 +165,8 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
 					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
 						protected void selectionChanged() {
+							model.setSelectedLanguage(getSelectedLanguage());
+							model.setSelectedShop(getSelectedShop());
 							updateProductList();
 						}
 					});
@@ -194,7 +180,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 						});
 					}});
 					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
-							setData(SMap.<Long, SMap<String, String>>empty(), getLanguage());
+							setData(SMap.<Long, SMap<String, String>>empty(), model.getSelectedLanguage());
 						}
 						protected String getAddCategoryLabel() {
 							return messages.addCategoriesLink();
@@ -274,6 +260,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 				}});
 			}});
 		}});
+
 		noProductsFoundLabel = new Label(messages.noProductsFound()) {{
 			setVisible(false);
 		}};
@@ -288,12 +275,13 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					}
 				});
 			}}, 40);
-			add(details = new ProductDetails(getLanguage(), getOutputChannel(), nameProperty, variantProperty, priceProperty, imageProperty) {
+			add(details = new ProductDetails(nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					ProductMasterDetail.this.storeItem(cmd);
 				}
 			});
 		}});
+		details.setModel(model);
 	}
 	
 	
@@ -419,9 +407,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		SMap<PropertyInfo, SMap<String, Object>> properties = products.getOrEmpty(productRow.productId);
 		
 		// image
-		Object image = properties.getOrEmpty(smallImageProperty).tryGet(getLanguage(), null);
+		Object image = properties.getOrEmpty(smallImageProperty).tryGet(model.getSelectedLanguage(), null);
 		if (image == null) {
-			image = properties.getOrEmpty(imageProperty).tryGet(getLanguage(), null);
+			image = properties.getOrEmpty(imageProperty).tryGet(model.getSelectedLanguage(), null);
 		}
 		if (image instanceof MediaValue) {
 			final MediaValue value = (MediaValue)image;
@@ -431,20 +419,20 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 		
 		// product
-		Object productName = properties.getOrEmpty(nameProperty).tryGet(getLanguage(), null);
+		Object productName = properties.getOrEmpty(nameProperty).tryGet(model.getSelectedLanguage(), null);
 		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "<" + messages.noProductNameSet() + ">");
 		
-		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(getLanguage(), null);
+		final Object productVariant = properties.getOrEmpty(variantProperty).tryGet(model.getSelectedLanguage(), null);
 		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");
 		
-		final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(getLanguage(), null);
+		final Object productNr = properties.getOrEmpty(artNoProperty).tryGet(model.getSelectedLanguage(), null);
 		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
 		
-		final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(getLanguage(), null);
+		final Object productDescription = properties.getOrEmpty(descriptionProperty).tryGet(model.getSelectedLanguage(), null);
 		rowWidgets.productDescriptionLabel.setText(productDescription instanceof String ? productDescription.toString() : "");
 		
 		// price
-		final Object price = properties.getOrEmpty(priceProperty).tryGet(getLanguage(), null);
+		final Object price = properties.getOrEmpty(priceProperty).tryGet(model.getSelectedLanguage(), null);
 		if (price != null) {
 			// TODO Use locale in the following format??
 			rowWidgets.priceLabel.setText(MoneyFormatUtil.full((Money) price));
@@ -506,7 +494,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 		for (Entry<Long, SMap<String, String>> category : filterCategories.getCategories()) {
 			filterText.append(sep); sep = ", ";
-			filterText.append(category.getValue().tryGet(getLanguage(), null));
+			filterText.append(category.getValue().tryGet(model.getSelectedLanguage(), null));
 		}
 		if (filterText.length() > 0) {
 			filterLabel.setHTML(messages.filterMessage(filterText.toString())); 

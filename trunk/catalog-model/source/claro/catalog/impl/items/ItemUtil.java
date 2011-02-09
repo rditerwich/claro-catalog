@@ -30,7 +30,7 @@ public class ItemUtil {
 		
 		// get the name value for each language
 		if (nameProperty != null) {
-			SMap<String,Object> values = nameProperty.getValues(stagingArea, outputChannel);
+			SMap<String,Object> values = nameProperty.getEffectiveValues(stagingArea, outputChannel);
 			for (String language : values.getKeys()) {
 				result = result.add(language, (String) values.get(language));
 			}
