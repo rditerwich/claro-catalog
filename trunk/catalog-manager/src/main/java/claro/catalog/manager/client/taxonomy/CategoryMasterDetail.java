@@ -359,8 +359,12 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	private void rowSelected(int row) {
-		CategoryRow selectedCategory = categoryRows.get(row);
-		categorySelected(selectedCategory.categoryId);
+		if (row < 0) {
+			closeDetail();
+		} else {
+			CategoryRow selectedCategory = categoryRows.get(row);
+			categorySelected(selectedCategory.categoryId);
+		}
 	}
 	
 

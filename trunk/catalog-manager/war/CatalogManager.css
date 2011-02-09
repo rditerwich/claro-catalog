@@ -596,6 +596,14 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	color: gray;
 }
 
+.categoryDetails .itemPropertyValues .valueParent.inherited .valueWidget input {
+	color: gray;
+}
+
+.categoryDetails .itemPropertyValues .valueParent.inherited .valueWidget {
+	color: gray;
+}
+
 .categoryDetails .itemPropertyValues .valueParent.overridden .valueWidget {
 	color: blue;
 }

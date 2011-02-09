@@ -168,7 +168,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 							model.setSelectedLanguage(getSelectedLanguage());
 							model.setSelectedShop(getSelectedShop());
 							updateProductList();
-							rowSelected(getCurrentRow());
+							int currentRow = getCurrentRow();
+							System.out.println("current row " + currentRow);
+							rowSelected(currentRow);
 						}
 					});
 					setWidget(0, 1, new TextBox() {{
@@ -409,7 +411,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		
 		// image
 		Object image = properties.getOrEmpty(smallImageProperty).tryGet(model.getSelectedLanguage(), null);
-		if (image == null) {
+		if (MediaValue.mediaIsNull(image)) {
 			image = properties.getOrEmpty(imageProperty).tryGet(model.getSelectedLanguage(), null);
 		}
 		if (image instanceof MediaValue) {
@@ -506,9 +508,12 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	}
 
 	private void rowSelected(int row) {
-
-		ProductRow product = productRows.get(row);
-		productSelected(product.productId);
+		if (row < 0) {
+			closeDetail();
+		} else {
+			ProductRow product = productRows.get(row);
+			productSelected(product.productId);
+		}
 	}
 	
 	private void addRowSelectionListener(HasClickHandlers widget, final int row) {
