@@ -59,6 +59,7 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 					Category category = em.find(Category.class, id);
 					if (category != null) {
 						Navigation navigation = new Navigation();
+						navigation.setParentShop(result.shop);
 						navigation.setCategory(category);
 						result.shop.getNavigation().add(navigation);
 					}

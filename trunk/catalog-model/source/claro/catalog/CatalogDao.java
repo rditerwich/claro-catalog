@@ -452,7 +452,7 @@ public class CatalogDao extends AbstractDao {
 	public void removeAllStagingValues(StagingArea to) {
 		if (to == null || to.getId() == null) throw new IllegalArgumentException("to must not be null");
 		EntityManager entityManager = getEntityManager();
-		Query query = entityManager.createQuery("DELETE FROM PropertyValue v WHERE v.stagingArea=:stagingArea").setParameter("stagingAreao", to);
+		Query query = entityManager.createQuery("DELETE FROM PropertyValue v WHERE v.stagingArea=:stagingArea").setParameter("stagingArea", to);
 		query.executeUpdate();
 	}
 	

@@ -7,6 +7,9 @@ import easyenterprise.lib.command.CommandValidationException;
 
 public class PerformStaging implements Command<PerformStaging.Result> {
 
+	public static final String STAGING_AREA_PREVIEW = "preview";
+	public static final String STAGING_AREA_PUBLISHED = "published";
+
 	private static final long serialVersionUID = 1L;
 
 	public Long catalogId;
@@ -29,7 +32,7 @@ public class PerformStaging implements Command<PerformStaging.Result> {
 		validate(toStagingName != null, "no to staging-area specified");
 	}
 
-	public class Result implements CommandResult {
+	public static class Result implements CommandResult {
 		private static final long serialVersionUID = 1L;
 	}
 }

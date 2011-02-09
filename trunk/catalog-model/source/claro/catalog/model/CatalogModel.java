@@ -31,9 +31,6 @@ import easyenterprise.lib.util.SMap;
 
 public class CatalogModel {
 
-	public static final String STAGING_AREA_PREVIEW = "preview";
-	public static final String STAGING_AREA_PUBLISHED = "published";
-	
 	public final CatalogDao dao;
 	public final Catalog catalog;
 	public final ItemModel root;
@@ -77,8 +74,6 @@ public class CatalogModel {
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
 		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup, true);
-		findOrCreateStagingArea(STAGING_AREA_PREVIEW);
-		findOrCreateStagingArea(STAGING_AREA_PUBLISHED);
   }
 	
 	public Catalog getCatalog() {
