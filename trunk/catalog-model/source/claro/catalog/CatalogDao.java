@@ -422,6 +422,11 @@ public class CatalogDao extends AbstractDao {
 		getEntityManager().remove(entity);
 	}
 
+	public void removePropertyValue(PropertyValue propertyValue) {
+		propertyValue.getItem().getPropertyValues().remove(propertyValue);
+		getEntityManager().remove(propertyValue);
+	}
+
 	public List<Shop> getShops(Long catalogId, Paging paging) {
 		CriteriaBuilder cb = getCriteriaBuilder();
 		CriteriaQuery<Shop> cQuery = cb.createQuery(Shop.class);
@@ -487,4 +492,5 @@ public class CatalogDao extends AbstractDao {
 		
 		return query.getResultList();
 	}
+
 }

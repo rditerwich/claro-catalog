@@ -20,6 +20,7 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.impl.items.ItemUtil;
 import claro.catalog.model.CatalogModel;
+import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
@@ -38,6 +39,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 	private Long inkCatId;
 	protected Long hpPrintersCatId;
 	private Long pricesGroupId;
+	private String rootName;
 	
 	
 	@Test
@@ -63,6 +65,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.product;
 		cmd.itemId = product1Id;
 		cmd.remove = true;
 		
@@ -145,6 +148,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
 		cmd.itemId = inkCatId;
 		cmd.groupsToSet = SMap.create(imageProperty, new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
 
@@ -181,6 +185,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
 		cmd.itemId = hpPrintersCatId;
 		cmd.groupsToRemove = SMap.create(priceProperty, new PropertyGroupInfo(pricesGroupId));
 
@@ -203,12 +208,61 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 
 	@Test
 	public void basicSetPropertyValue() throws Exception {
-		// TODO
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		PropertyInfo propertyToSet = getCatalogModel().variantProperty.getPropertyInfo();
+		Object valueToSet = "New Value";
+		
+		ItemModel inkCat = getCatalogModel().getItem(inkCatId);
+		PropertyModel variantProperty = inkCat.findProperty(propertyToSet.propertyId, true);
+		Assert.assertNotSame(valueToSet, variantProperty.getValues(null, null).get());
+		
+		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
+		cmd.itemId = inkCatId;
+		cmd.valuesToSet = SMap.create(propertyToSet, SMap.create((String)null, valueToSet)); // Remove value for name.
+		
+		Result result = executeCommand(cmd);
+		
+		// Has the result been filled?
+		Assert.assertEquals(inkCatId, result.storedItemId);
+		
+		PropertyData resultVariantData = findProperty(result, getCatalogModel().generalPropertyGroup, propertyToSet);
+
+		// Find the info back, it should have the new value set.
+		Assert.assertNotNull(resultVariantData);
+		Assert.assertEquals(valueToSet, resultVariantData.values.get().get());
+		
+		// TODO Check DB as well?
 	}
+
+
+	private PropertyData findProperty(Result result, PropertyGroup generalPropertyGroup, PropertyInfo nameProperty) {
+		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.propertyData.get(new PropertyGroupInfo(generalPropertyGroup.getId()));
+		return generalGroupProperties.get(nameProperty);
+	}
+	
 	
 	@Test
 	public void basicRemovePropertyValue() throws Exception {
-		// TODO
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
+		cmd.itemId = inkCatId;
+		PropertyInfo propertyOfValueToRemove = getCatalogModel().nameProperty.getPropertyInfo();
+		cmd.valuesToRemove = SMap.create(propertyOfValueToRemove, Collections.singletonList((String)null)); // Remove value for name.
+		
+		Result result = executeCommand(cmd);
+		
+		// Has the result been filled?
+		Assert.assertEquals(inkCatId, result.storedItemId);
+		
+		// Find the info back, it should have no values attached to it.
+		PropertyData resultNameData = findProperty(result, getCatalogModel().generalPropertyGroup, propertyOfValueToRemove);
+		Assert.assertNotNull(resultNameData);
+		Assert.assertTrue(CollectionUtil.notNull(resultNameData.values).isEmpty());
+		Assert.assertEquals(rootName, resultNameData.effectiveValues.get().get().get());
 	}
 	
 	@Test
@@ -246,6 +300,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 			
 			// First create some categories and items
 			Category root = model.catalog.getRoot();
+			rootName = (String) model.getRootItem().findProperty(model.nameProperty.getPropertyId(), false).getValues(null, null).get();
 			Category printers = addCategory(entityManager, model, root, "Printers");
 			Category ink = addCategory(entityManager, model, root, "Ink");
 			Category hpPrinters = addCategory(entityManager, model, printers, "HP Printers");

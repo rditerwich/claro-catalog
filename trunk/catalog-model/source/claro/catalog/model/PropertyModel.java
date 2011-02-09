@@ -168,7 +168,7 @@ public abstract class PropertyModel {
 			Property propertyEntity = getEntity();
 			PropertyValue propertyValue = item.catalog.dao.getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
-				item.catalog.dao.getEntityManager().remove(propertyValue);
+				item.catalog.dao.removePropertyValue(propertyValue);
 				// Item has changed:
 				item.invalidateChildExtent(true);
 			}
