@@ -3,6 +3,9 @@ package claro.catalog.impl.shop;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogDao;
@@ -60,15 +63,19 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 			
 			// 
 			if (topLevelCategoryIds != null) {
-				result.shop.getNavigation().clear();
-				for (Long id : topLevelCategoryIds) {
-					Category category = em.find(Category.class, id);
-					if (category != null) {
-						Navigation navigation = new Navigation();
-						navigation.setParentShop(result.shop);
-						navigation.setCategory(category);
-						result.shop.getNavigation().add(navigation);
-					}
+				List<Navigation> navs = result.shop.getNavigation();
+				while (navs.size() < topLevelCategoryIds.size()) {
+					navs.add(new Navigation());
+				}
+				while (navs.size() > topLevelCategoryIds.size()) {
+					Navigation nav = navs.remove(navs.size() - 1);
+					em.remove(nav);
+				}
+				for (int i = navs.size() - 1; i >= 0; i--) {
+					Navigation navigation = navs.get(i);
+					Category category = em.find(Category.class, topLevelCategoryIds.get(i));
+					navigation.setParentShop(result.shop);
+					navigation.setCategory(category);
 				}
 			}
 			

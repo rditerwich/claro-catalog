@@ -271,7 +271,7 @@ public class CatalogModel {
 			}
 		}
 	}
-
+ 
 	public void flushCache() {
 		invalidate(items.values());
 	}
