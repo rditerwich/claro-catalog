@@ -95,10 +95,8 @@ public class CatalogPage extends Page {
 		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
 		cmd.orderByIds = Collections.singletonList(nameProperty.propertyId); 
 
-//		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingProducts(), 2, 1000);
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts(), false) {
 			public void onSuccess(FindItems.Result result) {
-//				loadingMessage.cancel();
 				super.onSuccess(result);
 				productMasterDetail.setProducts(result.items);
 			}

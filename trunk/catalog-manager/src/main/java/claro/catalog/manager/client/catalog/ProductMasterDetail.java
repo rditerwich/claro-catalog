@@ -360,7 +360,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	private void render(int i, ProductRow productRow) {
 		RowWidgets rowWidgets = tableWidgets.get(i);
 		
-		SMap<PropertyInfo, SMap<String, Object>> properties = products.tryGet(productRow.productId);
+		SMap<PropertyInfo, SMap<String, Object>> properties = products.getOrEmpty(productRow.productId);
 		
 		// image
 		Object image = properties.getOrEmpty(smallImageProperty).tryGet(getLanguage(), null);

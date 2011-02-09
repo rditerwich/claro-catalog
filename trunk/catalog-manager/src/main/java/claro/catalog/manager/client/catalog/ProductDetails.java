@@ -188,6 +188,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
+			cmd.itemType = ItemType.product;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
 			

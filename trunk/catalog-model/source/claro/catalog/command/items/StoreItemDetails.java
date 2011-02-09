@@ -61,7 +61,7 @@ public class StoreItemDetails implements Command<StoreItemDetails.Result> {
 		validate (itemId != null || itemType != null);
 		
 		// For now, we treat item as abstract
-		validate (itemType == null || itemType != ItemType.item);
+		validate (itemType != null && itemType != ItemType.item);
 		
 		if (remove) {
 			validate (isEmpty(valuesToSet));

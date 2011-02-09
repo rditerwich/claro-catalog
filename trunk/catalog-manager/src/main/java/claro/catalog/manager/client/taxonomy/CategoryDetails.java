@@ -246,6 +246,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
+			cmd.itemType = ItemType.catagory;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
 			
