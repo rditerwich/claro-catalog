@@ -806,6 +806,7 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	padding-bottom: 1px;
 	padding-left: 4px;
 	padding-right: 6px;
+	cursor: pointer;
 }
 .languageList .gwt-Label:hover {
 #	color: #DEE5F2;
