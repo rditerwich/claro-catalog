@@ -1,0 +1,50 @@
+/*
+*
+*	Enriched.css for Plantin Display
+*	
+*	@author 	Jelle Versele
+*	@email		jelle@siteware.be
+*	@website	siteware.be / jelleversele.be
+*
+*/
+
+
+/* top-nav */
+#top-nav .left { -moz-border-radius: 2px 0 0 2px; -webkit-border-radius: 2px 0 0 2px; border-radius: 2px 0 0 2px; }
+#top-nav .right { -moz-border-radius: 2px; -webkit-border-radius:2px; border-radius: 2px; } 
+
+/* nav */
+#nav > ul > li > a { text-shadow: 0px 0px 1px rgba(0,0,0,0.6); }
+#nav ul li li a { text-shadow: 0 -1px rgba(0,0,0,0.6); }
+#nav ul ul { -moz-border-radius: 0 0 3px 3px; -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.3); -webkit-border-radius: 0 0 3px 3px; -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.3); border-radius: 0 0 3px 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.3);  }
+/* search */
+#txt-search, #btn-search { -moz-box-shadow: 1px 1px 0 rgba(255,255,255,0.3); -webkit-box-shadow: 1px 1px 0 rgba(255,255,255,0.3); box-shadow: 1px 1px 0 rgba(255,255,255,0.3); -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;}
+
+/* tab-slider */
+.tab-slider-nav ul li a { -moz-border-radius: 3px 3px 0 0; -webkit-border-radius: 3px 3px 0 0; border-radius: 3px 3px 0 0;}
+.slider-welcome-cta .left a { -moz-border-radius: 2px 0 0 2px; -webkit-border-radius: 2px 0 0 2px; border-radius: 2px 0 0 2px; }
+.slider-welcome-cta .right a { -moz-border-radius: 0 2px 2px 0; -webkit-border-radius: 0 2px 2px 0; border-radius: 0 2px 2px 0; }
+
+/* btn-red / btn-blue */
+.btn-red,.btn-blue { -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; text-shadow: 0 0 1px rgba(0,0,0,0.8);  }
+
+/* content wrapper */
+.content-wrapper { -moz-box-shadow: 0 0 0 3px rgba(0,0,0,0.07); -moz-border-radius: 2px; -webkit-box-shadow: 0 0 0 3px rgba(0,0,0,0.07); -webkit-border-radius: 3px; box-shadow: 0 0 0 3px rgba(0,0,0,0.07); border-radius: 2px; }
+
+/* refine column */
+#refine h2, #refine span { text-shadow: 0 0 1px rgba(0,0,0,0.8); }
+
+/* breadcrumb */
+.breadcrumb li.home a { -moz-border-radius: 3px 0 0 3px; -webkit-border-radius: 3px 0 0 3px; border-radius: 3px 0 0 3px; }
+.breadcrumb li:last-child span { -moz-border-radius: 0 3px 3px 0; -webkit-border-radius: 0 3px 3px 0; border-radius: 0 3px 3px 0; }
+
+/* products */
+.product, .product-img { -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
+.product-img { -moz-box-shadow: 0 1px 1px 1px rgba(152,166,184,0.3); -webkit-box-shadow: 0 1px 1px 1px rgba(152,166,184,0.3); box-shadow: 0 1px 1px 1px rgba(152,166,184,0.3); }
+.product-img:hover { -moz-box-shadow: 0 1px 1px 1px rgba(152,166,184,0.6); -webkit-box-shadow: 0 1px 1px 1px rgba(152,166,184,0.6); box-shadow: 0 1px 1px 1px rgba(152,166,184,0.6); }
+
+/* form */
+input[type=text],textarea { -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; -moz-box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.3); -webkit-box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.3); box-shadow: inset 0 0 1px 0 rgba(0,0,0,0.3);  }
+
+.product-detail-img { -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
+

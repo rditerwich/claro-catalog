@@ -1,0 +1,52 @@
+/*
+*	
+*	Main.css for Plantin Display
+*	
+*	@author 	Jelle Versele	
+*	@email		jelle@siteware.be
+*	@website	siteware.be / jelleversele.be
+*
+*
+*	self clearing floats by Dan Cederholm
+*	
+*/
+
+/* self clearing floats */
+
+.group:after {
+	content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
+/* ie */ 
+
+* html .group { 	
+	height: 1%;
+	}
+*:first-child+html .group { 
+	min-height: 1px;
+	}
+	
+button{
+	width: 1;
+	overflow: visible;
+	cursor: pointer;
+}
+
+
+/* basic classes */
+
+.row { margin-bottom: 30px; }
+.last { margin-right: 0 !important; padding-right: 0 !important; border: 0 !important; }
+.right { float: right; }
+.left { float: left; }
+
+br,hr { clear:both; }
+
+a.button2 {
+	margin-left:8px;
+	color:black !important;
+}

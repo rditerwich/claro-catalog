@@ -1,0 +1,41 @@
+<template:include template="templates/pageframe">
+	<webshop:current-category>
+		<cms:paging>
+<!-- product-overview-heading -->
+<div class="row" id="product-overview-heading"><h2 class="icon-folder">Producten
+	  <span style="float:right" class="paging">
+        <paging:single-page><attr:set name="style" value="display:none"/></paging:single-page>
+			<paging:previous>&#171;</paging:previous>
+			<paging:page/>
+			<paging:next>&#187;</paging:next>
+		  </span>
+</h2>
+<!-- /product-overview-heading -->
+<!-- pagination & sort options -->
+<div class="pagination-sort-top group row">
+
+<div style="margin-left: 2em" class="pagination right">
+	  
+</div>
+</div>
+</div>
+<!-- /pagination & sort options -->
+
+
+<webshop:current-products include-sub-categories="true" group-size="4" page-size="8">
+<div class="product-row-1 group">
+  <list:group>
+	<div class="product"><p class="product-img">
+   <product:add-to-cart-link class="button2"><product:value property="Image" /></product:add-to-cart-link> 
+ 		</p>
+
+		<div class="product-title"><product:value property="Name" /></div>
+	</div>
+
+  </list:group>
+</div>
+</webshop:current-products>
+		</cms:paging>
+
+</webshop:current-category>
+</template:include>
