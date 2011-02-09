@@ -48,6 +48,7 @@ import claro.jpa.jobs.Job;
 import claro.jpa.jobs.JobResult;
 import claro.jpa.jobs.JobResult_;
 import claro.jpa.order.Order;
+import claro.jpa.order.OrderStatus;
 import claro.jpa.shop.Shop;
 
 import com.google.common.base.Objects;
@@ -467,9 +468,14 @@ public class CatalogDao extends AbstractDao {
 	
 
 	@SuppressWarnings("unchecked")
-	public List<Order> getOrders(Paging paging) {
+	public List<Order> getOrders(OrderStatus statusFilter, Paging paging) {
 		EntityManager entityManager = getEntityManager();
-		Query query = entityManager.createQuery("from Order order by orderDate desc");
+		String queryString = "select o from Order o " + (statusFilter != null? " where o.status = :orderStatus " : "") + "order by o.orderDate desc";
+		Query query = entityManager.createQuery(queryString);
+		
+		if (statusFilter != null) {
+			query.setParameter("orderStatus", statusFilter);
+		}
 		
 		if (paging.shouldPage()) {
 			query.setFirstResult(paging.getPageStart());

@@ -8,6 +8,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.jpa.order.Order;
+import claro.jpa.order.OrderStatus;
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
 
 public abstract class OrderModel implements Globals {
@@ -18,6 +19,8 @@ public abstract class OrderModel implements Globals {
 	
 	private List<Order> orders = new ArrayList<Order>();
 	private Order order;
+
+	private OrderStatus statusFilter;
 	
 	public List<Order> getOrders() {
 		return orders;
@@ -49,6 +52,12 @@ public abstract class OrderModel implements Globals {
 	}
 
 
+
+	public void setStatusFilter(OrderStatus filterStatus) {
+		this.statusFilter = filterStatus;
+	}
+
+
 	/**
 	 * Fetches the current page
 	 */
@@ -75,6 +84,7 @@ public abstract class OrderModel implements Globals {
 	public void fetchOrders(boolean wait) {
 		// TODO For now, ignore wait.  Use PagedView in future.
 		GetOrders command = new GetOrders();
+		command.statusFilter = statusFilter;
 		GwtCommandFacade.execute(command, new StatusCallback<GetOrders.Result>(messages.loadingOrdersMessage()) {
 			public void onSuccess(GetOrders.Result result) {
 				super.onSuccess(result);
@@ -121,5 +131,4 @@ public abstract class OrderModel implements Globals {
 	protected abstract void openDetail();
 	
 	protected abstract void renderAll();
-
 }

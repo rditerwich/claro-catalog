@@ -3,12 +3,12 @@ package claro.catalog.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
-
-import com.google.common.base.Strings;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
@@ -18,12 +18,16 @@ import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
+import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.shop.Shop;
+
+import com.google.common.base.Strings;
+
 import easyenterprise.lib.util.SMap;
-import easyenterprise.lib.util.StringUtil;
 
 public class CatalogModel {
 
@@ -47,6 +51,7 @@ public class CatalogModel {
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
 	private PropertyGroup imagesPropertyGroup;
+	private LinkedHashSet<String> allLanguages;
 
 	public static void startOperation(CatalogDao dao) {
 		CatalogAccess.startOperation(dao);
@@ -151,6 +156,29 @@ public class CatalogModel {
 		
 		return result;
 	}
+	
+	/**
+	 * Retrieves all languages currently in use by this catalog.  Note that the null language is also included.
+	 * @return
+	 */
+	public synchronized Set<String> getAllLanguages() {
+		if (allLanguages == null) {
+			allLanguages = new LinkedHashSet<String>();
+			
+			allLanguages.add(null);
+			
+			allLanguages.addAll(CatalogModelUtil.splitLanguages(getCatalog().getLanguages()));
+			for (OutputChannel channel : getCatalog().getOutputChannels()) {
+				if (channel instanceof Shop) {
+					Shop shop = (Shop) channel;
+					
+					allLanguages.addAll(CatalogModelUtil.splitLanguages(shop.getLanguages()));
+				}
+			}
+		}
+		return allLanguages;
+	}
+
 	
 	private Catalog findOrCreateCatalog(Long id) {
 		EntityManager em = dao.getEntityManager();

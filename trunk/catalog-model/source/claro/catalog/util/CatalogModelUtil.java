@@ -3,6 +3,7 @@ package claro.catalog.util;
 import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,10 @@ public class CatalogModelUtil {
 		return result;
 	}
 	
+	public static String mergeLanguages(String... languages) {
+		return mergeLanguages(Arrays.asList(languages));
+	}
+
 	/**
 	 * Merge the given language,comma separated.  Strips null or empty languages.  If no language remains, null is returned.
 	 * @param languages

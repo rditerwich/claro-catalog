@@ -31,7 +31,7 @@ public class GetOrdersImpl extends GetOrders implements CommandImpl<GetOrders.Re
 		
 		Result result = new Result();
 		CatalogDao dao = CatalogDaoService.getCatalogDao();
-		result.orders = dao.getOrders(paging);
+		result.orders = dao.getOrders(statusFilter, paging);
 
 		result.orders = Cloner.clone(result.orders, view);
 		return result;

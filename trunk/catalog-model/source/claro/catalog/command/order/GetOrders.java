@@ -3,6 +3,7 @@ package claro.catalog.command.order;
 import java.util.List;
 
 import claro.jpa.order.Order;
+import claro.jpa.order.OrderStatus;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
@@ -14,6 +15,8 @@ public class GetOrders implements Command<GetOrders.Result> {
 
 	public Paging paging = Paging.NO_PAGING;
 	// TODO Probably need to filter... maybe limit by date?
+
+	public OrderStatus statusFilter;
 	
 	public void checkValid() throws CommandValidationException {
 	}

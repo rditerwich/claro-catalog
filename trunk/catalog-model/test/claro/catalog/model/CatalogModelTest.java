@@ -1,6 +1,7 @@
 package claro.catalog.model;
 
 import static claro.catalog.model.CatalogModelTestUtil.addCategory;
+import static claro.catalog.model.CatalogModelTestUtil.addShop;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -9,11 +10,11 @@ import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
+import claro.jpa.shop.Shop;
 import easyenterprise.lib.util.SMap;
 
 public class CatalogModelTest extends CatalogTestBase {
@@ -52,5 +53,42 @@ public class CatalogModelTest extends CatalogTestBase {
 		SMap<String,Object> effectiveValues = visibleProperty.getEffectiveValues(null, null);
 		Object defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertTrue((Boolean) defaultLanguageValue);
+	}
+	
+	@Test
+	public void testEffectiveValuesOutputChannel() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+
+		Shop shop = addShop(entityManager, model, "Webshop");
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		
+		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
+		
+		PropertyModel supplierProperty = hpPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+
+		supplierProperty.setValue(null, null, shop, null, "HP");
+
+		// Look on hpColorPrinter model
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		
+		supplierProperty = hpColorPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+		
+		// It should only be visible for this shop:
+		SMap<String,Object> effectiveValues = supplierProperty.getEffectiveValues(null, null);
+		Object defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertNull(defaultLanguageValue);
+
+		// Do we have it?
+		effectiveValues = supplierProperty.getEffectiveValues(null, shop);
+		defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertEquals("HP", defaultLanguageValue);
 	}
 }

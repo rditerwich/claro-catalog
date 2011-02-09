@@ -346,5 +346,6 @@ public interface I18NCatalog extends Messages {
 	String orderAmountPaidLabel();
 	String orderProductOrderTab();
 	String orderHistoryTab();
+	String orderFilter();
 
 }

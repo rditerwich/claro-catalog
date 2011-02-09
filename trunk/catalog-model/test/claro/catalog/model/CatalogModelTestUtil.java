@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import javax.persistence.EntityManager;
 
+import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
@@ -17,12 +18,25 @@ import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.shop.Shop;
 
 import com.google.common.base.Objects;
 
 import easyenterprise.lib.util.Tuple;
 
 public class CatalogModelTestUtil {
+	
+	public static Shop addShop(EntityManager entityManager, CatalogModel catalogModel, String name, String... languages) throws SQLException {
+		Shop s = new Shop();
+		s.setCatalog(catalogModel.getCatalog());
+		s.setName(name);
+		
+		s.setLanguages(CatalogModelUtil.mergeLanguages(languages));
+		
+		entityManager.persist(s);
+		
+		return s;
+	}
 	
 	public static Category addCategory(EntityManager entityManager, CatalogModel catalogModel, Item parent, String name) throws SQLException {
 		Category c = new Category();

@@ -815,6 +815,13 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 
 .masterdetailtest { padding: 5px;}
 
+
+/** Order Styles */
+
+.orderRibbon {
+	padding: 5px;
+}
+
 /** Import Styles */
 
 .ImportPage .ee-MasterDetailMaster td img {

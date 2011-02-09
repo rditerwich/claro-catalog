@@ -5,6 +5,7 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -209,7 +210,7 @@ public abstract class PropertyModel {
 				
 				// calculate effective value for each output channel, language combination
 				EffectiveValueHelper helper = new EffectiveValueHelper(stagingArea, propertyValues);
-				for (String language : helper.getLanguages()) {
+				for (String language : item.catalog.getAllLanguages()) {
 
 					// find best value in this item
 					Object effectiveValue = helper.getBestValue(outputChannel, language, undefined);
@@ -276,7 +277,7 @@ public abstract class PropertyModel {
 			});
 		}
 	};
-
+	
 	static void setTypedValue(PropertyValue propertyValue, Object value) {
 		switch(propertyValue.getProperty().getType()) {
 		case Media: 
