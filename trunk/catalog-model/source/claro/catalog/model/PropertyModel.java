@@ -218,7 +218,7 @@ public abstract class PropertyModel {
 					// look in parent items, first one wins, parents are ordered
 					if (effectiveValue == undefined) {
 						for (ItemModel parent : getItem().getParents()) {
-							PropertyModel property = parent.findProperty(getPropertyId(), false);
+							PropertyModel property = parent.findProperty(getPropertyId(), true);
 							if (property != null) {
 								effectiveValue = property.getEffectiveValues(stagingArea, outputChannel).get(language, undefined);
 								if (effectiveValue != undefined) break;
