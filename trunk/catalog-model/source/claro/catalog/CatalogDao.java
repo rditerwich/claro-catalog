@@ -464,7 +464,9 @@ public class CatalogDao extends AbstractDao {
 			setParameter("stagingArea", stagingArea).
 			getResultList();
 		if (!result.isEmpty()) {
-			return result.get(0);
+			StagingStatus status = result.get(0);
+			getEntityManager().refresh(status);
+			return status;
 		}
 		StagingStatus status = new StagingStatus();
 		status.setCatalog(catalog);

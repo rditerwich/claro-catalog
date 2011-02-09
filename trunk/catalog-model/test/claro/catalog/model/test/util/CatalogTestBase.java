@@ -90,7 +90,7 @@ public class CatalogTestBase {
   }
 	
 	protected <T extends CommandResult> T executeCommand(Command<T> command) throws SQLException, CommandException {
-		catalogDao.startTransaction();
+		getCatalogDao().startTransaction();
 		try {
 			T result = getServer().execute(command);
 			catalogDao.commitTransaction();

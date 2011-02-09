@@ -68,7 +68,7 @@ public class PerformStagingImpl extends PerformStaging implements CommandImpl<Pe
 		
 		// update staging status
 		StagingStatus status = model.dao.getOrCreateStagingStatus(model.getCatalog(), to);
-		status.setUpdateSequenceNr(status.getUpdateSequenceNr());
+		status.setUpdateSequenceNr(status.getUpdateSequenceNr() + 1);
 		
 		return new Result();
 	}
