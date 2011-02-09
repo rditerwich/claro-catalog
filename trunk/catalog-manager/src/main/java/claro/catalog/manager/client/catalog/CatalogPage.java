@@ -44,6 +44,7 @@ public class CatalogPage extends Page {
 		if (productMasterDetail != null) {
 			productMasterDetail.refreshLanguages();
 		}
+		updateProductList();
 	}
 	
 	@Override

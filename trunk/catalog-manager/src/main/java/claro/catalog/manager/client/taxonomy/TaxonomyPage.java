@@ -41,6 +41,7 @@ public class TaxonomyPage extends Page {
 		if (categoryMasterDetail != null) {
 			categoryMasterDetail.refreshLanguages();
 		}
+		updateCategories();
 	}
 	
 	@Override
