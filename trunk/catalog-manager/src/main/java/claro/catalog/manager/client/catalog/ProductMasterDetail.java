@@ -168,6 +168,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 							model.setSelectedLanguage(getSelectedLanguage());
 							model.setSelectedShop(getSelectedShop());
 							updateProductList();
+							rowSelected(getCurrentRow());
 						}
 					});
 					setWidget(0, 1, new TextBox() {{

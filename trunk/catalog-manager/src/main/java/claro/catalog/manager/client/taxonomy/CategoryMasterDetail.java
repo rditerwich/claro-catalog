@@ -159,6 +159,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 							model.setSelectedLanguage(getSelectedLanguage());
 							model.setSelectedShop(getSelectedShop());
 							updateCategories();
+							rowSelected(getCurrentRow());
 						}
 					});
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{

@@ -38,6 +38,7 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 			addChangeHandler(new ChangeHandler() {
 				public void onChange(ChangeEvent event) {
 					updateSelection(listBox.getSelectedIndex());
+					event.stopPropagation();
 				}
 			});
 		}});
