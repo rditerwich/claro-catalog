@@ -272,7 +272,7 @@ public class CatalogModel {
 		}
 	}
 
-	public void flush() {
+	public void flushCache() {
 		invalidate(items.values());
 	}
 }

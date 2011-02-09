@@ -6,8 +6,9 @@ import static easyenterprise.lib.command.CommandValidationException.validate;
 import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogDao;
-import claro.catalog.CatalogDaoService;
+import claro.catalog.CatalogModelService;
 import claro.catalog.command.shop.StoreShop;
+import claro.catalog.model.CatalogModel;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Template;
 import claro.jpa.shop.Navigation;
@@ -24,7 +25,8 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 
 	@Override
 	public Result execute() throws CommandException {
-		CatalogDao dao = CatalogDaoService.getCatalogDao();
+		CatalogModel model = CatalogModelService.getCatalogModel(catalogId);
+		CatalogDao dao = model.dao;
 		EntityManager em = dao.getEntityManager();
 		validateCommand(em);
 
@@ -74,6 +76,10 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 			result.shop = Cloner.clone(result.shop, GetShopsImpl.view);
 		}
 
+
+		// Flush cache
+		model.flushCache();
+		
 		return result;
 	}
 

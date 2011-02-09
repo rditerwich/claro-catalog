@@ -59,7 +59,7 @@ public class DeleteImportedDataImpl extends DeleteImportedData implements Comman
 		for (Catalog catalog : catalogs) {
 			CatalogModel catalogModel = CatalogModelService.getCatalogModel(catalog.getId());
 			if (catalogModel != null) {
-				catalogModel.flush();
+				catalogModel.flushCache();
 			}
 		}
 		return result;
