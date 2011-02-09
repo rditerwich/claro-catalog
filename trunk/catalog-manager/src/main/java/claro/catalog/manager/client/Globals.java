@@ -1,4 +1,4 @@
-package claro.catalog.manager.client;
+	package claro.catalog.manager.client;
 
 import claro.catalog.manager.client.i18n.I18NCatalog;
 import claro.catalog.manager.client.images.Images;

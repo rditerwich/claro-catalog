@@ -763,7 +763,8 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 
 /** Languages component */
 .languageStyle {
-	margin-left: 10px;
+	margin-left: 4px;
+	margin-right: 6px;
 }
 .languageStyle table {
 	border-spacing: 0px;
@@ -794,7 +795,7 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 }
 
 .languageStyle a.languageAdd {
-	margin-left: 10px;
+	margin-left: 6px;
 }
 
 .languageList .gwt-Label {

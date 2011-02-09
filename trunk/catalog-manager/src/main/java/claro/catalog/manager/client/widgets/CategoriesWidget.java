@@ -1,11 +1,13 @@
 package claro.catalog.manager.client.widgets;
 
+import java.util.Collection;
 import java.util.List;
 
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
+import claro.jpa.catalog.Category;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -47,7 +49,8 @@ public class CategoriesWidget extends Composite implements Globals {
 	private final boolean canSelect;
 	private SMap<Long, SMap<String, String>> categories;
 	private String language;
-	
+
+	private Collection<Category> pendingSetDataCategories;
 
 	public CategoriesWidget() {
 		this(true);
@@ -58,6 +61,17 @@ public class CategoriesWidget extends Composite implements Globals {
 		initWidget(mainPanel = new FlowPanel() {{
 			StyleUtil.addStyle(this, Styles.categoryStyle);
 		}});
+	}
+	
+	public void setData(Collection<Category> categories, String language) {
+		pendingSetDataCategories = categories;
+		SMap<Long, SMap<String, String>> data = SMap.empty();
+		for (Category category : categories) {
+			SMap<String, String> labels = SMap.create((String) null, "" + category.getId());
+			data = data.add(category.getId(), labels);
+		}
+		setData(data, language);
+		fetchCategories();
 	}
 	
 	public void setData(SMap<Long, SMap<String, String>> categories, String language) {
@@ -98,6 +112,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							removeCategory(catId);
+							categoriesChanged();
 						}
 					});
 				}});
@@ -132,19 +147,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					}
 
 					// Update tree
-					GetCategoryTree c = new GetCategoryTree();
-					c.catalogId = CatalogManager.getCurrentCatalogId();
-					c.outputChannelId = null; // TODO ???
-					GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
-						public void onSuccess(GetCategoryTree.Result result) {
-							// TODO Only create tree if data changed??
-							Widget panelWidget = createTree(result.root, result.categories, result.children);
-							if (panelWidget == null) {
-								panelWidget = new Label(messages.noCategoriesAvailable());
-							}
-							((ScrollPanel)addCategoryPanel.getWidget()).setWidget(panelWidget);
-						}
-					});
+					fetchCategories();
 					
 					addCategoryPanel.showRelativeTo((Widget) event.getSource());
 				}
@@ -172,6 +175,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 	protected void addCategory(Long categoryId, SMap<String, String> labels) {
 		categories = categories.add(categoryId, labels);
+		categoriesChanged();
 		render();
 	}
 
@@ -261,5 +265,38 @@ public class CategoriesWidget extends Composite implements Globals {
 				StyleUtil.remove(anchor, Styles.mouseOverStyle);
 			}
 		});
+	}
+
+	private void fetchCategories() {
+		GetCategoryTree c = new GetCategoryTree();
+		c.catalogId = CatalogManager.getCurrentCatalogId();
+		c.outputChannelId = null; // TODO ???
+		GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
+			public void onSuccess(GetCategoryTree.Result result) {
+				
+				// pending set-data
+				if (pendingSetDataCategories != null) {
+					SMap<Long, SMap<String, String>> data = SMap.empty();
+					for (Category category : pendingSetDataCategories) {
+						SMap<String, String> labels = result.categories.get(category.getId(), SMap.create((String) null, "" + category.getId()));
+						data = data.add(category.getId(), labels);
+					}
+					pendingSetDataCategories = null;
+					setData(data, language);
+				}
+				
+				// TODO Only create tree if data changed??
+				if (addCategoryPanel != null) {
+					Widget panelWidget = createTree(result.root, result.categories, result.children);
+					if (panelWidget == null) {
+						panelWidget = new Label(messages.noCategoriesAvailable());
+					}
+					((ScrollPanel)addCategoryPanel.getWidget()).setWidget(panelWidget);
+				}
+			}
+		});
+	}
+
+	protected void categoriesChanged() {
 	}
 }

@@ -309,6 +309,7 @@ public interface I18NCatalog extends Messages {
 	
 	String loadingWebShopsMessage();
 	String addLanguageLink();
+	String setLanguageLink();
 	String noLanguagesAvailable();
 	String shopNameHelp();
 	String shopUrlPrefixLabel();
@@ -322,17 +323,19 @@ public interface I18NCatalog extends Messages {
 	String loadingWebShopsAction();
 	String defaultLanguageName();
 	String savingWebShopsAction();
-
+	String topLevelCategoriesLabel();
+	String topLevelCategoriesHelp();
+	
 	String orderCanceledStatus();
-    String orderClosedStatus();
-    String orderCompleteStatus();
-    String orderInShoppingCartStatus();
-    String orderOnHoldStatus();
-    String orderPendingPaymentStatus();
-    String orderProcessingStatus();
-    String orderReceivedPaymentStatus();
-    String orderShippedStatus();
-    
+  String orderClosedStatus();
+  String orderCompleteStatus();
+  String orderInShoppingCartStatus();
+  String orderOnHoldStatus();
+  String orderPendingPaymentStatus();
+  String orderProcessingStatus();
+  String orderReceivedPaymentStatus();
+  String orderShippedStatus();
+  
 	String orderShopNameLabel();
 	String orderDateLabel();
 	String orderStatusLabel();
@@ -347,5 +350,4 @@ public interface I18NCatalog extends Messages {
 	String orderProductOrderTab();
 	String orderHistoryTab();
 	String orderFilter();
-
 }

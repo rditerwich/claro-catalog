@@ -1,19 +1,22 @@
 package claro.catalog.manager.client.webshop;
 
+import static easyenterprise.lib.util.CollectionUtil.firstOrNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.xerces.impl.dtd.models.CMUniOp;
-
 import claro.catalog.command.shop.StoreShop;
+import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.catalog.manager.client.widgets.LanguagesWidget;
 import claro.catalog.util.CatalogModelUtil;
+import claro.jpa.catalog.Category;
+import claro.jpa.shop.Navigation;
 
-import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -35,6 +38,7 @@ public class WebshopDetail extends Composite implements Globals {
 	private TextBox urlPrefixTextBox;
 	private LanguagesWidget defaultLanguageWidget;
 	private LanguagesWidget languagesWidget;
+	private CategoriesWidget categoriesWidget;
 
 	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
 		protected String getMessage() {
@@ -73,8 +77,8 @@ public class WebshopDetail extends Composite implements Globals {
 				add(messages.nameLabel(), nameTextBox = new TextBox(), messages.shopNameHelp());
 				add(messages.shopUrlPrefixLabel(), urlPrefixTextBox = new TextBox(), messages.urlPrefixHelp());
 				add(messages.defaultlanguageLabel(), defaultLanguageWidget = new LanguagesWidget(false, false) {
-					protected void addLanguage(String language) {
-						super.addLanguage(language);
+					@Override
+					protected void languagesChanged() {
 						doStoreShop();
 					}
 				}, messages.defaultLanguageHelp());
@@ -84,6 +88,12 @@ public class WebshopDetail extends Composite implements Globals {
 						doStoreShop();
 					}
 				}, messages.shopLanguagesHelp());
+				add(messages.topLevelCategoriesLabel(), categoriesWidget = new CategoriesWidget(true) {
+					@Override
+					protected void categoriesChanged() {
+						doStoreShop();
+					}
+				}, messages.topLevelCategoriesHelp());
 			}});		
 		}});
 		
@@ -104,6 +114,13 @@ public class WebshopDetail extends Composite implements Globals {
 		urlPrefixTextBox.setText(model.getShop().getUrlPrefix());
 		defaultLanguageWidget.setData(model.getShop().getDefaultLanguage() != null? Collections.singletonList(model.getShop().getDefaultLanguage()) : null); // TODO Actually set default language.
 		setSelectedLanguages(model.getShop().getLanguages()); 
+		List<Category> categories = new ArrayList<Category>();
+		for (Navigation nav : model.getShop().getNavigation()) {
+			if (nav.getCategory() != null) {
+				categories.add(nav.getCategory());
+			}
+		}
+		categoriesWidget.setData(categories, CatalogManager.getUiLanguage());
 	}
 	
 
@@ -113,7 +130,9 @@ public class WebshopDetail extends Composite implements Globals {
 		model.getShop().setDefaultLanguage(getSelectedDefaultLanguage());
 		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getLanguages()));
 		
-		model.store(new StoreShop(model.getShop()));
+		StoreShop command = new StoreShop(model.getShop());
+		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getCategories().getKeys());
+		model.store(command);
 	}
 	
 	private void setSelectedLanguages(String languages) {
@@ -138,10 +157,7 @@ public class WebshopDetail extends Composite implements Globals {
 	}
 
 	private String getSelectedDefaultLanguage() {
-		if (!defaultLanguageWidget.getLanguages().isEmpty()) {
-			return defaultLanguageWidget.getLanguages().get(0);
-		}
-		return null;
+		return firstOrNull(defaultLanguageWidget.getLanguages());
 	}
 }
 

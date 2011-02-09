@@ -3,6 +3,8 @@ package claro.catalog.manager.client.widgets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import claro.catalog.manager.client.Globals;
 
@@ -35,7 +37,7 @@ public class LanguagesWidget extends Composite implements Globals {
 	
 
 	private final boolean canSelect;
-	private List<String> languages = new ArrayList<String>();
+	private Set<String> languages = new TreeSet<String>();
 	private final boolean allowMultiple;
 	
 
@@ -62,7 +64,7 @@ public class LanguagesWidget extends Composite implements Globals {
 		render();
 	}
 	
-	public List<String> getLanguages() {
+	public Set<String> getLanguages() {
 		return languages;
 	}
 	
@@ -92,6 +94,7 @@ public class LanguagesWidget extends Composite implements Globals {
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							removeLanguage(lang);
+							languagesChanged();
 						}
 					});
 				}});
@@ -106,7 +109,7 @@ public class LanguagesWidget extends Composite implements Globals {
 	}
 
 	protected String getAddLanguageLabel() {
-		return messages.addLanguageLink();
+		return allowMultiple ? messages.addLanguageLink() : messages.setLanguageLink();
 	}
 
 	private Anchor createAddAnchor(String addCategoryText) {
@@ -166,6 +169,10 @@ public class LanguagesWidget extends Composite implements Globals {
 		languages.remove(language);
 		render();
 	}
+
+	protected void languagesChanged() {
+	}
+
 	
 	private Widget createLanguageSelection(final String[] allLanguages) {
 		if (allLanguages == null || allLanguages.length == 0) {
@@ -174,7 +181,7 @@ public class LanguagesWidget extends Composite implements Globals {
 		
 		final List<Tuple<String,String>> newLanguages = new ArrayList<Tuple<String,String>>();
 		for (int i = 0; i < allLanguages.length; i++) {
-			if (!allLanguages[i].equals("default")) {
+			if (!languages.contains(allLanguages[i]) && !allLanguages[i].equals("default")) {
 				// DisplayName first to be able to sort.
 				newLanguages.add(Tuple.create(displayName(allLanguages[i]), allLanguages[i]));
 			}
@@ -196,6 +203,7 @@ public class LanguagesWidget extends Composite implements Globals {
 					if (cell != null) {
 						Tuple<String, String> selectedLanguage = newLanguages.get(cell.getRowIndex());
 						if (!languages.contains(selectedLanguage.getSecond())) {
+							languagesChanged();
 							addLanguage(selectedLanguage.getSecond());
 							addCategoryPanel.hide();
 						}
