@@ -125,6 +125,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 //					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
 //					addPage(new EmptyPage(placeController, "Orders"), "Orders");
 					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
+					addPage(new SettingsPage(placeController, "Technical Settings"), "Settings");
 //					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
 //					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
 //					addPage(new TearupTabsTestPage(placeController), "TabTest");

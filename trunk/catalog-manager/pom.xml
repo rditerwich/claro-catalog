@@ -70,7 +70,7 @@
 			<style>DETAILED</style>
 			<noServer>false</noServer>
 			<extraJvmArgs>-Xmx512m</extraJvmArgs>
-			<gwtVersion>2.1.1</gwtVersion>
+			<gwtVersion>2.1.0</gwtVersion>
  		  <compileSourcesArtifacts>
             <artifact>claro:catalog-server</artifact>
             <artifact>easyenterprise:ee-lib</artifact>

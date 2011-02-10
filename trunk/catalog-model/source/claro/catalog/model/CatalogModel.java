@@ -273,6 +273,12 @@ public class CatalogModel {
 	}
  
 	public void flushCache() {
+		flushCache(false);
+	}
+	public void flushCache(boolean full) {
 		invalidate(items.values());
+		if (full) {
+			// TODO Implement full.
+		}
 	}
 }

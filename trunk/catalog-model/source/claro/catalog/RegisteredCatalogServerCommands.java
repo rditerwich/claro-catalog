@@ -1,5 +1,6 @@
 package claro.catalog;
 
+import claro.catalog.impl.FlushCatalogModelImpl;
 import claro.catalog.impl.GetLanguagesByShopImpl;
 import claro.catalog.impl.GetLanguagesImpl;
 import claro.catalog.impl.LoginImpl;
@@ -40,5 +41,6 @@ public class RegisteredCatalogServerCommands extends RegisteredCommands {
 		register(GetOrdersImpl.class);
 		register(LoginImpl.class);
 		register(PerformStagingImpl.class);
+		register(FlushCatalogModelImpl.class);
 	}
 }
