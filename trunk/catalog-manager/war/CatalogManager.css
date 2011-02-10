@@ -692,6 +692,13 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	visibility: visible;
 	color: gray;
 }
+.itemPropertyValues tr.itemPropertyValueRow .itemPropertyValueName {
+	white-space: nowrap;
+}
+
+.itemPropertyValues tr.itemPropertyValueRow .valueParentTD {
+	width: 100%;
+}	
 
 /** Taxonomy Page */
 

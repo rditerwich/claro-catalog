@@ -43,7 +43,7 @@ import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
-	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden, source, itemPropertyValueRow, groupInherited }
+	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden, source, itemPropertyValueRow, groupInherited, itemPropertyValueName, valueParentTD }
 	private static int NAME_COLUMN = 0;
 	private static int VALUE_COLUMN = 1;
 	private static int GROUP_COLUMN = 2;
@@ -170,6 +170,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				
 				// name and source
 				groupPanelWidgets.panel.setWidget(j, NAME_COLUMN, new Grid(1, 2) {{
+					StyleUtil.addStyle(this, Styles.itemPropertyValueName);
 					// name
 					setWidget(0, 0, propertyValueWidgets.nameWidget = new Label());
 
@@ -196,6 +197,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 						}
 					}); 
 				}});
+				StyleUtil.addClass(propertyValueWidgets.valueParentWidget.getElement().getParentElement(), Styles.valueParentTD);
 				
 				// groups
 				if (canReassignGroups) {
