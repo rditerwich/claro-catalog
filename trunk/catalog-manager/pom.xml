@@ -84,7 +84,7 @@
         <configuration>
           <warSourceDirectory>war</warSourceDirectory>
           <webXml>war/WEB-INF/web.xml</webXml>
-          <outputDirectory>war</outputDirectory>
+          <outputDirectory>target</outputDirectory>
 		</configuration>
       </plugin>
     </plugins>
