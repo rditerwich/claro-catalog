@@ -8,7 +8,10 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
 
+import org.apache.xml.serialize.Printer;
+
 import claro.jpa.catalog.Catalog;
+import easyenterprise.lib.cloner.Print;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandExecutor;
@@ -44,6 +47,7 @@ public class CatalogServer implements CommandExecutor {
 	
 	@Override
 	public <T extends CommandResult, C extends Command<T>> T execute(C command) throws CommandException {
+		System.out.println("Command: " + Print.print(command));
 		return executor.execute(command);
 	}
 	

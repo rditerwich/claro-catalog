@@ -476,6 +476,22 @@ public class CatalogDao extends AbstractDao {
 		return status;
 	}
 	
+	
+	public StagingArea getOrCreateStagingArea(String name) {
+		@SuppressWarnings("unchecked")
+		List<StagingArea> result = getEntityManager().createQuery("SELECT s FROM StagingArea s WHERE s.name=:name").
+		setParameter("name", name).
+		getResultList();
+		if (!result.isEmpty()) {
+			StagingArea status = result.get(0);
+			return status;
+		}
+		StagingArea stagin = new StagingArea();
+		stagin.setName(name);
+		getEntityManager().persist(stagin);
+		return stagin;
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	public List<Order> getOrders(OrderStatus statusFilter, Paging paging) {
