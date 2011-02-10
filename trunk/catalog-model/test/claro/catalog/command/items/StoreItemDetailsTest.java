@@ -240,10 +240,22 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 
 	@Test
 	public void setPropertyValueCheckInherited() throws Exception {
+		Object valueToSet = "New Value";
+
+		FindItems find = new FindItems();
+		find.catalogId = TEST_CATALOG_ID;
+		
+		FindItems.Result findResult = executeCommand(find);
+
+		SMap<PropertyInfo, SMap<String, Object>> hpInk = findResult.items.get(hpInkId);
+		Assert.assertNotNull(hpInk);
+		
+		Object inheritedValue = hpInk.getOrEmpty(getCatalogModel().supplierProperty.getPropertyInfo()).get(null);
+		Assert.assertNotSame(valueToSet, inheritedValue);
+
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		PropertyInfo propertyToSet = getCatalogModel().supplierProperty.getPropertyInfo();
-		Object valueToSet = "New Value";
 		
 		ItemModel inkCat = getCatalogModel().getItem(inkCatId);
 		PropertyModel variantProperty = inkCat.findProperty(propertyToSet.propertyId, true);
@@ -265,16 +277,15 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertNotNull(resultVariantData);
 		Assert.assertEquals(valueToSet, resultVariantData.values.get().get());
 
-		FindItems find = new FindItems();
+		find = new FindItems();
 		find.catalogId = TEST_CATALOG_ID;
-		find.categoryIds = Collections.singletonList(getCatalogModel().getRootItem().getItemId());
 		
-		FindItems.Result findResult = executeCommand(find);
+		findResult = executeCommand(find);
 
-		SMap<PropertyInfo, SMap<String, Object>> hpInk = findResult.items.get(hpInkId);
+		hpInk = findResult.items.get(hpInkId);
 		Assert.assertNotNull(hpInk);
 		
-		Object inheritedValue = hpInk.getOrEmpty(getCatalogModel().supplierProperty.getPropertyInfo()).get(null);
+		inheritedValue = hpInk.getOrEmpty(getCatalogModel().supplierProperty.getPropertyInfo()).get(null);
 		Assert.assertEquals(valueToSet, inheritedValue);
 		
 	}

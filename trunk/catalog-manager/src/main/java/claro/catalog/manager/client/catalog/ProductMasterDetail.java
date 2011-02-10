@@ -112,6 +112,16 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		this.productRows = convertProductKeys(products.getKeys());
 		
 		render();
+		
+		// Did we have a selection?  
+		if (model.getSelectedProductId() != null) {
+			
+			// Try to find it back
+			int row = ProductRow.findRow(productRows, model.getSelectedProductId());
+			
+			// Reselect it.
+			rowSelected(row);
+		}
 	}
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
@@ -168,9 +178,6 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 							model.setSelectedLanguage(getSelectedLanguage());
 							model.setSelectedShop(getSelectedShop());
 							updateProductList();
-							int currentRow = getCurrentRow();
-							System.out.println("current row " + currentRow);
-							rowSelected(currentRow);
 						}
 					});
 					setWidget(0, 1, new TextBox() {{
@@ -458,6 +465,8 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	public void setSelectedProduct(Long productId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
 		int row = productRows.indexOf(new ProductRow(productId));
+		
+		model.setSelectedProductId(productId);
 
 		int oldRow = getCurrentRow();
 		
@@ -472,6 +481,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 
 	private void closeDetail() {
+		model.setSelectedProductId(null);
 		closeDetail(true);
 	}
 
@@ -540,6 +550,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		public Long productId;
 		public boolean isChanged;
 		
+		public static int findRow(List<ProductRow> rows, Long productId) {
+			return rows.indexOf(new ProductRow(productId));
+		}
 		public ProductRow(Long productId) {
 			this(productId, false);
 		}

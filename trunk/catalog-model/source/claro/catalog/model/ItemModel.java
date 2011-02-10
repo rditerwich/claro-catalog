@@ -91,6 +91,10 @@ public class ItemModel {
 	 * @return
 	 */
 	public Set<ItemModel> getParents() {
+		return getParents(false);
+	}
+	
+	private Set<ItemModel> getParents(boolean skipChildConnect) {
 		synchronized (catalog) {
 			if (parents == null) {
 				LinkedHashSet<ItemModel> parents = new LinkedHashSet<ItemModel>();
@@ -108,6 +112,9 @@ public class ItemModel {
 						// prevent cycles
 						if (!parentItem.getParentExtent().contains(this)) {
 							parents.add(parentItem);
+							if (!skipChildConnect) {
+								parentItem.getChildren(true); // Make sure our parents are connected to us.
+							}
 						}
 					}
 				}
@@ -179,13 +186,22 @@ public class ItemModel {
 	 * @return
 	 */
 	public Set<ItemModel> getChildren() {
+		return getChildren(false);
+	}
+	public Set<ItemModel> getChildren(boolean skipParentConnect) {
 		synchronized (catalog) {
 			if (children == null) {
 				HashSet<ItemModel> children = new HashSet<ItemModel>();
 				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getChildren());
 				for (ParentChild parentChild : parentChildren) {
 					if (parentChild.getChild() != null && !equal(parentChild.getChild().getId(), itemId)) {
-						children.add(catalog.getItem(parentChild.getChild().getId()));
+						ItemModel childItem = catalog.getItem(parentChild.getChild().getId());
+						children.add(childItem);
+						
+						// Make sure our children are connected to us.
+						if (!skipParentConnect) {
+							childItem.getParents(true); 
+						}
 					}
 				}
 				this.children = ImmutableSet.copyOf(children);
@@ -330,18 +346,8 @@ public class ItemModel {
 			// Labels
 			for (Entry<String, String> newLabel : CollectionUtil.notNull(newLabels)) {
 				String existingLabel = property.getPropertyInfo().labels.get(newLabel.getKey());
-				if (existingLabel == null) {
-					// New label 
-					Label label = new Label();
-					label.setLanguage(newLabel.getKey());
-					label.setLabel(newLabel.getValue());
-					label.setProperty(property.getEntity());
-					property.getEntity().getLabels().add(label);
-					catalog.dao.getEntityManager().persist(label);
-
-					changed = true;
-				} else if (!existingLabel.equals(newLabel.getValue())) {
-					// Update label. TODO
+				if (existingLabel == null || !existingLabel.equals(newLabel.getValue())) {
+					catalog.dao.setPropertyLabel(property.getEntity(), newLabel.getKey(), newLabel.getValue());
 					changed = true;
 				}
 			}
@@ -551,18 +557,20 @@ public class ItemModel {
 	}
 	
 	void invalidateParentExtent(boolean includeSelf) {
-		// TODO Do we need synchronization?
 		
-		catalog.invalidate(parentExtent);
+		for (ItemModel parent : CollectionUtil.notNull(parents)) {
+			parent.invalidateParentExtent(true);
+		}
 		if (includeSelf) {
 			catalog.invalidate(this);
 		}
 	}
 
 	void invalidateChildExtent(boolean includeSelf) {
-		// TODO Do we need synchronization?
 		
-		catalog.invalidate(childExtent);
+		for (ItemModel child : CollectionUtil.notNull(children)) {
+			child.invalidateChildExtent(true);
+		}
 		if (includeSelf) {
 			catalog.invalidate(this);
 		}

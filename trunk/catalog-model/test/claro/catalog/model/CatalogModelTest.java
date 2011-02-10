@@ -105,35 +105,55 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		EntityManager entityManager = getCatalogDao().getEntityManager();
 		CatalogModel model = getCatalogModel();
-		
+
+		// Test data setup
 		Shop shop = addShop(entityManager, model, "Webshop");
-		
 		Category root = model.catalog.getRoot();
 		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
 		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
 		
-		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
+		// values to set.
+		String nonShopValueToSet = "HP";
+		String shopValueToSet = "HP For Shop";
 		
+		// Make sure the values are not set (AND: test the case where the data has already been accessed in the model
+		ItemModel hpColorPrinterModelBefore = model.getItem(hpColorPrinters.getId());
+		PropertyModel supplierPropertyBefore = hpColorPrinterModelBefore.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierPropertyBefore);
+		
+		// Check for null shop
+		SMap<String,Object> effectiveValues = supplierPropertyBefore.getEffectiveValues(null, null);
+		Object defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertNotSame(nonShopValueToSet, defaultLanguageValue);
+		
+		// Check for the shop
+		effectiveValues = supplierPropertyBefore.getEffectiveValues(null, shop);
+		defaultLanguageValue = effectiveValues.get(null);
+		Assert.assertNotSame(shopValueToSet, defaultLanguageValue);
+
+		// Make the changes.
+		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
 		PropertyModel supplierProperty = hpPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
 		Assert.assertNotNull(supplierProperty);
 		
-		supplierProperty.setValue(null, null, null, null, "HP");
-		supplierProperty.setValue(null, null, shop, null, "HP For Shop");
+		supplierProperty.setValue(null, null, null, null, nonShopValueToSet);
+		supplierProperty.setValue(null, null, shop, null, shopValueToSet);
+		
 		
 		// Look on hpColorPrinter model
-		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		ItemModel hpColorPrinterModelAfter = model.getItem(hpColorPrinters.getId());
 		
-		supplierProperty = hpColorPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel supplierPropertyAfter = hpColorPrinterModelAfter.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierPropertyAfter);
 		
 		// It should only be visible for this shop:
-		SMap<String,Object> effectiveValues = supplierProperty.getEffectiveValues(null, null);
-		Object defaultLanguageValue = effectiveValues.get(null);
-		Assert.assertEquals("HP", defaultLanguageValue);
+		SMap<String,Object> effectiveValuesAfter = supplierPropertyAfter.getEffectiveValues(null, null);
+		Object defaultLanguageValueAfter = effectiveValuesAfter.get(null);
+		Assert.assertEquals(nonShopValueToSet, defaultLanguageValueAfter);
 		
 		// Do we have it?
-		effectiveValues = supplierProperty.getEffectiveValues(null, shop);
-		defaultLanguageValue = effectiveValues.get(null);
-		Assert.assertEquals("HP For Shop", defaultLanguageValue);
+		effectiveValuesAfter = supplierPropertyAfter.getEffectiveValues(null, shop);
+		defaultLanguageValueAfter = effectiveValuesAfter.get(null);
+		Assert.assertEquals(shopValueToSet, defaultLanguageValueAfter);
 	}
 }

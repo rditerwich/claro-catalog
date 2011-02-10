@@ -15,9 +15,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -38,7 +35,11 @@ public class LanguageAndShopSelector extends Composite implements Globals {
 			addChangeHandler(new ChangeHandler() {
 				public void onChange(ChangeEvent event) {
 					updateSelection(listBox.getSelectedIndex());
-					event.stopPropagation();
+				}
+			});
+			addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					event.stopPropagation();  // Prevent detail screens from closing.  TODO Maybe somehow do this outside of this widget?
 				}
 			});
 		}});

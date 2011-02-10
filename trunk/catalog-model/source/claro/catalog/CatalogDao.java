@@ -495,4 +495,37 @@ public class CatalogDao extends AbstractDao {
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setPropertyLabel(Property property, String language, String value) {
+		EntityManager entityManager = getEntityManager();
+
+		Query query = entityManager
+			.createQuery("select l from Label l where l.property.id = :propId" + (language != null? " and l.language = :language" : " and l.language is null"))
+			.setParameter("propId", property.getId());
+		
+		if (language != null) {
+			query.setParameter("language", language);
+		}
+		
+		List<Label> labels = query.getResultList();
+		if (labels.size() == 1) {
+			Label label = labels.get(0);
+			label.setLanguage(language);
+			label.setLabel(value);
+		} else if (labels.isEmpty()) {
+			// New label 
+			Label label = new Label();
+			label.setLanguage(language);
+			label.setLabel(value);
+			label.setProperty(property);
+
+			property.getLabels().add(label);
+			
+			entityManager.persist(label);
+		} else {
+			throw new IllegalStateException("Multiple labels found for property id " + property.getId() + " and language " + language);
+		}
+		
+	}
+
 }

@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.cobogw.gwt.user.client.ui.RoundedPanel;
-
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -18,7 +16,6 @@ import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
-import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
 import com.google.gwt.dom.client.Style.Unit;
@@ -47,7 +44,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private String language;
 	private String filterString;
 	
-	private OutputChannel outputChannel;
 
 	private PropertyInfo nameProperty;
 	private PropertyInfo variantProperty;
@@ -66,17 +62,10 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	protected HTML filterLabel;
 	private CategoryDetails details;
 	
-	private PropertyGroupInfo generalGroup;
-	
-	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> newCategoryProperties;
-	private SMap<Long, SMap<String, String>> newCategoryParents;
-	private RoundedPanel masterRoundedPanel;
 	private Long rootCategoryId;
 	private SMap<Long, SMap<String, String>> categories;
 	private SMap<Long, Long> childrenByCategory;
 	private List<claro.catalog.manager.client.taxonomy.CategoryMasterDetail.CategoryRow> categoryRows = Collections.emptyList();
-	private SMap<Long, SMap<String, String>> newCategoryGroups;
-	private SMap<Long, SMap<String, String>> newCategoryParentExtentWithSelf;
 	protected Label pleaseWaitLabel;
 	private final TaxonomyModel model;
 
@@ -90,7 +79,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
-		this.generalGroup = generalGroup;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
 		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
 		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
@@ -111,6 +99,17 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 		this.categoryRows = createRows();
 		render();
+		
+		// Did we have a selection?  
+		if (model.getSelectedCategoryId() != null) {
+			
+			// Try to find it back
+			int row = CategoryRow.findRow(categoryRows, model.getSelectedCategoryId());
+			
+			// Reselect it.
+			rowSelected(row);
+		}
+
 	}
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
@@ -159,7 +158,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 							model.setSelectedLanguage(getSelectedLanguage());
 							model.setSelectedShop(getSelectedShop());
 							updateCategories();
-							rowSelected(getCurrentRow());
 						}
 					});
 					setWidget(1, 0, new Anchor(messages.newCategory()) {{
@@ -212,7 +210,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		categories = categories.set(categoryId, categoryLabels);
 		
 		// Find row to update
-		int itemRow = categoryRows.indexOf(new CategoryRow(previousCategoryId));
+		int itemRow = CategoryRow.findRow(categoryRows, previousCategoryId);
 		if (itemRow != -1) {
 			// Update row
 			categoryRows.get(itemRow).categoryId = categoryId;
@@ -226,7 +224,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			int parentIndex = -1;
 			if (parentId != null) {
 				// Find parent:
-				parentIndex = categoryRows.indexOf(new CategoryRow(parentId));
+				parentIndex = CategoryRow.findRow(categoryRows, parentId);
 			}
 			
 			// Add new category, and set itemRow accordingly
@@ -247,8 +245,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			details.setItemData(categoryId, groups, parentExtentWithSelf, parents, propertyValues);
 		}
 	}
-	
-
 
 	private void render() {
 		
@@ -355,6 +351,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	private void closeDetail() {
+		model.setSelectedCategoryId(null);
 		closeDetail(true);
 	}
 	
@@ -370,8 +367,8 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 	
 	protected void setSelectedCategory(Long categoryId, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> properties) {
-		
-		int row = categoryRows.indexOf(new CategoryRow(categoryId));
+		model.setSelectedCategoryId(categoryId);
+		int row = CategoryRow.findRow(categoryRows, categoryId);
 
 		int oldRow = getCurrentRow();
 		
@@ -507,6 +504,10 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		@Override
 		public int hashCode() {
 			return Objects.hashCode(categoryId);
+		}
+
+		private static int findRow(List<CategoryRow> rows, Long categoryId) {
+			return rows.indexOf(new CategoryRow(categoryId));
 		}
 	}
 
