@@ -7,6 +7,7 @@ import static claro.catalog.model.CatalogModelTestUtil.addProduct;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 
@@ -40,6 +41,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 	protected Long hpPrintersCatId;
 	private Long pricesGroupId;
 	private String rootName;
+	private Long hpInkId;
 	
 	
 	@Test
@@ -236,6 +238,47 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		// TODO Check DB as well?
 	}
 
+	@Test
+	public void setPropertyValueCheckInherited() throws Exception {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		PropertyInfo propertyToSet = getCatalogModel().supplierProperty.getPropertyInfo();
+		Object valueToSet = "New Value";
+		
+		ItemModel inkCat = getCatalogModel().getItem(inkCatId);
+		PropertyModel variantProperty = inkCat.findProperty(propertyToSet.propertyId, true);
+		Assert.assertNotSame(valueToSet, variantProperty.getValues(null, null).get());
+		
+		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
+		cmd.itemId = inkCatId;
+		cmd.valuesToSet = SMap.create(propertyToSet, SMap.create((String)null, valueToSet)); 
+		
+		Result result = executeCommand(cmd);
+		
+		// Has the result been filled?
+		Assert.assertEquals(inkCatId, result.storedItemId);
+		
+		PropertyData resultVariantData = findProperty(result, getCatalogModel().generalPropertyGroup, propertyToSet);
+		
+		// Find the info back, it should have the new value set.
+		Assert.assertNotNull(resultVariantData);
+		Assert.assertEquals(valueToSet, resultVariantData.values.get().get());
+
+		FindItems find = new FindItems();
+		find.catalogId = TEST_CATALOG_ID;
+		find.categoryIds = Collections.singletonList(getCatalogModel().getRootItem().getItemId());
+		
+		FindItems.Result findResult = executeCommand(find);
+
+		SMap<PropertyInfo, SMap<String, Object>> hpInk = findResult.items.get(hpInkId);
+		Assert.assertNotNull(hpInk);
+		
+		Object inheritedValue = hpInk.getOrEmpty(getCatalogModel().supplierProperty.getPropertyInfo()).get(null);
+		Assert.assertEquals(valueToSet, inheritedValue);
+		
+	}
+	
 
 	private PropertyData findProperty(Result result, PropertyGroup generalPropertyGroup, PropertyInfo nameProperty) {
 		SMap<PropertyInfo, PropertyData> generalGroupProperties = result.propertyData.get(new PropertyGroupInfo(generalPropertyGroup.getId()));
@@ -333,11 +376,11 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 					Tuple.create(model.priceProperty, new Money(200.00, "EUR")),
 			});
 			
-			addProduct(entityManager, model, ink, "HP CYM ", new Tuple[] { 
+			hpInkId = addProduct(entityManager, model, ink, "HP CYM ", new Tuple[] { 
 					Tuple.create(model.articleNumberProperty, "ART123123111"),
 					Tuple.create(model.variantProperty, "HP CYM XL"),
 					Tuple.create(model.priceProperty, new Money(60.00, "EUR")),
-			});
+			}).getId();
 			
 			addProduct(entityManager, model, ink, "Canon Cyan", new Tuple[] { 
 					Tuple.create(model.articleNumberProperty, "ART111222444"),

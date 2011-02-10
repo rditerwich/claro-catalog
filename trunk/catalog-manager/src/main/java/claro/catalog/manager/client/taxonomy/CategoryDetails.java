@@ -15,13 +15,10 @@ import claro.catalog.manager.client.widgets.CategoriesWidget;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -115,11 +112,11 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //				}});
 				
 				add(propertiesComponent = new CategoryProperties() {
-					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-						CategoryDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
+					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo, String language) {
+						CategoryDetails.this.propertySet(itemId, propertyInfo, language);
 					}
-					protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
-						CategoryDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
+					protected void propertyToRemove(Long itemId, PropertyInfo propertyInfo, String language) {
+						CategoryDetails.this.propertyRemoved(itemId, propertyInfo, language);
 					}
 				});	
 			}}));
@@ -235,6 +232,30 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			cmd.itemType = ItemType.catagory;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
+			
+			storeItem(cmd);
+		}
+	}
+	
+	private void propertySet(Long itemId, PropertyInfo propertyInfo, String language) {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.catagory;
+		cmd.propertiesToSet = Collections.singletonList(propertyInfo);
+		
+		storeItem(cmd);
+	}
+	
+	private void propertyRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+		
+		// Only remove values if the item exists:
+		if (itemId != null) {
+			StoreItemDetails cmd = new StoreItemDetails();
+			cmd.itemId = itemId;
+			cmd.itemType = ItemType.catagory;
+			
+			cmd.propertiesToRemove = Collections.singletonList(propertyInfo.propertyId);
 			
 			storeItem(cmd);
 		}

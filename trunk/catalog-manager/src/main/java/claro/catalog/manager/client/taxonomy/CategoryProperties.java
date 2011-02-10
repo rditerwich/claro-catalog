@@ -1,7 +1,5 @@
 package claro.catalog.manager.client.taxonomy;
 
-import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -10,14 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -25,10 +20,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -38,20 +31,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.gwt.client.widgets.MoneyWidget;
-import easyenterprise.lib.util.CollectionUtil;
-import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
-import gwtupload.client.IUploadStatus.Status;
-import gwtupload.client.IUploader;
-import gwtupload.client.SingleUploader;
 
 abstract public class CategoryProperties extends Composite implements Globals {
 	public enum Styles implements Style { clear, valueParent, valueWidget, categoryProperties }
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
-	private static int VALUE_COLUMN = 2;
-	private static int GROUP_COLUMN = 3;
+	private static int GROUP_COLUMN = 2;
+	private static int CLEAR_COLUMN = 3;
 	private static int NR_COLS = 4;
 	private static Comparator<PropertyType> typeComparator = new Comparator<PropertyType> () {
 		public int compare(PropertyType o1, PropertyType o2) {
@@ -80,7 +67,13 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		
 		initWidget(new VerticalPanel() {{
 			StyleUtil.addStyle(this, Styles.categoryProperties);
-			add(new Anchor("Define new property...")); // TODO i18n.
+			add(new Anchor("Define new property...") {{
+				addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						createNewProperty();
+					}
+				});
+			}}); // TODO i18n.
 			add(propertyPanel = new Grid(0, NR_COLS));
 		}});
 	}
@@ -90,6 +83,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	}
 	
 	/**
+	 * TODO Change to only receive property/group data.
 	 * set the item data and (re)render.
 	 * 
 	 * @param itemId
@@ -108,11 +102,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	 * @param itemId
 	 * @param propertyInfo
 	 * @param language
-	 * @param value
 	 */
-	protected abstract void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
+	protected abstract void propertyToSet(Long itemId, PropertyInfo propertyInfo, String language);
 
-	protected abstract void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language);
+	protected abstract void propertyToRemove(Long itemId, PropertyInfo propertyInfo, String language);
 	
 	private void render() {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
@@ -128,39 +121,42 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		// Create new rows
 		for (int j = oldRowCount; j < requiredNrRows; j++) {
 			final PropertyValueWidgets propertyValueWidgets = new PropertyValueWidgets();
-			
+			final int row = j;
 			// name
-			propertyPanel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new TextBox()); // TODO Change listener.
+			propertyPanel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new TextBox() {{
+				addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						propetyNameChanged(row, getText());
+					}
+				});
+			}}); // TODO Change listener.
 			
 			// type
 			propertyPanel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new ListBox() {{
-				// TODO Sort types?
 				for (PropertyType type : propertyTypes) {
-					addItem(type.name());// TODO How about i18n??
+					addItem(type.name(), type.name());// TODO How about i18n??
 				}
+				addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						propertyTypeChanged(row, PropertyType.valueOf(getValue(getSelectedIndex())));
+					}
+				});
 			}}); 
-			
-			if (false) {
-			// Value + Clear button
-			propertyPanel.setWidget(j, VALUE_COLUMN, propertyValueWidgets.valueParentWidget = new Grid(1, 2) {{
-				StyleUtil.addStyle(this, Styles.valueParent);
-				// Real value is added in the bind fase...
-				setWidget(0, 1, propertyValueWidgets.clearValueWidget = new Image() {{
-					StyleUtil.addStyle(this, Styles.clear);
-					final Widget me = this;
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							clearValue(me);
-						}
-					});
-				}
-				}); 
-			}});
-			}
 			
 			// groups
 			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox());
 			
+			// Clear button
+			propertyPanel.setWidget(j, CLEAR_COLUMN, propertyValueWidgets.clearValueWidget = new Image() {{
+				StyleUtil.addStyle(this, Styles.clear);
+					addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							propertyErased(row);
+						}
+					});
+				}
+			}); 
+
 			valueWidgets.add(propertyValueWidgets);
 		}
 
@@ -184,11 +180,6 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				// set type
 				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.getType(), typeComparator)); 
 				
-				Widget valueWidget = null;
-				if (false) {
-				// ensure value widget
-				valueWidget = setValueWidget(propertyValueWidgets, i, VALUE_COLUMN, property, propertyData);
-				}
 				
 				// Groups
 				propertyValueWidgets.propertyGroupsWidget.clear();
@@ -205,15 +196,55 @@ abstract public class CategoryProperties extends Composite implements Globals {
 					j++;
 				}
 				
-				// Remember binding
-				if (valueWidget != null) {
-					propertyByValueWidget.put(valueWidget, property);
-					propertyByValueWidget.put(propertyValueWidgets.clearValueWidget, property);
-				}
-				
 				i++;
 			}
 		}
+	}
+	
+	private void createNewProperty() {
+		// TODO Make a more clean implementation
+		PropertyGroupInfo group = values.getFirstKey();
+		SMap<PropertyInfo, PropertyData> properties = values.get(group, SMap.<PropertyInfo, PropertyData>empty());
+		PropertyInfo newProperty = new PropertyInfo();
+		newProperty.setType(PropertyType.String); // Type is required.
+		properties = properties.add(newProperty, null);
+		values = values.set(group, properties);
+		render();
+	}
+
+	protected void propetyNameChanged(int row, String text) {
+		PropertyInfo rowProperty = getRowProperty(row);
+		if (rowProperty.labels == null) {
+			rowProperty.labels = SMap.empty();
+		}
+		rowProperty.labels = rowProperty.labels.set(model.getSelectedLanguage(), text);
+		propertyToSet(itemId, rowProperty, model.getSelectedLanguage());
+	}
+	private void propertyTypeChanged(int row, PropertyType type) {
+		PropertyInfo rowProperty = getRowProperty(row);
+		rowProperty.setType(type);
+		propertyToSet(itemId, rowProperty, model.getSelectedLanguage());
+	}
+	
+	private void propertyErased(int row) {
+		PropertyInfo rowProperty = getRowProperty(row);
+		propertyToRemove(itemId, rowProperty, model.getSelectedLanguage());
+	}
+	
+	private PropertyInfo getRowProperty(int row) {
+		int i = 0;
+		for (PropertyGroupInfo propertyGroup : values.getKeys()) {
+			SMap<PropertyInfo, PropertyData> properties = values.get(propertyGroup);
+			List<PropertyInfo> propertyKeys = properties.getKeys();
+			
+			for (PropertyInfo property : propertyKeys) {
+				if (row == i) {
+					return property;
+				}
+				i++;
+			}
+		}
+		return null;
 	}
 	
 	private static int getNrProperties(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
@@ -222,151 +253,6 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			result += group.getValue().getKeys().size();
 		}
 		return result;
-	}
-
-	private Widget setValueWidget(PropertyValueWidgets propertyValueWidgets, int row, int col, PropertyInfo property, PropertyData propertyData) {
-		
-		// ensure widget:
-		Widget widget = ensureWidget(propertyValueWidgets, property);
-
-		// Set actual value
-		// TODO what about overriding values to null?  Use undefined in the code below?
-		// TODO many multiplicity properties.
-		
-		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
-		Object value = values.tryGet(model.getSelectedLanguage(), null);
-		boolean isDerived = false;
-
-		if (value == null) {
-			SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
-			SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
-			
-			value = effectiveLanguageValues.tryGet(model.getSelectedLanguage(), null);
-			isDerived = true; 
-		}
-		
-		setValue(widget, value, property);
-		
-		if (isDerived) {
-			StyleUtil.addStyle(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
-		} else {
-			// TODO Maybe changelistener to remove derived?
-			StyleUtil.remove(propertyValueWidgets.valueParentWidget, CatalogManager.Styles.inherited);
-		}
-		return widget;
-	}
-
-	// TODO: Enums, Formatted Text, Money.
-	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, final PropertyInfo property) {
-		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
-		Widget result = null;
-		
-		switch (property.getType()) {
-		case Boolean:
-			if (oldWidget instanceof CheckBox) {
-				result = oldWidget;
-			} else {
-				result = new CheckBox() {{
-					final CheckBox me = this;
-					addClickHandler(new ClickHandler() {
-						public void onClick(ClickEvent event) {
-							valueChanged(me, getValue());
-						}
-					});
-				}};
-			}
-			break;
-		case Media:
-			if (oldWidget instanceof HorizontalPanel && ((HorizontalPanel)oldWidget).getWidgetCount() > 1 && ((HorizontalPanel)oldWidget).getWidget(0) instanceof MediaWidget) {
-				result = oldWidget;
-			} else {
-				result = new HorizontalPanel() {{
-					final HorizontalPanel me = this;
-					setVerticalAlignment(ALIGN_MIDDLE);
-					add(new MediaWidget(false, true));
-					add(new SingleUploader() {{
-//						addHoverVisibility(getForm());
-//						addHoverVisibility(this.getFileInput());
-						addOnFinishUploadHandler(new OnFinishUploaderHandler() {
-							public void onFinish(IUploader uploader) {
-								if (uploader.getStatus() == Status.SUCCESS) {
-									valueChanged(me, uploader.getServerInfo().field); 
-								}
-							}
-						});
-					}});
-					
-				}};
-			}
-			break;
-		case Money:
-			if (oldWidget instanceof MoneyWidget) {
-				result = oldWidget;
-			} else {
-				result = new MoneyWidget() {
-					protected void valueChanged(Money newValue) {
-						CategoryProperties.this.valueChanged(this, newValue);
-					}
-				};
-			}
-			break;
-		default:
-			if (oldWidget instanceof TextBox) {
-				result = oldWidget;
-			} else {
-				result = new TextBox() {{
-					final TextBox me = this; 
-					addChangeHandler(new ChangeHandler() {
-						public void onChange(ChangeEvent event) {
-							valueChanged(me, getText());
-						}
-					});
-				}};
-			}
-		}
-		
-		if (result != oldWidget) {
-			propertyValueWidgets.valueParentWidget.setWidget(0, 0, result);
-		}
-		
-		StyleUtil.addStyle(result, Styles.valueWidget);
-		
-		return result;
-	}
-
-	private void setValue(Widget widget, Object value, PropertyInfo property) {
-		switch (property.getType()) {
-		case Boolean:
-			CheckBox checkBox = (CheckBox) widget;
-			checkBox.setValue((Boolean) value);
-			break;
-		case Media:
-			MediaWidget mediaWidget = (MediaWidget) ((HorizontalPanel)widget).getWidget(0);
-			if (value instanceof MediaValue) {
-				MediaValue mediaValue = (MediaValue) value;
-//				mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);
-				mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
-			} else {
-//				mediaWidget.setUploadData(itemId, property.propertyId, null, language);
-				mediaWidget.setData(null, null, null);
-			}
-			break;
-		case Money:
-			MoneyWidget moneyWidget = (MoneyWidget) widget;
-			moneyWidget.setValue((Money) value);
-			break;
-		default:
-			TextBox textBox = (TextBox) widget;
-			textBox.setText(value != null? propertyStringConverter.toString(property.getType(), value) : null);
-		}
-	}
-
-	private void valueChanged(Widget widget, Object newValue) {
-		propertyValueSet(itemId, propertyByValueWidget.get(widget), model.getSelectedLanguage(), newValue);
-	}
-	
-	private void clearValue(Widget eraseButton) {
-		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), model.getSelectedLanguage());
 	}
 	
 	private class PropertyValueWidgets {
