@@ -27,9 +27,12 @@ object WebshopCache {
 	
   private val map : ConcurrentMap[(Boolean, String), Shop] = MapMaker(10, MapMaker.STRONG, MapMaker.SOFT, key => {
   	val stagingAreaName = if (key._1) PerformStaging.STAGING_AREA_PREVIEW else PerformStaging.STAGING_AREA_PUBLISHED
-  	val stagingArea = findAllStagingAreas.find(_.getName == stagingAreaName).get
+  	val stagingArea = WebshopModel.dao.getOrCreateStagingArea(stagingAreaName)
   	val language = key._2
+  	println("SHOPS:" + findAllShops.map(_.getName).mkString(","))
+  	println("FINDING SHOP:" + shopName)
   	val shop = findAllShops.find(_.getName == shopName).get
+  	println("SHOP FOUND:" + shop)
   	new Shop(new WebshopData(catalogModel, shop, stagingArea, language))
   }) 
 
