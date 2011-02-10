@@ -588,6 +588,11 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 100%;
 }
 
+.itemPropertyValues .valueParent .valueWidget {
+	width: 100%;
+	padding: 2px 0px;
+}
+
 .itemPropertyValues .groupInherited {
 	color: gray
 }
@@ -668,7 +673,8 @@ table.filterpanel input.gwt-TextBox { margin-right: 40px; }
 	width: 14px;
 	height: 14px;
 	border: none;
-	
+	margin: 2px;
+	display: block;
 }
 
 .itemPropertyValues img.inherited {
