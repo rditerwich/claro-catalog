@@ -48,7 +48,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private static int VALUE_COLUMN = 1;
 	private static int GROUP_COLUMN = 2;
 //	private static int SOURCE_COLUMN = 3;
-	private static int NR_COLS = 3;
+	private static int NR_FIXED_COLS = 2;
 
 	private TabPanel propertyGroupPanel;
 	private List<GroupPanelWidgets> groupPanels = new ArrayList<GroupPanelWidgets>();
@@ -63,10 +63,13 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	private final boolean showPropertySources;
 	private final boolean canReassignGroups;
 	private ItemPageModel model;
+	private final int nrCols;
 	
 	public ItemPropertyValues(final boolean canReassignGroups, boolean showPropertySources) {
 		this.canReassignGroups = canReassignGroups;
 		this.showPropertySources = showPropertySources;
+
+		nrCols = NR_FIXED_COLS + ((canReassignGroups?1:0) + (showPropertySources?1:0));
 		
 		propertyGroupPanel = new TabPanel();
 		StyleUtil.addStyle(propertyGroupPanel, Styles.itemPropertyValues);
@@ -126,7 +129,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		for (int i = oldPanelCount; i < propertyGroups.size(); i++) {
 			GroupPanelWidgets propertyGroupWidgets = new GroupPanelWidgets();
 			
-			propertyGroupPanel.add(propertyGroupWidgets.panel = new Grid(0, NR_COLS), "");
+			propertyGroupPanel.add(propertyGroupWidgets.panel = new Grid(0, nrCols), "");
 			
 			groupPanels.add(propertyGroupWidgets);
 			
