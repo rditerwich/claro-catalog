@@ -20,5 +20,36 @@ public class PropertyData implements Serializable {
 	public SMap<StagingArea, SMap<OutputChannel, SMap<String, Object>>> effectiveValues;
 	
 	public SMap<OutputChannel, SMap<Source, SMap<String, Object>>> sourceValues;
+	
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder();
+		
+		result.append("{");
+		String sep = "";
+		if (groupItemNameLabels != null) {
+			result.append(sep); sep = ",";
+			result.append("groupItemNameLabels=");
+			result.append(groupItemNameLabels);
+		}
+		if (values != null) {
+			result.append(sep); sep = ",";
+			result.append("values=");
+			result.append(values);
+		}
+		if (effectiveValues != null) {
+			result.append(sep); sep = ",";
+			result.append("effectiveValues=");
+			result.append(effectiveValues);
+		}
+		if (sourceValues != null) {
+			result.append(sep); sep = ",";
+			result.append("sourceValues=");
+			result.append(sourceValues);
+		}
+		result.append("}");
+		
+		return result.toString();
+	}
 }
 	

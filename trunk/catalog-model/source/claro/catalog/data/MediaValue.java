@@ -34,4 +34,9 @@ public class MediaValue implements Serializable {
 		
 		return result;
 	}
+	
+	@Override
+	public String toString() {
+		return "MediaValue(" + propertyValueId + "," + mimeType + "," + filename +")";
+	}
 }

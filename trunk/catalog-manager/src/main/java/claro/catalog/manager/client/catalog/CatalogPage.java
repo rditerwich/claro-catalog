@@ -97,7 +97,7 @@ public class CatalogPage extends Page {
 		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
 		cmd.orderByIds = productMasterDetail.getOrderByIds(); 
 
-		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts(), false) {
+		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
 				super.onSuccess(result);
 				productMasterDetail.setProducts(result.items);

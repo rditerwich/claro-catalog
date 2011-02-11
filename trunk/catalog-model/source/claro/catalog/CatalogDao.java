@@ -10,7 +10,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
@@ -54,7 +53,6 @@ import claro.jpa.shop.Shop;
 import com.google.common.base.Objects;
 
 import easyenterprise.lib.jpa.AbstractDao;
-import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Paging;
 
 public class CatalogDao extends AbstractDao {
@@ -93,51 +91,57 @@ public class CatalogDao extends AbstractDao {
 	}
 
 	public PropertyValue getPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
-		CriteriaBuilder cb = getCriteriaBuilder();
-		CriteriaQuery<PropertyValue> c = cb.createQuery(PropertyValue.class);
+		StringBuilder queryString = new StringBuilder();
 		
-		ParameterExpression<Item> itemParam = cb.parameter(Item.class);
-		ParameterExpression<Property> propertyParam = cb.parameter(Property.class);
-		ParameterExpression<Source> sourceParam = source != null ? cb.parameter(Source.class) : null;
-		ParameterExpression<StagingArea> stagingParam = stagingArea != null ? cb.parameter(StagingArea.class) : null;
-		ParameterExpression<OutputChannel> outputChannelParam = outputChannel != null ? cb.parameter(OutputChannel.class) : null;
-		ParameterExpression<String> languageParam = language != null ? cb.parameter(String.class) : null;
+		queryString.append("select pv from PropertyValue pv where pv.item = :item and pv.property = :property");
+		if (source != null) {
+			queryString.append(" and pv.source = :source");
+		} else {
+			queryString.append(" and pv.source is null");
+		}
+		if (stagingArea != null) {
+			queryString.append(" and pv.stagingArea = :stagingArea");
+		} else {
+			queryString.append(" and pv.stagingArea is null");
+		}
+		if (outputChannel != null) {
+			queryString.append(" and pv.outputChannel = :outputChannel");
+		} else {
+			queryString.append(" and pv.outputChannel is null");
+		}
+		if (language != null) {
+			queryString.append(" and pv.language = :language");
+		} else {
+			queryString.append(" and pv.language is null");
+		}
 		
-		Root<PropertyValue> root = c.from(PropertyValue.class);
-		Expression<?> property1 = root.get(PropertyValue_.source);
-		Expression<?> property2 = root.get(PropertyValue_.stagingArea);
-		Expression<?> property3 = root.get(PropertyValue_.outputChannel);
-		Expression<?> property4 = root.get(PropertyValue_.language);
-		c.select(root).where(
-				cb.equal(root.get(PropertyValue_.item), itemParam),
-				cb.equal(root.get(PropertyValue_.property), propertyParam),
-				sourceParam == null ?
-						cb.isNull(property1) :
-						cb.equal(property1, sourceParam),
-				stagingParam == null ? 
-					cb.isNull(property2) :
-					cb.equal(property2, stagingParam),
-				outputChannelParam == null ? 
-					cb.isNull(property3) :
-					cb.equal(property3, outputChannelParam),
-				languageParam == null ? 
-					cb.isNull(property4) :
-					cb.equal(property4, languageParam));
-		System.out.println(c.toString());
-		TypedQuery<PropertyValue> query = getEntityManager().createQuery(c);
-		System.out.println(query.toString());
-		query.setParameter(itemParam, item);
-		query.setParameter(propertyParam, property);
-		if (source != null)
-			query.setParameter(sourceParam, source);
-		if (stagingArea != null)
-				query.setParameter(stagingParam, stagingArea);
-		if (outputChannel != null)
-				query.setParameter(outputChannelParam, outputChannel);
-		if (language != null)
-				query.setParameter(languageParam, language);
-
-		return CollectionUtil.firstOrNull(query.getResultList());
+		Query query = getEntityManager().createQuery(queryString.toString());
+		query.setParameter("item", item);
+		query.setParameter("property", property);
+		if (source != null) {
+			query.setParameter("source", source);
+		}
+		if (stagingArea != null) {
+			query.setParameter("stagingArea", stagingArea);
+		}
+		if (outputChannel != null) {
+			query.setParameter("outputChannel", outputChannel);
+		}
+		if (language != null) {
+			query.setParameter("language", language);
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<PropertyValue> propertyValues = query.getResultList();
+		
+		// Return the result
+		if (propertyValues.size() == 1) {
+			return propertyValues.get(0);
+		} else if (propertyValues.isEmpty()) {
+			return null;
+		} else {
+			throw new IllegalStateException("Multiple propertyvalues found for property id " + property.getId() + "source " + source + ", stagingArea" + stagingArea + ", outputChannel " + outputChannel + " and language " + language);
+		}
 	}
 
 	public Label getOrCreateLabel(Property property, String label, String language) {

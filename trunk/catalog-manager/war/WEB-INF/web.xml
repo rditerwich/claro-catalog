@@ -12,8 +12,8 @@
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.url</param-name>
-<!--         <param-value>jdbc:postgresql://localhost:15432/catalog3</param-value> -->
-        <param-value>jdbc:postgresql:catalog3</param-value>
+<!--          <param-value>jdbc:postgresql://localhost:15432/catalog3</param-value> -->
+        <param-value>jdbc:postgresql:catalog3</param-value> -->
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.user</param-name>
@@ -56,7 +56,8 @@
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.url</param-name>
-        <param-value>jdbc:postgresql:catalog3</param-value>
+         <param-value>jdbc:postgresql:catalog3</param-value>
+ <!--         <param-value>jdbc:postgresql://localhost:15432/catalog3</param-value> -->
       </init-param>
       <init-param>
         <param-name>javax.persistence.jdbc.user</param-name>
