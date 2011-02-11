@@ -40,7 +40,7 @@
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
 		<!-- This is the default servlet, it puts files in session -->
-		<servlet-class>easyenterprise.lib.gwt.server.UploadServlet</servlet-class>
+		<servlet-class>gwtupload.server.UploadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>uploadServlet</servlet-name>
@@ -80,7 +80,7 @@
 
 	<servlet>
 		<servlet-name>AuthenticationServlet</servlet-name>
-		<servlet-class>easyenterprise.lib.gwt.server.OpenIdServlet</servlet-class>
+		<servlet-class>easyenterprise.lib.server.OpenIdServlet</servlet-class>
 	</servlet>
 
     <servlet-mapping>

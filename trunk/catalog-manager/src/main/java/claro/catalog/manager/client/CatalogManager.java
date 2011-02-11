@@ -24,12 +24,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
+import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.command.gwt.GwtCommandFacade.BusyListener;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 
 public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Globals {
 
-	public enum Styles implements Style {
+	public enum Styles implements Style, Globals {
 
 		
 		//old:
@@ -52,14 +54,15 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 		productvariant, 
 		masterdetailtest, 
 		itemRowChanged, 
-		productDetailsTitle
+		productDetailsTitle, spinner
 	}
 
 	public static PropertyStringConverter propertyStringConverter = new PropertyStringConverter();
 	
 	private static User currentUser;
 	private Label username;
-	
+	private Image spinner;
+
 	public static Long getCurrentCatalogId() {
 		return -1l;
 	}
@@ -89,6 +92,16 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				add(new Image(rb.logo()) {{
 					StyleUtil.addStyle(this, Styles.headerimage);
 				}});
+				add(spinner = new Image(images.spinner()) {{
+					setVisible(true);
+					StyleUtil.addStyle(this, Styles.spinner);
+				}});
+				GwtCommandFacade.setBusyListener(new BusyListener() {
+					public void busyChanged(boolean busy) {
+						spinner.setVisible(busy);
+					}
+				});
+				
 //				add(username = new Label());
 //				add(new Anchor("Login...") {{
 //					addClickHandler(new ClickHandler() {
