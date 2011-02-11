@@ -40,6 +40,7 @@ import org.apache.commons.fileupload.FileItem;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogModelService;
+import claro.catalog.CatalogServer;
 import claro.catalog.command.importing.PerformImport;
 import claro.catalog.command.importing.PerformImport.Result;
 import claro.catalog.command.importing.PerformImportException;
@@ -69,7 +70,6 @@ import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.sexpr.DefaultContext;
 import easyenterprise.lib.sexpr.SExpr;
 import easyenterprise.lib.sexpr.SExprParseException;
@@ -225,7 +225,7 @@ public class PerformImportImpl extends PerformImport implements CommandImpl<Resu
 
 		// uploaded file?
 		if (uploadFieldName != null) {
-			FileItem fileItem = UploadServlet.getUploadedFile(uploadFieldName);
+			FileItem fileItem = CatalogServer.getUploadedFile(uploadFieldName);
 			if (fileItem != null) {
 				// copy and unzip file 
 				File tempFile = copyToFile(fileItem.getInputStream(), new File(fileItem.getName()).getName());

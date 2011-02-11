@@ -7,18 +7,22 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.xml.serialize.Printer;
+import org.apache.commons.fileupload.FileItem;
 
 import claro.jpa.catalog.Catalog;
-import easyenterprise.lib.cloner.Print;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Printer;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandExecutor;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandServer;
 import easyenterprise.lib.command.RegisteredCommands;
+import easyenterprise.lib.server.HttpRequestService;
 import easyenterprise.lib.util.DBScript;
+import gwtupload.server.UploadServlet;
 
 public class CatalogServer implements CommandExecutor {
 
@@ -44,10 +48,17 @@ public class CatalogServer implements CommandExecutor {
 		createDatabase();
 	}
 	
+	public static FileItem getUploadedFile(String fieldName) {
+		HttpServletRequest request = HttpRequestService.getRequest();
+		if (request != null)
+			return UploadServlet.findItemByFieldName(UploadServlet.getSessionFileItems(request), fieldName);
+		else 
+			return null;
+	}
 	
 	@Override
 	public <T extends CommandResult, C extends Command<T>> T execute(C command) throws CommandException {
-		System.out.println("Command: " + Print.print(command));
+		System.out.println("Command: " + Printer.print(command, BasicView.DEFAULT));
 		return executor.execute(command);
 	}
 	

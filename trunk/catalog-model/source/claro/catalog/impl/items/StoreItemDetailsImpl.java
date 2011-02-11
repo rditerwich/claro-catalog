@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import org.apache.commons.fileupload.FileItem;
 
 import claro.catalog.CatalogModelService;
+import claro.catalog.CatalogServer;
 import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.MediaValue;
@@ -23,10 +24,11 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Printer;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.command.CommandValidationException;
-import easyenterprise.lib.gwt.server.UploadServlet;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
@@ -42,6 +44,9 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 
 	@Override
 	public Result execute() throws CommandException {
+		
+		System.out.println("Storing: " + Printer.print(this, new BasicView("parentsToSet", "propertiesToRemove", "propertiesToSet", "valuesToRemove", "valuesToSet")));
+		
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
 		EntityManager em = catalogModel.dao.getEntityManager();
 		
@@ -122,7 +127,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 				for (Entry<String, Object> languageValue : value.getValue()) {
 					Object typedValue = languageValue.getValue();
 					if (propertyModel.getEntity().getType() == PropertyType.Media) {
-						FileItem fileItem = UploadServlet.getUploadedFile(typedValue.toString());
+						FileItem fileItem = CatalogServer.getUploadedFile(typedValue.toString());
 						if (fileItem != null) {
 							MediaValue mv = MediaValue.create(null, fileItem.getContentType(), fileItem.getName(), fileItem.get());
 							typedValue = mv;
