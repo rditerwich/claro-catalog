@@ -32,6 +32,7 @@ public class WebshopPage extends Page {
 			if (getShop() != null) {
 				master.render();
 				detail.render();
+				shippingOptionsPanel.render();
 				masterDetail.setCurrentRow(master.findObject(getShop()));
 			} else {
 				master.render();
@@ -66,8 +67,8 @@ public class WebshopPage extends Page {
 				setMaster(master = new WebshopMaster(model));
 				setDetail(tabs = new PullUpTabs(26, 5) {{
 					setMainWidget(detail = new WebshopDetail(model));
-					addTab(new EEButton(messages.promotionsTab()), 100, promotionsPanel = new WebshopPromotionsPanel(model));
-					addTab(new EEButton(messages.shippingOptionsTab()), 100, shippingOptionsPanel = new WebshopShippingOptionsPanel(model));
+					addTab(new EEButton(messages.promotionsTab()), 120, promotionsPanel = new WebshopPromotionsPanel(model));
+					addTab(new EEButton(messages.shippingOptionsTab()), 150, shippingOptionsPanel = new WebshopShippingOptionsPanel(model));
 				}});
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {

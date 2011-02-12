@@ -1,5 +1,6 @@
 package claro.catalog.manager.client.webshop;
 
+import static easyenterprise.lib.util.ObjectUtil.orElse;
 import claro.catalog.command.shop.StoreShop;
 import claro.catalog.manager.client.widgets.FormTable;
 
@@ -7,6 +8,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextBox;
+
+import easyenterprise.lib.util.ObjectUtil;
 
 public class WebshopShippingOptionsPanel extends Composite {
 
@@ -34,5 +37,10 @@ public class WebshopShippingOptionsPanel extends Composite {
 				});
 			}}, messages.expressDeliveryChargeHelp());
 		}});
+	}
+	
+	public void render() {
+		shippingCostsTextBox.setText(orElse(model.getShop().getShippingCosts(), 0).toString());
+		expressDeliveryChargeTextBox.setText(orElse(model.getShop().getExpressDeliveryCharge(), 0).toString());
 	}
 }
