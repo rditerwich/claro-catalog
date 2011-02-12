@@ -19,11 +19,8 @@ html, .main {
 	font-size:0;
 	line-height:0;
 }
-.logo {
-	padding:0 0 0 40px;
-	float:left;
-	width:auto;
-}
+
+
 h1 {
 	margin:0;
 	padding:0 0;
@@ -80,6 +77,20 @@ a {
 	margin-left: 24px !important;
 	margin-top: 12px !important;
 }
+
+.spinner {
+	position: absolute;
+	left: 100px;
+	top:12px;
+	width: 36px;
+	height: 44px;
+	background-color: #2E3242;
+	text-align: center;
+}
+
+.spinner img {
+	margin-top:8px;
+}	
 
 .header_resize {
 	margin:0 auto;
@@ -241,6 +252,7 @@ ul.ex_menu li a:hover {
 	margin:8px 16px 4px 0;
 	float:left;
 }
+
 .footer {
 #	background-color:#2d2f3d;
 	width: 100%;

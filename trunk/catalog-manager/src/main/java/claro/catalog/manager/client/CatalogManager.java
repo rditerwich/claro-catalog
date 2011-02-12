@@ -61,7 +61,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 	
 	private static User currentUser;
 	private Label username;
-	private Image spinner;
+	private FlowPanel spinner;
 
 	public static Long getCurrentCatalogId() {
 		return -1l;
@@ -92,9 +92,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				add(new Image(rb.logo()) {{
 					StyleUtil.addStyle(this, Styles.headerimage);
 				}});
-				add(spinner = new Image(images.spinner()) {{
-					setVisible(true);
+				add(spinner = new FlowPanel() {{
+					setVisible(false);
 					StyleUtil.addStyle(this, Styles.spinner);
+					add(new Image(images.spinner()));
 				}});
 				GwtCommandFacade.setBusyListener(new BusyListener() {
 					public void busyChanged(boolean busy) {

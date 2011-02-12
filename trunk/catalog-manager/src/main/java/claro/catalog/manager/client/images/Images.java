@@ -62,6 +62,6 @@ public interface Images extends ClientBundle {
   @Source("remove.jpg")
 	ImageResource removeIcon();
 
-  @Source("spinner2.gif")
+  @Source("spinner.gif")
   ImageResource spinner();
 }
