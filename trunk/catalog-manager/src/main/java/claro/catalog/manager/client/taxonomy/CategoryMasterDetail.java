@@ -18,11 +18,9 @@ import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 
 import com.google.common.base.Objects;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -30,10 +28,12 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
@@ -160,7 +160,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 							updateCategories();
 						}
 					});
-					setWidget(1, 0, new Anchor(messages.newCategory()) {{
+					setWidget(1, 0, new EEButton(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								createNewCategory(rootCategoryId);
@@ -188,14 +188,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	private void createDetailPanel() {
-		setDetail(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						CategoryMasterDetail.this.closeDetail();
-					}
-				});
-			}}, 40);
+		setDetail(new LayoutPanel() {{
 			add(details = new CategoryDetails(nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);

@@ -22,20 +22,19 @@ import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.catalog.manager.client.widgets.MediaWidget;
 
 import com.google.common.base.Objects;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -210,7 +209,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 							updateProductList();
 						}
 					});
-					setWidget(1, 0, new Anchor(messages.newProduct()) {{
+					setWidget(1, 0, new EEButton(messages.newProduct()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								createNewProduct(rootCategory);
@@ -237,7 +236,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 				
 			}}); 
 			add(new VerticalPanel() {{
-				add(new EEButton(messages.publishToPreviewButton()) {{
+				add(new Anchor(messages.publishToPreviewButton()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							new ConfirmationDialog(messages.publishToPreviewConfirmation(), images.warning()) {
@@ -252,7 +251,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 						}
 					});
 				}});
-				add(new EEButton(messages.publishPreviewToProductionButton()) {{
+				add(new Anchor(messages.publishPreviewToProductionButton()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							new ConfirmationDialog(messages.publishPreviewToProductionConfirmation(), images.warning()) {
@@ -277,14 +276,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	}
 	
 	protected void createDetailPanel() {
-		setDetail(new DockLayoutPanel(Unit.PX) {{
-			addNorth(new Anchor("Close") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						closeDetail();
-					}
-				});
-			}}, 40);
+		setDetail(new LayoutPanel() {{
 			add(details = new ProductDetails(nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					ProductMasterDetail.this.storeItem(cmd);
