@@ -8,7 +8,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
-import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 
@@ -19,6 +19,8 @@ public class WebshopPage extends Page {
 	private WebshopMaster master;
 	private PullUpTabs tabs;
 	private WebshopDetail detail;
+	private WebshopShippingOptionsPanel shippingOptionsPanel;
+	private WebshopPromotionsPanel promotionsPanel;
 	private ShopModel model = new ShopModel() {
 
 		public void setShop(claro.jpa.shop.Shop shop) {
@@ -64,7 +66,8 @@ public class WebshopPage extends Page {
 				setMaster(master = new WebshopMaster(model));
 				setDetail(tabs = new PullUpTabs(26, 5) {{
 					setMainWidget(detail = new WebshopDetail(model));
-//					addTab(new EEButton(messages.campaignsTab()), 100, campaignsPanel = new WebshopCampaignsPanel(model));
+					addTab(new EEButton(messages.promotionsTab()), 100, promotionsPanel = new WebshopPromotionsPanel(model));
+					addTab(new EEButton(messages.shippingOptionsTab()), 100, shippingOptionsPanel = new WebshopShippingOptionsPanel(model));
 				}});
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {

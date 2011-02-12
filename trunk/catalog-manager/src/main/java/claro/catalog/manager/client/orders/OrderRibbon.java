@@ -41,15 +41,7 @@ public class OrderRibbon extends Composite implements Globals {
 					}
 				});
 			}});
-			setWidget(1, 0, new Anchor(messages.newOrderLink()) {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						model.createOrder();
-						event.stopPropagation();
-					}
-				});
-			}});
-			setWidget(1, 1, new Anchor(messages.refresh()) {{
+			setWidget(1, 0, new Anchor(messages.refresh()) {{
 				addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
 						model.fetchOrders();

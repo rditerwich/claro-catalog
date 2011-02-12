@@ -354,4 +354,10 @@ public interface I18NCatalog extends Messages {
 	String publishToPreviewConfirmation();
 	String publishPreviewToProductionButton();
 	String publishPreviewToProductionConfirmation();
+	String promotionsTab();
+	String shippingOptionsTab();
+	String shippingCostsLabel();
+	String shippingCostsHelp();
+	String expressDeliveryChargeLabel();
+	String expressDeliveryChargeHelp();
 }
