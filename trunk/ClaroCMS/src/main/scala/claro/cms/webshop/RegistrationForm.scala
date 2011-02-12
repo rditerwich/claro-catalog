@@ -46,7 +46,15 @@ class RegistrationForm(val user : jpa.party.User) extends Form {
         PlainMailBodyType(msg))
 
       // store user
-      WebshopDao.transaction (_.persist(user))
+      WebshopDao transaction { em =>
+      	for (party <- Option(user.getParty)) {
+      		for (address <- Option(party.getAddress)) em.persist(address)
+      		for (address <- Option(party.getDeliveryAddress)) em.persist(address)
+      		for (address <- Option(party.getShippingAddress)) em.persist(address)
+      		em.persist(party)
+      	}
+      	em.persist(user)  
+      }
       if (href.trim != "") {
         S.redirectTo(href)
       }

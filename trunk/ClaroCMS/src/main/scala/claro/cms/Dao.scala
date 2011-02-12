@@ -71,7 +71,7 @@ trait Dao {
       result
     } catch {
       case e => 
-        if (newTx) 
+        if (newTx && tx.isActive) 
           tx.rollback()
         throw e
     }
