@@ -7,7 +7,7 @@ import claro.cms.Dao
 
 object WebshopDao extends Dao {
 
-  val dataSource = "claro.jpa.PersistenceUnit"
+  val dataSource = "claro.jpa.catalog"
 
   def findCatalog(id : Long) : Option[Catalog] = 
     querySingle("Select from Catalog c where c.id = :id", "id" -> id)
