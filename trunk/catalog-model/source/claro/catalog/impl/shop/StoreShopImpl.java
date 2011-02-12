@@ -3,7 +3,6 @@ package claro.catalog.impl.shop;
 
 import static easyenterprise.lib.command.CommandValidationException.validate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
