@@ -311,7 +311,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		
 		// Update details:
 		if (getCurrentRow() == itemRow) {
-			openDetail(itemRow);  // Redraw selection if necessary.
+			setCurrentRow(itemRow);  // Redraw selection if necessary.
 			details.setItemData(productId, categories, propertyValues);
 		}
 	}
@@ -462,7 +462,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 
 		int oldRow = getCurrentRow();
 		
-		openDetail(row);
+		setCurrentRow(row);
 
 		details.setItemData(productId, categories, propertyValues);
 		
@@ -522,6 +522,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		widget.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				rowSelected(row);
+				openDetail();
 				// prevent detail to close immediately
 				event.stopPropagation();
 			}
