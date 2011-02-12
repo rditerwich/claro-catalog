@@ -1,6 +1,7 @@
 package claro.jpa.shop;
 
 import java.io.Serializable;
+import java.lang.Double;
 import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class Shop extends OutputChannel implements Serializable {
     private String languages = "";
     private List<Navigation> navigation;
     private List<Promotion> promotions;
+    private Double shippingCosts;
+    private Double expressDeliveryCharge;
 
     public String getUrlPrefix() {
         return urlPrefix;
@@ -53,6 +56,22 @@ public class Shop extends OutputChannel implements Serializable {
 
     public void setPromotions(List<Promotion> value) {
         this.promotions = value;
+    }
+
+    public Double getShippingCosts() {
+        return shippingCosts;
+    }
+
+    public void setShippingCosts(Double value) {
+        this.shippingCosts = value;
+    }
+
+    public Double getExpressDeliveryCharge() {
+        return expressDeliveryCharge;
+    }
+
+    public void setExpressDeliveryCharge(Double value) {
+        this.expressDeliveryCharge = value;
     }
 
     @Override

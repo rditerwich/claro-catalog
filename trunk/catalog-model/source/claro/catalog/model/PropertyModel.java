@@ -5,6 +5,7 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -124,6 +125,7 @@ public abstract class PropertyModel {
 			Property propertyEntity = getEntity();
 			PropertyValue propertyValue = item.catalog.dao.getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
 			if (propertyValue != null) {
+				
 				// Are we changing anything?
 				Object existingValue = getTypedValue(propertyValue);
 				if (!Objects.equal(value, existingValue)) {

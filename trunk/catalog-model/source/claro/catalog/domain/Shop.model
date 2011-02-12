@@ -51,6 +51,16 @@ Package {
                     isComposite = true
                     opposite = shop:Promotion/attributes:shop
                 }
+                Attribute {
+                    name = shippingCosts
+                    type = primitive:Money
+                    lower = 0
+                }
+                Attribute {
+                    name = expressDeliveryCharge
+                    type = primitive:Money
+                    lower = 0
+                }
             }
         }
         Class {

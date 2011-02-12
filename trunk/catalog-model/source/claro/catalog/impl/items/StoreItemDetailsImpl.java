@@ -50,8 +50,6 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 		catalogModel = CatalogModelService.getCatalogModel(catalogId);
 		EntityManager em = catalogModel.dao.getEntityManager();
 		
-		System.out.println("Storing: " + Printer.print(this, new BasicView("parentsToSet", "propertiesToRemove", "propertiesToSet", "valuesToRemove", "valuesToSet")));
-		
 		if (stagingAreaId != null) {
 			stagingArea = em.find(StagingArea.class, stagingAreaId);
 		}
@@ -155,7 +153,6 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);
 		}
 		
-		System.out.println("Returning result: " + Printer.print(result, new BasicView("masterValues", "categoryLabels", "parents", "parentExtentWithSelf", "groups", "propertyData")));
 		
 		return result;
 	}
