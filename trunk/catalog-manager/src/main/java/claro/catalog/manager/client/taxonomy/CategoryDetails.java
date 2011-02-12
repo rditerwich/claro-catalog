@@ -60,7 +60,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		this.priceProperty = priceProperty;
 		this.imageProperty = imageProperty;
 		
-		initWidget(pullups = new PullUpTabs(30, 5) {{
+		initWidget(pullups = new PullUpTabs(26, 5) {{
 			StyleUtil.addStyle(this, Styles.categoryDetails);
 			setMainWidget(new ScrollPanel(new FlowPanel() {{
 				

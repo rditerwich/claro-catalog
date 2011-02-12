@@ -144,7 +144,13 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			}}); 
 			
 			// groups
-			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox());
+			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox() {{
+				addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						propertyGroupChanged(row, getValue(getSelectedIndex()));
+					}
+				});
+			}});
 			
 			// Clear button
 			propertyPanel.setWidget(j, CLEAR_COLUMN, propertyValueWidgets.clearValueWidget = new Image() {{
@@ -224,6 +230,12 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		PropertyInfo rowProperty = getRowProperty(row);
 		rowProperty.setType(type);
 		propertyToSet(itemId, rowProperty, model.getSelectedLanguage());
+	}
+	private void propertyGroupChanged(int row, String group) {
+		PropertyInfo rowProperty = getRowProperty(row);
+		PropertyGroupInfo groupInfo = values.getKeys().get(row);
+		
+		// TODO
 	}
 	
 	private void propertyErased(int row) {
