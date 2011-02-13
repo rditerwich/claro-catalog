@@ -62,6 +62,7 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 			
 			// 
 			if (topLevelCategoryIds != null) {
+				em.refresh(result.shop);
 				List<Navigation> navs = result.shop.getNavigation();
 				while (navs.size() < topLevelCategoryIds.size()) {
 					navs.add(new Navigation());
