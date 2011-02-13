@@ -531,7 +531,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		widget.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				rowSelected(row);
-				openDetail();
+				openDetail(row);
 				// prevent detail to close immediately
 				event.stopPropagation();
 			}
