@@ -11,6 +11,11 @@ public class MediaValue implements Serializable {
 	public String filename;
 	transient public byte[] content;
 	
+	@Override
+	public String toString() {
+		return "MediaValue(" + propertyValueId + "," + mimeType + "," + filename + ")";
+	}
+	
 	public static boolean mediaIsNull(Object obj) {
 		if (obj == null) {
 			return true;
