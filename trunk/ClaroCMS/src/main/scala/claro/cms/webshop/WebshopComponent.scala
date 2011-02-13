@@ -75,6 +75,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
     case product : Product => Map(   
       "id" -> product.id,
       "properties" -> product.properties -> "property",
+      "properties-by-group" -> product.propertiesByGroup -> "group",
       "property" -> product.property(locale, @@("name")) -> "property",
       "value" -> value(product.property(locale, @@("property"))),
       "categories" -> product.categories -> "category",
@@ -202,6 +203,10 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "town-field" -> address.townField,
       "country-field" -> address.countryField)
     
+    case group : PropertiesByGroup => Map(  
+  		"name" -> group.propertyGroup.name,
+  		"properties" -> group.properties -> "property")
+    		
     case property: Property => Map(  
       "id" -> property.id.toString,
       "name" -> property.name,

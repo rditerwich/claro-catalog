@@ -2,6 +2,7 @@ package claro.cms.webshop
 import claro.jpa
 import claro.catalog.CatalogDao
 import claro.catalog.data.MediaValue
+import claro.catalog.data.PropertyGroupInfo
 import claro.catalog.model.{PropertyModel, ItemModel, CatalogModel}
 import claro.cms.Cms
 import claro.common.util.{Delegate, KeywordMap, Locales, ProjectionMap}
@@ -76,6 +77,7 @@ object WebshopModel {
 class Mapping(product: Option[Product], cacheData: WebshopData) {
   lazy val categories = ProjectionMap((item : ItemModel) => new Category(item, cacheData, this))
   lazy val products = ProjectionMap((item : ItemModel) => new Product(item, cacheData, this))
+  lazy val propertyGroups = ProjectionMap((propertyGroup : PropertyGroupInfo) => new PropertyGroup(propertyGroup, cacheData, this))
   lazy val properties = ProjectionMap((property : PropertyModel) => new Property(property, cacheData, this))
   lazy val promotions = ProjectionMap((p: jpa.shop.Promotion) => p match {
     case p: jpa.shop.VolumeDiscountPromotion => new VolumeDiscountPromotion(p, cacheData, this)
@@ -153,6 +155,12 @@ trait Item {
 
   val properties: Seq[Property] =
   	item.getPropertyExtent.toSeq.map(_.getValue).filterNot(cacheData.isExcluded(_)) map (mapping.properties)
+  	
+	val propertiesByGroup: Seq[PropertiesByGroup] =
+		for (key <- item.getPropertyExtent.getKeys.toSeq) 
+			yield PropertiesByGroup(
+					mapping.propertyGroups(key),  
+					item.getPropertyExtent.getAll(key).toSeq.filterNot(cacheData.isExcluded(_)) map (mapping.properties))
 
   val propertyNames: Set[String] =
     properties.map(_.name).toSet
@@ -242,6 +250,16 @@ class Product(val item : ItemModel, val cacheData: WebshopData, val mapping: Map
   
   val priceProperty: Option[Property] = property(Locales.empty, "Price")
 }
+
+class PropertyGroup(propertyGroup: PropertyGroupInfo, cacheData: WebshopData, mapping: Mapping) extends Delegate(propertyGroup) {
+
+	val namesByLanguage : Map[Option[String], String] = 
+		Map(propertyGroup.labels.toSeq map (l => (l.getKey asOption, l.getValue)):_*)
+	
+	val name : String = propertyGroup.labels.tryGet(cacheData.language, null)
+}
+
+case class PropertiesByGroup(propertyGroup : PropertyGroup, properties : Seq[Property])
 
 class Property(property: PropertyModel, cacheData: WebshopData, mapping: Mapping) extends Delegate(property) {
 
