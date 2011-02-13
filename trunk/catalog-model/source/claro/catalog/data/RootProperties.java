@@ -10,6 +10,7 @@ public interface RootProperties {
 	String PRICE = "Price";
 	String SUPPLIER = "Supplier";
 	String SUPPLIER_ARTICLENUMBER = "Supplier Article Number";
+	String MANUAL = "Manual";
 	String VISIBLE = "Visible";
 	
 	// General property group
@@ -18,4 +19,5 @@ public interface RootProperties {
 	// Root category
 	String ROOTCATEGORY_NAME = "Global";
 	String IMAGES = "Images";
+	String DOCUMENTS = "Documents";
 }

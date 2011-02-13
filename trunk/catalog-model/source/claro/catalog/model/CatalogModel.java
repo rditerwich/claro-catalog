@@ -49,6 +49,8 @@ public class CatalogModel {
 	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
 	private PropertyGroup imagesPropertyGroup;
 	private LinkedHashSet<String> allLanguages;
+	private PropertyGroup documentsPropertyGroup;
+	private PropertyModel manualProperty;
 
 	public static void startOperation(CatalogDao dao) {
 		CatalogAccess.startOperation(dao);
@@ -64,6 +66,7 @@ public class CatalogModel {
 		this.root = findOrCreateRootCategory();
 		this.generalPropertyGroup = findOrCreatePropertyGroup(RootProperties.GENERALGROUP, null);
 		this.imagesPropertyGroup = findOrCreatePropertyGroup(RootProperties.IMAGES, null);
+		this.documentsPropertyGroup = findOrCreatePropertyGroup(RootProperties.DOCUMENTS, null);
 		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup, RootProperties.ROOTCATEGORY_NAME);
 		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
 		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
@@ -73,6 +76,7 @@ public class CatalogModel {
 		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
 		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
 		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
+		this.manualProperty = root.findOrCreateProperty(RootProperties.MANUAL, null, PropertyType.Media, documentsPropertyGroup);
 		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup, true);
   }
 	

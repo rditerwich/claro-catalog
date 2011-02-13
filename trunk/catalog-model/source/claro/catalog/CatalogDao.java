@@ -123,9 +123,7 @@ public class CatalogDao extends AbstractDao {
 				languageParam == null ? 
 					cb.isNull(property4) :
 					cb.equal(property4, languageParam));
-		System.out.println(c.toString());
 		TypedQuery<PropertyValue> query = getEntityManager().createQuery(c);
-		System.out.println(query.toString());
 		query.setParameter(itemParam, item);
 		query.setParameter(propertyParam, property);
 		if (source != null)

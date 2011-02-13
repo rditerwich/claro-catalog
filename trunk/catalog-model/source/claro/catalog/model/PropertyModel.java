@@ -5,7 +5,6 @@ import static com.google.common.base.Objects.equal;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -324,7 +323,7 @@ public abstract class PropertyModel {
 	// TODO map all non-string values
 	static Object getTypedValue(PropertyValue value) {
 		switch (value.getProperty().getType()) {
-		case Media: return MediaValue.create(value.getId(), value.getMimeType(), value.getStringValue());
+		case Media: return MediaValue.create(value.getId(), value.getMimeType(), value.getStringValue(), value.getMediaValue());
 		case Money: return new Money(value.getMoneyValue(), value.getMoneyCurrency());
 		case Boolean: return value.getBooleanValue();
 		case Enum: return value.getEnumValue();

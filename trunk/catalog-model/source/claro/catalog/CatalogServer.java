@@ -50,8 +50,11 @@ public class CatalogServer implements CommandExecutor {
 	
 	public static FileItem getUploadedFile(String fieldName) {
 		HttpServletRequest request = HttpRequestService.getRequest();
-		if (request != null)
+		if (request != null) {
+			System.out.println("****************************************");
+		System.out.println("SESSION 2: " + request.getSession());
 			return UploadServlet.findItemByFieldName(UploadServlet.getSessionFileItems(request), fieldName);
+		}
 		else 
 			return null;
 	}
@@ -71,7 +74,7 @@ public class CatalogServer implements CommandExecutor {
 		try {
 			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
 			script = new DBScript(Catalog.class.getResourceAsStream("/UpdateSchema.sql"));
-			script.execute(em);
+//			script.execute(em);
 		} catch (Throwable e) {
 			throw new SQLException("Couldn't create catalog schema. Did you forget to create the catalog database?", e);
 		} finally {

@@ -145,7 +145,12 @@ public class ItemModel {
 	}
 
 	public Item getEntity() {
-	  return catalog.dao.getItem(itemId);
+	  Item item = catalog.dao.getItem(itemId);
+	  if (item == null) {
+	  	catalog.flushCache();
+	  	throw new ItemNotFoundException(itemId);
+	  }
+		return item;
   }
 	
 	/**
