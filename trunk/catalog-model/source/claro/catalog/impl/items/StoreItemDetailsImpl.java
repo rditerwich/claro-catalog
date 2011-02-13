@@ -147,7 +147,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 				result.categoryLabels = ItemUtil.getNameLabels(itemModel, catalogModel, outputChannel, stagingArea);
 			}
 			
-			result.parents = ItemUtil.parents(itemModel, catalogModel, stagingArea, outputChannel, false);
+			result.parents = ItemUtil.parents(itemModel, catalogModel, stagingArea, outputChannel, itemType == ItemType.catagory);
 			result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, stagingArea, outputChannel, true);
 			result.groups = ItemUtil.groups(itemModel, catalogModel, stagingArea, outputChannel);
 			result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);

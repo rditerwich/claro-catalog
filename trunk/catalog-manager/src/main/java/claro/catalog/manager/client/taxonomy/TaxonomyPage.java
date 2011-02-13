@@ -123,23 +123,23 @@ public class TaxonomyPage extends Page {
 
 	}
 
-	private void updateCategorySelection(final Long productId) {
+	private void updateCategorySelection(final Long categoryId) {
 		final StatusMessage loadingMessage = StatusMessage.show(messages.loadingCategoryDetails(), 2, 1000);
 
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.itemId = productId;
+		cmd.itemId = categoryId;
 		cmd.outputChannelId = model.getSelectedShopId();
 		cmd.language = model.getSelectedLanguage();
+		cmd.includeRootCategory = true;
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {
 				loadingMessage.cancel();
-				categoryMasterDetail.setSelectedCategory(productId, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
+				categoryMasterDetail.setSelectedCategory(categoryId, result.groups, result.parentExtentWithSelf, result.parents, result.propertyData);
 			}
 		});
 		
-		// TODO See whether it was cached 
 	}
 	
 	private void storeItem(final StoreItemDetails cmd) {
