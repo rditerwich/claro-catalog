@@ -123,6 +123,14 @@ public abstract class ShopModel implements Globals {
 			}
 		});
 	}
+	
+	public void addNewPromotion(Long shopId, Long productId) {
+		// TODO
+	}
+	
+	public void showPromotion(Long promotionId) {
+		// TODO
+	}
 
 	protected abstract void openDetail();
 	

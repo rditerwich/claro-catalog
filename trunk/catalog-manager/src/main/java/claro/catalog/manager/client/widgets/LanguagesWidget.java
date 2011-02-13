@@ -30,7 +30,7 @@ import easyenterprise.lib.util.Tuple;
 
 public class LanguagesWidget extends Composite implements Globals {
 	
-	enum Styles implements Style { mouseOverStyle, languageStyle, languageName, languageAdd, languageList }
+	enum Styles implements Style { mouseOverStyle, languageStyle, languageName, languageAddNoSelection, languageAdd, languageList }
 	
 	private FlowPanel mainPanel;
 	private PopupPanel addCategoryPanel;
@@ -98,12 +98,12 @@ public class LanguagesWidget extends Composite implements Globals {
 					});
 				}});
 				if (lastLanguage && allowMultiple) {
-					setWidget(0, 2, createAddAnchor("+"));
+					setWidget(0, 2, createAddAnchor("+", false));
 				}
 			}});
 		}
 		if (languages.isEmpty()) {
-			mainPanel.add(createAddAnchor(getAddLanguageLabel()));
+			mainPanel.add(createAddAnchor(getAddLanguageLabel(), true));
 		}
 	}
 
@@ -111,9 +111,13 @@ public class LanguagesWidget extends Composite implements Globals {
 		return allowMultiple ? messages.addLanguageLink() : messages.setLanguageLink();
 	}
 
-	private Anchor createAddAnchor(String addCategoryText) {
+	private Anchor createAddAnchor(String addCategoryText, final boolean emptySelection) {
 		return new Anchor(addCategoryText) {{ // TODO Use image instead?
-			StyleUtil.addStyle(this, Styles.languageAdd);
+			if (emptySelection) {
+				StyleUtil.addStyle(this, Styles.languageAddNoSelection);
+			} else {
+				StyleUtil.addStyle(this, Styles.languageAdd);
+			}
 			setTitle(getAddLanguageTooltip());
 			addHoverStyles(this);
 			addClickHandler(new ClickHandler() {

@@ -200,11 +200,19 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	
 	public void updateCategory(Long previousCategoryId, Long categoryId, Long parentId, SMap<String, String> categoryLabels, SMap<Long, SMap<String, String>> groups, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> parents, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
-		categories = categories.set(categoryId, categoryLabels);
+		
+		// No category id means a remove.
+		if (categoryId != null) {
+			categories = categories.set(categoryId, categoryLabels);
+		}
 		
 		// Find row to update
 		int itemRow = CategoryRow.findRow(categoryRows, previousCategoryId);
-		if (itemRow != -1) {
+		if (categoryId == null) {
+			categoryRows.remove(itemRow);
+			render();
+			closeDetail();
+		} else if (itemRow != -1) {
 			// Update row
 			categoryRows.get(itemRow).categoryId = categoryId;
 			categoryRows.get(itemRow).isChanged = true;
@@ -365,10 +373,9 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 		int oldRow = getCurrentRow();
 		
-		openDetail(row);
+		setCurrentRow(row);
 
 		details.setItemData(categoryId, groups, parentExtentWithSelf, parents, properties);
-		
 		
 		if (oldRow != row) {
 			details.resetTabState();

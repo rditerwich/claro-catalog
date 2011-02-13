@@ -40,7 +40,7 @@ import easyenterprise.lib.util.SMap;
 // TODO Allow changing of order of categories.
 public class CategoriesWidget extends Composite implements Globals {
 	
-	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAdd, categoryTree }
+	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAddNoSelection, categoryAdd, categoryTree }
 	
 	private FlowPanel mainPanel;
 	private PopupPanel addCategoryPanel;
@@ -117,12 +117,12 @@ public class CategoriesWidget extends Composite implements Globals {
 					});
 				}});
 				if (lastCategory) {
-					setWidget(0, 2, createAddAnchor("+"));
+					setWidget(0, 2, createAddAnchor("+", false));
 				}
 			}});
 		}
 		if (categoryKeys.isEmpty()) {
-			mainPanel.add(createAddAnchor(getAddCategoryLabel()));
+			mainPanel.add(createAddAnchor(getAddCategoryLabel(), true));
 		}
 	}
 
@@ -130,9 +130,13 @@ public class CategoriesWidget extends Composite implements Globals {
 		return messages.addToCategoriesLink();
 	}
 
-	private Anchor createAddAnchor(String addCategoryText) {
+	private Anchor createAddAnchor(String addCategoryText, final boolean emptySelection) {
 		return new Anchor(addCategoryText) {{ // TODO Use image instead?
-			StyleUtil.addStyle(this, Styles.categoryAdd);
+			if (emptySelection) {
+				StyleUtil.addStyle(this, Styles.categoryAddNoSelection);
+			} else {
+				StyleUtil.addStyle(this, Styles.categoryAdd);
+			}
 			setTitle(getAddCategoryTooltip());
 			addHoverStyles(this);
 			addClickHandler(new ClickHandler() {

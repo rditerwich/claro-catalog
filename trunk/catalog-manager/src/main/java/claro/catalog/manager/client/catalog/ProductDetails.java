@@ -14,8 +14,12 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.MediaWidget;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -50,6 +54,21 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	private CatalogPageModel model;
 	
+	
+	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
+		protected String getMessage() {
+			if (productNameBox != null) {
+				return messages.removeProductConfirmationMessage(productNameBox.getText());
+			}
+			return null;
+		};
+		protected void yesPressed() {
+			removeProduct(itemId);
+		}
+	};
+	
+
+	
 	public ProductDetails(PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.nameProperty = nameProperty;
 		this.variantProperty = variantProperty;
@@ -62,7 +81,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 //			add(new Trail());
 				
 				// Title
-				add(new Grid(1, 2) {{
+				add(new Grid(1, 3) {{
 					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
 					setWidget(0, 0, productNameBox = new Header(1, "") {{
 						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productname);
@@ -84,6 +103,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 							categoryRemoved(itemId, categoryId);
 						}
 					});
+					setWidget(0, 2, new Anchor(messages.removeProductLink()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								removeWithConfirmation.show();
+							}
+						});
+					}});
 				}});
 				
 				// Image, Price
@@ -149,6 +175,16 @@ abstract public class ProductDetails extends Composite implements Globals {
 	
 	abstract protected void storeItem(StoreItemDetails cmd);
 	
+	private void removeProduct(Long itemId) {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.product;
+		cmd.remove = true;
+		
+		storeItem(cmd);
+	}
+
 	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 		StoreItemDetails cmd = new StoreItemDetails();
 		

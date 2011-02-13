@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.command.shop.StoreShop;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -12,9 +13,13 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ConfirmationDialog;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -54,6 +59,20 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private PullUpTabs pullups;
 	private TaxonomyModel model;
 	
+	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
+		protected String getMessage() {
+			if (categoryNameBox != null) {
+				return messages.removeCategoryConfirmationMessage(categoryNameBox.getText());
+			}
+			return null;
+		};
+		protected void yesPressed() {
+			removeCategory(itemId);
+		}
+	};
+	
+
+	
 	public CategoryDetails( PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
 		this.nameProperty = nameProperty;
 		this.variantProperty = variantProperty;
@@ -67,7 +86,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //			add(new Trail());
 				
 				// Title
-				add(new Grid(1, 2) {{
+				add(new Grid(1, 3) {{
 					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
 					setWidget(0, 0, (Widget)(categoryNameBox = new TextBox() {{
 						StyleUtil.addStyle(this, Styles.categoryname);
@@ -97,6 +116,14 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 							categoryRemoved(itemId, categoryId);
 						}
 					});
+					setWidget(0, 2, new Anchor(messages.removeCategoryLink()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								removeWithConfirmation.show();
+							}
+						});
+					}});
+
 				}});
 				
 //				// Image, Price
@@ -203,6 +230,16 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	}
 
 	abstract protected void storeItem(StoreItemDetails cmd);
+	
+	private void removeCategory(Long itemId) {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.catagory;
+		cmd.remove = true;
+		
+		storeItem(cmd);
+	}
 	
 	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
 		StoreItemDetails cmd = new StoreItemDetails();

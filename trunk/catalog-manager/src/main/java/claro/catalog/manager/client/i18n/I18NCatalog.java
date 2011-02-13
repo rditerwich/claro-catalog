@@ -256,6 +256,11 @@ public interface I18NCatalog extends Messages {
 	String savingProductDetailsStatus();
 	String savingProductDetailsFailedStatus();
 	String savingProductDetailsSuccessStatus();
+	String removeCategoryConfirmationMessage(String text);
+	String removeCategoryLink();
+	String removeProductConfirmationMessage(String text);
+	String removeProductLink();
+	
 	String propertySourceTooltip(String propertyName, String sourceName);
 	String unknownPropertySourceTooltip(String propertyName);
 	String defaultValuesTab();

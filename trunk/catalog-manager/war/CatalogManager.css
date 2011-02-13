@@ -463,6 +463,7 @@ box-shadow: 0 0 3px 3px #888;
 /* Note this selector is not supported in IE6 */
 table.ee-MasterDetailTable>tbody>tr>td {
 	border-bottom: 1px solid #E4E4FE;
+	cursor: pointer; 
 }
 
 /***** ee-FormTable *****/
@@ -744,10 +745,12 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 
 /** Categories component */
 .categoryStyle {
-	margin-left: 10px;
+	margin-left: 4px;
 }
 .categoryStyle table {
 	border-spacing: 0px;
+	margin-right: 6px;
+	float: left;
 }
 .categoryStyle table td {
 	border-collapse: collapse;
@@ -801,6 +804,8 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 }
 .languageStyle table {
 	border-spacing: 0px;
+	margin-right: 6px;
+	float: left;
 }
 .languageStyle table td {
 	border-collapse: collapse;

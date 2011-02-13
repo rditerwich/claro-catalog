@@ -288,12 +288,21 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	
 	protected void updateProduct(Long previousProductId, Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues) {
-		// Update product list:
-		products = products.set(productId, masterValues);
+		
+		// If we did not remove,
+		if (productId != null) {
+			// Update product list:
+			products = products.set(productId, masterValues);
+		}
 		
 		// Determine row to update
 		int itemRow = productRows.indexOf(new ProductRow(previousProductId));
-		if (itemRow != -1) {
+		if (productId == null) {
+			// Remove row
+			productRows.remove(itemRow);
+			render();
+			closeDetail();
+		} else if (itemRow != -1) {
 			// update row
 			ProductRow productRow = productRows.get(itemRow);
 			productRow.productId = productId;
