@@ -117,12 +117,17 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
     val empty = sorted.filter(nav => !itemsEntities.contains(nav.getCategory))
     if (empty.isEmpty) filledSeq
     else filledSeq ++ empty.flatMap(nav => navigation(nav.getSubNavigation))
+    println("***************************************")
+    println(nav)
+    Seq(sorted)
   }
     
-  def topLevelNavigation = navigation(shop.getNavigation)
+  def topLevelNavigation = Seq(shop.getNavigation.toSeq)
   
-  def topLevelCategories : Set[jpa.catalog.Category] = 
+  def topLevelCategories : Set[jpa.catalog.Category] = {
+  	println(topLevelNavigation.toSeq)
   	topLevelNavigation.flatMap(_.map(_.getCategory)).toSet.filter(itemsEntities)
+  }
 
   def allItemEntities : Set[jpa.catalog.Item] = 
   	items.map(_.getEntity)
