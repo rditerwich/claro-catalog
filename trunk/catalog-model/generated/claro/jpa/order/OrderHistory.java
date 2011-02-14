@@ -14,6 +14,7 @@ public class OrderHistory implements Serializable {
     private OrderStatus newStatus;
     private String comment = "";
     private Date date;
+    private Order order;
 
     public Long getId() {
         return id;
@@ -56,6 +57,14 @@ public class OrderHistory implements Serializable {
 
     public void setDate(Date value) {
         this.date = value;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order value) {
+        this.order = value;
     }
 
     @Override

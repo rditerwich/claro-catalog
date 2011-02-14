@@ -4,7 +4,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-11T15:55:35")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-14T12:16:55")
 @StaticMetamodel(TabularFileFormat.class)
 public class TabularFileFormat_ extends ImportFileFormat_ {
 

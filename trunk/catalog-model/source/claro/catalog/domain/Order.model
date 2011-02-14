@@ -66,6 +66,7 @@ Package {
                     lower = 0
                     upper = {}
                     isComposite = true
+                    opposite = order:OrderHistory/attributes:order
                 }
             }
             
@@ -137,6 +138,11 @@ Package {
                 Attribute {
                     name = date
                     type = primitive:Date 
+                }
+                Attribute {
+                    name = order
+                    type = order:Order
+                    opposite = order:Order/attributes:history
                 }
             }
         }
