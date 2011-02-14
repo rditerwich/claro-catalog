@@ -72,8 +72,8 @@ public class OrderPage extends Page {
 				setMaster(master = new OrderMaster(model));
 				setDetail(tabs = new PullUpTabs(26, 5) {{
 					setMainWidget(detail = new OrderDetail(model));
-					addTab(new EEButton(messages.orderProductOrderTab()), 100, orderProductOrderPanel = new VerticalPanel());
-					addTab(new EEButton(messages.orderHistoryTab()), 100, orderHistoryPanel = new VerticalPanel());
+					addTab(new EEButton(messages.orderProductOrderTab()), 160, orderProductOrderPanel = new VerticalPanel());
+					addTab(new EEButton(messages.orderHistoryTab()), 160, orderHistoryPanel = new VerticalPanel());
 				}});
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {
