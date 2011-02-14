@@ -92,6 +92,7 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
               order.order.setAmountPaid(0d)
               order.order.setStatus(jpa.order.OrderStatus.PendingPayment)
               order.order.setTransport(transport)
+              order.order.setShop(WebshopModel.shop.shop)
               em.merge(order.order)
               
               // clear shopping basket
