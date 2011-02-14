@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
 
 public abstract class Page extends Composite implements RequiresResize, ProvidesResize, Globals {
 	private final PlaceController placeController;
+	private MainMenu menu;
 
 	public abstract void show();
 	
@@ -25,6 +26,17 @@ public abstract class Page extends Composite implements RequiresResize, Provides
 			((RequiresResize) getWidget()).onResize();
 		}
 	}
+	
+	void setMainMenu(MainMenu menu) {
+		this.menu = menu;
+	}
+	
+	protected void showPage(Page page) {
+		if (menu != null) {
+			menu.showPage(page);
+		}
+	}
+	
 	protected void initialize() {
 	}
 }

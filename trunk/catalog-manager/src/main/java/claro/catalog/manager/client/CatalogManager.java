@@ -63,6 +63,10 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 	private Label username;
 	private FlowPanel spinner;
 
+	private WebshopPage webshopPage;
+	private CatalogPage catalogPage;
+
+
 	public static Long getCurrentCatalogId() {
 		return -1l;
 	}
@@ -131,9 +135,9 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 //				}});
 				add(new MainMenu(pageContainer) {{
 					setStylePrimaryName(GlobalStylesEnum.menu.toString());
-					addPage(new CatalogPage(placeController), messages.catalogMenu());
+					addPage(catalogPage = new CatalogPage(placeController), messages.catalogMenu());
 					addPage(new TaxonomyPage(placeController), messages.taxonomyMenu());
-					addPage(new WebshopPage(placeController, messages.webshopMenu()), messages.webshopMenu());
+					addPage(webshopPage = new WebshopPage(placeController, messages.webshopMenu()), messages.webshopMenu());
 					addPage(new OrderPage(placeController, messages.ordersMenu()), messages.ordersMenu());
 //					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
 //					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
@@ -143,7 +147,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 //					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
 //					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
 //					addPage(new TearupTabsTestPage(placeController), "TabTest");
-
+					catalogPage.setShopModel(webshopPage.getModel());
 				}});
 //			topPanel.add(choices);
 				

@@ -1,6 +1,7 @@
 package claro.catalog.impl.items;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -14,9 +15,11 @@ import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.shop.VolumeDiscountPromotion;
 import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.Cloner;
 import easyenterprise.lib.cloner.View;
+import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
 public class ItemUtil {
@@ -145,5 +148,23 @@ public class ItemUtil {
 		
 		return result;
 	}
+	
+	
 
+	public static SMap<OutputChannel, SMap<Long, SMap<String, String>>> promotions(ItemModel productModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel) {
+		SMap<OutputChannel, SMap<Long, SMap<String, String>>> result = SMap.empty();
+
+		List<VolumeDiscountPromotion> attachedPromotions = catalogModel.dao.findPromotionsForProduct(catalogModel.catalog.getId(), productModel.getItemId());
+		for (VolumeDiscountPromotion promotion : attachedPromotions) {
+			SMap<Long, SMap<String, String>> productsWithPromotion = result.get(promotion.getShop(), SMap.<Long, SMap<String, String>>empty());
+			productsWithPromotion = productsWithPromotion.set(productModel.getItemId(), ItemUtil.getNameLabels(promotion, catalogModel, channel, area));
+			result = result.set(Cloner.clone(promotion.getShop(), view), productsWithPromotion);  // TODO this clones too many times.
+		}
+		return result;
+	}
+
+	// TODO How to do i18n??
+	private static SMap<String, String> getNameLabels(VolumeDiscountPromotion promotion, CatalogModel catalogModel, OutputChannel channel, StagingArea area) {
+		return SMap.create(null, "Volume discount: " + new Money(promotion.getPrice(), promotion.getPriceCurrency()).toString() + " (min " + promotion.getVolumeDiscount() + " products)");
+	}
 }

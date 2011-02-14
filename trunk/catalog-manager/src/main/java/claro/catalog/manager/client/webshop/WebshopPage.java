@@ -29,10 +29,16 @@ public class WebshopPage extends Page {
 		
 		@Override
 		protected void renderAll() {
+			if (!initialized) { // TODO Is this a hack?
+				showPage(WebshopPage.this);
+			}
 			if (getShop() != null) {
 				master.render();
 				detail.render();
 				shippingOptionsPanel.render();
+				if (getPromotions() != null) {
+					promotionsPanel.render();
+				}
 				masterDetail.setCurrentRow(master.findObject(getShop()));
 			} else {
 				master.render();
@@ -44,13 +50,29 @@ public class WebshopPage extends Page {
 		protected void openDetail() {
 			masterDetail.openDetail();
 		}
+
+		@Override
+		protected void showPromotions() {
+			tabs.showTab(promotionsPanel);
+		}
+
+		@Override
+		protected void showWebshopPage() {
+			showPage(WebshopPage.this);
+		}
 	};
+	private boolean initialized;
 	
 	public WebshopPage(PlaceController placeController, String string) {
 		super(placeController);
 //		mainPanel = new LayoutPanel();
 //		mainPanel.setStylePrimaryName("ImportPage");
 //		initWidget(mainPanel);
+	}
+	
+	
+	public ShopModel getModel() {
+		return model;
 	}
 
 	@Override
@@ -61,6 +83,7 @@ public class WebshopPage extends Page {
 
 	@Override
 	protected void initialize() {
+		initialized = true;
 		initWidget(new LayoutPanel() {{
 			add(masterDetail = new CatalogManagerMasterDetail(100) {{
 				setHeader(ribbon = new WebshopRibbon(model));

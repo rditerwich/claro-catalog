@@ -17,6 +17,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
+import claro.catalog.manager.client.webshop.ShopModel;
 import claro.catalog.manager.client.widgets.StatusMessage;
 
 import com.google.gwt.place.shared.PlaceController;
@@ -28,17 +29,28 @@ import easyenterprise.lib.util.SMap;
 
 public class CatalogPage extends Page {
 
-	private CatalogPageModel model = new CatalogPageModel();
+	private CatalogPageModel model = new CatalogPageModel() {
+		protected ShopModel getShopModel() {
+			return shopModel;
+		}
+	};
 	private LayoutPanel mainPanel;
 	private ProductMasterDetail productMasterDetail;
 
 	private PropertyInfo nameProperty;
+	private ShopModel shopModel;
 	
 	public CatalogPage(PlaceController placeController) {
 		super(placeController);
 		
 		initWidget(mainPanel = new LayoutPanel());
 	}
+	
+
+	public void setShopModel(ShopModel shopModel) {
+		this.shopModel = shopModel;
+	}
+
 
 	public void show() {
 		if (productMasterDetail != null) {
@@ -67,8 +79,6 @@ public class CatalogPage extends Page {
 		
 		// Read Root properties
 		updateProductListRootProperties();		
-		
-		// TODO update OuputChannels and Languages. 
 		
 	}
 
@@ -147,15 +157,7 @@ public class CatalogPage extends Page {
 				loadingMessage.cancel();
 				super.onSuccess(result);
 
-				for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : result.propertyData) {
-					for (Entry<PropertyInfo, PropertyData> propertyEntry : group.getValue()) {
-						PropertyInfo property = propertyEntry.getKey();
-//						alert("property + " + property.propertyId + " type " + property.type + " ord: " + property.type.ordinal());
-//						alert("property + " + property.propertyId + " type " + property.getType() + " ord: " + property.getType().ordinal());
-					}
-				}
-
-				
+				model.setPromotionsForSelectedProduct(result.promotions);
 				productMasterDetail.setSelectedProduct(productId, result.parents, result.propertyData);
 			}
 		});

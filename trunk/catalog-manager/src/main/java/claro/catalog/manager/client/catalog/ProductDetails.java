@@ -13,6 +13,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
+import claro.catalog.manager.client.webshop.ShopModel;
 import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.MediaWidget;
@@ -43,7 +44,8 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private CategoriesWidget categoryPanel;
 	private Label productPrice;
 	private MediaWidget productImage;
-	
+	private Anchor promotionAnchor;
+
 	private ItemPropertyValues propertyValues;
 	private SMap<Long, SMap<String, String>> categories;
 	private Long itemId;
@@ -112,7 +114,8 @@ abstract public class ProductDetails extends Composite implements Globals {
 					}});
 				}});
 				
-				// Image, Price
+				// Image, Price, Promotion
+				
 				add(new HorizontalPanel(){{
 					StyleUtil.addStyle(this, Styles.imagePrice);
 					setVerticalAlignment(ALIGN_MIDDLE);
@@ -122,6 +125,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 					}});
 					productImage.setImageSize("125px", "125px");
+					add(promotionAnchor = new Anchor(messages.addPromotionLink()) {{
+						addClickHandler(new ClickHandler() {
+							public void onClick(ClickEvent event) {
+								doPromotion();
+							}
+						});
+					}});
 				}});
 				
 				add(propertyValues = new ItemPropertyValues(false, false) {
@@ -289,7 +299,19 @@ abstract public class ProductDetails extends Composite implements Globals {
 			productPrice.setText("");
 		}
 
+		// Update categories.
 		categoryPanel.setData(categories, model.getSelectedLanguage());
+		
+		// Update promotions
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getPromotions() != null?model.getPromotions().get(model.getSelectedShop()) : null;
+		if (promotionsForShop != null) {
+			String promotionText = promotionsForShop.getFirst().tryGet(model.getSelectedLanguage(), null);
+			promotionAnchor.setText(messages.promotionsLink(promotionText));
+		} else {
+			promotionAnchor.setText(messages.addPromotionLink());
+		}
+		
+		promotionAnchor.setVisible(model.getSelectedShop() != null);
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
@@ -314,6 +336,17 @@ abstract public class ProductDetails extends Composite implements Globals {
 		}
 		
 		return null;
+	}
+	
+	private void doPromotion() {
+		// Goto webshop model and lookup/add promotion
+		
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getPromotions() != null ? model.getPromotions().get(model.getSelectedShop()) : null;
+		if (promotionsForShop != null) {
+			model.getShopModel().showPromotion(itemId);
+		} else {
+			model.getShopModel().addNewPromotion(model.getSelectedShop(), itemId);
+		}
 	}
 	
 	private static SMap<PropertyInfo, PropertyData> stripGroupInfo(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) { 

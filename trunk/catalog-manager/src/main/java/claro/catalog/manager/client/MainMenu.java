@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 public class MainMenu extends Composite {
 
 	private Map<String, PageWrapper> pages = new HashMap<String, MainMenu.PageWrapper>();
+	private Map<Page, PageWrapper> pagesToWrappers = new HashMap<Page, MainMenu.PageWrapper>();
 	
 	public static PageWrapper currentPage;
 
@@ -41,10 +42,16 @@ public class MainMenu extends Composite {
 		wrapper.link = new Hyperlink("<span><span>" + menuText + "</span></span>", true, wrapper.token);
 		menuPanel.add(wrapper.link);
 		pages.put(wrapper.token, wrapper);
+		pagesToWrappers.put(page, wrapper);
+		page.setMainMenu(this);
 	}
 	
 	public static boolean isCurrentPage(Page page) {
 		return currentPage != null && currentPage.page == page;
+	}
+	
+	protected void showPage(Page page) {
+		History.newItem(pagesToWrappers.get(page).token);
 	}
 	
 	private void showPage(String historyToken) {

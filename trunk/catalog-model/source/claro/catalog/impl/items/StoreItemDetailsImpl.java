@@ -151,8 +151,10 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, stagingArea, outputChannel, true);
 			result.groups = ItemUtil.groups(itemModel, catalogModel, stagingArea, outputChannel);
 			result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);
+			if (itemModel.isCategory()) {
+				result.promotions = ItemUtil.promotions(itemModel, catalogModel, stagingArea, outputChannel);
+			}
 		}
-		
 		
 		return result;
 	}

@@ -1,0 +1,30 @@
+
+ul { list-style-position:outside; list-style-type:disc; margin:0 0 1em 30px }
+ol { list-style-position:outside; list-style-type:decimal; margin:0 0 1em 30px }
+
+
+#nav { padding:0; width:960px; height:50px; background:url(inc/img/nav-bg.png) no-repeat 0 0; position:absolute; bottom:0; left:0; list-style:none outside none; margin:0 }
+#nav li { display:inline; float:left; width:98px; height:50px; text-transform:uppercase; text-align:center; letter-spacing:1.2px; background:url(inc/img/nav-divider.gif) no-repeat right 50%; margin:0 }
+#nav li#menu-item-30 { width:178px; }
+#nav li#menu-item-29 { width:157px; }
+#nav li#menu-item-18 { width:172px; }
+#nav li#menu-item-28 { width:123px; }
+#nav li#menu-item-16 { width:90px; }
+#nav li#menu-item-27 { width:142px; background:none }
+
+#nav li a { display:block; height:50px; line-height:50px; color:#aaa; text-decoration:none; text-shadow:1px 1px 1px #000; background:url(inc/img/nav-bg.png) no-repeat 0 0; padding:0 0 0 5px; font-weight:normal }
+#nav li.current-menu-item a, .single-post #nav li#menu-item-16 a, .category #nav li#menu-item-16 a, .search #nav li#menu-item-16 a, .parent-pageid-21 #nav li#menu-item-29 a { color:#fff }
+#nav li#menu-item-30 a { background-position:-98px 0; padding:0 }
+#nav li#menu-item-29 a { background-position:-276px 0; padding:0 }
+#nav li#menu-item-18 a { background-position:-433px 0; padding:0 }
+#nav li#menu-item-28 a { background-position:-605px 0; padding:0 }
+#nav li#menu-item-16 a { background-position:-728px 0; padding:0 }
+#nav li#menu-item-27 a { background-position:-818px 0; padding:0 5px 0 0 }
+
+#nav li a:hover { background-position:0 bottom; color:#fff }
+#nav li#menu-item-30 a:hover { background-position:-98px bottom; }
+#nav li#menu-item-29 a:hover { background-position:-276px bottom; }
+#nav li#menu-item-18 a:hover { background-position:-433px bottom; }
+#nav li#menu-item-28 a:hover { background-position:-605px bottom; }
+#nav li#menu-item-16 a:hover { background-position:-728px bottom; }
+#nav li#menu-item-27 a:hover { background-position:-818px bottom; }

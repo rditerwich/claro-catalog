@@ -17,7 +17,9 @@ import claro.catalog.impl.items.ItemDetailsCommandImpl;
 import claro.catalog.impl.items.PerformStagingImpl;
 import claro.catalog.impl.items.StoreItemDetailsImpl;
 import claro.catalog.impl.order.GetOrdersImpl;
+import claro.catalog.impl.shop.FindPromotionsImpl;
 import claro.catalog.impl.shop.GetShopsImpl;
+import claro.catalog.impl.shop.StorePromotionImpl;
 import claro.catalog.impl.shop.StoreShopImpl;
 import easyenterprise.lib.command.RegisteredCommands;
 
@@ -42,5 +44,7 @@ public class RegisteredCatalogServerCommands extends RegisteredCommands {
 		register(LoginImpl.class);
 		register(PerformStagingImpl.class);
 		register(FlushCatalogModelImpl.class);
+		register(StorePromotionImpl.class);
+		register(FindPromotionsImpl.class);
 	}
 }

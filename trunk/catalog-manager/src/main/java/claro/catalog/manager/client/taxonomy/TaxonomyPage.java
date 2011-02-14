@@ -131,7 +131,6 @@ public class TaxonomyPage extends Page {
 		cmd.itemId = categoryId;
 		cmd.outputChannelId = model.getSelectedShopId();
 		cmd.language = model.getSelectedLanguage();
-		cmd.includeRootCategory = true;
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
 			public void onSuccess(ItemDetailsCommand.Result result) {

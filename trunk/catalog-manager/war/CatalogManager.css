@@ -908,4 +908,21 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 
 .ImportDataMappingPanel .ee-FormTable {
 	height: 80px;
-}	
+}
+
+
+/** shop */
+
+img.clear {
+	background:  url(images/closeButton2.png);
+	width: 14px;
+	height: 14px;
+	border: none;
+	
+}
+
+img.clear:hover {
+	background: url(images/closeButton3.png);
+	width: 14px;
+	height: 14px;
+}

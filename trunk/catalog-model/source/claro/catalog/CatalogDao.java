@@ -1,6 +1,7 @@
 package claro.catalog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +49,9 @@ import claro.jpa.jobs.JobResult;
 import claro.jpa.jobs.JobResult_;
 import claro.jpa.order.Order;
 import claro.jpa.order.OrderStatus;
+import claro.jpa.shop.Promotion;
 import claro.jpa.shop.Shop;
+import claro.jpa.shop.VolumeDiscountPromotion;
 
 import com.google.common.base.Objects;
 
@@ -547,6 +550,36 @@ public class CatalogDao extends AbstractDao {
 			throw new IllegalStateException("Multiple labels found for property id " + property.getId() + " and language " + language);
 		}
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Promotion> findPromotions(Long catalogId, List<Shop> shops) {
+		EntityManager entityManager = getEntityManager();
+		
+		boolean shopsRequested = shops != null && !shops.isEmpty();
+		
+		Query query = entityManager
+//			.createQuery("select p from Promotion p where " + (shopsRequested? " p.shop in :shops" : " p.shop.catalog.id = :catalogId"));
+			.createQuery("select p from Promotion p where " + (shopsRequested? " p.shop = :firstShop" : " p.shop.catalog.id = :catalogId") + " order by p.startDate desc");
+
+		if (shopsRequested) {
+//			query.setParameter("shops", shops);
+			query.setParameter("firstShop", shops.get(0));
+		} else {
+			query.setParameter("catalogId", catalogId);
+		}
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<VolumeDiscountPromotion> findPromotionsForProduct(Long catalogId, Long productId) {
+		EntityManager entityManager = getEntityManager();
+		Query query = entityManager.createQuery("select p from VolumeDiscountPromotion p where p.product.id = :productId and (p.endDate is null or p.endDate > CURRENT_DATE)");
+		
+		query.setParameter("productId", productId);
+		
+		return query.getResultList();
 	}
 
 }

@@ -99,7 +99,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	
 
 	public void resetTabState() {
-//		if (propertyGroupPanel.getWidgetCount() > 0) {
+//		if (propertyGroupPanel != null && propertyGroupPanel.getWidgetCount() > 0) {
 //			propertyGroupPanel.selectTab(0);
 //		}
 	}

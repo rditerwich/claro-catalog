@@ -10,12 +10,16 @@ import claro.catalog.model.ItemModel;
 import claro.catalog.util.CatalogCommand;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.StagingArea;
+import easyenterprise.lib.cloner.BasicView;
+import easyenterprise.lib.cloner.Printer;
+import easyenterprise.lib.cloner.View;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
 
 public class ItemDetailsCommandImpl extends ItemDetailsCommand implements CommandImpl<ItemDetailsCommand.Result>, CatalogCommand {
 
 	private static final long serialVersionUID = 1L;
+	static View shopView = new BasicView();
 
 	public ItemDetailsCommand.Result execute() throws CommandException {
 		
@@ -45,14 +49,18 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		// Convert item model to result.
 		ItemDetailsCommand.Result result = new ItemDetailsCommand.Result();
 		
-		result.parents = ItemUtil.parents(itemModel, catalogModel, area, channel, includeRootCategory);
+		result.parents = ItemUtil.parents(itemModel, catalogModel, area, channel, itemModel.isCategory());
 		result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, area, channel, true);
 		result.groups = ItemUtil.groups(itemModel, catalogModel, area, channel);
 		result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, area, channel);
+		if (!itemModel.isCategory()) {
+			result.promotions = ItemUtil.promotions(itemModel, catalogModel, area, channel);
+		}
+
+		System.out.println("ItemDetailsCommand: " + Printer.print(result, new BasicView("parents", "parentExtentWithSelf", "groups", "propertyData", "promotions")));
 		
 		return result;
 	}
-
 	@Override
 	public Long getCatalogId() {
 		return catalogId;

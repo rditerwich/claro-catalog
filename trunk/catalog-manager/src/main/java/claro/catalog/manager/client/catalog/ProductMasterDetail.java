@@ -320,7 +320,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		
 		// Update details:
 		if (getCurrentRow() == itemRow) {
-			setCurrentRow(itemRow);  // Redraw selection if necessary.
+			openDetail(itemRow);
 			details.setItemData(productId, categories, propertyValues);
 		}
 	}

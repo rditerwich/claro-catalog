@@ -8,6 +8,7 @@ import java.util.List;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
+import claro.jpa.catalog.OutputChannel;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;
 import easyenterprise.lib.command.CommandValidationException;
@@ -92,22 +93,31 @@ public class StoreItemDetails implements Command<StoreItemDetails.Result> {
 			validate(!CollectionUtil.notNull(propertiesToRemove).contains(property));
 		}
 	}
-
+	
 	public static class Result implements CommandResult {
+		// The direct parents with their names per language.
+		public SMap<Long, SMap<String, String>> parents;
+		
+		// The parent extent with their names per language.
+		public SMap<Long, SMap<String, String>> parentExtentWithSelf;
+		
+		// All groups with their names per language.
+		public SMap<Long, SMap<String, String>> groups;
+
+		// Property values per property, per group.
+		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
+		
+		// Promotions by channel, most current first.  
+		public SMap<OutputChannel, SMap<Long, SMap<String, String>>> promotions;
+
 		private static final long serialVersionUID = 1L;
 		public Long storedItemId;
+		
 		
 		// product result
 		public SMap<PropertyInfo, SMap<String, Object>> masterValues;
 		
 		// category results
-		public SMap<Long, SMap<String, String>> parentExtentWithSelf;
 		public SMap<String, String> categoryLabels;
-		public SMap<Long, SMap<String, String>> groups;
-
-		// shared results
-		public SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyData;
-		public SMap<Long, SMap<String, String>> parents;
-		
 	}
 }
