@@ -118,7 +118,10 @@ public class ItemModel {
 							if (!skipChildConnect) {
 								parentItem.getChildren(true); // Make sure our parents are connected to us.
 							}
+						} else {
+							System.out.println("Cycle Prevented in GetParents()!! Item " + getItemId() + " not added as parent");
 						}
+						// TODO Log Detected Cycle???
 					}
 				}
 				this.parents = ImmutableSet.copyOf(parents);
@@ -148,7 +151,10 @@ public class ItemModel {
 		for (ItemModel parent : parents) {
 			if (!inParentExtent(itemId, parent.getEntity(), new HashSet<Item>())) {
 				items.add(parent.getEntity());
+			} else {
+				System.out.println("Cycle Prevented in SetParents()!! Item " + getItemId() + " not added as parent");
 			}
+			
 		}
 		CatalogDao dao = catalog.dao;
 		if (dao.setItemParents(getEntity(), items)) {

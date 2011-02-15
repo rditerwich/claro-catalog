@@ -253,6 +253,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
+			cmd.itemType = ItemType.product;
 			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
 			
 			storeItem(cmd);

@@ -42,6 +42,9 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	
 	private HasText categoryNameBox;
 	private CategoriesWidget categoryPanel;
+	private Anchor removeLink;
+
+	
 //	private Label productPrice;
 //	private MediaWidget productImage;
 	
@@ -116,7 +119,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 							categoryRemoved(itemId, categoryId);
 						}
 					});
-					setWidget(0, 2, new Anchor(messages.removeCategoryLink()) {{
+					setWidget(0, 2, removeLink = new Anchor(messages.removeCategoryLink()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								removeWithConfirmation.show();
@@ -323,6 +326,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
+			cmd.itemType = ItemType.catagory;
 			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
 			
 			storeItem(cmd);
@@ -343,6 +347,12 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 
 		final Object productName = getValue(nameProperty, properties);
 		categoryNameBox.setText(productName instanceof String ? productName.toString() : "");
+		
+		// Disable removed link for the root category.
+		removeLink.setVisible(itemId != model.getRootCategoryId());
+		
+		// Also disable parent selection
+		categoryPanel.setVisible(itemId != model.getRootCategoryId());
 		
 //		final Object productVariant = getValue(variantProperty, properties);
 //		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");

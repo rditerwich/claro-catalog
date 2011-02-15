@@ -20,6 +20,7 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
@@ -172,10 +173,12 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			}
 		}
 
-		// Set categories must exist.
+		// Set categories must exist and not introduce cycles.
 		for (Long categoryId : CollectionUtil.notNull(parentsToSet)) {
 			ItemModel categoryModel = catalogModel.getItem(categoryId);
-			validate(categoryModel != null);
+			validate(categoryModel != null);  // must exist
+			validate(itemId != catalogModel.getRootItem().getItemId()); // Cannot set parents of root
+			validate(!categoryModel.getParentExtent().contains(catalogModel.getItem(itemId))); // No cycles.
 		}
 		
 		// removed properties must must exist and be ours

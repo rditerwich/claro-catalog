@@ -62,9 +62,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	protected HTML filterLabel;
 	private CategoryDetails details;
 	
-	private Long rootCategoryId;
-	private SMap<Long, SMap<String, String>> categories;
-	private SMap<Long, Long> childrenByCategory;
 	private List<claro.catalog.manager.client.taxonomy.CategoryMasterDetail.CategoryRow> categoryRows = Collections.emptyList();
 	protected Label pleaseWaitLabel;
 	private final TaxonomyModel model;
@@ -93,9 +90,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	public void setCategoriesTree(Long rootCategoryId, SMap<Long, Long> children, SMap<Long, SMap<String, String>> categories) {
-		this.rootCategoryId = rootCategoryId;
-		this.categories = categories;
-		this.childrenByCategory = children;
+		this.model.setCategoriesTree(rootCategoryId, children, categories);
 	
 		this.categoryRows = createRows();
 		render();
@@ -163,7 +158,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 					setWidget(1, 0, new EEButton(messages.newCategory()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
-								createNewCategory(rootCategoryId);
+								createNewCategory(model.getRootCategoryId());
 							}
 						});
 					}});
@@ -203,7 +198,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		
 		// No category id means a remove.
 		if (categoryId != null) {
-			categories = categories.set(categoryId, categoryLabels);
+			model.updateCategory(categoryId, categoryLabels);
 		}
 		
 		// Find row to update
@@ -231,10 +226,10 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			// Add new category, and set itemRow accordingly
 			if (parentIndex != -1) {
 				itemRow = parentIndex + 1;
-				categoryRows.add(itemRow, new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), categoryRows.get(parentIndex).indentation + 1, true));
+				categoryRows.add(itemRow, new CategoryRow(categoryId, model.getChildrenByCategory().getAll(categoryId).isEmpty(), categoryRows.get(parentIndex).indentation + 1, true));
 			} else {
 				itemRow = categoryRows.size();
-				categoryRows.add(new CategoryRow(categoryId, childrenByCategory.getAll(categoryId).isEmpty(), 1, true));
+				categoryRows.add(new CategoryRow(categoryId, model.getChildrenByCategory().getAll(categoryId).isEmpty(), 1, true));
 			}
 			
 			// Rerender master to add row.
@@ -338,7 +333,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		rowWidgets.hasChildrenImage.setVisible(!categoryRow.isLeaf);
 		
 		// category label
-		String label = categories.getOrEmpty(categoryRow.categoryId).tryGet(language, null);
+		String label = model.getCategories().getOrEmpty(categoryRow.categoryId).tryGet(language, null);
 		if (label == null) {
 			label = "<" + messages.noCategoryNameSet() + ">";
 		}
@@ -423,13 +418,13 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private List<CategoryRow> createRows() {
 		List<CategoryRow> result = new ArrayList<CategoryRow>();
 		
-		convertToRows(rootCategoryId, result, 0);
+		convertToRows(model.getRootCategoryId(), result, 0);
 		
 		return result;
 	}
 	
 	private void convertToRows(Long currentCategory, List<CategoryRow> result, int indentation) {
-		List<Long> children = childrenByCategory.getAll(currentCategory);
+		List<Long> children = model.getChildrenByCategory().getAll(currentCategory);
 		boolean isLeaf = children == null || children.size() == 0;
 
 		// Add current:
@@ -449,8 +444,8 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		
 		Collections.sort(result, new Comparator<Long>() {
 			public int compare(Long o1, Long o2) {
-				String category1Label = categories.getOrEmpty(o1).tryGet(language, null);
-				String category2Label = categories.getOrEmpty(o2).tryGet(language, null);
+				String category1Label = model.getCategories().getOrEmpty(o1).tryGet(language, null);
+				String category2Label = model.getCategories().getOrEmpty(o2).tryGet(language, null);
 				
 				// TODO what if labels are not available?
 				if (category1Label == null) {

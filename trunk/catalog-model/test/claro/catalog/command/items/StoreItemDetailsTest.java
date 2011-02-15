@@ -7,7 +7,6 @@ import static claro.catalog.model.CatalogModelTestUtil.addProduct;
 
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 
@@ -28,6 +27,7 @@ import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
+import easyenterprise.lib.command.CommandValidationException;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
@@ -128,6 +128,28 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 	@Test
 	public void basicSetParents() throws Exception {
 		// TODO
+	}
+	
+	@Test
+	public void setParentsCycle() throws Exception {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.catalogId = TEST_CATALOG_ID;
+		cmd.itemType = ItemType.catagory;
+		cmd.itemId = printersCatId;
+		
+		// Request a cycle:
+		cmd.parentsToSet = Collections.singletonList(hpPrintersCatId);
+		
+		boolean exceptionCaught = false;
+		try {
+			executeCommand(cmd);
+		} catch (CommandValidationException ex) {
+			exceptionCaught = true;
+		}
+		if (!exceptionCaught) {
+			Assert.fail("Command must throw a cycle detected validation exception");
+		}
 	}
 	
 	@Test

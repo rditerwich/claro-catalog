@@ -5,6 +5,7 @@ import static claro.catalog.model.CatalogModelTestUtil.addShop;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -15,6 +16,7 @@ import org.junit.Test;
 
 import claro.catalog.model.test.util.CatalogTestBase;
 import claro.jpa.catalog.Category;
+import claro.jpa.catalog.Item;
 import claro.jpa.shop.Shop;
 import easyenterprise.lib.util.SMap;
 
@@ -31,8 +33,6 @@ public class CatalogModelTest extends CatalogTestBase {
 
 	}
 	
-	
-	// TODO Add test to invalidate item without childextent.
 	
 	@Test
 	public void testParentExtentWithRemoveItemUntouched() throws Exception {
@@ -140,6 +140,54 @@ public class CatalogModelTest extends CatalogTestBase {
 		Assert.assertNotNull(supplierProperty);
 	}
 	
+	
+	@Test
+	public void testCategoryCycleSet() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		ItemModel hpPrintersModel = model.getItem(hpPrinters.getId());
+		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
+		
+		// Try to set child as parent.
+		Set<ItemModel> parentsBefore = hpPrintersModel.getParents();
+		hpPrintersModel.setParents(Collections.singletonList(hpColorPlottersModel));
+		Set<ItemModel> parentsAfter = hpPrintersModel.getParents();
+		// TODO Make the setter throw an exception??
+//		Assert.assertEquals(parentsBefore.size(), parentsAfter.size());
+//		Assert.assertEquals(parentsBefore.iterator().next(), parentsAfter.iterator().next());
+	}
+	
+	@Test
+	public void testCategoryCycleGet() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Category root = model.catalog.getRoot();
+		
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		// Create a cycle in the categories:
+		model.dao.setItemParents(hpPrinters, Collections.singletonList((Item)hpColorPrinters));
+		
+		// Try to detect the cycle:
+		ItemModel hpPrintersModel = model.getItem(hpPrinters.getId());
+		// TODO not sure what the result should be (impl dependent).
+		
+		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
+		// TODO not sure what the result should be (impl dependent).
+	}
 	
 	@Test
 	public void testEffectiveValues() throws Exception {
