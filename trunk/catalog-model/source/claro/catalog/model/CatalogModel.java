@@ -118,7 +118,7 @@ public class CatalogModel {
 			itemData.invalidateChildExtent(true);
 			itemData.invalidateParentExtent(false);
 			root.doInvalidate();
-			items.remove(itemData);
+			items.remove(id);
 		} else {
 			item = dao.getItem(id);
 		}

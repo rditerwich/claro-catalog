@@ -5,6 +5,7 @@ import static claro.catalog.model.CatalogModelTestUtil.addShop;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 
@@ -32,6 +33,112 @@ public class CatalogModelTest extends CatalogTestBase {
 	
 	
 	// TODO Add test to invalidate item without childextent.
+	
+	@Test
+	public void testParentExtentWithRemoveItemUntouched() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		
+		model.removeItem(hpColorPrinterModel.itemId);
+
+		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
+
+		// check model:
+		Assert.assertNull(model.items.get(hpColorPrinters.getId()));
+		
+		// Check parent.
+		Set<ItemModel> parents = hpColorPlottersModel.getParents();
+		Assert.assertEquals(1, parents.size());
+		Assert.assertEquals(hpPrinters, parents.iterator().next().getEntity());
+
+		// Check properties
+		hpColorPlottersModel.getPropertyExtent();
+		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+		
+	}
+	
+	@Test
+	public void testParentExtentWithRemoveItemTouched() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		
+		// Touch item, trigger parent extent etc.
+		hpColorPrinterModel.getPropertyExtent();
+		
+		model.removeItem(hpColorPrinterModel.itemId);
+		
+		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
+		hpColorPlottersModel.getPropertyExtent();
+
+		// check model:
+		Assert.assertNull(model.items.get(hpColorPrinters.getId()));
+		
+		// Check parent.
+		Set<ItemModel> parents = hpColorPlottersModel.getParents();
+		Assert.assertEquals(1, parents.size());
+		Assert.assertEquals(hpPrinters, parents.iterator().next().getEntity());
+
+		// Check properties
+		hpColorPlottersModel.getPropertyExtent();
+		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+	}
+	
+	@Test
+	public void testParentExtentWithRemoveItemBelowTouched() throws Exception {
+		ensureDatabaseCreated();
+		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		ItemModel hpColorPlotterModelBefore = model.getItem(hpColorPlotters.getId());
+		
+		// Touch child.
+		hpColorPlotterModelBefore.getPropertyExtent();
+		
+		model.removeItem(hpColorPrinterModel.itemId);
+		
+		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
+		hpColorPlottersModel.getPropertyExtent();
+		
+		// check model:
+		Assert.assertNull(model.items.get(hpColorPrinters.getId()));
+		
+		// Check parent.
+		Set<ItemModel> parents = hpColorPlottersModel.getParents();
+		Assert.assertEquals(1, parents.size());
+		Assert.assertEquals(hpPrinters, parents.iterator().next().getEntity());
+		
+		// Check properties
+		hpColorPlottersModel.getPropertyExtent();
+		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
+		Assert.assertNotNull(supplierProperty);
+	}
 	
 	
 	@Test
