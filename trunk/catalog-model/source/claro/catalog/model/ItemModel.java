@@ -129,12 +129,15 @@ public class ItemModel {
 	
 	private boolean inParentExtent(Long id, Item item, Set<Item> visited) {
 		if (visited.add(item)) {
+			if (equal(id, item.getId())) {
+				return true;
+			}
 			for (ParentChild parent : getEntity().getParents()) {
-				if (parent.getParent() == null) continue;
-				if (equal(id, parent.getParent().getId())) {
-					return true;
+				if (parent.getParent() != null) {
+					if (inParentExtent(id, parent.getParent(), visited)) {
+						return true;
+					}
 				}
-				return inParentExtent(id, parent.getParent(), visited);
 			}
 		}
 		return false;
