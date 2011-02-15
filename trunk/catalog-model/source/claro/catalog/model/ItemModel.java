@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.persistence.Entity;
+
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -29,6 +31,7 @@ import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 import easyenterprise.lib.util.CollectionUtil;
@@ -110,7 +113,7 @@ public class ItemModel {
 					if (parentChild.getParent() != null && !equal(parentChild.getParent().getId(), itemId)) {
 						ItemModel parentItem = catalog.getItem(parentChild.getParent().getId());
 						// prevent cycles
-						if (!parentItem.getParentExtent().contains(this)) {
+						if (!inParentExtent(getItemId(), parentChild.getParent(), new HashSet<Item>())) {
 							parents.add(parentItem);
 							if (!skipChildConnect) {
 								parentItem.getChildren(true); // Make sure our parents are connected to us.
@@ -124,10 +127,25 @@ public class ItemModel {
 		}
 	}
 	
+	private boolean inParentExtent(Long id, Item item, Set<Item> visited) {
+		if (visited.add(item)) {
+			for (ParentChild parent : getEntity().getParents()) {
+				if (parent.getParent() == null) continue;
+				if (equal(id, parent.getParent().getId())) {
+					return true;
+				}
+				return inParentExtent(id, parent.getParent(), visited);
+			}
+		}
+		return false;
+	}
+	
 	public void setParents(Collection<ItemModel> parents) {
 		List<Item> items = new ArrayList<Item>();
 		for (ItemModel parent : parents) {
-			items.add(parent.getEntity());
+			if (!inParentExtent(itemId, parent.getEntity(), new HashSet<Item>())) {
+				items.add(parent.getEntity());
+			}
 		}
 		CatalogDao dao = catalog.dao;
 		if (dao.setItemParents(getEntity(), items)) {
