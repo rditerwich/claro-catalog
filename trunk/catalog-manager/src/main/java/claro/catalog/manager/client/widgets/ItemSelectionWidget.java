@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import claro.catalog.command.items.GetCategoryTree;
+import claro.catalog.data.ItemType;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
@@ -38,7 +39,7 @@ import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.SMap;
 
 // TODO Allow changing of order of categories.
-public class CategoriesWidget extends Composite implements Globals {
+public class ItemSelectionWidget extends SelectionWidget {
 	
 	enum Styles implements Style { mouseOverStyle, categoryStyle, categoryName, categoryAddNoSelection, categoryAdd, categoryTree }
 	
@@ -51,16 +52,36 @@ public class CategoriesWidget extends Composite implements Globals {
 	private String language;
 
 	private Collection<Category> pendingSetDataCategories;
+	private boolean multiSelect;
+	private ItemType itemType;
 
-	public CategoriesWidget() {
-		this(true);
+	public ItemSelectionWidget() {
+		this(true, ItemType.category, true);
 	}
 	
-	public CategoriesWidget(boolean canSelect) {
-		this.canSelect = canSelect;
+	public ItemSelectionWidget(boolean canSelectSelection, ItemType itemType, boolean multiSelect) {
+		this.canSelect = canSelectSelection;
+		this.itemType = itemType;
+		this.multiSelect = multiSelect;
 		initWidget(mainPanel = new FlowPanel() {{
 			StyleUtil.addStyle(this, Styles.categoryStyle);
 		}});
+	}
+
+	/**
+	 * Note: does *not* re-render. Only {@link #setData(Collection, String)} re-renders.
+	 * @param itemType
+	 */
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
+	}
+	
+	/**
+	 * Note: does *not* re-render. Only {@link #setData(Collection, String)} re-renders.
+	 * @param multiSelect
+	 */
+	public void setMultiSelect(boolean multiSelect) {
+		this.multiSelect = multiSelect;
 	}
 	
 	public void setData(Collection<Category> categories, String language) {
@@ -81,7 +102,7 @@ public class CategoriesWidget extends Composite implements Globals {
 		render();
 	}
 	
-	public SMap<Long, SMap<String, String>> getCategories() {
+	public SMap<Long, SMap<String, String>> getSelection() {
 		return categories;
 	}
 	
@@ -112,7 +133,7 @@ public class CategoriesWidget extends Composite implements Globals {
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							removeCategory(catId);
-							categoriesChanged();
+							selectionChanged();
 						}
 					});
 				}});
@@ -179,7 +200,7 @@ public class CategoriesWidget extends Composite implements Globals {
 	
 	protected void addCategory(Long categoryId, SMap<String, String> labels) {
 		categories = categories.add(categoryId, labels);
-		categoriesChanged();
+		selectionChanged();
 		render();
 	}
 
@@ -191,6 +212,7 @@ public class CategoriesWidget extends Composite implements Globals {
 			}
 		}
 		categories = newCats;
+		selectionChanged();
 		render();
 	}
 	
@@ -301,6 +323,6 @@ public class CategoriesWidget extends Composite implements Globals {
 		});
 	}
 
-	protected void categoriesChanged() {
+	protected void selectionChanged() {
 	}
 }

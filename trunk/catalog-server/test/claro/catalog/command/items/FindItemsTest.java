@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 
+import claro.catalog.data.ItemType;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.test.util.CatalogTestBase;

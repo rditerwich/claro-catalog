@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.FindItems;
-import claro.catalog.command.items.ItemType;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
@@ -164,7 +164,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 	
 	private Class<? extends Item> resultClass() {
 		switch (resultType) {
-		case catagory: return Category.class;
+		case category: return Category.class;
 		case product: return Product.class;
 		default: return Item.class;
 		}

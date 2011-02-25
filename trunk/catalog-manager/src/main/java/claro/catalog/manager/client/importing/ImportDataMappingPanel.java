@@ -13,7 +13,7 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.ActionImage;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.jpa.catalog.Property;
 import claro.jpa.importing.ImportProducts;
@@ -45,7 +45,7 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 	private Table propertyGrid;
 	private ListBox matchPropertyListBox;
 	private ListBox nestedFileListBox;
-	private CategoriesWidget categoryPanel;
+	private ItemSelectionWidget categoryPanel;
 	private final List<Tuple<String, Long>> properties = new ArrayList<Tuple<String,Long>>();
 	private final ImportSoureModel model;
 
@@ -77,7 +77,7 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 				add(messages.matchProperty(), matchPropertyListBox = new ListBox() {{
 					addChangeHandler(changeHandler);
 				}}, messages.matchPropertyHelp());
-				add(messages.selectCategoryLabel(), categoryPanel = new CategoriesWidget() {
+				add(messages.selectCategoryLabel(), categoryPanel = new ItemSelectionWidget() {
 						protected String getAddCategoryTooltip() {
 							return messages.addCategoryProductDetailsTooltip("RUUD");  // TODO This is a little dirty??
 						}

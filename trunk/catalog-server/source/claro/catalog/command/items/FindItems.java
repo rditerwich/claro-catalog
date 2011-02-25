@@ -2,6 +2,7 @@ package claro.catalog.command.items;
 
 import java.util.List;
 
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyInfo;
 import easyenterprise.lib.command.Command;
 import easyenterprise.lib.command.CommandResult;

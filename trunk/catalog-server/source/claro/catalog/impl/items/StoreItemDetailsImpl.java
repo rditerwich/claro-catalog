@@ -12,8 +12,8 @@ import org.apache.commons.fileupload.FileItem;
 
 import claro.catalog.CatalogModelService;
 import claro.catalog.CatalogServer;
-import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -144,11 +144,11 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			if (itemType == ItemType.product) {
 				result.masterValues = ItemUtil.effectivePropertyValues(itemModel, stagingArea, outputChannel);
 			}
-			if (itemType == ItemType.catagory) {
+			if (itemType == ItemType.category) {
 				result.categoryLabels = ItemUtil.getNameLabels(itemModel, catalogModel, outputChannel, stagingArea);
 			}
 			
-			result.parents = ItemUtil.parents(itemModel, catalogModel, stagingArea, outputChannel, itemType == ItemType.catagory);
+			result.parents = ItemUtil.parents(itemModel, catalogModel, stagingArea, outputChannel, itemType == ItemType.category);
 			result.parentExtentWithSelf = ItemUtil.parentExtent(itemModel, catalogModel, stagingArea, outputChannel, true);
 			result.groups = ItemUtil.groups(itemModel, catalogModel, stagingArea, outputChannel);
 			result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, stagingArea, outputChannel);

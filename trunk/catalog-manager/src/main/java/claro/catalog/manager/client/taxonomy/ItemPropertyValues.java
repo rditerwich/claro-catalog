@@ -3,19 +3,22 @@ package claro.catalog.manager.client.taxonomy;
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import claro.catalog.data.ItemType;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.catalog.CatalogPageModel;
 import claro.catalog.manager.client.items.ItemPageModel;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.jpa.catalog.Category;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -334,6 +337,21 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				}};
 			}
 			break;
+		case Item:
+			if (oldWidget instanceof ItemSelectionWidget) {
+				ItemSelectionWidget itemWidget = (ItemSelectionWidget) oldWidget;
+				itemWidget.setItemType(ItemType.item); // TODO itemtype should be set depending on the property.
+				itemWidget.setMultiSelect(property.isMany);
+				
+				result = oldWidget;
+			} else {
+				result = new ItemSelectionWidget(false, ItemType.item, property.isMany) {// TODO itemtype should be set depending on the property.
+					protected void selectionChanged() {
+						valueChanged(this, getSelection());
+					}
+				}; 
+			}
+			break;
 		case Media:
 			if (oldWidget instanceof HorizontalPanel && ((HorizontalPanel)oldWidget).getWidgetCount() > 1 && ((HorizontalPanel)oldWidget).getWidget(0) instanceof MediaWidget) {
 				result = oldWidget;
@@ -398,6 +416,14 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		case Boolean:
 			CheckBox checkBox = (CheckBox) widget;
 			checkBox.setValue((Boolean) value);
+			break;
+		case Item:
+			ItemSelectionWidget selectionWidget = (ItemSelectionWidget)widget;
+			if (value != null) {
+				selectionWidget.setData(Collections.<Category>emptyList(), model.getSelectedLanguage());  // TODO Get the proper value. (List<Long>)
+			} else {
+				selectionWidget.setData(Collections.<Category>emptyList(), model.getSelectedLanguage());
+			}
 			break;
 		case Media:
 			MediaWidget mediaWidget = (MediaWidget) ((HorizontalPanel)widget).getWidget(0);

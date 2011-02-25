@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import claro.catalog.command.items.PerformStaging;
 import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -16,8 +17,8 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.command.StatusCallback;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 import claro.catalog.manager.client.widgets.MediaWidget;
 
@@ -69,7 +70,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	
 	// Widgets
-	private CategoriesWidget filterCategories;
+	private ItemSelectionWidget filterCategories;
 	private LanguageAndShopSelector languageSelection;
 	private List<RowWidgets> tableWidgets = new ArrayList<ProductMasterDetail.RowWidgets>();
 
@@ -125,7 +126,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
 		if (filterCategories != null) {
-			return filterCategories.getCategories();
+			return filterCategories.getSelection();
 		}
 		return SMap.empty();
 	}
@@ -188,7 +189,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 							}
 						});
 					}});
-					setWidget(0, 2, filterCategories = new CategoriesWidget(false) {{
+					setWidget(0, 2, filterCategories = new ItemSelectionWidget(false, ItemType.category, true) {{
 							setData(SMap.<Long, SMap<String, String>>empty(), model.getSelectedLanguage());
 						}
 						protected String getAddCategoryLabel() {
@@ -506,7 +507,7 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		if (filterSet) {
 			sep = " and ";
 		}
-		for (Entry<Long, SMap<String, String>> category : filterCategories.getCategories()) {
+		for (Entry<Long, SMap<String, String>> category : filterCategories.getSelection()) {
 			filterText.append(sep); sep = ", ";
 			filterText.append(category.getValue().tryGet(model.getSelectedLanguage(), null));
 		}

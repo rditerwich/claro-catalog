@@ -7,11 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 import claro.catalog.command.shop.StoreShop;
+import claro.catalog.data.ItemType;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.FormTable;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.LanguagesWidget;
 import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.Category;
@@ -38,7 +39,7 @@ public class WebshopDetail extends Composite implements Globals {
 	private TextBox urlPrefixTextBox;
 	private LanguagesWidget defaultLanguageWidget;
 	private LanguagesWidget languagesWidget;
-	private CategoriesWidget categoriesWidget;
+	private ItemSelectionWidget categoriesWidget;
 
 	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
 		protected String getMessage() {
@@ -88,9 +89,9 @@ public class WebshopDetail extends Composite implements Globals {
 						doStoreShop();
 					}
 				}, messages.shopLanguagesHelp());
-				add(messages.topLevelCategoriesLabel(), categoriesWidget = new CategoriesWidget(true) {
+				add(messages.topLevelCategoriesLabel(), categoriesWidget = new ItemSelectionWidget(true, ItemType.category, true) {
 					@Override
-					protected void categoriesChanged() {
+					protected void selectionChanged() {
 						doStoreShop();
 					}
 				}, messages.topLevelCategoriesHelp());
@@ -131,7 +132,7 @@ public class WebshopDetail extends Composite implements Globals {
 		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getLanguages()));
 		
 		StoreShop command = new StoreShop(model.getShop());
-		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getCategories().getKeys());
+		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getSelection().getKeys());
 		model.store(command);
 	}
 	

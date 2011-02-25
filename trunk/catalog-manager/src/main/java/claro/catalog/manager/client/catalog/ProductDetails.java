@@ -3,8 +3,8 @@ package claro.catalog.manager.client.catalog;
 import java.util.Collections;
 import java.util.Map.Entry;
 
-import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -14,7 +14,7 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
 import claro.catalog.manager.client.webshop.ShopModel;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.MediaWidget;
 
@@ -41,7 +41,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private enum Styles implements Style { productDetails, imagePrice }
 	
 	private Header productNameBox;
-	private CategoriesWidget categoryPanel;
+	private ItemSelectionWidget categoryPanel;
 	private Label productPrice;
 	private MediaWidget productImage;
 	private Anchor promotionAnchor;
@@ -88,7 +88,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 					setWidget(0, 0, productNameBox = new Header(1, "") {{
 						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productname);
 					}});
-					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
+					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
 						protected String getAddCategoryTooltip() {
 							return messages.addCategoryProductDetailsTooltip(productNameBox.getText());  // TODO This is a little dirty??
 						}
@@ -208,7 +208,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		}
 		// Always include categories for new items:
 		if (itemId == null) {
-			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 		}
 		
 		storeItem(cmd);
@@ -233,7 +233,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		cmd.itemId = itemId;
 		cmd.itemType = ItemType.product;
 		
-		cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+		cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
@@ -254,7 +254,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
 			cmd.itemType = ItemType.product;
-			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 			
 			storeItem(cmd);
 		}

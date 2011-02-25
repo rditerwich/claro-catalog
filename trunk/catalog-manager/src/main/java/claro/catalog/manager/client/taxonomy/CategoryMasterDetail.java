@@ -14,7 +14,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
 
 import com.google.common.base.Objects;
@@ -55,7 +55,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	
 	// Widgets
-	private CategoriesWidget filterCategories;
+	private ItemSelectionWidget filterCategories;
 	private LanguageAndShopSelector languageSelection;
 	private List<RowWidgets> tableWidgets = new ArrayList<CategoryMasterDetail.RowWidgets>();
 
@@ -109,7 +109,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	public SMap<Long, SMap<String, String>> getFilterCategories() {
 		if (filterCategories != null) {
-			return filterCategories.getCategories();
+			return filterCategories.getSelection();
 		}
 		return SMap.empty();
 	}

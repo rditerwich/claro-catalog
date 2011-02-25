@@ -5,6 +5,7 @@ import static easyenterprise.lib.util.CollectionUtil.isEmpty;
 
 import java.util.List;
 
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;

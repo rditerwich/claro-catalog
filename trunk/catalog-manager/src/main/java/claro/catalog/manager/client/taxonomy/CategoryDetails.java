@@ -3,16 +3,16 @@ package claro.catalog.manager.client.taxonomy;
 import java.util.Collections;
 import java.util.Map.Entry;
 
-import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.shop.StoreShop;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.CategoriesWidget;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -41,7 +41,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private enum Styles implements Style { categoryDetails, imagePrice, categoryname }
 	
 	private HasText categoryNameBox;
-	private CategoriesWidget categoryPanel;
+	private ItemSelectionWidget categoryPanel;
 	private Anchor removeLink;
 
 	
@@ -99,7 +99,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 							}
 						});
 					}}));
-					setWidget(0, 1, categoryPanel = new CategoriesWidget() {
+					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
 						protected String getAddCategoryLabel() {
 							return messages.addParentCategoriesLink();
 						};
@@ -241,7 +241,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.remove = true;
 		
 		storeItem(cmd);
@@ -251,7 +251,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(model.getSelectedLanguage(), value));
 
 		// Always include name if this is a new item.
@@ -260,7 +260,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		}
 		// Always include categories for new items:
 		if (itemId == null) {
-			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 		}
 		
 		storeItem(cmd);
@@ -272,7 +272,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
-			cmd.itemType = ItemType.catagory;
+			cmd.itemType = ItemType.category;
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(model.getSelectedLanguage()));
 			
@@ -284,7 +284,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.propertiesToSet = Collections.singletonList(propertyInfo);
 		
 		storeItem(cmd);
@@ -294,7 +294,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.groupsToSet = SMap.create(propertyInfo, groupInfo);
 		
 		storeItem(cmd);
@@ -306,7 +306,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
-			cmd.itemType = ItemType.catagory;
+			cmd.itemType = ItemType.category;
 			
 			cmd.propertiesToRemove = Collections.singletonList(propertyInfo.propertyId);
 			
@@ -317,9 +317,9 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private void categoryAdded(Long itemId, Long categoryId) {
 		StoreItemDetails cmd = new StoreItemDetails();
 		cmd.itemId = itemId;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		
-		cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+		cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
@@ -339,8 +339,8 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		if (itemId != null) {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
-			cmd.itemType = ItemType.catagory;
-			cmd.parentsToSet = categoryPanel.getCategories().getKeys();
+			cmd.itemType = ItemType.category;
+			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
 			
 			storeItem(cmd);
 		}

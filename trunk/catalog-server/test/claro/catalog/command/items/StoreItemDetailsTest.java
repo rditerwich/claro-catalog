@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import claro.catalog.command.items.StoreItemDetails.Result;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -91,7 +92,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = inkCatId;
 		PropertyInfo colorProperty = new PropertyInfo();
 		colorProperty.labels = SMap.create(null, "color");
@@ -135,7 +136,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = printersCatId;
 		
 		// Request a cycle:
@@ -172,7 +173,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = inkCatId;
 		cmd.groupsToSet = SMap.create(imageProperty, new PropertyGroupInfo(getCatalogModel().generalPropertyGroup.getId()));
 
@@ -209,7 +210,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = hpPrintersCatId;
 		cmd.groupsToRemove = SMap.create(priceProperty, new PropertyGroupInfo(pricesGroupId));
 
@@ -242,7 +243,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertNotSame(valueToSet, variantProperty.getValues(null, null).get());
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = inkCatId;
 		cmd.valuesToSet = SMap.create(propertyToSet, SMap.create((String)null, valueToSet)); // Remove value for name.
 		
@@ -284,7 +285,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		Assert.assertNotSame(valueToSet, variantProperty.getValues(null, null).get());
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = inkCatId;
 		cmd.valuesToSet = SMap.create(propertyToSet, SMap.create((String)null, valueToSet)); 
 		
@@ -324,7 +325,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.catalogId = TEST_CATALOG_ID;
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.itemId = inkCatId;
 		PropertyInfo propertyOfValueToRemove = getCatalogModel().nameProperty.getPropertyInfo();
 		cmd.valuesToRemove = SMap.create(propertyOfValueToRemove, Collections.singletonList((String)null)); // Remove value for name.

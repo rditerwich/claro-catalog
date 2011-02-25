@@ -6,9 +6,9 @@ import java.util.Collections;
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.GetCategoryTree;
 import claro.catalog.command.items.ItemDetailsCommand;
-import claro.catalog.command.items.ItemType;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.items.StoreItemDetails.Result;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
@@ -95,7 +95,7 @@ public class TaxonomyPage extends Page {
 	private void createNewCategory(final Long parentId) {
 		final StoreItemDetails cmd = new StoreItemDetails();
 		
-		cmd.itemType = ItemType.catagory;
+		cmd.itemType = ItemType.category;
 		cmd.valuesToSet = SMap.create(nameProperty, SMap.create(model.getSelectedLanguage(), (Object)messages.newCategory()));
 		cmd.parentsToSet = Collections.singletonList(parentId);
 		
