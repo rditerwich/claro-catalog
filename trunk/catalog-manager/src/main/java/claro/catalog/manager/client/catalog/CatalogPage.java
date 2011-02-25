@@ -2,7 +2,6 @@ package claro.catalog.manager.client.catalog;
 
 
 import java.util.Collections;
-import java.util.Map.Entry;
 
 import claro.catalog.command.RootDataCommand;
 import claro.catalog.command.items.FindItems;
@@ -10,8 +9,6 @@ import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.items.StoreItemDetails.Result;
 import claro.catalog.data.ItemType;
-import claro.catalog.data.PropertyData;
-import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
@@ -104,7 +101,7 @@ public class CatalogPage extends Page {
 		cmd.language = model.getSelectedLanguage();
 		
 		cmd.filter = productMasterDetail.getFilter();
-		cmd.categoryIds = productMasterDetail.getFilterCategories().getKeys();
+		cmd.categoryIds = productMasterDetail.getFilterCategories();
 		cmd.orderByIds = productMasterDetail.getOrderByIds(); 
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {

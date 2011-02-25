@@ -13,9 +13,8 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
-import claro.catalog.manager.client.webshop.ShopModel;
-import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -89,10 +88,10 @@ abstract public class ProductDetails extends Composite implements Globals {
 						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productname);
 					}});
 					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
-						protected String getAddCategoryTooltip() {
+						protected String getAddSelectionTooltip() {
 							return messages.addCategoryProductDetailsTooltip(productNameBox.getText());  // TODO This is a little dirty??
 						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
+						protected String getRemoveSelectedObjectTooltip(String categoryName) {
 							return messages.removeCategoryProductDetailsTooltip(categoryName);
 						}
 						@Override
@@ -208,7 +207,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		}
 		// Always include categories for new items:
 		if (itemId == null) {
-			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection();
 		}
 		
 		storeItem(cmd);
@@ -233,7 +232,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		cmd.itemId = itemId;
 		cmd.itemType = ItemType.product;
 		
-		cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+		cmd.parentsToSet = categoryPanel.getSelection();
 		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
@@ -254,7 +253,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
 			cmd.itemType = ItemType.product;
-			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection();
 			
 			storeItem(cmd);
 		}

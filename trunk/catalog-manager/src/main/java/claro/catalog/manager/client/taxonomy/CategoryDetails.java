@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Map.Entry;
 
 import claro.catalog.command.items.StoreItemDetails;
-import claro.catalog.command.shop.StoreShop;
 import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -12,8 +11,8 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
+import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -100,13 +99,13 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 						});
 					}}));
 					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
-						protected String getAddCategoryLabel() {
+						protected String getAddToSelectionLabel() {
 							return messages.addParentCategoriesLink();
 						};
-						protected String getAddCategoryTooltip() {
+						protected String getAddSelectionTooltip() {
 							return messages.addCategoryProductDetailsTooltip(categoryNameBox.getText());  // TODO This is a little dirty??
 						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
+						protected String getRemoveSelectedObjectTooltip(String categoryName) {
 							return messages.removeCategoryProductDetailsTooltip(categoryName);
 						}
 						@Override
@@ -260,7 +259,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		}
 		// Always include categories for new items:
 		if (itemId == null) {
-			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection();
 		}
 		
 		storeItem(cmd);
@@ -319,7 +318,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		cmd.itemId = itemId;
 		cmd.itemType = ItemType.category;
 		
-		cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+		cmd.parentsToSet = categoryPanel.getSelection();
 		if (itemId == null) {
 			// Always include name for a new item.
 			addNamePropertyValue(cmd);
@@ -340,7 +339,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			StoreItemDetails cmd = new StoreItemDetails();
 			cmd.itemId = itemId;
 			cmd.itemType = ItemType.category;
-			cmd.parentsToSet = categoryPanel.getSelection().getKeys();
+			cmd.parentsToSet = categoryPanel.getSelection();
 			
 			storeItem(cmd);
 		}

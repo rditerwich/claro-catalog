@@ -107,11 +107,11 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 	}
 	
-	public SMap<Long, SMap<String, String>> getFilterCategories() {
+	public List<Long> getFilterCategories() {
 		if (filterCategories != null) {
 			return filterCategories.getSelection();
 		}
-		return SMap.empty();
+		return null;
 	}
 	
 	public String getFilter() {

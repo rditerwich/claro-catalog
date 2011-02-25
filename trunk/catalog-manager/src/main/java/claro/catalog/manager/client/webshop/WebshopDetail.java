@@ -59,6 +59,7 @@ public class WebshopDetail extends Composite implements Globals {
 	
 
 
+	@SuppressWarnings("unchecked")
 	public WebshopDetail(ShopModel model_) {
 		this.model = model_;
 		initWidget(new VerticalPanel() {{
@@ -132,7 +133,7 @@ public class WebshopDetail extends Composite implements Globals {
 		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getLanguages()));
 		
 		StoreShop command = new StoreShop(model.getShop());
-		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getSelection().getKeys());
+		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getSelection());
 		model.store(command);
 	}
 	
@@ -146,17 +147,6 @@ public class WebshopDetail extends Composite implements Globals {
 		languagesWidget.setData(selectedLanguages);
 	}
 	
-	private String getSelectedLanguages() {
-		StringBuilder result = new StringBuilder();
-		String sep = "";
-		for (String language : languagesWidget.getLanguages()) {
-			result.append(sep); sep = ",";
-			result.append(language);
-		}
-		
-		return result.toString();
-	}
-
 	private String getSelectedDefaultLanguage() {
 		return firstOrNull(defaultLanguageWidget.getLanguages());
 	}

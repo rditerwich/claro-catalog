@@ -743,20 +743,20 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	visibility: visible;
 }
 
-/** Categories component */
-.categoryStyle {
+/** Selection component */
+.selectionStyle {
 	margin-left: 4px;
 }
-.categoryStyle table {
+.selectionStyle table {
 	border-spacing: 0px;
 	margin-right: 6px;
 	float: left;
 }
-.categoryStyle table td {
+.selectionStyle table td {
 	border-collapse: collapse;
 	padding: 0px;
 }
-.categoryStyle a {
+.selectionStyle a {
 	font-size: x-small;
 	text-decoration: none;
 	color: #5A6986;
@@ -766,18 +766,18 @@ table.ee-MasterDetailTable a.gwt-Anchor.categoryname {
 	padding-left: 4px;
 	padding-right : 4px;
 }
-.categoryStyle a:hover {
+.selectionStyle a:hover {
 #	color: #DEE5F2;
 	color: white;
 	background-color: #5A6986;
 }
 
-.categoryStyle a.categoryName {
+.selectionStyle a.selectionDisplayName {
 	border-right: 1px solid black;
 	padding-right: 6px;
 }
 
-.categoryStyle a.categoryAdd {
+.selectionStyle a.selectionAdd {
 	margin-left: 10px;
 }
 

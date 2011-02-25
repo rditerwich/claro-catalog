@@ -369,4 +369,5 @@ public interface I18NCatalog extends Messages {
 	String promotionsLink(String promotionText);
 	String propertyIsMany();
 	String propertyIsSingle();
+	String addToSelectionLink();
 }

@@ -78,10 +78,10 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 					addChangeHandler(changeHandler);
 				}}, messages.matchPropertyHelp());
 				add(messages.selectCategoryLabel(), categoryPanel = new ItemSelectionWidget() {
-						protected String getAddCategoryTooltip() {
+						protected String getAddSelectionTooltip() {
 							return messages.addCategoryProductDetailsTooltip("RUUD");  // TODO This is a little dirty??
 						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
+						protected String getRemoveSelectedObjectTooltip(String categoryName) {
 							return messages.removeCategoryProductDetailsTooltip(categoryName);
 						}
 						@Override

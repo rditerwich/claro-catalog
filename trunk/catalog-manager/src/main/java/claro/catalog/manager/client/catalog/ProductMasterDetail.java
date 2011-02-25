@@ -124,11 +124,11 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		}
 	}
 	
-	public SMap<Long, SMap<String, String>> getFilterCategories() {
+	public List<Long> getFilterCategories() {
 		if (filterCategories != null) {
 			return filterCategories.getSelection();
 		}
-		return SMap.empty();
+		return null;
 	}
 	
 
@@ -192,13 +192,13 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 					setWidget(0, 2, filterCategories = new ItemSelectionWidget(false, ItemType.category, true) {{
 							setData(SMap.<Long, SMap<String, String>>empty(), model.getSelectedLanguage());
 						}
-						protected String getAddCategoryLabel() {
+						protected String getAddToSelectionLabel() {
 							return messages.addCategoriesLink();
 						};
-						protected String getAddCategoryTooltip() {
+						protected String getAddSelectionTooltip() {
 							return messages.addCategoryFilter();
 						}
-						protected String getRemoveCategoryTooltip(String categoryName) {
+						protected String getRemoveSelectedObjectTooltip(String categoryName) {
 							return messages.removeCategoryFilterTooltip(categoryName);
 						}
 						protected void removeCategory(Long categoryId) {
@@ -507,9 +507,9 @@ abstract public class ProductMasterDetail extends CatalogManagerMasterDetail imp
 		if (filterSet) {
 			sep = " and ";
 		}
-		for (Entry<Long, SMap<String, String>> category : filterCategories.getSelection()) {
+		for (Long categoryId : filterCategories.getSelection()) {
 			filterText.append(sep); sep = ", ";
-			filterText.append(category.getValue().tryGet(model.getSelectedLanguage(), null));
+			filterText.append(filterCategories.displayName(categoryId));
 		}
 		if (filterText.length() > 0) {
 			filterLabel.setHTML(messages.filterMessage(filterText.toString())); 
