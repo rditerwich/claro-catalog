@@ -19,7 +19,10 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
@@ -37,9 +40,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	public enum Styles implements Style { clear, valueParent, valueWidget, categoryProperties }
 	private static int NAME_COLUMN = 0;
 	private static int TYPE_COLUMN = 1;
-	private static int GROUP_COLUMN = 2;
-	private static int CLEAR_COLUMN = 3;
-	private static int NR_COLS = 4;
+	private static int ISMANY_COLUMN = 2;
+	private static int GROUP_COLUMN = 3;
+	private static int CLEAR_COLUMN = 4;
+	private static int NR_COLS = 5;
 	private static Comparator<PropertyType> typeComparator = new Comparator<PropertyType> () {
 		public int compare(PropertyType o1, PropertyType o2) {
 			return o1.name().compareToIgnoreCase(o2.name());
@@ -101,11 +105,12 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	 * Called when the value of a property is set.
 	 * @param itemId
 	 * @param propertyInfo
-	 * @param language
 	 */
-	protected abstract void propertyToSet(Long itemId, PropertyInfo propertyInfo, String language);
+	protected abstract void propertyToSet(Long itemId, PropertyInfo propertyInfo);
+	
+	protected abstract void propertyGroupToSet(Long itemId, PropertyInfo propertyInfo, PropertyGroupInfo group);
 
-	protected abstract void propertyToRemove(Long itemId, PropertyInfo propertyInfo, String language);
+	protected abstract void propertyToRemove(Long itemId, PropertyInfo propertyInfo);
 	
 	private void render() {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
@@ -129,7 +134,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 						propetyNameChanged(row, getText());
 					}
 				});
-			}}); // TODO Change listener.
+			}});
 			
 			// type
 			propertyPanel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new ListBox() {{
@@ -142,6 +147,17 @@ abstract public class CategoryProperties extends Composite implements Globals {
 					}
 				});
 			}}); 
+			
+			// ismany
+			propertyPanel.setWidget(j, ISMANY_COLUMN, propertyValueWidgets.propertyIsManyWidget = new ListBox() {{
+				addItem(messages.propertyIsSingle());
+				addItem(messages.propertyIsMany());
+				addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						propertyIsManyChanged(row, getSelectedIndex() == 1);
+					}
+				});
+			}});
 			
 			// groups
 			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox() {{
@@ -177,7 +193,6 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			
 			for (PropertyInfo property : propertyKeys) {
 				PropertyValueWidgets propertyValueWidgets = valueWidgets.get(i);
-				PropertyData propertyData = properties.get(property);
 				
 				// Set name
 				String propertyName = property.labels.tryGet(CatalogManager.getUiLanguage(), null);
@@ -186,6 +201,8 @@ abstract public class CategoryProperties extends Composite implements Globals {
 				// set type
 				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.getType(), typeComparator)); 
 				
+				// set ismany
+				propertyValueWidgets.propertyIsManyWidget.setSelectedIndex(property.isMany?1:0); 
 				
 				// Groups
 				propertyValueWidgets.propertyGroupsWidget.clear();
@@ -224,23 +241,28 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			rowProperty.labels = SMap.empty();
 		}
 		rowProperty.labels = rowProperty.labels.set(model.getSelectedLanguage(), text);
-		propertyToSet(itemId, rowProperty, model.getSelectedLanguage());
+		propertyToSet(itemId, rowProperty);
 	}
 	private void propertyTypeChanged(int row, PropertyType type) {
 		PropertyInfo rowProperty = getRowProperty(row);
 		rowProperty.setType(type);
-		propertyToSet(itemId, rowProperty, model.getSelectedLanguage());
+		propertyToSet(itemId, rowProperty);
+	}
+	private void propertyIsManyChanged(int row, Boolean value) {
+		PropertyInfo rowProperty = getRowProperty(row);
+		rowProperty.isMany = value;
+		propertyToSet(itemId, rowProperty);
 	}
 	private void propertyGroupChanged(int row, String group) {
 		PropertyInfo rowProperty = getRowProperty(row);
 		PropertyGroupInfo groupInfo = values.getKeys().get(row);
 		
-		// TODO
+		propertyGroupToSet(itemId, rowProperty, groupInfo);
 	}
 	
 	private void propertyErased(int row) {
 		PropertyInfo rowProperty = getRowProperty(row);
-		propertyToRemove(itemId, rowProperty, model.getSelectedLanguage());
+		propertyToRemove(itemId, rowProperty);
 	}
 	
 	private PropertyInfo getRowProperty(int row) {
@@ -268,6 +290,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	}
 	
 	private class PropertyValueWidgets {
+		public ListBox propertyIsManyWidget;
 		protected Widget clearValueWidget;
 		public TextBox nameWidget;
 		public ListBox typeWidget;

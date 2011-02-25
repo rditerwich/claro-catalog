@@ -109,12 +109,11 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	 * Called when the value of a property is set.
 	 * @param itemId
 	 * @param propertyInfo
-	 * @param language
 	 * @param value
 	 */
-	protected abstract void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value);
+	protected abstract void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value);
 
-	protected abstract void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language);
+	protected abstract void propertyValueErased(Long itemId, PropertyInfo propertyInfo);
 	
 	private void render() {
 		List<PropertyGroupInfo> propertyGroups = values.getKeys();
@@ -422,11 +421,11 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 
 	private void valueChanged(Widget widget, Object newValue) {
-		propertyValueSet(itemId, propertyByValueWidget.get(widget), model.getSelectedLanguage(), newValue);
+		propertyValueSet(itemId, propertyByValueWidget.get(widget), newValue);
 	}
 	
 	private void clearValue(Widget eraseButton) {
-		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton), model.getSelectedLanguage());
+		propertyValueErased(itemId, propertyByValueWidget.get(eraseButton));
 	}
 	
 	private static class GroupPanelWidgets {

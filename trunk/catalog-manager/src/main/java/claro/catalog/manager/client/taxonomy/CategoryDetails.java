@@ -95,7 +95,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 						StyleUtil.addStyle(this, Styles.categoryname);
 						addChangeHandler(new ChangeHandler() {
 							public void onChange(ChangeEvent event) {
-								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, model.getSelectedLanguage(), categoryNameBox.getText());
+								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, categoryNameBox.getText());
 							}
 						});
 					}}));
@@ -142,20 +142,23 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //				}});
 				
 				add(propertiesComponent = new CategoryProperties() {
-					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo, String language) {
-						CategoryDetails.this.propertySet(itemId, propertyInfo, language);
+					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo) {
+						CategoryDetails.this.propertySet(itemId, propertyInfo);
 					}
-					protected void propertyToRemove(Long itemId, PropertyInfo propertyInfo, String language) {
-						CategoryDetails.this.propertyRemoved(itemId, propertyInfo, language);
+					protected void propertyGroupToSet(Long itemId, PropertyInfo propertyInfo, PropertyGroupInfo group) {
+						CategoryDetails.this.propertyGroupSet(itemId, propertyInfo, group);
+					}
+					protected void propertyToRemove(Long itemId, PropertyInfo propertyInfo) {
+						CategoryDetails.this.propertyRemoved(itemId, propertyInfo);
 					}
 				});	
 			}}));
 			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(true, true) {
-				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
+				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
+					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, value);
 				}
-				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
-					CategoryDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
+				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo) {
+					CategoryDetails.this.propertyValueRemoved(itemId, propertyInfo);
 				}
 			});
 			showTab(0);
@@ -244,12 +247,12 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		storeItem(cmd);
 	}
 	
-	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
 		cmd.itemType = ItemType.catagory;
-		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(language, value));
+		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(model.getSelectedLanguage(), value));
 
 		// Always include name if this is a new item.
 		if (itemId == null && !propertyInfo.equals(nameProperty)) {
@@ -263,7 +266,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		storeItem(cmd);
 	}
 
-	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo) {
 		
 		// Only remove values if the item exists:
 		if (itemId != null) {
@@ -271,13 +274,13 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			cmd.itemId = itemId;
 			cmd.itemType = ItemType.catagory;
 
-			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
+			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(model.getSelectedLanguage()));
 			
 			storeItem(cmd);
 		}
 	}
 	
-	private void propertySet(Long itemId, PropertyInfo propertyInfo, String language) {
+	private void propertySet(Long itemId, PropertyInfo propertyInfo) {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
@@ -287,7 +290,17 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		storeItem(cmd);
 	}
 	
-	private void propertyRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+	private void propertyGroupSet(Long itemId, PropertyInfo propertyInfo, PropertyGroupInfo groupInfo) {
+		StoreItemDetails cmd = new StoreItemDetails();
+		
+		cmd.itemId = itemId;
+		cmd.itemType = ItemType.catagory;
+		cmd.groupsToSet = SMap.create(propertyInfo, groupInfo);
+		
+		storeItem(cmd);
+	}
+	
+	private void propertyRemoved(Long itemId, PropertyInfo propertyInfo) {
 		
 		// Only remove values if the item exists:
 		if (itemId != null) {

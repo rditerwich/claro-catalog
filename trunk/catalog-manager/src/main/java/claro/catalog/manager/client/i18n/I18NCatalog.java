@@ -367,4 +367,6 @@ public interface I18NCatalog extends Messages {
 	String expressDeliveryChargeHelp();
 	String addPromotionLink();
 	String promotionsLink(String promotionText);
+	String propertyIsMany();
+	String propertyIsSingle();
 }

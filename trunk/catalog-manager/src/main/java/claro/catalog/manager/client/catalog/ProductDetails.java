@@ -135,11 +135,11 @@ abstract public class ProductDetails extends Composite implements Globals {
 				}});
 				
 				add(propertyValues = new ItemPropertyValues(false, false) {
-					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
-						ProductDetails.this.propertyValueSet(itemId, propertyInfo, language, value);
+					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
+						ProductDetails.this.propertyValueSet(itemId, propertyInfo, value);
 					}
-					protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo, String language) {
-						ProductDetails.this.propertyValueRemoved(itemId, propertyInfo, language);
+					protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo) {
+						ProductDetails.this.propertyValueRemoved(itemId, propertyInfo);
 					}
 				});		
 			}}));
@@ -195,12 +195,12 @@ abstract public class ProductDetails extends Composite implements Globals {
 		storeItem(cmd);
 	}
 
-	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, String language, Object value) {
+	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
 		StoreItemDetails cmd = new StoreItemDetails();
 		
 		cmd.itemId = itemId;
 		cmd.itemType = ItemType.product;
-		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(language, value));
+		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(model.getSelectedLanguage(), value));
 
 		// Always include name if this is a new item.
 		if (itemId == null && !propertyInfo.equals(nameProperty)) {
@@ -214,7 +214,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		storeItem(cmd);
 	}
 
-	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo, String language) {
+	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo) {
 		
 		// Only remove values if the item exists:
 		if (itemId != null) {
@@ -222,7 +222,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			cmd.itemId = itemId;
 			cmd.itemType = ItemType.product;
 
-			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(language));
+			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(model.getSelectedLanguage()));
 			
 			storeItem(cmd);
 		}
