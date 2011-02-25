@@ -78,15 +78,13 @@ public class WebshopDetail extends Composite implements Globals {
 			add(new FormTable() {{
 				add(messages.nameLabel(), nameTextBox = new TextBox(), messages.shopNameHelp());
 				add(messages.shopUrlPrefixLabel(), urlPrefixTextBox = new TextBox(), messages.urlPrefixHelp());
-				add(messages.defaultlanguageLabel(), defaultLanguageWidget = new LanguagesWidget(false, false) {
-					@Override
-					protected void languagesChanged() {
+				add(messages.defaultlanguageLabel(), defaultLanguageWidget = new LanguagesWidget(false) {
+					protected void selectionChanged() {
 						doStoreShop();
 					}
 				}, messages.defaultLanguageHelp());
-				add(messages.shopLanguagesLabel(), languagesWidget = new LanguagesWidget(false, true) {
-					protected void addLanguage(String language) {
-						super.addLanguage(language);
+				add(messages.shopLanguagesLabel(), languagesWidget = new LanguagesWidget(true) {
+					protected void selectionChanged() {
 						doStoreShop();
 					}
 				}, messages.shopLanguagesHelp());
@@ -114,7 +112,7 @@ public class WebshopDetail extends Composite implements Globals {
 		
 		nameTextBox.setText(model.getShop().getName());
 		urlPrefixTextBox.setText(model.getShop().getUrlPrefix());
-		defaultLanguageWidget.setData(model.getShop().getDefaultLanguage() != null? Collections.singletonList(model.getShop().getDefaultLanguage()) : null); // TODO Actually set default language.
+		defaultLanguageWidget.setSelection(model.getShop().getDefaultLanguage() != null? Collections.singletonList(model.getShop().getDefaultLanguage()) : null); // TODO Actually set default language.
 		setSelectedLanguages(model.getShop().getLanguages()); 
 		List<Category> categories = new ArrayList<Category>();
 		for (Navigation nav : model.getShop().getNavigation()) {
@@ -130,7 +128,7 @@ public class WebshopDetail extends Composite implements Globals {
 		model.getShop().setName(nameTextBox.getText());
 		model.getShop().setUrlPrefix(urlPrefixTextBox.getText());
 		model.getShop().setDefaultLanguage(getSelectedDefaultLanguage());
-		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getLanguages()));
+		model.getShop().setLanguages(CatalogModelUtil.mergeLanguages(languagesWidget.getSelection()));
 		
 		StoreShop command = new StoreShop(model.getShop());
 		command.topLevelCategoryIds = new ArrayList<Long>(categoriesWidget.getSelection());
@@ -144,11 +142,11 @@ public class WebshopDetail extends Composite implements Globals {
 			selectedLanguages.add(language);
 		}
 		
-		languagesWidget.setData(selectedLanguages);
+		languagesWidget.setSelection(selectedLanguages);
 	}
 	
 	private String getSelectedDefaultLanguage() {
-		return firstOrNull(defaultLanguageWidget.getLanguages());
+		return firstOrNull(defaultLanguageWidget.getSelection());
 	}
 }
 

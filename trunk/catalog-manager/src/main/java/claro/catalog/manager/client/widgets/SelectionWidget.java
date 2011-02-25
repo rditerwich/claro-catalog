@@ -21,13 +21,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.util.CollectionUtil;
 
 public abstract class SelectionWidget<T> extends Composite implements Globals {
-	// categoryStyle -> selectionStyle
-	// categoryName -> selectionDisplayName
-	// categoryAdd -> selectionAdd
-	// categoryAddNoSelection -> selectionAddNoSelection
-	enum Styles implements Style { mouseOverStyle, selectionStyle, selectionDisplayName, selectionAddNoSelection, selectionAdd, categoryTree }
+	enum Styles implements Style { mouseOverStyle, selectionStyle, selectionDisplayName, selectionAddNoSelection, selectionAdd }
 	
 	// State
 	private List<T> selection = new ArrayList<T>();
@@ -52,10 +49,14 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 	public void setMultiSelect(boolean multiSelect) {
 		this.multiSelect = multiSelect;
 	}
+	
+	public boolean isMultiSelect() {
+		return multiSelect;
+	}
 
 	public void setSelection(Iterable<T> selection) {
 		this.selection.clear();
-		for (T selectedObject : selection) {
+		for (T selectedObject : CollectionUtil.notNull(selection)) {
 			this.selection.add(selectedObject);
 		}
 		
@@ -66,15 +67,36 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 		return selection;
 	}
 	
+	/**
+	 * Subclasses must override either this method or {@link #getDisplayNames(List, DisplayNamesCallback)}
+	 * @param selectedObject
+	 * @return
+	 */
+	public String displayName(T selectedObject) {
+		return "" + selectedObject;
+	}
+
 	// methods that must be implemented by subclasses:
-	abstract protected void getDisplayNames(List<T> selection, DisplayNamesCallback displayNamesCallback);
 	abstract protected void addSelectionClicked(Widget addWidget);
 
+	// Methods that can be overridden by subclasses.
+	
+	/**
+	 * Subclasses must override either this method or {@link #displayName(T)}
+	 */
+	protected void getDisplayNames(List<T> selection, DisplayNamesCallback displayNamesCallback) {
+		List<String> result = new ArrayList<String>();
+		for (T selectedObject : selection) {
+			result.add(displayName(selectedObject));
+		}
+		
+		displayNamesCallback.displayNames(result);
+	}
+	
 	protected interface DisplayNamesCallback {
 		void displayNames(List<String> names);
 	}
 
-	// Methods that can be overridden by subclasses.
 	protected String getAddToSelectionLabel() {
 		return messages.addToSelectionLink();
 	}

@@ -44,6 +44,7 @@ import easyenterprise.lib.util.SMap;
 // TODO Allow changing of order of categories.
 // TODO Change from categories to generic item selection.
 public class ItemSelectionWidget extends SelectionWidget<Long> {
+	private enum ExtraStyles implements Style { categoryTree }
 	
 	private PopupPanel addCategoryPanel;
 	
@@ -109,7 +110,7 @@ public class ItemSelectionWidget extends SelectionWidget<Long> {
 	protected void addSelectionClicked(Widget addWidget) {
 		if (addCategoryPanel == null) {
 			addCategoryPanel = new PopupPanel(true) {{
-				StyleUtil.addStyle(this, Styles.categoryTree);
+				StyleUtil.addStyle(this, ExtraStyles.categoryTree);
 				setWidget(new ScrollPanel(new Label(messages.loading())) {{
 					setPixelSize(200, 400);
 				}});
