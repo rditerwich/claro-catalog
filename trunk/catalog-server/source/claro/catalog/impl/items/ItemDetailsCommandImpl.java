@@ -5,6 +5,7 @@ import javax.persistence.EntityManager;
 import claro.catalog.CatalogDaoService;
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.items.ItemDetailsCommand;
+import claro.catalog.data.ItemType;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.util.CatalogCommand;
@@ -55,6 +56,9 @@ public class ItemDetailsCommandImpl extends ItemDetailsCommand implements Comman
 		result.propertyData = ItemUtil.propertyData(catalogModel, itemModel, area, channel);
 		if (!itemModel.isCategory()) {
 			result.promotions = ItemUtil.promotions(itemModel, catalogModel, area, channel);
+		}
+		if (itemModel.isProduct()) {
+			result.masterValues = ItemUtil.effectivePropertyValues(itemModel, area, channel);
 		}
 
 		System.out.println("ItemDetailsCommand: " + Printer.print(result, new BasicView("parents", "parentExtentWithSelf", "groups", "propertyData", "promotions")));

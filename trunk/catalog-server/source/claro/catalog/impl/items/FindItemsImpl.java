@@ -1,5 +1,7 @@
 package claro.catalog.impl.items;
 
+import static easyenterprise.lib.util.CollectionUtil.subList;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -25,6 +27,7 @@ import claro.jpa.catalog.Property;
 import claro.jpa.catalog.StagingArea;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
 public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Result> {
@@ -113,7 +116,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		}
 		
 		if (paging.shouldPage()) {
-			return result.subList(paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
+			return subList(result, paging.getPageStart(), paging.getPageStart() + paging.getPageSize());
 		}
 		
 		return result;

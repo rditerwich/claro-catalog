@@ -45,6 +45,8 @@ public class ItemDetailsCommand implements Command<ItemDetailsCommand.Result>{
 		
 		
 		public SMap<PropertyInfo, PropertyData> danglingPropertyData;
+
+		public SMap<PropertyInfo, SMap<String, Object>> masterValues;
 	}
 
 }

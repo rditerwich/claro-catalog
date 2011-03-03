@@ -178,7 +178,9 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			ItemModel categoryModel = catalogModel.getItem(categoryId);
 			validate(categoryModel != null);  // must exist
 			validate(itemId != catalogModel.getRootItem().getItemId()); // Cannot set parents of root
-			validate(!categoryModel.getParentExtent().contains(catalogModel.getItem(itemId))); // No cycles.
+			if (itemId != null) {
+				validate(!categoryModel.getParentExtent().contains(catalogModel.getItem(itemId))); // No cycles.
+			}
 		}
 		
 		// removed properties must must exist and be ours
