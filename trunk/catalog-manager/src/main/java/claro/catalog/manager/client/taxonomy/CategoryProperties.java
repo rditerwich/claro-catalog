@@ -65,10 +65,11 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	private SMap<Long, SMap<String, String>> groups;
 	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
 	private Grid propertyPanel;
-	private TaxonomyModel model;
+	private final TaxonomyModel model;
 	
-	public CategoryProperties() {
+	public CategoryProperties(TaxonomyModel model) {
 		
+		this.model = model;
 		initWidget(new VerticalPanel() {{
 			StyleUtil.addStyle(this, Styles.categoryProperties);
 			add(new Anchor("Define new property...") {{
@@ -80,10 +81,6 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			}}); // TODO i18n.
 			add(propertyPanel = new Grid(0, NR_COLS));
 		}});
-	}
-	
-	public void setModel(TaxonomyModel model) {
-		this.model = model;
 	}
 	
 	/**
@@ -226,7 +223,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	
 	private void createNewProperty() {
 		// TODO Make a more clean implementation
-		PropertyGroupInfo group = values.getFirstKey();
+		PropertyGroupInfo group = values.getKey(0);
 		SMap<PropertyInfo, PropertyData> properties = values.get(group, SMap.<PropertyInfo, PropertyData>empty());
 		PropertyInfo newProperty = new PropertyInfo();
 		newProperty.setType(PropertyType.String); // Type is required.

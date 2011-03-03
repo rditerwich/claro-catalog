@@ -9,7 +9,6 @@ import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
-import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
@@ -35,9 +34,11 @@ import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.SMap;
 
-
-abstract public class ProductDetails extends Composite implements Globals {
+public class ProductDetails extends Composite implements Globals {
 	private enum Styles implements Style { productDetails, imagePrice }
+	
+	private final CatalogPage page;
+	private final CatalogPageModel model;
 	
 	private Header productNameBox;
 	private ItemSelectionWidget categoryPanel;
@@ -46,14 +47,6 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private Anchor promotionAnchor;
 
 	private ItemPropertyValues propertyValues;
-	private SMap<Long, SMap<String, String>> categories;
-	private Long itemId;
-	private PropertyInfo nameProperty;
-	private PropertyInfo variantProperty;
-	private PropertyInfo priceProperty;
-	private PropertyInfo imageProperty;
-	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
-	private CatalogPageModel model;
 	
 	
 	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
@@ -64,17 +57,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 			return null;
 		};
 		protected void yesPressed() {
-			removeProduct(itemId);
+			removeProduct(model.getSelectedProductId());
 		}
 	};
 	
-
-	
-	public ProductDetails(PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
-		this.nameProperty = nameProperty;
-		this.variantProperty = variantProperty;
-		this.priceProperty = priceProperty;
-		this.imageProperty = imageProperty;
+	public ProductDetails(CatalogPage page, final CatalogPageModel model) {
+		this.page = page;
+		this.model = model;
 		
 		initWidget(new ScrollPanel(new FlowPanel() {{
 			StyleUtil.addStyle(this, Styles.productDetails);
@@ -85,7 +74,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 				add(new Grid(1, 3) {{
 					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
 					setWidget(0, 0, productNameBox = new Header(1, "") {{
-						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productname);
+						StyleUtil.addStyle(this, CatalogPage.Styles.productname);
 					}});
 					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
 						protected String getAddSelectionTooltip() {
@@ -97,11 +86,11 @@ abstract public class ProductDetails extends Composite implements Globals {
 						@Override
 						protected void addCategory(Long categoryId, SMap<String, String> labels) {
 							super.addCategory(categoryId, labels);
-							categoryAdded(itemId, categoryId);
+							categoryAdded(model.getSelectedProductId(), categoryId);
 						}
 						protected void removeCategory(Long categoryId) {
 							super.removeCategory(categoryId);
-							categoryRemoved(itemId, categoryId);
+							categoryRemoved(model.getSelectedProductId(), categoryId);
 						}
 					});
 					setWidget(0, 2, new Anchor(messages.removeProductLink()) {{
@@ -115,12 +104,12 @@ abstract public class ProductDetails extends Composite implements Globals {
 				
 				// Image, Price, Promotion
 				
-				add(new HorizontalPanel(){{
+				add(new HorizontalPanel() {{
 					StyleUtil.addStyle(this, Styles.imagePrice);
 					setVerticalAlignment(ALIGN_MIDDLE);
 					add(productImage = new MediaWidget(false, true));
 					add(productPrice = new Label() {{
-						StyleUtil.addStyle(this, ProductMasterDetail.Styles.productprice);
+						StyleUtil.addStyle(this, CatalogPage.Styles.productprice);
 						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
 					}});
 					productImage.setImageSize("125px", "125px");
@@ -133,7 +122,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 					}});
 				}});
 				
-				add(propertyValues = new ItemPropertyValues(false, false) {
+				add(propertyValues = new ItemPropertyValues(model, false, false) {
 					protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
 						ProductDetails.this.propertyValueSet(itemId, propertyInfo, value);
 					}
@@ -148,41 +137,6 @@ abstract public class ProductDetails extends Composite implements Globals {
 			// TODO add a popup panel with dangling properties.
 	}
 	
-	public void setModel(CatalogPageModel m) {
-		this.model = m;
-		propertyValues.setModel(m);
-	}
-	
-	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
-		this.nameProperty = rootProperties.get(RootProperties.NAME);
-		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
-		this.priceProperty = rootProperties.get(RootProperties.PRICE);
-		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
-	}
-	
-	/**
-	 * set the item data and (re)render.
-	 * 
-	 * @param item
-	 * @param values
-	 */
-	public void setItemData(Long itemId, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values) {
-		this.itemId = itemId;
-		this.categories = categories;
-		this.values = values;
-		propertyValues.setItemData(itemId, null, null, values);
-		
-		render();
-	}
-	
-
-	public void resetTabState() {
-		propertyValues.resetTabState();
-	}
-
-
-	
-	abstract protected void storeItem(StoreItemDetails cmd);
 	
 	private void removeProduct(Long itemId) {
 		StoreItemDetails cmd = new StoreItemDetails();
@@ -191,7 +145,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		cmd.itemType = ItemType.product;
 		cmd.remove = true;
 		
-		storeItem(cmd);
+		page.storeItem(cmd);
 	}
 
 	private void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
@@ -202,7 +156,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		cmd.valuesToSet = SMap.create(propertyInfo, SMap.create(model.getSelectedLanguage(), value));
 
 		// Always include name if this is a new item.
-		if (itemId == null && !propertyInfo.equals(nameProperty)) {
+		if (itemId == null && !propertyInfo.equals(model.getNameProperty())) {
 			addNamePropertyValue(cmd);
 		}
 		// Always include categories for new items:
@@ -210,7 +164,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 			cmd.parentsToSet = categoryPanel.getSelection();
 		}
 		
-		storeItem(cmd);
+		page.storeItem(cmd);
 	}
 
 	private void propertyValueRemoved(Long itemId, PropertyInfo propertyInfo) {
@@ -223,7 +177,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 
 			cmd.valuesToRemove = SMap.create(propertyInfo, Collections.singletonList(model.getSelectedLanguage()));
 			
-			storeItem(cmd);
+			page.storeItem(cmd);
 		}
 	}
 	
@@ -238,13 +192,13 @@ abstract public class ProductDetails extends Composite implements Globals {
 			addNamePropertyValue(cmd);
 		}
 		
-		storeItem(cmd);
+		page.storeItem(cmd);
 	}
 
 	private void addNamePropertyValue(StoreItemDetails cmd) {
-		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
-		Object productName = getValue(nameProperty, properties);
-		cmd.valuesToSet = cmd.valuesToSet.add(nameProperty, SMap.create(model.getSelectedLanguage(), productName));
+		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(model.getSelectedProductPropertyValues());
+		Object productName = getValue(model.getNameProperty(), properties);
+		cmd.valuesToSet = cmd.valuesToSet.add(model.getNameProperty(), SMap.create(model.getSelectedLanguage(), productName));
 	}
 	
 	private void categoryRemoved(Long itemId, Long categoryId) {
@@ -255,23 +209,23 @@ abstract public class ProductDetails extends Composite implements Globals {
 			cmd.itemType = ItemType.product;
 			cmd.parentsToSet = categoryPanel.getSelection();
 			
-			storeItem(cmd);
+			page.storeItem(cmd);
 		}
 	}
 	
-	private void render() {
+	void render() {
 		// Make sure we have the root properties:
-		if (nameProperty == null) {
+		if (model.getNameProperty() == null) {
 			return;
 		}
 		
-		if (values == null) {
+		if (model.getSelectedProductPropertyValues() == null) {
 			return;
 		}
 		
-		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(values);
+		SMap<PropertyInfo, PropertyData> properties = stripGroupInfo(model.getSelectedProductPropertyValues());
 
-		final Object productName = getValue(nameProperty, properties);
+		final Object productName = getValue(model.getNameProperty(), properties);
 		productNameBox.setText(productName instanceof String ? productName.toString() : "");
 		
 //		final Object productVariant = getValue(variantProperty, properties);
@@ -280,7 +234,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 //		final Object productNr = getValue(artNoProperty, properties);
 //		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
 		
-		final Object productImageData = getValue(imageProperty, properties);
+		final Object productImageData = getValue(model.getImageProperty(), properties);
 		if (productImageData instanceof MediaValue) {
 			MediaValue productImageMediaValue = (MediaValue) productImageData;
 			
@@ -291,7 +245,7 @@ abstract public class ProductDetails extends Composite implements Globals {
 		}
 		
 		// price
-		final Object price = getValue(priceProperty, properties);
+		final Object price = getValue(model.getPriceProperty(), properties);
 		if (price != null) {
 			// TODO Use locale in the following format??
 			productPrice.setText(MoneyFormatUtil.full((Money)price));
@@ -300,12 +254,15 @@ abstract public class ProductDetails extends Composite implements Globals {
 		}
 
 		// Update categories.
-		categoryPanel.setData(categories, model.getSelectedLanguage());
+		categoryPanel.setData(model.getSelectedProductCategories(), model.getSelectedLanguage());
+		
+		propertyValues.setItemData(model.getSelectedProductId(), model.getSelectedProductCategories(), model.getSelectedParentExtentWithSelf(), model.getSelectedProductPropertyValues());
+		
 		
 		// Update promotions
-		SMap<Long, SMap<String, String>> promotionsForShop = model.getPromotions() != null?model.getPromotions().get(model.getSelectedShop()) : null;
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedShop()) : null;
 		if (promotionsForShop != null) {
-			String promotionText = promotionsForShop.getFirst().tryGet(model.getSelectedLanguage(), null);
+			String promotionText = promotionsForShop.get(0).tryGet(model.getSelectedLanguage(), null);
 			promotionAnchor.setText(messages.promotionsLink(promotionText));
 		} else {
 			promotionAnchor.setText(messages.addPromotionLink());
@@ -341,11 +298,11 @@ abstract public class ProductDetails extends Composite implements Globals {
 	private void doPromotion() {
 		// Goto webshop model and lookup/add promotion
 		
-		SMap<Long, SMap<String, String>> promotionsForShop = model.getPromotions() != null ? model.getPromotions().get(model.getSelectedShop()) : null;
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedShop()) : null;
 		if (promotionsForShop != null) {
-			model.getShopModel().showPromotion(itemId);
+			model.getShopModel().showPromotion(model.getSelectedProductId());
 		} else {
-			model.getShopModel().addNewPromotion(model.getSelectedShop(), itemId);
+			model.getShopModel().addNewPromotion(model.getSelectedShop(),model.getSelectedProductId());
 		}
 	}
 	

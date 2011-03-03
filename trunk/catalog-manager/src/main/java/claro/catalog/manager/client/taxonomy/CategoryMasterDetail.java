@@ -184,13 +184,12 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	private void createDetailPanel() {
 		setDetail(new LayoutPanel() {{
-			add(details = new CategoryDetails(nameProperty, variantProperty, priceProperty, imageProperty) {
+			add(details = new CategoryDetails(model, nameProperty, variantProperty, priceProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);
 				}
 			});
 		}});
-		details.setModel(model);
 	}
 	
 	
@@ -373,7 +372,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		details.setItemData(categoryId, groups, parentExtentWithSelf, parents, properties);
 		
 		if (oldRow != row) {
-			details.resetTabState();
+//			details.resetTabState();
 		}
 	}
 	

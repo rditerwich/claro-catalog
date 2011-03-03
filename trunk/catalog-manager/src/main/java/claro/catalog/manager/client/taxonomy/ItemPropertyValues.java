@@ -53,22 +53,22 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 //	private static int SOURCE_COLUMN = 3;
 	private static int NR_FIXED_COLS = 2;
 
+	private final ItemPageModel model;
+	private final boolean showPropertySources;
+	private final boolean canReassignGroups;
+	private final int nrCols;
+
 	private TabPanel propertyGroupPanel;
 	private List<GroupPanelWidgets> groupPanels = new ArrayList<GroupPanelWidgets>();
 	private Map<Widget, PropertyInfo> propertyByValueWidget = new HashMap<Widget, PropertyInfo>();
-	
-	
 	
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values;
 	private Long itemId;
 	private SMap<Long, SMap<String, String>> groups;
 	private SMap<Long, SMap<String, String>> parentExtentWithSelf;
-	private final boolean showPropertySources;
-	private final boolean canReassignGroups;
-	private ItemPageModel model;
-	private final int nrCols;
 	
-	public ItemPropertyValues(final boolean canReassignGroups, boolean showPropertySources) {
+	public ItemPropertyValues(final ItemPageModel model, final boolean canReassignGroups, boolean showPropertySources) {
+		this.model = model;
 		this.canReassignGroups = canReassignGroups;
 		this.showPropertySources = showPropertySources;
 
@@ -77,11 +77,6 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		propertyGroupPanel = new TabPanel();
 		StyleUtil.addStyle(propertyGroupPanel, Styles.itemPropertyValues);
 		initWidget(propertyGroupPanel);
-	}
-	
-
-	public void setModel(ItemPageModel m) {
-		this.model = m;
 	}
 	
 	/**
@@ -99,14 +94,6 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		this.values = values;
 		render();
 	}
-	
-
-	public void resetTabState() {
-//		if (propertyGroupPanel != null && propertyGroupPanel.getWidgetCount() > 0) {
-//			propertyGroupPanel.selectTab(0);
-//		}
-	}
-
 	
 	/**
 	 * Called when the value of a property is set.

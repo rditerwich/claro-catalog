@@ -75,7 +75,8 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	
 
 	
-	public CategoryDetails( PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
+	public CategoryDetails(final TaxonomyModel model, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
+		this.model = model;
 		this.nameProperty = nameProperty;
 		this.variantProperty = variantProperty;
 		this.priceProperty = priceProperty;
@@ -140,7 +141,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 //					productImage.setImageSize("125px", "125px");
 //				}});
 				
-				add(propertiesComponent = new CategoryProperties() {
+				add(propertiesComponent = new CategoryProperties(model) {
 					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo) {
 						CategoryDetails.this.propertySet(itemId, propertyInfo);
 					}
@@ -151,8 +152,9 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 						CategoryDetails.this.propertyRemoved(itemId, propertyInfo);
 					}
 				});	
+
 			}}));
-			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(true, true) {
+			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(model, true, true) {
 				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
 					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, value);
 				}
@@ -166,12 +168,6 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		}});
 			
 			// TODO add a popup panel with dangling properties.
-	}
-	
-	public void setModel(TaxonomyModel model) {
-		this.model = model;
-		propertiesComponent.setModel(model);
-		inheritedPropertyValuesComponent.setModel(model);
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
@@ -204,13 +200,6 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 		
 		render();	
 	}
-	
-
-	public void resetTabState() {
-		pullups.hideTab();
-		inheritedPropertyValuesComponent.resetTabState();
-	}
-
 
 	public void onResize() {
 		pullups.onResize();
