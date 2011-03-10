@@ -12,11 +12,15 @@ import com.google.common.base.Strings;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import easyenterprise.lib.gwt.client.StyleUtil;
+import easyenterprise.lib.gwt.client.widgets.EEHoverCorners;
+import easyenterprise.lib.gwt.client.widgets.EEPagingButton;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail.IsHTMLTable;
 import easyenterprise.lib.gwt.client.widgets.MoneyFormatUtil;
 import easyenterprise.lib.gwt.client.widgets.TableWithObjects;
@@ -36,15 +40,20 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 	protected HTML label;
 	private TableWithObjects<RowWidgets> table;
 
-	public CatalogPageMaster(CatalogPage page, CatalogPageModel model) {
+	public CatalogPageMaster(CatalogPage page, final CatalogPageModel model) {
 		this.page = page;
 		this.model = model;
 		add(label = new HTML(DEBUG_ID_PREFIX));
-		add(table = new TableWithObjects<CatalogPageMaster.RowWidgets>() {{
-			resizeColumns(NR_COLS);
-			getColumnFormatter().getElement(PRODUCT_COL).getStyle().setProperty("textAlign", "left");
-			setHeaderText(0, 1, messages.product());
-			setHeaderText(0, 2, messages.price());
+		
+		add(new EEHoverCorners() {{
+			setLeft(new EEPagingButton.PreviousNext(model.getProductData(), new Image(images.prevPage()), new Image(images.nextPage())));
+			setRight(new EEPagingButton.PreviousNext(model.getProductData(), new Image(images.prevPage()), new Image(images.nextPage())));
+			add(table = new TableWithObjects<CatalogPageMaster.RowWidgets>() {{
+				resizeColumns(NR_COLS);
+				getColumnFormatter().getElement(PRODUCT_COL).getStyle().setProperty("textAlign", "left");
+				setHeaderText(0, 1, messages.product());
+				setHeaderText(0, 2, messages.price());
+			}});
 		}});
 	}
 	

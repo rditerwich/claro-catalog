@@ -15,11 +15,22 @@ import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
 
+import easyenterprise.lib.gwt.client.PagedData;
+import easyenterprise.lib.gwt.client.PagedData.Listener;
 import easyenterprise.lib.util.SMap;
 
 public abstract class CatalogPageModel extends ItemPageModel implements Globals {
 
 	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
+	
+	private PagedData<Object> productData = new PagedData<Object>(10, new Listener() {
+
+		@Override
+		public void dataChanged() {
+			// TODO Auto-generated method stub
+			
+		}
+	});
 	
 	private Long rootCategory;
 	private PropertyInfo nameProperty;
@@ -87,6 +98,10 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 	
 	public void setProducts(SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products) {
 		this.products = products;
+	}
+	
+	public PagedData<Object> getProductData() {
+		return productData;
 	}
 
 	public Long getRootCategory() {

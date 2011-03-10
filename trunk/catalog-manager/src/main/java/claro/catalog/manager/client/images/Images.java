@@ -64,4 +64,10 @@ public interface Images extends ClientBundle {
 
   @Source("spinner.gif")
   ImageResource spinner();
+  
+  @Source("prev.png")
+  ImageResource prevPage();
+  
+  @Source("next.png")
+  ImageResource nextPage();
 }
