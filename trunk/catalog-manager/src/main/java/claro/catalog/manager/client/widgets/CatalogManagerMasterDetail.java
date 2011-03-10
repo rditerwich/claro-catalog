@@ -41,7 +41,7 @@ public class CatalogManagerMasterDetail extends MasterDetail implements Globals 
 	
 	@Override
 	protected HasWidgets createMasterWrapper(LayoutPanel parent) {
-		Panel result = new RoundedPanel(RoundedPanel.ALL, 4) {{
+		Panel result = new RoundedPanelAccess(RoundedPanel.ALL, 4) {{
 			setBorderColor("white");
 		}};
 		parent.add(result);

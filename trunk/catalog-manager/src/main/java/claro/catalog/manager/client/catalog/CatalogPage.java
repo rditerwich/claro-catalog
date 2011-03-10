@@ -26,17 +26,29 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
 import easyenterprise.lib.command.gwt.GwtCommandFacade;
+import easyenterprise.lib.gwt.client.PagedData;
+import easyenterprise.lib.gwt.client.PagedData.Listener;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
+import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.Paging;
 import easyenterprise.lib.util.SMap;
 
-public class CatalogPage extends Page {
+public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap<PropertyInfo, SMap<String, Object>>> {
 
 	public static enum Styles implements Style { productMasterDetail, productprice, productname, product, productTD, productpanel }
 
+	private PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> productData = new PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>>(20, this, new Listener() {
+		public void dataChanged() {
+			render();
+		}
+	});
+	
+
 	private CatalogPageModel model = new CatalogPageModel() {
-		@Override
+		public PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData() {
+			return productData;
+		}
 		public ShopModel getShopModel() {
 			return shopModel;
 		}
@@ -70,10 +82,15 @@ public class CatalogPage extends Page {
 			add(productMasterDetail = new CatalogManagerMasterDetail(150) {{
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {
-						updateProductSelection(model.getProducts().getKey(getCurrentRow()));
+						updateProductSelection(model.getProductData().getKey(getCurrentRow()));
 					}
 				});
-			}});
+			}
+			public void onResize() {
+				super.onResize();
+				render();
+			};
+			});
 		}});
 		
 		ribbon = new CatalogRibbon(this, model);
@@ -90,14 +107,18 @@ public class CatalogPage extends Page {
 	public void render() {
 		ribbon.render();
 //		if (ribbon.filterRibbon.isCurrent()) {
-			productMasterDetail.setMaster(productsMaster);
-			productMasterDetail.setDetail(productDetails);
-			productsMaster.render();
-			productDetails.render();
+		productMasterDetail.setMaster(productsMaster);
+		productMasterDetail.setDetail(productDetails);
+		productsMaster.render();
+		productDetails.render();
 //		}
 	}
 	
 	public void updateProductList() {
+		productData.flush();
+	}
+	
+	public void fetchData(Paging page, final PagedData.Callback<Long, SMap<PropertyInfo, SMap<String, Object>>> callback) {
 		FindItems cmd = new FindItems();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.resultType = ItemType.product;
@@ -108,13 +129,13 @@ public class CatalogPage extends Page {
 		cmd.filter = model.getFilterString();
 		cmd.categoryIds = model.getFilterCategories().getKeys();
 		cmd.orderByIds = model.getOrderByIds(); 
-		cmd.paging = Paging.get(0, 20);
+		cmd.paging = page;
 
 		GwtCommandFacade.executeWithRetry(cmd, 3, new StatusCallback<FindItems.Result>(messages.loadingProducts()) {
 			public void onSuccess(FindItems.Result result) {
+				// TODO Compare with remembered command!!
 				super.onSuccess(result);
-				model.setProducts(result.items);
-				render();
+				callback.dataFetched(CollectionUtil.asList(result.items));
 			}
 		});
 	}
@@ -130,7 +151,7 @@ public class CatalogPage extends Page {
 				model.setRootCategory(result.rootCategory);
 				model.setRootProperties(result.rootProperties);
 				updateProductList();
-				render();
+//				render();
 			}
 		});
 	}

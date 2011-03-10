@@ -16,22 +16,10 @@ import claro.jpa.catalog.OutputChannel;
 import com.google.common.base.Objects;
 
 import easyenterprise.lib.gwt.client.PagedData;
-import easyenterprise.lib.gwt.client.PagedData.Listener;
 import easyenterprise.lib.util.SMap;
 
 public abstract class CatalogPageModel extends ItemPageModel implements Globals {
 
-	private SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products = SMap.empty();
-	
-	private PagedData<Object> productData = new PagedData<Object>(10, new Listener() {
-
-		@Override
-		public void dataChanged() {
-			// TODO Auto-generated method stub
-			
-		}
-	});
-	
 	private Long rootCategory;
 	private PropertyInfo nameProperty;
 	private PropertyInfo variantProperty;
@@ -83,25 +71,11 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 			this.selectedProductPromotions = promotions;
 			this.selectedParentExtentWithSelf = parentExtentWithSelf;
 		}
-		if (products.get(productId) != null) {
-			products = products.set(productId, masterValues);
-		}
+		getProductData().set(productId, masterValues);
 	}
 	
 	public void removeProduct(Long productId) {
-		products = products.removeKey(productId);
-	}
-	
-	public SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> getProducts() {
-		return products;
-	}
-	
-	public void setProducts(SMap<Long, SMap<PropertyInfo, SMap<String, Object>>> products) {
-		this.products = products;
-	}
-	
-	public PagedData<Object> getProductData() {
-		return productData;
+		getProductData().remove(productId);
 	}
 
 	public Long getRootCategory() {
@@ -171,10 +145,6 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 		this.filterCategories = filterCategories;
 	}
 	
-	public int indexOfProduct(Long productId) {
-		return products.indexOf(productId);
-	}
-
 	public boolean isChanged(Long productId) {
 		return changedProducts.contains(productId);
 	}
@@ -185,6 +155,9 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 		}
 		return Collections.emptyList();
 	}
+	
+	
+	public abstract PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData();
 	
 	public abstract ShopModel getShopModel();
 }

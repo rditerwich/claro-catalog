@@ -7,16 +7,18 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.catalog.manager.client.widgets.RoundedPanelAccess;
 
 import com.google.common.base.Strings;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.EEHoverCorners;
@@ -67,59 +69,90 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		updateLabel();
 		
 		int fromRows = table.getRowCount();
-		table.resizeRows(model.getProducts().size());
-		
-		// Create new Rows
-		for (int row = fromRows; row < model.getProducts().size(); row++) {
-			
-			
-			final RowWidgets rowWidgets = new RowWidgets();
-			table.setObject(row, rowWidgets);
-			
-			// Image
-			table.setWidget(row, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false, false));
-			
-			// Product
-			table.setWidget(row, PRODUCT_COL, new VerticalPanel() {{
-				StyleUtil.addStyle(this, CatalogPage.Styles.product);
-				// .title -> name
-				add(rowWidgets.productNameLabel = new Anchor() {{
-					StyleUtil.addStyle(this, CatalogPage.Styles.productname);
-				}});
-				// .subtitle -> variant
-				add(rowWidgets.productVariantLabel = new InlineLabel() {{
-					StyleUtil.addStyle(this, CatalogManager.Styles.productvariant);
-				}});
-				
-				// .body -> artnr
-				add(rowWidgets.productNrLabel = new InlineLabel() {{
-				}});
-				// .body -> description
-				add(rowWidgets.productDescriptionLabel = new InlineLabel() {{
-				}});
-			}});
-			table.getWidget(row, PRODUCT_COL).getElement().getParentElement().addClassName(CatalogPage.Styles.productTD.toString());
-			// Price
-			table.setWidget(row, PRICE_COL, rowWidgets.priceLabel = new Label() {{
-				StyleUtil.addStyle(this, CatalogPage.Styles.productprice);
-			}});
-		}
-		
+//		table.resizeRows(model.getProducts().size());
 
+		boolean fits = true;
+		int bufferSize = model.getProductData().getBufferSize();
+		for (int i = 0; i < bufferSize; i++) {
+			int row = i;
+			Entry<Long, SMap<PropertyInfo, SMap<String, Object>>> product = model.getProductData().getEntry(i);
+
+			// Only new rows need to be created.
+			if (i >= fromRows) {
+				table.resizeRows(i + 1);
+			
+				final RowWidgets rowWidgets = new RowWidgets();
+				table.setObject(row, rowWidgets);
+				
+				// Image
+				table.setWidget(row, IMAGE_COL, rowWidgets.imageWidget = new MediaWidget(false, false));
+				
+				// Product
+				table.setWidget(row, PRODUCT_COL, new VerticalPanel() {{
+					StyleUtil.addStyle(this, CatalogPage.Styles.product);
+					// .title -> name
+					add(rowWidgets.productNameLabel = new Anchor() {{
+						StyleUtil.addStyle(this, CatalogPage.Styles.productname);
+					}});
+					// .subtitle -> variant
+					add(rowWidgets.productVariantLabel = new InlineLabel() {{
+						StyleUtil.addStyle(this, CatalogManager.Styles.productvariant);
+					}});
+					
+					// .body -> artnr
+					add(rowWidgets.productNrLabel = new InlineLabel() {{
+					}});
+					// .body -> description
+					add(rowWidgets.productDescriptionLabel = new InlineLabel() {{
+					}});
+				}});
+				table.getWidget(row, PRODUCT_COL).getElement().getParentElement().addClassName(CatalogPage.Styles.productTD.toString());
+				// Price
+				table.setWidget(row, PRICE_COL, rowWidgets.priceLabel = new Label() {{
+					StyleUtil.addStyle(this, CatalogPage.Styles.productprice);
+				}});
+			
+			}
 		// (Re) bind widgets:
 		
-		
-		int i = 0;
-		for (Entry<Long, SMap<PropertyInfo, SMap<String, Object>>> product : model.getProducts()) {
-
 			render(i, product.getKey(), product.getValue());
 			
-			i++;
+			if (!rowFits(i)) {
+				// Remove from i
+				table.resizeRows(i);
+				model.getProductData().setSize(i);
+				fits = false;
+				break;
+			}
 		}
 		
-//		masterChanged();
+		if (fits) {
+			table.resizeRows(bufferSize);
+			
+			// Everything fits, so try to get more...
+			
+			model.getProductData().requestMore();
+		}
 	}
 	
+
+	private boolean rowFits(int i) {
+		Widget tableParent = getParent().getParent();
+		
+//		System.out.println("  MasterParentParent bottom is " + tableParent.getElement().getAbsoluteBottom());
+//		System.out.println("  MasterParent bottom is " + getParent().getElement().getAbsoluteBottom());
+//		System.out.println("  MasterParent lastdiv bottom is " + ((RoundedPanelAccess)getParent()).getAbsoluteBottom());
+//		System.out.println("  MasterTable bottom is " + table.getElement().getAbsoluteBottom());
+		
+		Element tr = table.getRowFormatter().getElement(i);
+		int tableBottomSize = ((RoundedPanelAccess)getParent()).getAbsoluteBottom() - table.getElement().getAbsoluteBottom();
+//		System.out.println("  row i: " + i  + " absBottom: " + tr.getAbsoluteBottom() + " bottom: " + tableBottomSize);
+		if (tr.getAbsoluteBottom() > tableParent.getElement().getAbsoluteBottom() - tableBottomSize) {
+			return false;
+		}
+
+		return true;
+	}
 
 	private void render(int row, Long productId, SMap<PropertyInfo, SMap<String, Object>> properties) {
 		RowWidgets rowWidgets = table.getObject(row);
@@ -168,7 +201,7 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 	private void updateLabel() {
 		boolean show = false;
 		StringBuilder filterText = new StringBuilder();
-		if (model.getProducts().size() == 0) {
+		if (model.getProductData().getBufferSize() == 0) {
 			filterText.append("No products found");
 			show = true;
 		} else {

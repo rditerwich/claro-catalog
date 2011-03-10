@@ -513,6 +513,7 @@ td.ee-FormTableHelp {
 /** catalogpage styles */
 
 .productMasterDetail .cbg-RPContainer { background-color: white; }
+.productMasterDetail table.ee-MasterDetailMaster { width: 100%; }
 .productMasterDetail table.ee-MasterDetailTable { width: 100%; }
 .productMasterDetail table.ee-MasterDetailTable tr.itemRowChanged td { font-style: italic; }
 .productMasterDetail table.ee-MasterDetailTable table.product { width: 100%; cursor: pointer;}
