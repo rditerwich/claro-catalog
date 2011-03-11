@@ -1,4 +1,4 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.test;
 
 import static easyenterprise.lib.gwt.client.StyleUtil.createStyle;
 
@@ -7,6 +7,9 @@ import java.util.List;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
+import claro.catalog.manager.client.CatalogManager;
+import claro.catalog.manager.client.Page;
+import claro.catalog.manager.client.CatalogManager.Styles;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 
 import com.google.gwt.event.dom.client.ClickEvent;

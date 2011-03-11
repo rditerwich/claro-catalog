@@ -1,4 +1,6 @@
-package claro.catalog.manager.client;
+package claro.catalog.manager.client.test;
+
+import claro.catalog.manager.client.Page;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.HorizontalPanel;
