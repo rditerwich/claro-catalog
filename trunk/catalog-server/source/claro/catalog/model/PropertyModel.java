@@ -20,6 +20,7 @@ import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.media.MediaContent;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
@@ -133,7 +134,7 @@ public abstract class PropertyModel {
 					setTypedValue(propertyValue, value);
 					
 					// Item has changed:
-					item.invalidateChildExtent(true);
+					item.getCatalog().invalidateItemAndChildExtent(item);
 				}
 			} else {
 				
@@ -154,7 +155,7 @@ public abstract class PropertyModel {
 				item.catalog.dao.getEntityManager().persist(propertyValue);
 				
 				// Item has changed:
-				item.invalidateChildExtent(true);
+				item.getCatalog().invalidateItemAndChildExtent(item);
 			}
 		}
 	}
@@ -169,7 +170,7 @@ public abstract class PropertyModel {
 			if (propertyValue != null) {
 				item.catalog.dao.removePropertyValue(propertyValue);
 				// Item has changed:
-				item.invalidateChildExtent(true);
+				item.getCatalog().invalidateItemAndChildExtent(item);
 			}
 		}
 	}
@@ -208,7 +209,7 @@ public abstract class PropertyModel {
 				langValues = SMap.empty();
 				
 				// calculate effective value for each output channel, language combination
-				EffectiveValueHelper helper = new EffectiveValueHelper(stagingArea, propertyValues);
+				EffectiveValueHelper helper = new EffectiveValueHelper(item.catalog, stagingArea, propertyValues);
 				for (String language : item.catalog.getAllLanguages()) {
 
 					// find best value in this item
@@ -277,20 +278,25 @@ public abstract class PropertyModel {
 		}
 	};
 	
-	static void setTypedValue(PropertyValue propertyValue, Object value) {
+	void setTypedValue(PropertyValue propertyValue, Object value) {
+		setTypedValue(item.catalog, propertyValue, value);
+	}
+	
+	public static void setTypedValue(CatalogModel catalog, PropertyValue propertyValue, Object value) {
 		switch(propertyValue.getProperty().getType()) {
 		case Media: 
+			if (value == null) value = MediaValue.empty;
 			if (value instanceof MediaValue) {
 				MediaValue mediaValue = (MediaValue) value;
-				propertyValue.setMimeType(mediaValue.mimeType);
-				propertyValue.setStringValue(mediaValue.filename);
-				propertyValue.setMediaValue(mediaValue.content);
-			} else if (value == null) {
-				propertyValue.setMimeType(null);
-				propertyValue.setStringValue(null);
-				propertyValue.setMediaValue(null);
-			}
-			else {
+				if (mediaValue.isEmpty()) {
+					propertyValue.setMediaValue(null);
+					propertyValue.setStringValue(null);
+				} else {
+					MediaContent mediaContent = catalog.dao.findMediaContentById(mediaValue.mediaContentId);
+					propertyValue.setMediaValue(mediaContent);
+					propertyValue.setStringValue(mediaValue.name);
+				}
+			} else {
 				throw new IllegalArgumentException("Property " + propertyValue.getProperty() + " can only be set using a MediaValue");
 			}
 			break;
@@ -321,9 +327,17 @@ public abstract class PropertyModel {
 
 	
 	// TODO map all non-string values
-	static Object getTypedValue(PropertyValue value) {
+	Object getTypedValue(PropertyValue value) {
+		return getTypedValue(item.catalog, value);
+	}
+	
+	static Object getTypedValue(CatalogModel catalog, PropertyValue value) {
 		switch (value.getProperty().getType()) {
-		case Media: return MediaValue.create(value.getId(), value.getMimeType(), value.getStringValue(), value.getMediaValue());
+		case Media: 
+			if (value.getMediaValue() != null) {
+				return MediaValue.create(value.getMediaValue().getId(), value.getMediaValue().getMimeType(), value.getStringValue());
+			}
+			return MediaValue.empty;
 		case Money: return new Money(value.getMoneyValue(), value.getMoneyCurrency());
 		case Boolean: return value.getBooleanValue();
 		case Enum: return value.getEnumValue();

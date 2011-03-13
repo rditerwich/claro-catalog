@@ -14,6 +14,7 @@ path primitive=/packages:Metaphor/packages:PIM/packages:Domain/types
 path catalog=/packages:Claro/packages:Domain/packages:Catalog/types
 path shop=/packages:Claro/packages:Domain/packages:Shop/types
 path importing=/packages:Claro/packages:Domain/packages:Importing/types
+path media=/packages:Claro/packages:Domain/packages:Media/types
 
 Package {
     name = Catalog
@@ -63,6 +64,14 @@ Package {
                     upper = {}
                     isComposite = true
                     opposite = catalog:PropertyGroup/attributes:catalog
+                }
+                Attribute {
+                    name = media
+                    type = media:Media
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = media:Media/attributes:catalog
                 }
             }
         }
@@ -436,25 +445,13 @@ Package {
                  */
                 Attribute {
                     name = mediaValue
-                    type = primitive:Blob
+                    type = media:MediaContent
                     lower = 0
                 }
                 
                 Attribute {
                     name = itemValue
                     type = catalog:Item
-                    lower = 0
-                }
-                
-                
-                /**
-                 * Used when property.type == Media.
-                 * Stored as ISO 4217 currency code.
-                 * See http://en.wikipedia.org/wiki/Mime_type.
-                 */
-                Attribute {
-                    name = mimeType
-                    type = primitive:String
                     lower = 0
                 }
                 

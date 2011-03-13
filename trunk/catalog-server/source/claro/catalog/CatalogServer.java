@@ -51,8 +51,6 @@ public class CatalogServer implements CommandExecutor {
 	public static FileItem getUploadedFile(String fieldName) {
 		HttpServletRequest request = HttpRequestService.getRequest();
 		if (request != null) {
-			System.out.println("****************************************");
-		System.out.println("SESSION 2: " + request.getSession());
 			return UploadServlet.findItemByFieldName(UploadServlet.getSessionFileItems(request), fieldName);
 		}
 		else 
@@ -75,6 +73,10 @@ public class CatalogServer implements CommandExecutor {
 			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
 			script = new DBScript(Catalog.class.getResourceAsStream("/UpdateSchema.sql"));
 //			script.execute(em);
+			script = new DBScript(
+				"CREATE INDEX propertyvalue_by_id on catalog.propertyvalue (id);" +
+				"CREATE INDEX propertyvalue_by_item_id on catalog.propertyvalue (item_id);");
+			script.execute(em);
 		} catch (Throwable e) {
 			throw new SQLException("Couldn't create catalog schema. Did you forget to create the catalog database?", e);
 		} finally {

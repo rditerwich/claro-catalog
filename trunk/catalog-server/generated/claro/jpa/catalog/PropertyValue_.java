@@ -5,11 +5,12 @@ import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.Source;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.media.MediaContent;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-25T10:37:21")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-03-11T13:19:18")
 @StaticMetamodel(PropertyValue.class)
 public class PropertyValue_ { 
 
@@ -24,11 +25,10 @@ public class PropertyValue_ {
     public static volatile SingularAttribute<PropertyValue, Item> item;
     public static volatile SingularAttribute<PropertyValue, Integer> integerValue;
     public static volatile SingularAttribute<PropertyValue, String> language;
+    public static volatile SingularAttribute<PropertyValue, MediaContent> mediaValue;
     public static volatile SingularAttribute<PropertyValue, Integer> enumValue;
-    public static volatile SingularAttribute<PropertyValue, byte[]> mediaValue;
     public static volatile SingularAttribute<PropertyValue, StagingArea> stagingArea;
     public static volatile SingularAttribute<PropertyValue, String> moneyCurrency;
-    public static volatile SingularAttribute<PropertyValue, String> mimeType;
     public static volatile SingularAttribute<PropertyValue, Double> realValue;
 
 }

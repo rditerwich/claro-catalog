@@ -6,6 +6,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
+import claro.jpa.media.Media;
 
 @SuppressWarnings("serial")
 public class Catalog implements Serializable {
@@ -17,6 +18,7 @@ public class Catalog implements Serializable {
     private List<Template> templates;
     private String languages = "";
     private List<PropertyGroup> propertyGroups;
+    private List<Media> media;
 
     public Long getId() {
         return id;
@@ -95,6 +97,17 @@ public class Catalog implements Serializable {
 
     public void setPropertyGroups(List<PropertyGroup> value) {
         this.propertyGroups = value;
+    }
+
+    public List<Media> getMedia() {
+        if (media == null) {
+            media = new ArrayList<Media>();
+        }
+        return media;
+    }
+
+    public void setMedia(List<Media> value) {
+        this.media = value;
     }
 
     @Override

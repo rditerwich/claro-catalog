@@ -1,13 +1,10 @@
 package claro.catalog.impl;
 
-import java.util.Locale;
-
 import claro.catalog.CatalogModelService;
 import claro.catalog.command.FlushCatalogModel;
 import claro.catalog.model.CatalogModel;
 import easyenterprise.lib.command.CommandException;
 import easyenterprise.lib.command.CommandImpl;
-import easyenterprise.lib.util.SMap;
 
 public class FlushCatalogModelImpl extends FlushCatalogModel implements CommandImpl<FlushCatalogModel.Result>{
 
@@ -18,7 +15,8 @@ public class FlushCatalogModelImpl extends FlushCatalogModel implements CommandI
 		checkValid();
 		
 		CatalogModel catalogModel = CatalogModelService.getCatalogModel(catalogId);
-		catalogModel.flushCache(true);
+		catalogModel.invalidateAllItems();
+		catalogModel.flush();
 		
 		Result result = new Result();
 		return result;

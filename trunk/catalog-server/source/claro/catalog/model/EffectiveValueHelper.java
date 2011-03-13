@@ -16,14 +16,15 @@ import claro.jpa.catalog.StagingArea;
 @SuppressWarnings("serial")
 class EffectiveValueHelper extends TreeMap<Source, List<PropertyValue>> {
 	
-	private static final Object undefined = new Object() {
-		
-	};
+	private static final Object undefined = new Object() {};
 
 	Set<String> languages = new HashSet<String>();
+
+	private final CatalogModel catalog;
 	
-	public EffectiveValueHelper(StagingArea stagingArea, Iterable<PropertyValue> propertyValues) {
+	public EffectiveValueHelper(CatalogModel catalog, StagingArea stagingArea, Iterable<PropertyValue> propertyValues) {
 		super(SourceComparator.instance);
+		this.catalog = catalog;
 		for (PropertyValue value : propertyValues) {
 			languages.add(value.getLanguage());
 			if (equal(stagingArea, value.getStagingArea())) {
@@ -66,7 +67,7 @@ class EffectiveValueHelper extends TreeMap<Source, List<PropertyValue>> {
 		for (List<PropertyValue> importValues : values()) {
 			for (PropertyValue importValue : importValues) {
 				if (equal(outputChannel, importValue.getOutputChannel()) && equal(language, importValue.getLanguage())) {
-					return PropertyModel.getTypedValue(importValue);
+					return PropertyModel.getTypedValue(catalog, importValue);
 				}
 			}
 		}

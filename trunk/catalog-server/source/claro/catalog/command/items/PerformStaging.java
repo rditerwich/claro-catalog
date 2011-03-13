@@ -15,6 +15,11 @@ public class PerformStaging implements Command<PerformStaging.Result> {
 	public Long catalogId;
 
 	/**
+	 * When null, the entire catalog is published.
+	 */
+	public Long outputChannelId;
+	
+	/**
 	 * When null, the no-staging values will be copied.
 	 */
 	public String fromStagingName;

@@ -1,7 +1,9 @@
 package claro.catalog.impl.items;
 
+import static com.google.common.base.Objects.equal;
 import static easyenterprise.lib.command.CommandValidationException.validate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -13,6 +15,8 @@ import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
+import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.catalog.StagingStatus;
 import easyenterprise.lib.command.CommandException;
@@ -44,13 +48,17 @@ public class PerformStagingImpl extends PerformStaging implements CommandImpl<Pe
 		// get all output channels
 		List<OutputChannel> outputChannels = model.getCatalog().getOutputChannels();
 		
+		int count = 0;
 		// loop over all items
-		for (Item item : model.getCatalog().getItems()) {
+		for (Item item : new ArrayList<Item>(model.getCatalog().getItems())) {
+			System.out.println("Staging item " + item.getId());
 			ItemModel itemModel = model.getItem(item.getId());
+			Item itemEntity = itemModel.getEntity();
 			
 			// loop over all properties
 			for (Entry<PropertyGroupInfo, PropertyModel> entry : itemModel.getPropertyExtent()) {
 				PropertyModel propertyModel = entry.getValue();
+				Property propertyEntity = propertyModel.getEntity();
 				
 				// loop over output channels
 				for (OutputChannel outputChannel : outputChannels) {
@@ -60,10 +68,29 @@ public class PerformStagingImpl extends PerformStaging implements CommandImpl<Pe
 					
 					// store them with to staging area
 					for (Entry<String, Object> value : effectiveValues) {
-						propertyModel.setValue(null, to, outputChannel, value.getKey(), value.getValue());
+						String language = value.getKey();
+						Object typedValue = value.getValue();
+						
+						// skip values whose default-language has the same value
+						if (language != null && equal(effectiveValues.get(null), typedValue)) continue;
+						
+						PropertyValue propertyValue = new PropertyValue();
+						itemEntity.getPropertyValues().add(propertyValue);
+						propertyValue.setItem(itemEntity);
+						
+						propertyValue.setProperty(propertyEntity);
+						propertyValue.setSource(null);
+						propertyValue.setStagingArea(to);
+						propertyValue.setOutputChannel(outputChannel);
+						propertyValue.setLanguage(language);
+						PropertyModel.setTypedValue(model, propertyValue, typedValue);
+						model.dao.getEntityManager().persist(propertyValue);
+						count++;
 					}
 				}
 			}
+			
+			model.invalidateItem(itemModel);
 		}
 		
 		// update staging status
@@ -71,8 +98,10 @@ public class PerformStagingImpl extends PerformStaging implements CommandImpl<Pe
 		status.setUpdateSequenceNr(status.getUpdateSequenceNr() + 1);
 		
 		// Flush cache
-		model.flushCache();
-		
+		model.flush();
+		model.dao.getEntityManager().flush();
+		model.dao.getEntityManager().clear();
+		System.out.println("Created " + count + " values for staging");
 		return new Result();
 	}
 }

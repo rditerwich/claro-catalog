@@ -1,12 +1,15 @@
 package claro.catalog.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.persistence.EntityManager;
 
@@ -23,11 +26,15 @@ import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.media.Media;
+import claro.jpa.media.MediaContent;
 import claro.jpa.shop.Shop;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 import easyenterprise.lib.util.SMap;
+import easyenterprise.lib.util.SecurityUtil;
 
 public class CatalogModel {
 
@@ -46,19 +53,12 @@ public class CatalogModel {
 	public final PropertyModel supplierArticleNumberProperty;
 	public final PropertyModel visibleProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
-	private Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
+	final Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
+	final ConcurrentLinkedQueue<ItemToInvalidate> itemsToInvalidate = new ConcurrentLinkedQueue<ItemToInvalidate>();
 	private PropertyGroup imagesPropertyGroup;
-	private LinkedHashSet<String> allLanguages;
 	private PropertyGroup documentsPropertyGroup;
 	private PropertyModel manualProperty;
-
-	public static void startOperation(CatalogDao dao) {
-		CatalogAccess.startOperation(dao);
-	}
-	
-	public static void endOperation() {
-		CatalogAccess.endOperation();
-	}
+	private LinkedHashSet<String> allLanguages;
 
 	public CatalogModel(Long id, CatalogDao dao) {
 		this.dao = dao;
@@ -115,9 +115,8 @@ public class CatalogModel {
 		Item item;
 		if (itemData != null) {
 			item = itemData.getEntity();
-			itemData.invalidateChildExtent(true);
-			itemData.invalidateParentExtent(false);
-			root.doInvalidate();
+			invalidateItems(itemData, true, true, true);
+			root.flush();
 			items.remove(id);
 		} else {
 			item = dao.getItem(id);
@@ -178,6 +177,37 @@ public class CatalogModel {
 		return allLanguages;
 	}
 
+	public MediaContent getOrCreateMediaContent(String mimeType, byte[] data) {
+		 String hash = SecurityUtil.computeSHA1(data);
+		 for (MediaContent mediaContent : dao.findMediaContent(mimeType, hash)) {
+			 if (mimeType.equals(mediaContent.getMimeType()) && Arrays.equals(mediaContent.getData(), data)) {
+				 return mediaContent;
+			 }
+		 }
+		 MediaContent mediaContent = new MediaContent();
+		 mediaContent.setMimeType(mimeType);
+		 mediaContent.setData(data);
+		 mediaContent.setHash(hash);
+		 dao.getEntityManager().persist(mediaContent);
+		 return mediaContent;
+	}
+	
+	public Media getOrCreateMedia(String mimeType, byte[] content, String nameHint) {
+		MediaContent mediaContent = getOrCreateMediaContent(mimeType, content);
+		Media result = null;
+		for (Media media : dao.findMediaByContent(mediaContent)) {
+			if (result == null || Objects.equal(nameHint, media.getName())) {
+				result = media;
+			}
+		}
+		if (result == null) {
+			result = new Media();
+			result.setName(nameHint);
+			result.setContent(mediaContent);
+			dao.getEntityManager().persist(result);
+		}
+		return result;
+	}
 	
 	private Catalog findOrCreateCatalog(Long id) {
 		EntityManager em = dao.getEntityManager();
@@ -262,27 +292,59 @@ public class CatalogModel {
 		return getItem(category.getId());
 	}
 	
-	void invalidate(ItemModel... items) {
-		for (ItemModel item : items) {
-			item.doInvalidate();
+	public void invalidateItem(ItemModel item) {
+		invalidateItems(item, true, false, false);
+	}
+	
+	public void invalidateItemAndChildExtent(ItemModel item) {
+		invalidateItems(item, true, true, false);
+	}
+	
+	public void invalidateItems(ItemModel item, boolean self, boolean childExtent, boolean parentExtent) {
+		itemsToInvalidate.add(new ItemToInvalidate(item.itemId, self, childExtent, parentExtent));
+	}
+	
+	public void invalidateAllItems() {
+		for (ItemModel item : items.values()) {
+			invalidateItem(item);
 		}
 	}
 	
-	void invalidate(Iterable<ItemModel> items) {
+	public void invalidateAll() {
+		invalidateAllItems();
+		// invalidate more
+	}
+	
+	void invalidateItems(Iterable<ItemModel> items) {
 		if (items != null) {
 			for (ItemModel item : items) {
-				item.doInvalidate();
+				invalidateItem(item);
 			}
 		}
 	}
  
-	public void flushCache() {
-		flushCache(false);
-	}
-	public void flushCache(boolean full) {
-		invalidate(items.values());
-		if (full) {
-			// TODO Implement full.
+	public void flush() {
+		// collect items to invalidate
+		Map<Long, ItemModel> items = null;
+		while (true) {
+			ItemToInvalidate itemToInvalidate = itemsToInvalidate.poll();
+			if (itemToInvalidate == null) break;
+			if (items == null) {
+				items = new TreeMap<Long, ItemModel>();
+			}
+			ItemModel model = this.items.get(itemToInvalidate.itemId);
+			if (model == null) continue;
+			if (itemToInvalidate.self) items.put(itemToInvalidate.itemId, model);
+			if (itemToInvalidate.childExtent) {
+				for (ItemModel child : model.getChildExtent()) items.put(child.itemId, child);
+			}
+			if (itemToInvalidate.parentExtent) {
+				for (ItemModel parent : model.getParentExtent()) items.put(parent.itemId, parent);
+			}
+			// now invalidate them all
+			for (ItemModel item : items.values()) {
+				item.flush();
+			}
 		}
 	}
 }

@@ -44,7 +44,7 @@ public class CatalogModelTestUtil {
 		addChild(entityManager, parent, c);
 		
 		
-		setPropertyValue(entityManager, null, null, c, catalogModel.nameProperty.getEntity(), null, name);
+		setPropertyValue(catalogModel, null, null, c, catalogModel.nameProperty.getEntity(), null, name);
 		entityManager.persist(c);
 		
 		return c;
@@ -55,9 +55,9 @@ public class CatalogModelTestUtil {
 		p.setCatalog(parent.getCatalog());
 		addChild(entityManager, parent, p);
 		
-		setPropertyValue(entityManager, null, null, p, catalogModel.nameProperty.getEntity(), null, name);
+		setPropertyValue(catalogModel, null, null, p, catalogModel.nameProperty.getEntity(), null, name);
 		for (Tuple<PropertyModel, Object> property : properties) {
-			setPropertyValue(entityManager, null, null, p, property.getFirst().getEntity(), null, property.getSecond());
+			setPropertyValue(catalogModel, null, null, p, property.getFirst().getEntity(), null, property.getSecond());
 		}
 		
 		entityManager.persist(p);
@@ -93,13 +93,13 @@ public class CatalogModelTestUtil {
 		entityManager.persist(pc);
 	}
 	
-	public static void setPropertyValue(EntityManager entityManager, StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language, Object value) throws SQLException {
+	public static void setPropertyValue(CatalogModel catalogModel, StagingArea stagingArea, OutputChannel outputChannel, Item item, Property property, String language, Object value) throws SQLException {
 		for (PropertyValue propertyValue : item.getPropertyValues()) {
 			if (propertyValue.getProperty().equals(property) 
 			&& Objects.equal(propertyValue.getStagingArea(), stagingArea)
 			&& Objects.equal(propertyValue.getOutputChannel(), outputChannel)
 			&& Objects.equal(propertyValue.getLanguage(), language)) {
-				setTypedValue(propertyValue, value);
+				setTypedValue(catalogModel, propertyValue, value);
 				return;
 			}
 		}
@@ -112,9 +112,9 @@ public class CatalogModelTestUtil {
 		newPropertyValue.setProperty(property);
 		newPropertyValue.setStagingArea(stagingArea);
 		newPropertyValue.setOutputChannel(outputChannel);
-		setTypedValue(newPropertyValue, value);
+		setTypedValue(catalogModel, newPropertyValue, value);
 		
-		entityManager.persist(newPropertyValue);
+		catalogModel.dao.getEntityManager().persist(newPropertyValue);
 	}
 
 }

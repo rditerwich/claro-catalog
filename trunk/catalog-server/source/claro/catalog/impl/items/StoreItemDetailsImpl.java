@@ -20,11 +20,11 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
-import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
+import claro.jpa.media.MediaContent;
 import easyenterprise.lib.cloner.BasicView;
 import easyenterprise.lib.cloner.Printer;
 import easyenterprise.lib.command.CommandException;
@@ -130,8 +130,8 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 					if (propertyModel.getEntity().getType() == PropertyType.Media) {
 						FileItem fileItem = CatalogServer.getUploadedFile(typedValue.toString());
 						if (fileItem != null) {
-							MediaValue mv = MediaValue.create(null, fileItem.getContentType(), fileItem.getName(), fileItem.get());
-							typedValue = mv;
+							MediaContent mediaContent = catalogModel.getOrCreateMediaContent(fileItem.getContentType(), fileItem.get());
+							typedValue = MediaValue.create(mediaContent.getId(), mediaContent.getMimeType(), fileItem.getName());
 						}
 					}
 					propertyModel.setValue(null, stagingArea, outputChannel, languageValue.getKey(), typedValue);

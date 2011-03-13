@@ -85,7 +85,8 @@ public class StoreShopImpl extends StoreShop implements CommandImpl<StoreShop.Re
 
 
 		// Flush cache
-		model.flushCache();
+		model.invalidateAll();
+		model.flush();
 		
 		return result;
 	}

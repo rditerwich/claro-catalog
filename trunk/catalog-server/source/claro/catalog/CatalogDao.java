@@ -1,7 +1,8 @@
 package claro.catalog;
 
+import static easyenterprise.lib.util.CollectionUtil.firstOrNull;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,8 @@ import claro.jpa.importing.ImportSource_;
 import claro.jpa.jobs.Job;
 import claro.jpa.jobs.JobResult;
 import claro.jpa.jobs.JobResult_;
+import claro.jpa.media.Media;
+import claro.jpa.media.MediaContent;
 import claro.jpa.order.Order;
 import claro.jpa.order.OrderStatus;
 import claro.jpa.shop.Promotion;
@@ -93,6 +96,10 @@ public class CatalogDao extends AbstractDao {
 		return getEntityManager().find(Property.class, id);
 	}
 
+	public List<PropertyValue> getPropertyValues(Item item) {
+		return getEntityManager().createQuery("select v from propertyvalue v where v.item = :item", PropertyValue.class).setParameter("item", item).getResultList();
+	} 
+	
 	public PropertyValue getPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
 		StringBuilder queryString = new StringBuilder();
 		
@@ -582,4 +589,34 @@ public class CatalogDao extends AbstractDao {
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<MediaContent> findMediaContent(String mimeType, String hash) {
+		Query query = getEntityManager().createQuery("select c from MediaContent c where c.mimeType = :mimeType and c.hash = :hash");
+		query.setParameter("mimeType", mimeType);
+		query.setParameter("hash", hash);
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public MediaContent findMediaContentById(Long mediaContentId) {
+		Query query = getEntityManager().createQuery("select m from MediaContent m where m.id = :id");
+		query.setParameter("id", mediaContentId);
+		return (MediaContent) firstOrNull(query.getResultList());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Media findMediaById(Long mediaContentId) {
+		Query query = getEntityManager().createQuery("select m from Media m where m.id = :id");
+		query.setParameter("id", mediaContentId);
+		return (Media) firstOrNull(query.getResultList());
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Media> findMediaByContent(MediaContent mediaContent) {
+		Query query = getEntityManager().createQuery("select m from Media m where m.content = :content");
+		query.setParameter("content", mediaContent);
+		return query.getResultList();
+		
+	}
+	
 }

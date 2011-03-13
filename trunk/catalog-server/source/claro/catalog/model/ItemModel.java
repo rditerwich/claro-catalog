@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.persistence.Entity;
-
 import claro.catalog.CatalogDao;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
@@ -31,7 +29,6 @@ import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.PropertyValue;
 import claro.jpa.catalog.StagingArea;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
 import easyenterprise.lib.util.CollectionUtil;
@@ -42,9 +39,9 @@ public class ItemModel {
 	final CatalogModel catalog;
 	final Long itemId;
 	private Class<? extends Item> itemClass;
-	private Set<ItemModel> parents;
+	Set<ItemModel> parents;
 	private Set<ItemModel> parentExtent;
-	private Set<ItemModel> children;
+	Set<ItemModel> children;
 	private Set<ItemModel> childExtent;
 	private SMap<PropertyGroupInfo, PropertyModel> properties;
 	private SMap<PropertyGroupInfo, PropertyModel> propertyExtent;
@@ -98,7 +95,7 @@ public class ItemModel {
 	}
 	
 	private Set<ItemModel> getParents(boolean skipChildConnect) {
-		synchronized (catalog) {
+		synchronized (catalog) { 
 			if (parents == null) {
 				LinkedHashSet<ItemModel> parents = new LinkedHashSet<ItemModel>();
 				List<ParentChild> parentChildren = new ArrayList<ParentChild>(getEntity().getParents());
@@ -166,7 +163,7 @@ public class ItemModel {
 				invalidItems.add(parent);
 				invalidItems.addAll(parent.getParentExtent());
 			}
-			catalog.invalidate(invalidItems);
+			catalog.invalidateItems(invalidItems);
 		}
 		
 	}
@@ -174,7 +171,8 @@ public class ItemModel {
 	public Item getEntity() {
 	  Item item = catalog.dao.getItem(itemId);
 	  if (item == null) {
-	  	catalog.flushCache(); 
+	  	catalog.invalidateAllItems();
+	  	catalog.flush(); 
 	  	throw new ItemNotFoundException(itemId);
 	  }
 		return item;
@@ -448,7 +446,7 @@ public class ItemModel {
 				assert entity instanceof Category;
 				catalog.dao.createGroupAssignment(property, group, (Category) entity);
 			}
-			invalidateChildExtent(true);
+			catalog.invalidateItemAndChildExtent(this);
 			return PropertyModel.createRoot(property.getId(), false, this, group != null? entity.getId() : null);
 		}
 	}
@@ -509,7 +507,7 @@ public class ItemModel {
 				if (groupAssignment != null) {
 					// Invalidating child extent of group assignment.  This could be refined to invalidating only the propertyMOdels of the child extent.
 					ItemModel groupAssignmentCategory = catalog.getItem(groupAssignment.getCategory().getId());
-					groupAssignmentCategory.invalidateChildExtent(true);
+					groupAssignmentCategory.getCatalog().invalidateItemAndChildExtent(this);
 					
 					catalog.dao.removeGroupAssignment(groupAssignment);
 					
@@ -534,7 +532,7 @@ public class ItemModel {
 					PropertyGroup groupEntity = catalog.dao.getEntityManager().find(PropertyGroup.class, group.getValue().propertyGroupId);
 					catalog.dao.createGroupAssignment(property.getEntity(), groupEntity, (Category)getEntity());
 					
-					invalidateChildExtent(true);
+					catalog.invalidateItemAndChildExtent(this);
 				}
 			}
 		}
@@ -550,7 +548,7 @@ public class ItemModel {
 				
 				catalog.dao.removeProperty(property.getEntity());
 
-				invalidateChildExtent(true);
+				catalog.invalidateItemAndChildExtent(this);
 			}
 		}
 	}
@@ -582,36 +580,18 @@ public class ItemModel {
 				
 			}
 			if (changed) {
-				invalidateChildExtent(true);
+				catalog.invalidateItemAndChildExtent(this);
 			}
 		}
 		
 	}
 	
-	void invalidateParentExtent(boolean includeSelf) {
-		
-		for (ItemModel parent : CollectionUtil.notNull(parents)) {
-			parent.invalidateParentExtent(true);
-		}
-		if (includeSelf) {
-			catalog.invalidate(this);
-		}
-	}
-
-	void invalidateChildExtent(boolean includeSelf) {
-		
-		for (ItemModel child : CollectionUtil.notNull(children)) {
-			child.invalidateChildExtent(true);
-		}
-		if (includeSelf) {
-			catalog.invalidate(this);
-		}
-	}
-	
 	/**
 	 * Only called from CatalogAccess, do not call!
 	 */
-	void doInvalidate() {
+	void flush() {
+		System.out.println("FLUSHING ITEM " + itemId);
+
 		synchronized (catalog) {
 			parents = null;
 			children = null;

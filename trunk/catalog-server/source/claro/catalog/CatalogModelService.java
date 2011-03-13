@@ -1,6 +1,9 @@
 package claro.catalog;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import claro.catalog.model.CatalogModel;
 
@@ -43,12 +46,10 @@ public class CatalogModelService extends CommandWrapper {
 			throw new RuntimeException("Catalog server not running.");
 		}
 		CatalogModel catalogModel = state.service.catalogModels.get(catalogId);
-		
-		if (!state.operationStarted && !state.parentHasStartedOperation) {
-			// TODO startOpertion not static
-			CatalogModel.startOperation(catalogModel.dao);
-			state.operationStarted = true;
+		if (state.usedCatalogs.isEmpty()) {
+			state.usedCatalogs = new HashSet<CatalogModel>();
 		}
+		state.usedCatalogs.add(catalogModel);
 		return catalogModel;
 	}
 	
@@ -64,23 +65,20 @@ public class CatalogModelService extends CommandWrapper {
 		State oldState = stateLocal.get();
 		State state = new State();
 		state.service = this;
-		state.parentHasStartedOperation = oldState != null && oldState.operationStarted;
 		stateLocal.set(state);
 		try {
 			return super.executeImpl(command);
 		}
 		finally {
-			if (state.operationStarted) {
-				stateLocal.set(oldState);
-				CatalogModel.endOperation();
+			stateLocal.set(oldState);
+			for (CatalogModel catalog : state.usedCatalogs) {
+				catalog.flush();
 			}
 		}
 	}
 	
 	public static class State {
 		CatalogModelService service;
-		boolean parentHasStartedOperation;
-		boolean operationStarted;
-		
+		Set<CatalogModel> usedCatalogs = Collections.emptySet();
 	}
 }

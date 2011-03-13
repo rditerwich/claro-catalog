@@ -1,0 +1,83 @@
+root /packages:Claro/packages:Domain/packages
+
+import Metaphor.PIM.Archetypes.CrmArchetype
+import Metaphor.PIM.Domain.Attribute
+import Metaphor.PIM.Domain.Class
+import Metaphor.PIM.Domain.Enumeration
+import Metaphor.PIM.Domain.Literal
+import Metaphor.PIM.Domain.Operation
+import Metaphor.PIM.Domain.Package
+import Metaphor.PIM.Domain.Parameter
+
+path primitive=/packages:Metaphor/packages:PIM/packages:Domain/types
+path catalog=/packages:Claro/packages:Domain/packages:Catalog/types
+path media=/packages:Claro/packages:Domain/packages:Media/types
+
+Package {
+    name = Media
+    types = {
+        Class {
+            name = Media
+            attributes = {
+                Attribute {
+                    name = name
+                    type = primitive:String
+                    lower = 0
+                }
+                Attribute {
+                   name = content
+                   type = media:MediaContent
+                }
+                Attribute {
+                    name = tags
+                    type = media:MediaTag
+                    lower = 0
+                    upper = {}
+                    isComposite = true
+                    opposite = media:MediaTag/attributes:media
+                }
+                Attribute {
+                    name = catalog
+                    type = catalog:Catalog
+                    opposite = catalog:Catalog/attributes:media
+                }
+            }
+        }
+        Class {
+            name = MediaContent
+            attributes = {
+                /**
+                 * Used when property.type == Media.
+                 * Stored as ISO 4217 currency code.
+                 * See http://en.wikipedia.org/wiki/Mime_type.
+                 */
+                Attribute {
+                   name = mimeType
+                   type = primitive:String
+                }
+                Attribute {
+                    name = hash
+                    type = primitive:String
+                }
+                Attribute {
+                   name = data
+                   type = primitive:Blob
+                }
+            }
+        }
+        Class {
+           name = MediaTag
+           attributes = {
+               Attribute {
+                   name = media
+                   type = media:Media
+                   opposite = media:Media/attributes:tags
+               }
+               Attribute {
+                   name = tag
+                   type = primitive:String
+               }
+           }
+       }
+    }
+}

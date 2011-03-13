@@ -29,7 +29,7 @@ public class PropertyStringConverter {
 		switch (type) {
 		case Media: 
 			MediaValue mediaValue = (MediaValue) value;
-			return mediaValue.mimeType + ":" + mediaValue.propertyValueId + ":" + mediaValue.filename;
+			return mediaValue.mimeType + ":" + mediaValue.mediaContentId + ":" + mediaValue.name;
 		case Money: 
 			Money moneyValue = (Money) value;
 			return moneyValue.value.toString();

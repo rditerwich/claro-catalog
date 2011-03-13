@@ -7,6 +7,7 @@ import java.lang.Integer;
 import java.lang.Long;
 import java.lang.Override;
 import java.lang.String;
+import claro.jpa.media.MediaContent;
 
 @SuppressWarnings("serial")
 public class PropertyValue implements Serializable {
@@ -23,9 +24,8 @@ public class PropertyValue implements Serializable {
     private Boolean booleanValue;
     private Double moneyValue;
     private String moneyCurrency;
-    private byte[] mediaValue;
+    private MediaContent mediaValue;
     private Item itemValue;
-    private String mimeType;
     private Item item;
 
     public Long getId() {
@@ -132,11 +132,11 @@ public class PropertyValue implements Serializable {
         this.moneyCurrency = value;
     }
 
-    public byte[] getMediaValue() {
+    public MediaContent getMediaValue() {
         return mediaValue;
     }
 
-    public void setMediaValue(byte[] value) {
+    public void setMediaValue(MediaContent value) {
         this.mediaValue = value;
     }
 
@@ -146,14 +146,6 @@ public class PropertyValue implements Serializable {
 
     public void setItemValue(Item value) {
         this.itemValue = value;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String value) {
-        this.mimeType = value;
     }
 
     public Item getItem() {

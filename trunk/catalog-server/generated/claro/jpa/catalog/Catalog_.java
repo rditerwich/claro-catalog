@@ -5,12 +5,13 @@ import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.Template;
+import claro.jpa.media.Media;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-02-25T10:37:21")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-03-11T13:19:18")
 @StaticMetamodel(Catalog.class)
 public class Catalog_ { 
 
@@ -22,5 +23,6 @@ public class Catalog_ {
     public static volatile SingularAttribute<Catalog, Category> root;
     public static volatile SingularAttribute<Catalog, String> name;
     public static volatile ListAttribute<Catalog, OutputChannel> outputChannels;
+    public static volatile ListAttribute<Catalog, Media> media;
 
 }

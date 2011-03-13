@@ -137,7 +137,7 @@ public class CatalogTestBase {
 	@After
 	public void finish() {
 		if (catalogModel != null) { 
-			CatalogModel.endOperation();
+			catalogModel.flush();
 		}
 		catalogDao.commitTransaction();
 	}
