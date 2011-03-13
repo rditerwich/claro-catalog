@@ -1,13 +1,12 @@
 package claro.cms.webshop
 import claro.jpa
 import claro.catalog.CatalogDao
-import claro.catalog.data.MediaValue
-import claro.catalog.data.PropertyGroupInfo
-import claro.catalog.model.{PropertyModel, ItemModel, CatalogModel}
+import claro.catalog.data.{PropertyGroupInfo, MediaValue}
+import claro.catalog.model.{PropertyModel, ItemModel, MediaContentCache, CatalogModel}
 import claro.cms.Cms
 import claro.common.util.{Delegate, KeywordMap, Locales, ProjectionMap}
 import claro.common.util.Conversions._
-import easyenterprise.lib.util.{Money}
+import easyenterprise.lib.util.Money
 import java.util.Locale
 import net.liftweb.http.{RequestVar, SessionVar, LiftRules}
 import net.liftweb.http.provider.servlet.HTTPServletContext
@@ -20,6 +19,8 @@ object WebshopModel {
     case context: HTTPServletContext => Map(context.initParams:_*)
     case _ => Map[String,String]()
   })
+	
+	lazy val mediaContentCache = new MediaContentCache(dao)
 	
   object shop extends RequestVar[Shop](WebshopCache(Cms.previewMode, Cms.locale.getISO3Language))
 
@@ -72,6 +73,12 @@ object WebshopModel {
       case None => false
     }
   }
+  
+  def mediaContent(mediaContentId : Long) : Option[(String, Array[Byte])] = 
+  	mediaContentCache.getMediaContent(new java.lang.Long(mediaContentId)) match {
+	  	case mediaContent if mediaContent != null && mediaContent.getData != null => Some((mediaContent.getMimeType, mediaContent.getData))
+	  	case _ => None
+	  }
 }
 
 class Mapping(product: Option[Product], cacheData: WebshopData) {
@@ -119,9 +126,6 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
 
   val categoriesByUrlName: collection.Map[String, Category] =
     categories mapBy (_.urlName)
-
-  val mediaValues: Map[Long, (String, Array[Byte])] =
-    cacheData.mediaValues
 
   val keywordMap =
     KeywordMap(products map (p => (p.properties map (_.valueAsString), p)))
@@ -276,20 +280,30 @@ class Property(property: PropertyModel, cacheData: WebshopData, mapping: Mapping
   val name : String = info.labels.tryGet(cacheData.language, null)
   val value : Any = property.getEffectiveValues(cacheData.staging, cacheData.shop).tryGet(cacheData.language, null)
 
-  val valueId : Long = value match {
-  	case media : MediaValue => media.propertyValueId.longValue
+  val hasMedia = value match {
+  	case media : MediaValue => !media.isEmpty
+  	case _ => false
+  }
+  
+  val mediaContentId : Long = value match {
+  	case media : MediaValue => media.mediaContentId.getOrElse(-1)
   	case _ => -1
   }
+  
   val mimeType : String = value match {
 	  case media : MediaValue => media.mimeType
 	  case _ => ""
 	}
-  val mediaValue : Array[Byte] = value match {
-	  case media : MediaValue => media.content
+  lazy val mediaContent : Array[Byte] = value match {
+	  case media : MediaValue if !media.isEmpty => WebshopModel.mediaContent(media.mediaContentId.longValue) match {
+	  	case Some((_, data)) => data
+	  	case None => Array()
+	  }
 	  case _ => Array()
 	}
-  val fileName : String = value match {
-	  case media : MediaValue => media.filename
+  
+  val mediaName : String = value match {
+	  case media : MediaValue => media.name
 	  case _ => ""
 	}
   val moneyValue : Double = value match {

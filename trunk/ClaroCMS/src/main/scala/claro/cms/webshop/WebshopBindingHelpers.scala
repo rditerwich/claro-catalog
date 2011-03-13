@@ -37,16 +37,18 @@ trait WebshopBindingHelpers extends BindingHelpers {
     property match { 
       case Some(property) => property.propertyType match {
         case jpa.catalog.PropertyType.Media => 
-          if (property.mediaValue == null) 
-            <img src={"/images/image-"+property.valueId+".jpg"} /> % currentAttributes()
-          else if (property.mimeType == "application/x-shockwave-flash") 
-            <object type="application/x-shockwave-flash" data={"/catalog/media/" + property.valueId}/> 
-          else if (property.mimeType == "application/pdf")
-            <a href={"/catalog/media/" + property.valueId}><img style="padding-bottom:-8px" src="/images/pdf.gif"/></a>
-	        else if (property.mimeType.startsWith("image/")) 
-	          <img src={"/catalog/media/" + property.valueId} /> % currentAttributes()
-	         else
-  		       Text(property.mediaValue.toString());
+          if (property.hasMedia) {
+	          if (property.mimeType == "application/x-shockwave-flash") 
+	            <object type="application/x-shockwave-flash" data={"/catalog/media/" + property.mediaContentId}/> 
+	          else if (property.mimeType == "application/pdf")
+	            <a href={"/catalog/media/" + property.mediaContentId}><img style="padding-bottom:-8px" src="/images/pdf.gif"/></a>
+		        else if (property.mimeType.startsWith("image/")) 
+		          <img src={"/catalog/media/" + property.mediaContentId} /> % currentAttributes()
+		         else
+	  		       Text(property.mediaContent.toString());
+          }
+          else 
+          	<span class="no-image"/>
         case jpa.catalog.PropertyType.Money =>
             formatMoney(property.moneyValue, property.moneyCurrency)
         case _ => Text(property.valueAsString)

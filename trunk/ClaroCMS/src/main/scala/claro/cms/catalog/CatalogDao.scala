@@ -192,7 +192,7 @@ object CatalogDao extends Dao {
       case PropertyType.String => propertyValue.setStringValue(value.asInstanceOf[String])
       case PropertyType.Money => propertyValue.setMoneyValue(value.asInstanceOf[Double])
       case PropertyType.Media => 
-        propertyValue.setMediaValue(value.asInstanceOf[Array[Byte]])
+//        propertyValue.setMediaValue(value.asInstanceOf[Array[Byte]])
         
     }
   }
@@ -204,19 +204,18 @@ object CatalogDao extends Dao {
 	    propertyValue.setProperty(property)
 	    propertyValue.setLanguage(language)
 	    val bytes = cl.getResourceAsStream(name).readBytes
-	    propertyValue.setMediaValue(bytes)
+//	    propertyValue.setMediaValue(bytes)
 	    if (name.endsWith(".jpg")) {
-	      propertyValue.setMimeType("image/jpeg")
+//	      propertyValue.setMimeType("image/jpeg")
 	    }
 	    if (name.endsWith(".gif")) {
-	      propertyValue.setMimeType("image/gif")
+//	      propertyValue.setMimeType("image/gif")
 	    }
 	    if (name.endsWith(".png")) {
-	      propertyValue.setMimeType("image/png")
+//	      propertyValue.setMimeType("image/png")
 	    }
   	}
   }
-  
   
   def getOrCreateLabel(property : Property, name : String, language : String = null) = {
     val label = property.getLabels.find(l => l.getProperty == property && l.getLanguage == language) getOrElse new Label useIn (property.getLabels.add(_))

@@ -55,7 +55,7 @@ object Link extends BindingHelpers {
   def apply(product: Product) = (xml: NodeSeq) =>
     new Elem(null, "a", new UnprefixedAttribute("href", "/product/" + product.id, current.attributes), TopScope, xml: _*);
 
-  def apply(path: String) = (xml: NodeSeq) => <a href={ path }>{ xml }</a>
+  def apply(path: String) = (xml: NodeSeq) => <a href={ path }>{ xml }</a> % currentAttributes()
 }
 
 object ParentLink extends BindingHelpers {

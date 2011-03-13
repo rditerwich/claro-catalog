@@ -231,7 +231,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
 
   dispatch.append {
     case ("catalog" :: "media" :: id :: Nil, suffix) => 
-      WebshopModel.shop.mediaValues.get(id.toLongOr(0)) match {
+      WebshopModel.mediaContent(id.toLongOr(-1)) match {
       case Some((mimeType, image)) => 
         val headers = List(
           ("Cache-Control", "public, max-age=3600"), 

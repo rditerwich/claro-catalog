@@ -5,6 +5,7 @@ import scala.collection.JavaConversions._
 import scala.xml.NodeSeq 
 import java.util.Locale
 import java.util.concurrent.ConcurrentMap
+import claro.catalog.data.MediaValue
 import claro.catalog.model.CatalogModel
 import claro.catalog.command.items.PerformStaging
 import claro.catalog.model.ItemModel
@@ -33,7 +34,11 @@ object WebshopCache {
   	println("FINDING SHOP:" + shopName)
   	val shop = findAllShops.find(_.getName == shopName).get
   	println("SHOP FOUND:" + shop)
-  	new Shop(new WebshopData(catalogModel, shop, stagingArea, language))
+  	val shopModel = new Shop(new WebshopData(catalogModel, shop, stagingArea, language))
+  	// save memory: catalogModel is mainly used during construction of shop
+  	catalogModel.invalidateAll()
+  	catalogModel.flush()
+  	shopModel
   }) 
 
   private var previewSequenceNr = 0
@@ -91,14 +96,11 @@ object CacheInvalidator extends Thread {
 
 class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val staging : jpa.catalog.StagingArea, val language : String) {
 
-  val templateObjectCache = new mutable.HashMap[Tuple2[Object, String], NodeSeq]
-  val templateClassCache = new mutable.HashMap[Tuple2[Class[_], String], NodeSeq]
-
-  val items : Set[ItemModel] = 
+  def items : Set[ItemModel] = 
   	catalog.root.getChildExtent.toSet filter (_.isVisible(staging, shop, language))
-  
-  val itemsEntities : Set[jpa.catalog.Item] = 
-  	items.map(_.getEntity)
+//  
+//  val itemsEntities : Set[jpa.catalog.Item] = 
+//  	items.map(_.getEntity)
   
   def item(item : jpa.catalog.Item) = catalog.getItem(item.getId)
   
@@ -107,42 +109,34 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
 
   def isExcluded(property : PropertyModel) = excludedProperties.contains(property.getEntity)
     
-  val promotions : Set[jpa.shop.Promotion] = 
+  def promotions : Set[jpa.shop.Promotion] = 
     shop.getPromotions toSet
-    
-  private def navigation(nav : Iterable[jpa.shop.Navigation]) : Seq[Seq[jpa.shop.Navigation]] = {
-    val sorted = nav.toSeq.sortBy(_.getIndex.getOrElse(0))
-    val filled = sorted.filter(nav => itemsEntities.contains(nav.getCategory))
-    val filledSeq = if (filled.isEmpty) Seq() else Seq(sorted.filter(nav => itemsEntities.contains(nav.getCategory)))
-    val empty = sorted.filter(nav => !itemsEntities.contains(nav.getCategory))
-    if (empty.isEmpty) filledSeq
-    else filledSeq ++ empty.flatMap(nav => navigation(nav.getSubNavigation))
-    println("***************************************")
-    println(nav)
-    Seq(sorted)
-  }
+//    
+//  private def navigation(nav : Iterable[jpa.shop.Navigation]) : Seq[Seq[jpa.shop.Navigation]] = {
+//    val sorted = nav.toSeq.sortBy(_.getIndex.getOrElse(0))
+//    val filled = sorted.filter(nav => itemsEntities.contains(nav.getCategory))
+//    val filledSeq = if (filled.isEmpty) Seq() else Seq(sorted.filter(nav => itemsEntities.contains(nav.getCategory)))
+//    val empty = sorted.filter(nav => !itemsEntities.contains(nav.getCategory))
+//    if (empty.isEmpty) filledSeq
+//    else filledSeq ++ empty.flatMap(nav => navigation(nav.getSubNavigation))
+//    println("***************************************")
+//    println(nav)
+//    Seq(sorted)
+//  }
     
   def topLevelNavigation = Seq(shop.getNavigation.toSeq)
   
-  def topLevelCategories : Set[jpa.catalog.Category] = {
-  	println(topLevelNavigation.toSeq)
-  	topLevelNavigation.flatMap(_.map(_.getCategory)).toSet.filter(itemsEntities)
-  }
+//  def topLevelCategories : Set[jpa.catalog.Category] = {
+//  	println(topLevelNavigation.toSeq)
+//  	topLevelNavigation.flatMap(_.map(_.getCategory)).toSet.filter(itemsEntities)
+//  }
 
-  def allItemEntities : Set[jpa.catalog.Item] = 
-  	items.map(_.getEntity)
+//  def allItemEntities : Set[jpa.catalog.Item] = 
+//  	items.map(_.getEntity)
   
-  def allPropertyValues : Set[jpa.catalog.PropertyValue] = 
-  	allItemEntities.flatMap(_.getPropertyValues)
+//  def allPropertyValues : Set[jpa.catalog.PropertyValue] = 
+//  	allItemEntities.flatMap(_.getPropertyValues)
   
-  val mediaPropertyValues : Seq[jpa.catalog.PropertyValue] = 
-      allPropertyValues filter (_.getProperty.getType == jpa.catalog.PropertyType.Media) filter(_.getMediaValue != null) toSeq
-  
-  val mediaValues : Map[Long, (String, Array[Byte])] =
-    Map(mediaPropertyValues map (v => (v.getId.longValue, (v.getMimeType, v.getMediaValue))):_*)
-    	
-
-
   def template(obj : Object, template : String) : Option[NodeSeq] = {
     None
   }  
