@@ -72,7 +72,7 @@ public class CatalogServer implements CommandExecutor {
 		try {
 			DBScript script = new DBScript("DROP SCHEMA catalog CASCADE");
 			script = new DBScript(Catalog.class.getResourceAsStream("/UpdateSchema.sql"));
-//			script.execute(em);
+			script.execute(em);
 			script = new DBScript(
 				"CREATE INDEX propertyvalue_by_id on catalog.propertyvalue (id);" +
 				"CREATE INDEX propertyvalue_by_item_id on catalog.propertyvalue (item_id);");
