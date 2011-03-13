@@ -58,11 +58,34 @@
   <div class="side_bar_panel"> 
     <h1>Order status</h1>
     <webshop:shopping-cart>
+      <shopping-cart:items>
+        <table>
+      <list:repeat>
+          <tr>
+            <item:product>
+              <td><product:value property="Name"/></td>
+            </item:product>
+			<td/>
+            <td style="text-align:right;"><item:total-price/></td>
+          </tr>
+      </list:repeat>
+       <shopping-cart:total-prices>
+          <tr>
+            <td colspan="1"><list:first><b>Total:</b></list:first></td>
+			<td>&#160;</td>
+            <td style="text-align:right;"><b><total-price:format/></b></td>
+          </tr>
+       </shopping-cart:total-prices>
+        </table>
 		  <div class="order_status" >
 		    <div><shopping-cart:link><b><lift:loc>Shopping Cart</lift:loc> &gt;&gt;</b></shopping-cart:link></div>
-		    <div><shopping-cart:items><list:once><list:size/></list:once></shopping-cart:items>&#160;<lift:loc>articles in shopping cart</lift:loc></div> 
-		    <div><shopping-cart:clear><lift:loc>Clear shopping cart</lift:loc>&gt;&gt;</shopping-cart:clear></div>
 		  </div>
+    <div class="button-bar">
+	<shopping-cart:link class="button">Order Now</shopping-cart:link>
+    </div>
+        <list:none>There are no items in the shopping cart</list:none>
+      </shopping-cart:items>
+
     </webshop:shopping-cart>
     <div id="order_status"><liftembed what="order_status" /></div>
   </div> 
