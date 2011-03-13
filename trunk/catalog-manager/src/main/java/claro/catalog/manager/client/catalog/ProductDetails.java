@@ -238,7 +238,7 @@ public class ProductDetails extends Composite implements Globals {
 		if (productImageData instanceof MediaValue) {
 			MediaValue productImageMediaValue = (MediaValue) productImageData;
 			
-			productImage.setData(productImageMediaValue.propertyValueId, productImageMediaValue.mimeType, productImageMediaValue.filename);
+			productImage.setData(productImageMediaValue.mediaContentId, productImageMediaValue.mimeType, productImageMediaValue.name);
 		} else {
 			productImage.setData(null, null, null);
 			

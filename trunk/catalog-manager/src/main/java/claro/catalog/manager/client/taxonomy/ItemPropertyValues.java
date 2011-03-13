@@ -417,7 +417,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			if (value instanceof MediaValue) {
 				MediaValue mediaValue = (MediaValue) value;
 //				mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);
-				mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
+				mediaWidget.setData(mediaValue.mediaContentId, mediaValue.mimeType, mediaValue.name);
 			} else {
 //				mediaWidget.setUploadData(itemId, property.propertyId, null, language);
 				mediaWidget.setData(null, null, null);

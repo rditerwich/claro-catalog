@@ -26,7 +26,7 @@ public class UploadWidget extends Composite implements Globals {
 	
 	// Parameters for upload
 	private InputHidden itemId;
-	private InputHidden pvId;
+	private InputHidden mediaContentId;
 	private InputHidden propertyId;
 	private InputHidden language;
 
@@ -50,7 +50,7 @@ public class UploadWidget extends Composite implements Globals {
 				add(new SubmitButton(messages.uploadFile()));
 			}});
 			add(itemId = new InputHidden("itemId"));
-			add(pvId = new InputHidden("propertyValueId"));
+			add(mediaContentId = new InputHidden("propertyValueId"));
 			add(propertyId = new InputHidden("propertyId"));
 			add(language = new InputHidden("language"));
 		}});
@@ -68,9 +68,9 @@ public class UploadWidget extends Composite implements Globals {
 		this.propertyId.setText(propertyId.toString());
 		
 		if (propertyValueId != null) {
-			this.pvId.setText(propertyValueId.toString());
+			this.mediaContentId.setText(propertyValueId.toString());
 		} else {
-			this.pvId.setText(null);  // TODO is this allowed, or ""?
+			this.mediaContentId.setText(null);  // TODO is this allowed, or ""?
 		}
 		
 		if (language != null) {

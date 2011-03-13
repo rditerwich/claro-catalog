@@ -14,5 +14,6 @@
 			<attribute name="javadoc_location" value="file:/Applications/eclipse/plugins/com.google.gwt.eclipse.sdkbundle.2.1.0_2.1.0.v201010280102/gwt-2.1.0/doc/javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

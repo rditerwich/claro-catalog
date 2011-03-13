@@ -14,10 +14,8 @@ public class CatalogUploadServlet extends UploadServlet {
 
 	
 	@Override
-	protected void service(HttpServletRequest request, HttpServletResponse arg1)
+	protected synchronized void service(HttpServletRequest request, HttpServletResponse arg1)
 			throws ServletException, IOException {
-		System.out.println("****************************************");
-		System.out.println("SESSION1: " + request.getSession());
 		super.service(request, arg1);
 	}
 }

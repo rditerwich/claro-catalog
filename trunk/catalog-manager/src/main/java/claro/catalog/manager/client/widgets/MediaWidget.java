@@ -1,7 +1,6 @@
 package claro.catalog.manager.client.widgets;
 
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.i18n.I18NCatalog;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
@@ -77,9 +76,9 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 	    return up.addSubmitCompleteHandler(handler);
 	}
 
-	public void setData(Long propertyValueId, String mimeType, String filename) {
+	public void setData(Long mediaContentId, String mimeType, String filename) {
 		Preconditions.checkState(up == null || uploadDataSet, "Widget can upload.  setUploadData() must be called before setData()");
-		render(propertyValueId, mimeType, filename);
+		render(mediaContentId, mimeType, filename);
 	}
 	
 	public void setUploadData(Long itemId, Long propertyId, Long propertyValueId, String language) {
@@ -89,8 +88,8 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 		uploadDataSet = true;
 	}
 
-	private void render(Long id, String mimeType, String filename) {
-		if (id == null || mimeType == null || "".equals(mimeType.trim()) ) {
+	private void render(Long mediaContentId, String mimeType, String filename) {
+		if (mediaContentId == null || mimeType == null || "".equals(mimeType.trim()) ) {
 			image.setVisible(alwaysShow);
 			a.setVisible(false);
 			image.setUrl("");
@@ -105,7 +104,7 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 			if (mimeType.startsWith("image")) {
 				image.setVisible(true);
 				a.setVisible(false);
-				image.setUrl(GWT.getModuleBaseURL() + "DownloadMedia?pvId=" + id);
+				image.setUrl(GWT.getModuleBaseURL() + "DownloadMedia?mediaContentId=" + mediaContentId);
 				image.setTitle(filename);
 				a.setHref("");
 				a.setText("");
@@ -114,7 +113,7 @@ public class MediaWidget extends Composite implements HasClickHandlers, Globals 
 				image.setVisible(false);
 				image.setUrl("");
 				image.setTitle("");
-				a.setHref(GWT.getModuleBaseURL() + "DownloadMedia?pvId=" + id);
+				a.setHref(GWT.getModuleBaseURL() + "DownloadMedia?mediaContentId=" + mediaContentId);
 				a.setText(filename);
 			}
 		}

@@ -159,12 +159,12 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		
 		// image
 		Object image = properties.getOrEmpty(model.getSmallImageProperty()).tryGet(model.getSelectedLanguage(), null);
-		if (MediaValue.mediaIsNull(image)) {
+		if (MediaValue.isEmpty(image)) {
 			image = properties.getOrEmpty(model.getImageProperty()).tryGet(model.getSelectedLanguage(), null);
 		}
 		if (image instanceof MediaValue) {
 			final MediaValue value = (MediaValue)image;
-			rowWidgets.imageWidget.setData(value.propertyValueId, value.mimeType, value.filename);
+			rowWidgets.imageWidget.setData(value.mediaContentId, value.mimeType, value.name);
 		} else {
 			rowWidgets.imageWidget.setData(null, null, null);  // Clear any previous images.
 		}

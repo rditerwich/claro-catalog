@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import claro.catalog.CatalogDao;
-import claro.jpa.catalog.PropertyValue;
+import claro.catalog.model.MediaContentCache;
+import claro.jpa.media.MediaContent;
 
 public class DownloadMediaServlet extends HttpServlet {
     private static final long serialVersionUID = 0L;
 
     private CatalogDao dao;
+		private MediaContentCache cache;
 
 
 	@Override
@@ -25,6 +27,7 @@ public class DownloadMediaServlet extends HttpServlet {
 		super.init(config);
 		org.eclipse.persistence.Version.getVersion();
 		dao = new CatalogDao(collectProperties(config));
+		cache = new MediaContentCache(dao);
 	}
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -54,20 +57,19 @@ public class DownloadMediaServlet extends HttpServlet {
         final FileData fd = new FileData();
 
         try {
-            final Long pvId = Long.valueOf(req.getParameter("pvId"));
-            final PropertyValue pv = dao.getEntityManager().find(PropertyValue.class, pvId);
+            final Long mediaContentId = Long.valueOf(req.getParameter("mediaContentId"));
+            MediaContent mediaContent = cache.getMediaContent(mediaContentId);
 
-            if (pv != null) {
-                resp.addHeader("Content-disposition", "attachment; filename=" + pv.getStringValue());
-                fd.content = pv.getMediaValue();
-                fd.contentType = pv.getMimeType();
+            if (mediaContent != null) {
+                fd.content = mediaContent.getData();
+                fd.contentType = mediaContent.getMimeType();
             } else {
-                fd.content = ("Could not find media file in database (id:" + pvId +")").getBytes();
-                fd.contentType = "image/png";
+                fd.content = ("Could not find media in catalog (id:" + mediaContentId +")").getBytes();
+                fd.contentType = "text/plain";
             }
         } catch (Exception e) {
-            fd.content = "Error finding media file in database ".getBytes();
-            fd.contentType = "image/png";
+        	fd.content = ("Error finding media media in catalog:" + e.getMessage()).getBytes();
+        	fd.contentType = "text/plain";
         }
         return fd;
     }

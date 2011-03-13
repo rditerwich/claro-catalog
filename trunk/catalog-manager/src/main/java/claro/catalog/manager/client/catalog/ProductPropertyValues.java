@@ -13,10 +13,8 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
-import claro.catalog.manager.client.CatalogManager.Styles;
 import claro.catalog.manager.client.widgets.MediaWidget;
 import claro.jpa.catalog.OutputChannel;
-import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -400,7 +398,7 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 			if (value instanceof MediaValue) {
 				MediaValue mediaValue = (MediaValue) value;
 //				mediaWidget.setUploadData(itemId, property.propertyId, mediaValue.propertyValueId, language);
-				mediaWidget.setData(mediaValue.propertyValueId, mediaValue.mimeType, mediaValue.filename);
+				mediaWidget.setData(mediaValue.mediaContentId, mediaValue.mimeType, mediaValue.name);
 			} else {
 //				mediaWidget.setUploadData(itemId, property.propertyId, null, language);
 				mediaWidget.setData(null, null, null);
