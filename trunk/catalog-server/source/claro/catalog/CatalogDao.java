@@ -3,12 +3,15 @@ package claro.catalog;
 import static easyenterprise.lib.util.CollectionUtil.firstOrNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -527,6 +530,17 @@ public class CatalogDao extends AbstractDao {
 	}
 
 	@SuppressWarnings("unchecked")
+	public List<Order> getOrdersWithProducts(Shop shop, int age, TimeUnit unit) {
+		Date end = new Date();
+		Date start = new Date(end.getTime() - unit.toMillis(age));
+		Query query = getEntityManager().createQuery("select o from Order o join fetch o.productOrders where o.shop = :shop and o.orderDate between :start and :end");
+		query.setParameter("shop", shop);
+		query.setParameter("start", start, TemporalType.DATE);
+		query.setParameter("end", end, TemporalType.DATE);
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
 	public void setPropertyLabel(Property property, String language, String value) {
 		EntityManager entityManager = getEntityManager();
 
@@ -618,5 +632,4 @@ public class CatalogDao extends AbstractDao {
 		return query.getResultList();
 		
 	}
-	
 }

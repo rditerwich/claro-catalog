@@ -115,6 +115,10 @@ Package {
                     opposite = shop:Shop/attributes:promotions
                 }
                 Attribute {
+                    name = showOnMainPage
+                    type = primitive:Boolean
+                }
+                Attribute {
                     name = templates
                     type = catalog:Template
                     lower = 0
