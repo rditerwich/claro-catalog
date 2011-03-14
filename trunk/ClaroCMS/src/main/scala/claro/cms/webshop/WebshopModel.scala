@@ -129,6 +129,9 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
 
   val keywordMap =
     KeywordMap(products map (p => (p.properties map (_.valueAsString), p)))
+    
+  val alsoBought : Map[Product, Seq[Product]] = 
+  	cacheData.alsoBought.map(kv => (mapping.products(kv._1), kv._2.map(mapping.products)))
 }
 
 trait Item {

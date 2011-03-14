@@ -28,8 +28,8 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
     "total-prices-plus-shipping" -> order.totalPricesPlusShipping -> "total-price",
     "clear" -> clear,
     "link" -> Link("/cart"),
-    "place-order" -> placeOrderLink,
-    "proceed-order-link" -> proceedOrderLink)
+    "place-order" -> placeOrderLink(@@("href", "/shipping")),
+    "proceed-order-link" -> proceedOrderLink(@@("href", "/shipping")))
   
   def order = WebshopModel.currentOrder.get
 
@@ -72,10 +72,10 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
   }  
   def shippingCosts = new Money(15, "EUR")
   
-  def proceedOrderLink = (xml : NodeSeq) => 
-    <a href="/shipping">{xml}</a> % currentAttributes()
+  def proceedOrderLink(href : String) = (xml : NodeSeq) => 
+    <a href={href}>{xml}</a> % currentAttributes()
   
-  def placeOrderLink = (xml : NodeSeq) => {
+  def placeOrderLink(href : String) = (xml : NodeSeq) => {
     val redraws = CurrentRedraws.get
     def callback = {
       WebshopDao.transaction { em =>
@@ -98,6 +98,11 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
               // clear shopping basket
               WebshopModel.currentOrder.remove()
               S.notice("Order has been placed")
+              
+              // redirect
+              if (href.trim != "") {
+					      //S.redirectTo(href)
+					    }
             case None =>
           }
           case None =>

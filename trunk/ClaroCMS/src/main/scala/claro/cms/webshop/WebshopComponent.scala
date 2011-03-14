@@ -82,6 +82,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "is-on-trail" -> Trail.isOnTrail(product),
       "is-selected" -> Trail.isSelected(product),
       "add-to-cart-link" -> ShoppingCart.addProduct(product),
+      "also-bought" -> WebshopModel.shop.get.alsoBought.getOrElse(product, Seq()) -> "product",
       "link" -> Link(product),
       "href" -> LinkAttr(product) -> "href")
     
@@ -113,8 +114,8 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "total-prices-plus-shipping" -> cart.order.totalPricesPlusShipping -> "total-price",
       "clear" -> cart.clear,
       "link" -> Link("/cart"),
-      "place-order" -> cart.placeOrderLink,
-      "proceed-order-link" -> cart.proceedOrderLink)
+      "place-order" -> cart.placeOrderLink(@@("href", "/registered")),
+      "proceed-order-link" -> cart.proceedOrderLink(@@("href", "/shipping2")))
     
     case order : Order => Map(
       "items" -> order.order.getProductOrders -> "item",

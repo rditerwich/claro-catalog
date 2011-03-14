@@ -4,7 +4,7 @@ import scala.collection.mutable
 import scala.collection.JavaConversions._
 import scala.xml.NodeSeq 
 import java.util.Locale
-import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.{ConcurrentMap, TimeUnit}
 import claro.catalog.data.MediaValue
 import claro.catalog.model.CatalogModel
 import claro.catalog.command.items.PerformStaging
@@ -140,4 +140,34 @@ class WebshopData (val catalog : CatalogModel, val shop : jpa.shop.Shop, val sta
   def template(obj : Object, template : String) : Option[NodeSeq] = {
     None
   }  
+  
+  /**
+   * The product seq is ordered by volume, high volume products come first.
+   * @return
+   */
+  def alsoBought : Map[ItemModel, Seq[ItemModel]] = {
+  	val allOrders : Seq[jpa.order.Order] = catalog.dao.getOrdersWithProducts(shop, 200, TimeUnit.DAYS)
+  	val productsByUser = mutable.Map[jpa.party.User, mutable.Map[jpa.catalog.Product, Int]]()
+  	for (order <- allOrders) {
+  		val products = productsByUser.getOrElseUpdate(order.getUser, mutable.Map[jpa.catalog.Product, Int]())
+  		for (product <- order.getProductOrders) {
+  			val volume = products.getOrElse(product.getProduct, 0) + product.getVolume.intValue
+  			products += ((product.getProduct, volume))
+  		}
+  	}
+    val productsByProduct = mutable.Map[jpa.catalog.Product, mutable.Map[jpa.catalog.Product, Int]]()
+    for ((user, userProducts) <- productsByUser) {
+    	for (productKey <- userProducts.keys) {
+    		for ((product, volume) <- userProducts if product != productKey) {
+    			val productProducts = productsByProduct.getOrElseUpdate(productKey, mutable.Map[jpa.catalog.Product, Int]())
+    			val volume2 = productProducts.getOrElse(product, 0) + volume
+    			productProducts += ((product, volume2))
+    		}
+    	}
+    }
+    val result = for ((product, products) <- productsByProduct) 
+    	yield (catalog.getItem(product.getId), products.toSeq.sortBy(_._2).map(t => catalog.getItem(t._1.getId)).reverse)
+    
+    result.toMap
+  }
 }
