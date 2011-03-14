@@ -1,15 +1,23 @@
 <template:include template="templates/page">
   <webshop:current-product>
      <head><title>Product Info</title></head>
-     <head></head>
-     <div class="contentheading">Article Number: <product:value property="ArticleNumber"/></div>
-     <product:value property="Description"/><br/>
-     <product:value property="Image" height="60px"/>
+	 <table style="margin-top:20px">
+		<tr><td style="padding-right:20px"><product:value property="Image" height="60px"/></td>
+		<td><div class="contentheading">Article Number: <product:value property="ArticleNumber"/></div>
+        <product:value property="Name"/>
+		<div class="contentheading">Price: <product:value property="Price"/></div>
+		<br/>
+       	<product:add-to-cart-link class="button">Add to Cart</product:add-to-cart-link>
+ </td></tr>
+	 </table>
+     
       <webshop:shopping-cart>
         <shopping-cart:add product="product" style="float:right;padding: 8px 12px;font-size: 12px;text-decoration: none;white-space:nowrap;line-height:20px;border: 1px solid #999;color: #4D4D4D;background: #FC0 url(images/bg_d01.gif) repeat-x 0px 50%;">Add to Cart</shopping-cart:add>
       </webshop:shopping-cart>
-<br/><br/><br/>
-<br/><br/><br/>
+
+
+<br/>
+	<h2>Specifications</h2>
 	<ul class="css-tabs skin2">
 	<product:properties-by-group>
 		<li><a href="#"><group:name/></a></li>
@@ -32,6 +40,15 @@
 	</div>
 	</product:properties-by-group>
 </div>
+
+
+	<product:also-bought>
+	<h2>Customers who bought this product also bought the following products</h2>
+	<list:repeat>
+		<template:include template="templates/product"/>
+	</list:repeat>
+<div style="clear:both"/>"
+	</product:also-bought>
 
 <script type="text/javascript">
  $(function() {
