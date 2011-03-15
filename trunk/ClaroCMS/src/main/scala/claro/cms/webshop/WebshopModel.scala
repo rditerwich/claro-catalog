@@ -12,6 +12,7 @@ import net.liftweb.http.{RequestVar, SessionVar, LiftRules}
 import net.liftweb.http.provider.servlet.HTTPServletContext
 import scala.collection.{mutable, immutable, Set}
 import scala.collection.JavaConversions._
+import scala.util.Random
 
 object WebshopModel {
 
@@ -109,6 +110,9 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
   val promotions: Set[Promotion] =
     cacheData.promotions map (mapping.promotions) toSet
 
+  def randomPromotions(count : Int) = 
+  	Random.shuffle(promotions).take(if (count < 0 || count > promotions.size) promotions.size else count)
+    
   val categories: Set[Category] =
     cacheData.items.filter(_.isCategory) map (mapping.categories) toSet
 
@@ -255,6 +259,10 @@ class Category(val item : ItemModel, val cacheData: WebshopData, val mapping: Ma
     val promotions = cacheData.promotions map (mapping.promotions) filter (p => !(p.products ** productExtent).isEmpty)
     if (promotions isEmpty) Set.empty else Set(promotions.toSeq first)
   }
+  
+  def randomProductExtentPromotions(count : Int) = 
+  	Random.shuffle(productExtentPromotions).take(if (count < 0 || count > productExtentPromotions.size) productExtentPromotions.size else count)
+
 }
 
 class Product(val item : ItemModel, val cacheData: WebshopData, val mapping: Mapping) extends Delegate(item) with Item {
