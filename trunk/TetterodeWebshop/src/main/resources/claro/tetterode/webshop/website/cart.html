@@ -43,6 +43,15 @@
     </div>
     </list:last>
     </shopping-cart:items>
+
+	<shopping-cart:also-bought>
+	<h2>Customers who bought this product also bought the following products</h2>
+	<list:repeat>
+		<template:include template="templates/product"/>
+	</list:repeat>
+<div style="clear:both"/>"
+	</shopping-cart:also-bought>
+
   </webshop:shopping-cart>
   <!-- lift:ShoppingCart.show phase="2">
     Address gegevens...
