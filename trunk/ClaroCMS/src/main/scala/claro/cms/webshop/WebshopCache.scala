@@ -24,7 +24,7 @@ object WebshopCache {
 	val shopName = rich(Website.instance.config.properties)("shop.name", "Shop")
 	val catalogName = rich(Website.instance.config.properties)("catalog.name", "Catalog")
 	lazy val catalog = findAllCatalogs.find(_.getName == catalogName).get
-	def catalogModel = new CatalogModel(catalog.getId, WebshopModel.dao)
+	lazy val catalogModel = new CatalogModel(catalog.getId, WebshopModel.dao)
 	
   private val map : ConcurrentMap[(Boolean, String), Shop] = MapMaker(10, MapMaker.STRONG, MapMaker.SOFT, key => {
   	val stagingAreaName = if (key._1) PerformStaging.STAGING_AREA_PREVIEW else PerformStaging.STAGING_AREA_PUBLISHED

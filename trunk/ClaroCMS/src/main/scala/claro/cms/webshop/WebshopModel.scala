@@ -132,6 +132,13 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
     
   val alsoBought : Map[Product, Seq[Product]] = 
   	cacheData.alsoBought.map(kv => (mapping.products(kv._1), kv._2.map(mapping.products)))
+  	
+  def alsoBought(products : Seq[Product]) : Seq[Product] = {
+  	val result = mutable.LinkedHashSet[Product]()
+  	result ++= products.flatMap(p => alsoBought.getOrElse(p, Seq()))
+  	result --= products
+  	result.toSeq
+  }
 }
 
 trait Item {

@@ -28,6 +28,8 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
     "total-prices-plus-shipping" -> order.totalPricesPlusShipping -> "total-price",
     "clear" -> clear,
     "link" -> Link("/cart"),
+    "also-bought" -> WebshopModel.shop.get.alsoBought(order.productOrders.map(_.product)) -> "product",
+    "also-bought2" -> order.productOrders.map(_.product) -> "product",
     "place-order" -> placeOrderLink(@@("href", "/shipping")),
     "proceed-order-link" -> proceedOrderLink(@@("href", "/shipping")))
   
@@ -140,6 +142,4 @@ class ShoppingCart private extends Bindable with WebshopBindingHelpers with Redr
     }
     SHtml.a(() => callback, xml) % current.attributes
   }
-  
-  
 }
