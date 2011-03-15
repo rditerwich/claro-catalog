@@ -98,7 +98,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "defined-properties" -> category.properties -> "property",
       "products" -> @@?("include-sub-categories", category.productExtent, category.products) -> "product",
       "promotions" -> category.productExtentPromotions -> "promotion",
-      "random-promotion" -> category.randomProductExtentPromotions(@@("count", "-1").toInt) -> "promotion",
+      "random-promotions" -> category.randomProductExtentPromotions(@@("count", "-1").toInt) -> "promotion",
       "is-on-trail" -> Trail.isOnTrail(category),
       "is-selected" -> Trail.isSelected(category),
       "link" -> Link(category),

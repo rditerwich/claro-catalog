@@ -257,7 +257,7 @@ class Category(val item : ItemModel, val cacheData: WebshopData, val mapping: Ma
 
   lazy val productExtentPromotions: Set[Promotion] = {
     val promotions = cacheData.promotions map (mapping.promotions) filter (p => !(p.products ** productExtent).isEmpty)
-    if (promotions isEmpty) Set.empty else Set(promotions.toSeq first)
+    if (promotions isEmpty) Set.empty else promotions.toSet
   }
   
   def randomProductExtentPromotions(count : Int) = 
