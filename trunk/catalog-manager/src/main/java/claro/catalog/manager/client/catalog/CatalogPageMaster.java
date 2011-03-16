@@ -202,11 +202,10 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		boolean show = false;
 		StringBuilder filterText = new StringBuilder();
 		if (model.getProductData().getBufferSize() == 0) {
-			filterText.append("No products found");
 			show = true;
+			label.setHTML(messages.noProductsFound()); 
 		} else {
 			show = false;
-			filterText.append("Results for ");
 			String filter = Strings.nullToEmpty(model.getFilterString()).trim();
 			String sep = "";
 			if (!filter.isEmpty()) {
@@ -220,8 +219,8 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 				filterText.append(page.ribbon.filterCategories.displayName(categoryId));
 				show = true;
 			}
+			label.setHTML(messages.filterMessage(filterText.toString())); 
 		}
-		label.setHTML(messages.filterMessage(filterText.toString())); 
 		label.setVisible(show);
 	}
 	

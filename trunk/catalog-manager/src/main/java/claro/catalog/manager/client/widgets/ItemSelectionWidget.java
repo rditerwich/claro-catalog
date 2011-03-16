@@ -139,13 +139,13 @@ public class ItemSelectionWidget extends SelectionWidget<Long> {
 	}
 	
 	@Override
-	protected void removeObjectClicked(Long itemId) {
+	protected void removeSelectedObject(Long itemId) {
 		removeItem(itemId);
 	}
 
 	protected void removeItem(Long itemId) {
 		displayNames = displayNames.removeKey(itemId);
-		removeSelectedObject(itemId);
+		super.removeSelectedObject(itemId);
 	}
 
 	protected String getAddToSelectionLabel() {

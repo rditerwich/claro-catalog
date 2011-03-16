@@ -97,7 +97,7 @@ public class TaxonomyPage extends Page {
 	private SMap<Long, SMap<String, String>> asDisplayNames(SMap<Long, ItemData> items) {
 		SMap<Long, SMap<String, String>> result = SMap.empty();
 		for (Entry<Long, ItemData> item : items) {
-			result.add(item.getKey(), item.getValue().displayNames);
+			result = result.add(item.getKey(), item.getValue().displayNames);
 		}
 		return result;
 	}

@@ -115,14 +115,10 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 		return "";
 	}
 	
-	protected void selectedObjectClicked(T categoryId) {
+	private void selectObject(T categoryId) {
 		
 	}
 	
-	protected void removeObjectClicked(T categoryId) {
-		removeSelectedObject(categoryId);
-	}
-
 	protected void selectionChanged() {
 	}
 
@@ -163,7 +159,7 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 									addHoverStyles(this);
 									addClickHandler(new ClickHandler() {
 										public void onClick(ClickEvent event) {
-											selectedObjectClicked(finalSelectedObject);
+											selectObject(finalSelectedObject);
 										}
 									});
 								}
