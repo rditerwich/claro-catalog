@@ -124,6 +124,8 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 				}
 			}
 			
+			catalogModel.flush(); // Flush to be able to use groups/properties/item for adding values.
+			
 			// Add values.
 			for (Entry<PropertyInfo, SMap<String, Object>> value : CollectionUtil.notNull(valuesToSet)) {
 				PropertyModel propertyModel = itemModel.findProperty(value.getKey().propertyId, true);

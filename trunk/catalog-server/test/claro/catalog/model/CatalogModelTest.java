@@ -149,11 +149,40 @@ public class CatalogModelTest extends CatalogTestBase {
 	
 	
 	@Test
-	public void testParentChildExtentAfterChildSetParent() {
+	public void testParentChildExtentAfterChildSetParent() throws Exception {
 		// get childextent of parent
 		// change a child to not include parent as a parent.
 		// See whether the child is removed from the parent.
+		ensureDatabaseCreated();
 		
+		EntityManager entityManager = getCatalogDao().getEntityManager();
+		CatalogModel model = getCatalogModel();
+		
+		Category root = model.catalog.getRoot();
+		Category hpPrinters = addCategory(entityManager, model, root, "HP Printers");
+		Category epsonPrinters = addCategory(entityManager, model, root, "Epson Printers");
+		Category hpColorPrinters = addCategory(entityManager, model, hpPrinters, "HP Color Printers");
+		Category hpColorPlotters = addCategory(entityManager, model, hpColorPrinters, "HP Color Plotters");
+		
+		ItemModel epsonPrintersModel = model.getItem(epsonPrinters.getId());
+		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
+		ItemModel hpColorPlotterModelBefore = model.getItem(hpColorPlotters.getId());
+		
+		// Touch parent
+		Set<ItemModel> childExtentBefore = model.getItem(hpPrinters.getId()).getChildExtent();
+		Assert.assertTrue(childExtentBefore.contains(hpColorPlotterModelBefore));
+		
+		// Rewire child.parent.
+		hpColorPlotterModelBefore.setParents(Collections.singleton(epsonPrintersModel));
+		
+		model.removeItem(hpColorPrinterModel.itemId);
+		
+		// Push changes through the model.
+		model.flush();
+		
+		// Check model:
+		Set<ItemModel> childExtentAfter = model.getItem(hpPrinters.getId()).getChildExtent();
+		Assert.assertFalse(childExtentAfter.contains(hpColorPlotterModelBefore));
 	}
 	
 	

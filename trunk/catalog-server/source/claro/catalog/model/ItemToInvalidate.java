@@ -2,13 +2,13 @@ package claro.catalog.model;
 
 public class ItemToInvalidate {
 
-	final long itemId;
+	final ItemModel item;
 	final boolean self;
 	final boolean childExtent;
 	final boolean parentExtent;
 	
-	public ItemToInvalidate(long itemId, boolean self, boolean childExtent, boolean parentExtent) {
-		this.itemId = itemId;
+	public ItemToInvalidate(ItemModel item, boolean self, boolean childExtent, boolean parentExtent) {
+		this.item = item;
 		this.self = self;
 		this.childExtent = childExtent;
 		this.parentExtent = parentExtent;

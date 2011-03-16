@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class CatalogModel {
 	public final PropertyModel visibleProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	final Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
-	final ConcurrentLinkedQueue<ItemToInvalidate> itemsToInvalidate = new ConcurrentLinkedQueue<ItemToInvalidate>();
+	final ConcurrentLinkedQueue<ItemModel> itemsToInvalidate = new ConcurrentLinkedQueue<ItemModel>();
 	private PropertyGroup imagesPropertyGroup;
 	private PropertyGroup documentsPropertyGroup;
 	private PropertyModel manualProperty;
@@ -115,7 +116,7 @@ public class CatalogModel {
 		Item item;
 		if (itemData != null) {
 			item = itemData.getEntity();
-			invalidateItems(itemData, true, true, true);
+			invalidateItems(computeInvalidItems(itemData, true, true, true));
 			root.flush();
 			items.remove(id);
 		} else {
@@ -293,21 +294,39 @@ public class CatalogModel {
 	}
 	
 	public void invalidateItem(ItemModel item) {
-		invalidateItems(item, true, false, false);
+		itemsToInvalidate.add(item);
 	}
 	
 	public void invalidateItemAndChildExtent(ItemModel item) {
-		invalidateItems(item, true, true, false);
+		invalidateItems(computeInvalidItems(item, true, true, false));
 	}
 	
-	public void invalidateItems(ItemModel item, boolean self, boolean childExtent, boolean parentExtent) {
-		itemsToInvalidate.add(new ItemToInvalidate(item.itemId, self, childExtent, parentExtent));
+	public Set<ItemModel> computeInvalidateItem(ItemModel item) {
+		return computeInvalidItems(item, true, false, false);
+	}
+	
+	public Set<ItemModel> computeInvalidateItemAndChildExtent(ItemModel item) {
+		return computeInvalidItems(item, true, true, false);
+	}
+	
+	public Set<ItemModel> computeInvalidItems(ItemModel item, boolean self, boolean childExtent, boolean parentExtent) {
+		Set<ItemModel> result = new HashSet<ItemModel>();
+		// Note: It is more expensive to look for doubles than to flush them!
+		if (self) {
+			result.add(item);
+		}
+		if (childExtent) {
+			result.addAll(item.getChildExtent());
+		}
+		if (parentExtent) {
+			result.addAll(item.getParentExtent());
+		}
+		
+		return result;
 	}
 	
 	public void invalidateAllItems() {
-		for (ItemModel item : items.values()) {
-			invalidateItem(item);
-		}
+		invalidateItems(items.values());
 	}
 	
 	public void invalidateAll() {
@@ -318,33 +337,14 @@ public class CatalogModel {
 	void invalidateItems(Iterable<ItemModel> items) {
 		if (items != null) {
 			for (ItemModel item : items) {
-				invalidateItem(item);
+				itemsToInvalidate.add(item);
 			}
 		}
 	}
  
 	public void flush() {
-		// collect items to invalidate
-		Map<Long, ItemModel> items = null;
-		while (true) {
-			ItemToInvalidate itemToInvalidate = itemsToInvalidate.poll();
-			if (itemToInvalidate == null) break;
-			if (items == null) {
-				items = new TreeMap<Long, ItemModel>();
-			}
-			ItemModel model = this.items.get(itemToInvalidate.itemId);
-			if (model == null) continue;
-			if (itemToInvalidate.self) items.put(itemToInvalidate.itemId, model);
-			if (itemToInvalidate.childExtent) {
-				for (ItemModel child : model.getChildExtent()) items.put(child.itemId, child);
-			}
-			if (itemToInvalidate.parentExtent) {
-				for (ItemModel parent : model.getParentExtent()) items.put(parent.itemId, parent);
-			}
-			// now invalidate them all
-			for (ItemModel item : items.values()) {
-				item.flush();
-			}
+		for (ItemModel itemToInvalidate = itemsToInvalidate.poll(); itemToInvalidate != null; itemToInvalidate = itemsToInvalidate.poll()) {
+			itemToInvalidate.flush();
 		}
 	}
 }

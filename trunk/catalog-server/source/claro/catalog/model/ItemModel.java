@@ -161,6 +161,8 @@ public class ItemModel {
 	}
 	
 	public void setParents(Collection<ItemModel> parents) {
+		
+		// Make sure there are no cycles.
 		List<Item> items = new ArrayList<Item>();
 		for (ItemModel parent : parents) {
 			if (!inParentExtent(itemId, parent.getEntity(), new HashSet<Item>())) {
@@ -170,19 +172,18 @@ public class ItemModel {
 			}
 			
 		}
-		CatalogDao dao = catalog.dao;
-		if (dao.setItemParents(getEntity(), items)) {
-			Set<ItemModel> invalidItems = new HashSet<ItemModel>();
-			invalidItems.addAll(getChildExtent());
-			invalidItems.add(this);
-			invalidItems.addAll(getParentExtent());
-			for (ItemModel parent : parents) {
-				invalidItems.add(parent);
-				invalidItems.addAll(parent.getParentExtent());
-			}
-			catalog.invalidateItems(invalidItems);
+		
+		// Items to invalidate if anything changes:
+		Set<ItemModel> invalidItems = catalog.computeInvalidItems(this, true, true, true);
+		for (ItemModel parent : parents) {
+			invalidItems.add(parent);
+			invalidItems.addAll(parent.getParentExtent());
 		}
 		
+		CatalogDao dao = catalog.dao;
+		if (dao.setItemParents(getEntity(), items)) {
+			catalog.invalidateItems(invalidItems);
+		}
 	}
 
 	public Item getEntity() {
@@ -539,6 +540,7 @@ public class ItemModel {
 			if (getItemClass() != Category.class) {
 				throw new UnsupportedOperationException();
 			}
+			
 			for (Entry<PropertyInfo, PropertyGroupInfo> group : groupsToSet) {
 				PropertyModel property = findProperty(group.getKey().propertyId, true);
 				if (property == null) {
