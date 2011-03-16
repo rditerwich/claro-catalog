@@ -25,7 +25,7 @@
           <tr>
             <item:product>
               <td><product:value property="ArticleNumber"/></td>
-              <td><product:value property="Description"/></td>
+              <td><product:value property="Name"/></td>
               <td style="text-align:right;"><item:price/></td>
             </item:product>
             <td style="text-align:right;"><item:volume/></td>
@@ -45,14 +45,14 @@
           </tr>
        </shopping-cart:total-prices-plus-shipping>
         </table>
-        <list:none>There are no items in the shopping cart</list:none>
-      </shopping-cart:items>
-    </div>
     <div class="button-bar" style="float:left;">
     <a class="button" href="/shipping">&#60;&#60; Shipping Options</a>
     </div>
     <div class="button-bar" style="float:right;">
 	    <shopping-cart:place-order class="button" href="/registerconfirmation">Place order</shopping-cart:place-order>
+    </div>
+        <list:none>There are no items in the shopping cart</list:none>
+      </shopping-cart:items>
     </div>
   </webshop:shopping-cart>
   <div style="clear:both"/>
