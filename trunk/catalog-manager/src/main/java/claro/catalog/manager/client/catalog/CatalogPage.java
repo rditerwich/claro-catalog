@@ -111,6 +111,12 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		productMasterDetail.setDetail(productDetails);
 		productsMaster.render();
 		productDetails.render();
+		if (model.getSelectedProductId() != null) {
+			int row = productData.indexOnPage(model.getSelectedProductId());
+			if (row != -1) {
+				productMasterDetail.openDetail(row);
+			}
+		}
 //		}
 	}
 	
@@ -178,7 +184,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				// TODO Proper status messages.
 				
 				model.setSelectedProductId(result.storedItemId);
-				model.setProductData(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
+				model.setProductDataForCreate(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
 //				render();
 			}
 		});

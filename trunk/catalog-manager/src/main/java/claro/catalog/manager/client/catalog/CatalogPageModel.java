@@ -64,6 +64,15 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 		return selectedParentExtentWithSelf;
 	}
 
+	public void setProductDataForCreate(Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, SMap<OutputChannel, SMap<Long, SMap<String, String>>> promotions) {
+		if (Objects.equal(selectedProductId, productId)) {
+			this.selectedProductCategories = categories;
+			this.selectedProductPropertyValues = propertyValues;
+			this.selectedProductPromotions = promotions;
+			this.selectedParentExtentWithSelf = parentExtentWithSelf;
+		}
+		getProductData().create(productId, masterValues);
+	}
 	public void setProductData(Long productId, SMap<PropertyInfo, SMap<String, Object>> masterValues, SMap<Long, SMap<String, String>> parentExtentWithSelf, SMap<Long, SMap<String, String>> categories, SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues, SMap<OutputChannel, SMap<Long, SMap<String, String>>> promotions) {
 		if (Objects.equal(selectedProductId, productId)) {
 			this.selectedProductCategories = categories;
