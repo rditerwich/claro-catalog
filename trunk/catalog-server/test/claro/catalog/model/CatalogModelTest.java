@@ -49,6 +49,8 @@ public class CatalogModelTest extends CatalogTestBase {
 		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
 		
 		model.removeItem(hpColorPrinterModel.itemId);
+		
+		model.flush();
 
 		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
 
@@ -85,6 +87,8 @@ public class CatalogModelTest extends CatalogTestBase {
 		hpColorPrinterModel.getPropertyExtent();
 		
 		model.removeItem(hpColorPrinterModel.itemId);
+		
+		model.flush();
 		
 		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
 		hpColorPlottersModel.getPropertyExtent();
@@ -123,6 +127,9 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		model.removeItem(hpColorPrinterModel.itemId);
 		
+		// Push changes through the model.
+		model.flush();
+		
 		ItemModel hpColorPlottersModel = model.getItem(hpColorPlotters.getId());
 		hpColorPlottersModel.getPropertyExtent();
 		
@@ -138,6 +145,15 @@ public class CatalogModelTest extends CatalogTestBase {
 		hpColorPlottersModel.getPropertyExtent();
 		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
 		Assert.assertNotNull(supplierProperty);
+	}
+	
+	
+	@Test
+	public void testParentChildExtentAfterChildSetParent() {
+		// get childextent of parent
+		// change a child to not include parent as a parent.
+		// See whether the child is removed from the parent.
+		
 	}
 	
 	
@@ -236,6 +252,8 @@ public class CatalogModelTest extends CatalogTestBase {
 		Assert.assertNotNull(supplierProperty);
 
 		supplierProperty.setValue(null, null, shop, null, "HP");
+		
+		model.flush();
 
 		// Look on hpColorPrinter model
 		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
@@ -294,6 +312,7 @@ public class CatalogModelTest extends CatalogTestBase {
 		supplierProperty.setValue(null, null, null, null, nonShopValueToSet);
 		supplierProperty.setValue(null, null, shop, null, shopValueToSet);
 		
+		model.flush();
 		
 		// Look on hpColorPrinter model
 		ItemModel hpColorPrinterModelAfter = model.getItem(hpColorPrinters.getId());
