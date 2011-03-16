@@ -724,6 +724,18 @@ Package {
                 Literal {
                     name = Item
                 }
+                /**
+                 * Property denotes a category
+                 */
+                Literal {
+                    name = Category
+                }
+                /**
+                 * Property denotes a product
+                 */
+                Literal {
+                    name = Product
+                }
             }
         }
     }

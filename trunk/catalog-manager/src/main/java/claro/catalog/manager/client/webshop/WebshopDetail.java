@@ -114,10 +114,10 @@ public class WebshopDetail extends Composite implements Globals {
 		urlPrefixTextBox.setText(model.getShop().getUrlPrefix());
 		defaultLanguageWidget.setSelection(model.getShop().getDefaultLanguage() != null? Collections.singletonList(model.getShop().getDefaultLanguage()) : null); // TODO Actually set default language.
 		setSelectedLanguages(model.getShop().getLanguages()); 
-		List<Category> categories = new ArrayList<Category>();
+		List<Long> categories = new ArrayList<Long>();
 		for (Navigation nav : model.getShop().getNavigation()) {
 			if (nav.getCategory() != null) {
-				categories.add(nav.getCategory());
+				categories.add(nav.getCategory().getId());
 			}
 		}
 		categoriesWidget.setData(categories, CatalogManager.getUiLanguage());

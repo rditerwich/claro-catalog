@@ -79,6 +79,12 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		
 		// make sure it is removed from the DB.
 		Assert.assertNull(getCatalogDao().getEntityManager().find(Product.class, product1Id));
+		
+		// And the model?
+		ItemModel parent = getCatalogModel().getItem(hpPrintersCatId);
+		for (ItemModel child : parent.getChildExtent()) {
+			Assert.assertNotSame(product1Id, child.getItemId());
+		}
 	}
 	
 	@Test

@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.CatalogDao;
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.jpa.catalog.Category;
@@ -46,6 +47,7 @@ public class ItemModel {
 	private SMap<PropertyGroupInfo, PropertyModel> properties;
 	private SMap<PropertyGroupInfo, PropertyModel> propertyExtent;
 	private Set<PropertyModel> danglingProperties;
+	private ItemType itemType;
 	
 	ItemModel(CatalogModel catalog, Long id) {
 		this.catalog = catalog;
@@ -69,6 +71,21 @@ public class ItemModel {
 		}
 	}
 
+	public ItemType getItemType() {
+		synchronized (catalog) {
+			if (this.itemType == null) {
+				if (isProduct()) {
+					this.itemType = ItemType.product;
+				} else if (isCategory()) {
+					this.itemType = ItemType.category;
+				} else {
+					this.itemType = ItemType.item;
+				}
+			}
+			return this.itemType;
+		}
+	}
+	
 	public boolean isProduct() {
 		return getEntity() instanceof Product;
 	}
@@ -600,6 +617,8 @@ public class ItemModel {
 			properties = null;
 			propertyExtent = null;
 			danglingProperties = null;
+			itemClass = null;
+			itemType = null;
 		}		
 	}
 }

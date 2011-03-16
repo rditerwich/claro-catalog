@@ -179,7 +179,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				
 				model.setSelectedProductId(result.storedItemId);
 				model.setProductData(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
-				render();
+//				render();
 			}
 		});
 	}
@@ -200,7 +200,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 
 				model.setSelectedProductId(cmd.itemId);
 				model.setProductData(productId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
-				render();
+//				render();
 			}
 		});
 		
@@ -224,10 +224,11 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				
 				if (cmd.remove) {
 					model.removeProduct(cmd.itemId);
+					// TODO Who do we need to invalidate?? E.g.,  webshops (promotions) ??
 				} else {
 					model.setProductData(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
 				}
-				render();
+//				render();
 			}
 		});
 	}

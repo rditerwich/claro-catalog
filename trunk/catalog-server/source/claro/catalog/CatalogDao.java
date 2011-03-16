@@ -34,6 +34,7 @@ import claro.jpa.catalog.Label_;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.OutputChannel_;
 import claro.jpa.catalog.ParentChild;
+import claro.jpa.catalog.Product;
 import claro.jpa.catalog.Property;
 import claro.jpa.catalog.PropertyGroup;
 import claro.jpa.catalog.PropertyGroupAssignment;
@@ -99,11 +100,41 @@ public class CatalogDao extends AbstractDao {
 		return getEntityManager().find(Property.class, id);
 	}
 
+	public PropertyValue createPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
+		PropertyValue propertyValue = new PropertyValue();
+		item.getPropertyValues().add(propertyValue);
+		propertyValue.setItem(item);
+		
+		propertyValue.setProperty(property);
+		propertyValue.setSource(source);
+		propertyValue.setStagingArea(stagingArea);
+		propertyValue.setOutputChannel(outputChannel);
+		propertyValue.setLanguage(language);
+		
+		getEntityManager().persist(propertyValue);
+
+		return propertyValue;
+	}
+
 	public List<PropertyValue> getPropertyValues(Item item) {
 		return getEntityManager().createQuery("select v from propertyvalue v where v.item = :item", PropertyValue.class).setParameter("item", item).getResultList();
 	} 
-	
+
 	public PropertyValue getPropertyValue(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
+		List<PropertyValue> propertyValues = getPropertyValues(item, property, source, stagingArea, outputChannel, language);
+
+		// Return the result
+		if (propertyValues.size() == 1) {
+			return propertyValues.get(0);
+		} else if (propertyValues.isEmpty()) {
+			return null;
+		} else {
+			throw new IllegalStateException("Multiple propertyvalues found for property id " + property.getId() + "source " + source + ", stagingArea" + stagingArea + ", outputChannel " + outputChannel + " and language " + language);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PropertyValue> getPropertyValues(Item item, Property property, Source source, StagingArea stagingArea, OutputChannel outputChannel, String language) {
 		StringBuilder queryString = new StringBuilder();
 		
 		queryString.append("select pv from PropertyValue pv where pv.item = :item and pv.property = :property");
@@ -144,17 +175,8 @@ public class CatalogDao extends AbstractDao {
 			query.setParameter("language", language);
 		}
 		
-		@SuppressWarnings("unchecked")
-		List<PropertyValue> propertyValues = query.getResultList();
+		return query.getResultList();
 		
-		// Return the result
-		if (propertyValues.size() == 1) {
-			return propertyValues.get(0);
-		} else if (propertyValues.isEmpty()) {
-			return null;
-		} else {
-			throw new IllegalStateException("Multiple propertyvalues found for property id " + property.getId() + "source " + source + ", stagingArea" + stagingArea + ", outputChannel " + outputChannel + " and language " + language);
-		}
 	}
 
 	public Label getOrCreateLabel(Property property, String label, String language) {
@@ -292,8 +314,20 @@ public class CatalogDao extends AbstractDao {
 			}
 		}
 		
+		// Promotions
+		if (item instanceof Product) {
+			for (VolumeDiscountPromotion promotion : findAnyPromotionsForProduct(item.getId())) {
+				removePromotion(promotion);
+			}
+		}
+		
+		// TODO Referring property values.
+		
 		// Remove from catalog
 		item.getCatalog().getItems().remove(item);
+		
+		
+		
 		
 		// Finally remove from db.
 		entityManager.remove(item);
@@ -302,6 +336,12 @@ public class CatalogDao extends AbstractDao {
 
 	
 	
+	public void removePromotion(VolumeDiscountPromotion promotion) {
+		promotion.getShop().getPromotions().remove(promotion);
+		promotion.setProduct(null);
+		getEntityManager().remove(promotion);
+	}
+
 	public List<Item> findItems(Catalog catalog, OutputChannel outputChannel, Class<? extends Item> itemClass) {
 		StringBuilder queryString = new StringBuilder("select item from ");
 		
@@ -593,6 +633,16 @@ public class CatalogDao extends AbstractDao {
 		return query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<VolumeDiscountPromotion> findAnyPromotionsForProduct(Long productId) {
+		EntityManager entityManager = getEntityManager();
+		Query query = entityManager.createQuery("select p from VolumeDiscountPromotion p where p.product.id = :productId");
+		
+		query.setParameter("productId", productId);
+		
+		return query.getResultList();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<VolumeDiscountPromotion> findPromotionsForProduct(Long catalogId, Long productId) {
 		EntityManager entityManager = getEntityManager();

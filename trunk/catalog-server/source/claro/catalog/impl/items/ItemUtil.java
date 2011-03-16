@@ -5,15 +5,18 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.jpa.catalog.Item;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroup;
+import claro.jpa.catalog.PropertyType;
 import claro.jpa.catalog.StagingArea;
 import claro.jpa.shop.VolumeDiscountPromotion;
 import easyenterprise.lib.cloner.BasicView;
@@ -24,7 +27,7 @@ import easyenterprise.lib.util.SMap;
 
 public class ItemUtil {
 	static View view = new BasicView();
-
+	
 	public static SMap<String, String> getNameLabels(ItemModel item, CatalogModel catalogModel, OutputChannel outputChannel, StagingArea stagingArea) {
 		SMap<String, String> result = SMap.empty();
 		
@@ -56,7 +59,12 @@ public class ItemUtil {
 	public static SMap<PropertyInfo, SMap<String, Object>> effectivePropertyValues(ItemModel candidate, StagingArea stagingArea, OutputChannel outputChannel) {
 		SMap<PropertyInfo, SMap<String, Object>> propertyValues = SMap.empty();
 		for (Entry<PropertyGroupInfo, PropertyModel> property : candidate.getPropertyExtent()) {
-			propertyValues = propertyValues.add(property.getValue().getPropertyInfo(), property.getValue().getEffectiveValues(stagingArea, outputChannel));
+			SMap<String, Object> convertedValues = SMap.empty();
+			for (Entry<String, Object> value : property.getValue().getEffectiveValues(stagingArea, outputChannel)) {
+				convertedValues = convertedValues.add(value.getKey(), convertModelValue(property.getValue().getPropertyInfo().getType(), value.getValue()));
+			}
+
+			propertyValues = propertyValues.add(property.getValue().getPropertyInfo(), convertedValues);
 		}
 		return propertyValues;
 	}
@@ -84,13 +92,21 @@ public class ItemUtil {
 				// Values
 				SMap<String, Object> values = property.getValues(area, channel);
 				if (values != null && !values.isEmpty()) {
-					propertyData.values = SMap.create(channel, values);
+					SMap<String, Object> convertedValues = SMap.empty();
+					for (Entry<String, Object> value : values) {
+						convertedValues = convertedValues.add(value.getKey(), convertModelValue(property.getPropertyInfo().getType(), value.getValue()));
+					}
+					propertyData.values = SMap.create(channel, convertedValues);
 				}
 				
 				// Effective Values
 				SMap<String, Object> effectiveValues = property.getEffectiveValues(area, channel);
 				if (effectiveValues != null && !effectiveValues.isEmpty()) {
-					propertyData.effectiveValues = SMap.create(area, SMap.create(channel, effectiveValues));
+					SMap<String, Object> convertedValues = SMap.empty();
+					for (Entry<String, Object> value : effectiveValues) {
+						convertedValues = convertedValues.add(value.getKey(), convertModelValue(property.getPropertyInfo().getType(), value.getValue()));
+					}
+					propertyData.effectiveValues = SMap.create(area, SMap.create(channel, convertedValues));
 				}
 				
 				// TODO How to do this???
@@ -107,6 +123,16 @@ public class ItemUtil {
 		return resultPropertyData;
 	}
 
+
+	private static Object convertModelValue(PropertyType type, Object value) {
+		switch (type) {
+		case Item:
+		case Category:
+		case Product:
+			return value != null ? ((Item)value).getId() : null;
+		}
+		return value;
+	}
 
 	public static SMap<Long, SMap<String, String>> parents(ItemModel itemModel, CatalogModel catalogModel, StagingArea area, OutputChannel channel, boolean includeRootCategory) {
 		SMap<Long, SMap<String, String>> categories = SMap.empty();

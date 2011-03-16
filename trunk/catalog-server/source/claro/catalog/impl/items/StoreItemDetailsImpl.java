@@ -20,6 +20,7 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
+import claro.jpa.catalog.Item;
 import claro.jpa.catalog.OutputChannel;
 import claro.jpa.catalog.PropertyGroupAssignment;
 import claro.jpa.catalog.PropertyType;
@@ -43,6 +44,7 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 
 	private OutputChannel outputChannel;
 
+	// TODO Require more catalogModel.flush() -es in update section??!!
 	@Override
 	public Result execute() throws CommandException {
 		
@@ -127,16 +129,37 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 				PropertyModel propertyModel = itemModel.findProperty(value.getKey().propertyId, true);
 				for (Entry<String, Object> languageValue : value.getValue()) {
 					Object typedValue = languageValue.getValue();
-					if (propertyModel.getEntity().getType() == PropertyType.Media) {
+					switch (propertyModel.getEntity().getType()) {
+					case Media:
 						FileItem fileItem = CatalogServer.getUploadedFile(typedValue.toString());
 						if (fileItem != null) {
 							MediaContent mediaContent = catalogModel.getOrCreateMediaContent(fileItem.getContentType(), fileItem.get());
 							typedValue = MediaValue.create(mediaContent.getId(), mediaContent.getMimeType(), fileItem.getName());
 						}
+						break;
+					case Item:
+					case Category:
+					case Product:
+						if (propertyModel.getEntity().getIsMany()) {
+							List<Item> typedListValue = new ArrayList<Item>();
+							for (Object itemId : (List<?>)typedValue) {
+								typedListValue.add(catalogModel.getItem((Long) itemId).getEntity());
+							}
+							
+							typedValue = typedListValue;
+						} else {
+							if (typedValue != null) {
+								typedValue = catalogModel.getItem((Long) typedValue).getEntity();
+							}
+						}
+						break;
 					}
 					propertyModel.setValue(null, stagingArea, outputChannel, languageValue.getKey(), typedValue);
 				}
 			}
+			
+			// Flush changes.
+			catalogModel.flush();
 			
 			// Update result with new data.
 			result.storedItemId = itemModel.getItemId();
@@ -222,10 +245,10 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 			}
 		}
 		
-		// Properties for added values must exist.
-		for (PropertyInfo value : CollectionUtil.notNull(valuesToSet).getKeys()) {
+		// Properties for added values must exist and be the right cardinality.
+		for (PropertyInfo property : CollectionUtil.notNull(valuesToSet).getKeys()) {
 			if (itemId != null) {
-				validate(catalogModel.getItem(itemId).findProperty(value.propertyId, true) != null);
+				validate(catalogModel.getItem(itemId).findProperty(property.propertyId, true) != null);
 			} else {
 				// New item, so property must be defined on one of the parents:
 				boolean found = false;
@@ -234,12 +257,18 @@ public class StoreItemDetailsImpl extends StoreItemDetails implements CommandImp
 					parents.add(catalogModel.getRootItem().getItemId());
 				}
 				for (Long categoryId : parents) {
-					if (catalogModel.getItem(categoryId).findProperty(value.propertyId, true) != null) {
+					if (catalogModel.getItem(categoryId).findProperty(property.propertyId, true) != null) {
 						found = true;
 						break;
 					}
 				}
 				validate(found);
+			}
+			
+			SMap<String, Object> languageValues = valuesToSet.get(property);
+			for (String language : languageValues.getKeys()) {
+				boolean isList = languageValues.get(language) instanceof List;
+				validate(property.isMany == isList);
 			}
 		}
 	}

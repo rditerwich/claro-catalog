@@ -26,5 +26,7 @@ public enum PropertyType {
     Volume, 
     Velocity, 
     Acceleration, 
-    Item
+    Item, 
+    Category, 
+    Product
 }

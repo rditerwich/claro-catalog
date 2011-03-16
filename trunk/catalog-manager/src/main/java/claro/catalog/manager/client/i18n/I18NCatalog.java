@@ -176,6 +176,8 @@ public interface I18NCatalog extends Messages {
 //	String down();
 //
 	String addToCategoriesLink();
+	String addToProductsLink();
+	String addToItemsLink();
 	String addCategoriesLink();
 	String addCategoryFilter();
 	String addCategoryProductDetailsTooltip(String productName);

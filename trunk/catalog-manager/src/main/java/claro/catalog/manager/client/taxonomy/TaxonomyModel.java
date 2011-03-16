@@ -1,5 +1,8 @@
 package claro.catalog.manager.client.taxonomy;
 
+import java.util.List;
+import java.util.Map;
+
 import claro.catalog.manager.client.items.ItemPageModel;
 import easyenterprise.lib.util.SMap;
 
@@ -8,7 +11,7 @@ public class TaxonomyModel extends ItemPageModel {
 	private Long selectedCategoryId;
 	private Long rootCategoryId;
 	private SMap<Long, SMap<String, String>> categories;
-	private SMap<Long, Long> childrenByCategory;
+	private Map<Long, List<Long>> childrenByCategory;
 	public void setSelectedCategoryId(Long selectedCategoryId) {
 		this.selectedCategoryId = selectedCategoryId;
 	}
@@ -17,7 +20,7 @@ public class TaxonomyModel extends ItemPageModel {
 	}
 
 	
-	public void setCategoriesTree(Long rootCategoryId, SMap<Long, Long> children, SMap<Long, SMap<String, String>> categories) {
+	public void setCategoriesTree(Long rootCategoryId, Map<Long, List<Long>> children, SMap<Long, SMap<String, String>> categories) {
 		this.rootCategoryId = rootCategoryId;
 		this.categories = categories;
 		this.childrenByCategory = children;
@@ -32,7 +35,7 @@ public class TaxonomyModel extends ItemPageModel {
 		return categories;
 	}
 	
-	public SMap<Long, Long> getChildrenByCategory() {
+	public Map<Long, List<Long>> getChildrenByCategory() {
 		return childrenByCategory;
 	}
 	public void updateCategory(Long categoryId, SMap<String, String> categoryLabels) {

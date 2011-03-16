@@ -3,12 +3,12 @@ package claro.catalog.manager.client.taxonomy;
 import static claro.catalog.manager.client.CatalogManager.propertyStringConverter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import claro.catalog.data.ItemType;
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
@@ -18,7 +18,7 @@ import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.items.ItemPageModel;
 import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
-import claro.jpa.catalog.Category;
+import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -273,14 +273,25 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		// TODO many multiplicity properties.
 		
 		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
-		Object value = values.tryGet(model.getSelectedLanguage(), null);
+		Object value;
+		if (property.isMany) {
+			value = values.tryGetAll(model.getSelectedLanguage(), null);
+		} else {
+			value = values.tryGet(model.getSelectedLanguage(), null);
+		}
 		boolean isInherited = false;
 
 		SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
 		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
-		Object inheritedValue = effectiveLanguageValues.tryGet(model.getSelectedLanguage(), null);
+		Object inheritedValue;
+		if (property.isMany) {
+			inheritedValue = effectiveLanguageValues.tryGetAll(model.getSelectedLanguage(), null);
+		} else {
+			inheritedValue = effectiveLanguageValues.tryGet(model.getSelectedLanguage(), null);
+		}
 
-		if (value == null) {
+		// TODO The many-case for inherited is *not* right.  
+		if (value == null || property.isMany && ((Collection<?>)value).isEmpty()) {
 			value = inheritedValue;
 			if (value != null) {
 				isInherited = true; 
@@ -325,16 +336,23 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			}
 			break;
 		case Item:
+		case Category:
+		case Product:
 			if (oldWidget instanceof ItemSelectionWidget) {
 				ItemSelectionWidget itemWidget = (ItemSelectionWidget) oldWidget;
-				itemWidget.setItemType(ItemType.item); // TODO itemtype should be set depending on the property.
+				itemWidget.setItemType(CatalogModelUtil.convert(property.getType())); 
 				itemWidget.setMultiSelect(property.isMany);
 				
 				result = oldWidget;
 			} else {
-				result = new ItemSelectionWidget(false, ItemType.item, property.isMany) {// TODO itemtype should be set depending on the property.
+				result = new ItemSelectionWidget(false, CatalogModelUtil.convert(property.getType()), property.isMany) {// TODO itemtype should be set depending on the property.
 					protected void selectionChanged() {
-						valueChanged(this, getSelection());
+						List<Long> selection = getSelection();
+						if (isMultiSelect()) {
+							valueChanged(this, selection);
+						} else {
+							valueChanged(this, selection.isEmpty() ? null : selection.get(0));
+						}
 					}
 				}; 
 			}
@@ -405,11 +423,13 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			checkBox.setValue((Boolean) value);
 			break;
 		case Item:
+		case Category:
+		case Product:
 			ItemSelectionWidget selectionWidget = (ItemSelectionWidget)widget;
 			if (value != null) {
-				selectionWidget.setData(Collections.<Category>emptyList(), model.getSelectedLanguage());  // TODO Get the proper value. (List<Long>)
+				selectionWidget.setData((Collection<Long>) (property.isMany ? value : Collections.singleton(value)), model.getSelectedLanguage());  // TODO Get the proper value. (List<Long>)
 			} else {
-				selectionWidget.setData(Collections.<Category>emptyList(), model.getSelectedLanguage());
+				selectionWidget.setData(Collections.<Long>emptyList(), model.getSelectedLanguage());
 			}
 			break;
 		case Media:

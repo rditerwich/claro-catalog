@@ -156,6 +156,7 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		for (Category category : categories) {
 			ItemModel categoryModel = catalogModel.getItem(category.getId());
 			if (first) {
+				first = false;
 				result.addAll(categoryModel.getChildExtent());
 			} else {
 				result.retainAll(categoryModel.getChildExtent());

@@ -1,6 +1,7 @@
 package claro.jpa.shop;
 
 import java.io.Serializable;
+import java.lang.Boolean;
 import java.lang.Long;
 import java.lang.Override;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class Promotion implements Serializable {
     private Date startDate;
     private Date endDate;
     private Shop shop;
+    private Boolean showOnMainPage = false;
     private List<Template> templates;
 
     public Long getId() {
@@ -46,6 +48,17 @@ public class Promotion implements Serializable {
 
     public void setShop(Shop value) {
         this.shop = value;
+    }
+
+    public Boolean getShowOnMainPage() {
+        return showOnMainPage;
+    }
+
+    public void setShowOnMainPage(Boolean value) {
+        if (value == null) {
+            value = false;
+        }
+        this.showOnMainPage = value;
     }
 
     public List<Template> getTemplates() {

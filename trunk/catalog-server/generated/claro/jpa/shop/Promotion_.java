@@ -8,7 +8,7 @@ import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-03-11T13:19:18")
+@Generated(value="EclipseLink-2.2.0.v20110203-r8920", date="2011-03-15T16:43:49")
 @StaticMetamodel(Promotion.class)
 public class Promotion_ { 
 
@@ -17,5 +17,6 @@ public class Promotion_ {
     public static volatile SingularAttribute<Promotion, Date> startDate;
     public static volatile ListAttribute<Promotion, Template> templates;
     public static volatile SingularAttribute<Promotion, Date> endDate;
+    public static volatile SingularAttribute<Promotion, Boolean> showOnMainPage;
 
 }

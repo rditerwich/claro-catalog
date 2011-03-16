@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.data.PropertyData;
@@ -89,7 +90,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		render();
 	}
 	
-	public void setCategoriesTree(Long rootCategoryId, SMap<Long, Long> children, SMap<Long, SMap<String, String>> categories) {
+	public void setCategoriesTree(Long rootCategoryId, Map<Long, List<Long>> children, SMap<Long, SMap<String, String>> categories) {
 		this.model.setCategoriesTree(rootCategoryId, children, categories);
 	
 		this.categoryRows = createRows();
@@ -223,12 +224,13 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 			}
 			
 			// Add new category, and set itemRow accordingly
+			boolean isLeaf = CollectionUtil.notNull(model.getChildrenByCategory().get(categoryId)).isEmpty();
 			if (parentIndex != -1) {
 				itemRow = parentIndex + 1;
-				categoryRows.add(itemRow, new CategoryRow(categoryId, model.getChildrenByCategory().getAll(categoryId).isEmpty(), categoryRows.get(parentIndex).indentation + 1, true));
+				categoryRows.add(itemRow, new CategoryRow(categoryId, isLeaf, categoryRows.get(parentIndex).indentation + 1, true));
 			} else {
 				itemRow = categoryRows.size();
-				categoryRows.add(new CategoryRow(categoryId, model.getChildrenByCategory().getAll(categoryId).isEmpty(), 1, true));
+				categoryRows.add(new CategoryRow(categoryId, isLeaf, 1, true));
 			}
 			
 			// Rerender master to add row.
@@ -423,7 +425,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	}
 	
 	private void convertToRows(Long currentCategory, List<CategoryRow> result, int indentation) {
-		List<Long> children = model.getChildrenByCategory().getAll(currentCategory);
+		List<Long> children = model.getChildrenByCategory().get(currentCategory);
 		boolean isLeaf = children == null || children.size() == 0;
 
 		// Add current:

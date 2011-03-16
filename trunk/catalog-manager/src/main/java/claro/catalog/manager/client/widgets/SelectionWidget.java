@@ -57,7 +57,9 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 	public void setSelection(Iterable<T> selection) {
 		this.selection.clear();
 		for (T selectedObject : CollectionUtil.notNull(selection)) {
-			this.selection.add(selectedObject);
+			if (selectedObject != null) {
+				this.selection.add(selectedObject);
+			}
 		}
 		
 		render();

@@ -10,9 +10,10 @@ import claro.catalog.impl.importing.GetImportSourceHistoryImpl;
 import claro.catalog.impl.importing.GetImportSourcesImpl;
 import claro.catalog.impl.importing.PerformImportImpl;
 import claro.catalog.impl.importing.StoreImportSourceImpl;
+import claro.catalog.impl.items.DisplayNamesImpl;
 import claro.catalog.impl.items.FindItemsImpl;
 import claro.catalog.impl.items.FindPropertiesImpl;
-import claro.catalog.impl.items.GetCategoryTreeImpl;
+import claro.catalog.impl.items.GetItemTreeImpl;
 import claro.catalog.impl.items.ItemDetailsCommandImpl;
 import claro.catalog.impl.items.PerformStagingImpl;
 import claro.catalog.impl.items.StoreItemDetailsImpl;
@@ -25,7 +26,8 @@ import easyenterprise.lib.command.RegisteredCommands;
 
 public class RegisteredCatalogServerCommands extends RegisteredCommands {
 	public RegisteredCatalogServerCommands() {
-		register(GetCategoryTreeImpl.class);
+		register(GetItemTreeImpl.class);
+		register(DisplayNamesImpl.class);
 		register(ItemDetailsCommandImpl.class);
 		register(FindItemsImpl.class);
 		register(FindPropertiesImpl.class);

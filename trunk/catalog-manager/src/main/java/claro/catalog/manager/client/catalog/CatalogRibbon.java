@@ -81,12 +81,14 @@ public class CatalogRibbon extends EERibbon implements Globals {
 			protected String getRemoveSelectedObjectTooltip(String categoryName) {
 				return messages.removeCategoryFilterTooltip(categoryName);
 			}
-			protected void removeCategory(Long categoryId) {
-				super.removeCategory(categoryId);
+			protected void removeItem(Long categoryId) {
+				super.removeItem(categoryId);
+				model.setFilterCategories(model.getFilterCategories().removeKey(categoryId));
 				page.updateProductList();
 			}
-			protected void addCategory(Long categoryId, SMap<String, String> labels) {
-				super.addCategory(categoryId, labels);
+			protected void addItem(Long categoryId, SMap<String, String> labels) {
+				super.addItem(categoryId, labels);
+				model.setFilterCategories(model.getFilterCategories().add(categoryId, labels));
 				page.updateProductList();
 			}
 			});

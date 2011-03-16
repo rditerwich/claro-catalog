@@ -3,8 +3,10 @@ package claro.catalog.model;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import claro.jpa.catalog.StagingArea;
 import claro.jpa.media.MediaContent;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
@@ -120,42 +123,65 @@ public abstract class PropertyModel {
 		if (source != null && stagingArea != null) throw new IllegalArgumentException("Can't have both a source and a staging area");
 		synchronized(getItem().catalog) {
 
-			// Do we have a property value already?
 			Item itemEntity = item.getEntity();
 			Property propertyEntity = getEntity();
-			PropertyValue propertyValue = item.catalog.dao.getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
-			if (propertyValue != null) {
+			if (propertyEntity.getIsMany()) {
+				Preconditions.checkArgument(value instanceof List, "many property must be set with a List.");
+				List<?> newValues = (List<?>) value;
+				List<PropertyValue> propertyValues = item.catalog.dao.getPropertyValues(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
 				
-				// Are we changing anything?
-				Object existingValue = getTypedValue(propertyValue);
-				if (!Objects.equal(value, existingValue)) {
+				List<Object> existingValues = new ArrayList<Object>();
+				
+				boolean changed = false;
+				for (PropertyValue pv : propertyValues) {
+					Object existingValue = getTypedValue(pv);
+					if (existingValue != null && newValues.contains(existingValue)) {
+						existingValues.add(existingValue);
+					} else {
+						changed = true;
+						item.catalog.dao.removePropertyValue(pv);
+					}
+				}
+				
+				for (Object newValue : newValues) {
+					if (newValue != null && !existingValues.contains(newValue)) {
+						changed = true;
+						PropertyValue newPropertyValue = item.catalog.dao.createPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
+						setTypedValue(newPropertyValue, newValue);
+					}
+				}
+				
+				if (changed) {
+					// Item has changed:
+					item.getCatalog().invalidateItemAndChildExtent(item);
+				}
+				
+			} else {
+				// Do we have a property value already?
+				PropertyValue propertyValue = item.catalog.dao.getPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
+				if (propertyValue != null) {
 					
-					// Set the actual value
+					// Are we changing anything?
+					Object existingValue = getTypedValue(propertyValue);
+					if (!Objects.equal(value, existingValue)) {
+						
+						// Set the actual value
+						setTypedValue(propertyValue, value);
+						
+						// Item has changed:
+						item.getCatalog().invalidateItemAndChildExtent(item);
+					}
+				} else {
+					
+					// No candidate found, create a new one
+					propertyValue = item.catalog.dao.createPropertyValue(itemEntity, propertyEntity, source, stagingArea, outputChannel, language);
+					
+					// Set the actual value.
 					setTypedValue(propertyValue, value);
 					
 					// Item has changed:
 					item.getCatalog().invalidateItemAndChildExtent(item);
 				}
-			} else {
-				
-				// No candidate found, create a new one
-				propertyValue = new PropertyValue();
-				itemEntity.getPropertyValues().add(propertyValue);
-				propertyValue.setItem(itemEntity);
-				
-				propertyValue.setProperty(propertyEntity);
-				propertyValue.setSource(source);
-				propertyValue.setStagingArea(stagingArea);
-				propertyValue.setOutputChannel(outputChannel);
-				propertyValue.setLanguage(language);
-				
-				// Set the actual value.
-				setTypedValue(propertyValue, value);
-				
-				item.catalog.dao.getEntityManager().persist(propertyValue);
-				
-				// Item has changed:
-				item.getCatalog().invalidateItemAndChildExtent(item);
 			}
 		}
 	}
@@ -315,7 +341,10 @@ public abstract class PropertyModel {
 		case Boolean: propertyValue.setBooleanValue((Boolean) value); break;
 		case Enum: propertyValue.setEnumValue((Integer) value); break;
 		case Integer: propertyValue.setIntegerValue((Integer) value); break;
-		case Item: propertyValue.setItemValue((Item) value); break;
+		case Item: 
+		case Category:
+		case Product:
+			propertyValue.setItemValue((Item) value); break;
 		case Real: propertyValue.setRealValue((Double) value);break;
 			
 		// TODO add other non-string values
@@ -342,7 +371,10 @@ public abstract class PropertyModel {
 		case Boolean: return value.getBooleanValue();
 		case Enum: return value.getEnumValue();
 		case Integer: return value.getIntegerValue();
-		case Item: return  value.getItemValue();
+		case Item: 
+		case Category:
+		case Product:
+			return  value.getItemValue();
 		case Real: return value.getRealValue();
 		default: return value.getStringValue();
 		}

@@ -85,12 +85,12 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 							return messages.removeCategoryProductDetailsTooltip(categoryName);
 						}
 						@Override
-						protected void addCategory(Long categoryId, SMap<String, String> labels) {
-							super.addCategory(categoryId, labels);
+						protected void addItem(Long categoryId, SMap<String, String> labels) {
+							super.addItem(categoryId, labels);
 //							categoryAdded(itemId, categoryId);
 						}
-						protected void removeCategory(Long categoryId) {
-							super.removeCategory(categoryId);
+						protected void removeItem(Long categoryId) {
+							super.removeItem(categoryId);
 //							categoryRemoved(itemId, categoryId);
 						}
 					}, messages.selectCategoryHelp());

@@ -2,12 +2,14 @@ package claro.catalog.manager.client.taxonomy;
 
 
 import java.util.Collections;
+import java.util.Map.Entry;
 
 import claro.catalog.command.RootDataCommand;
-import claro.catalog.command.items.GetCategoryTree;
+import claro.catalog.command.items.GetItemTree;
 import claro.catalog.command.items.ItemDetailsCommand;
 import claro.catalog.command.items.StoreItemDetails;
 import claro.catalog.command.items.StoreItemDetails.Result;
+import claro.catalog.data.ItemData;
 import claro.catalog.data.ItemType;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
@@ -79,17 +81,25 @@ public class TaxonomyPage extends Page {
 	}
 	
 	private void updateCategories() {
-		GetCategoryTree c = new GetCategoryTree();
+		GetItemTree c = new GetItemTree();
 		c.catalogId = CatalogManager.getCurrentCatalogId();
 		c.outputChannelId = model.getSelectedShopId();
 
 		invalidateCategoryTree(c.catalogId, c.outputChannelId);
 		
-		GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetCategoryTree.Result>() {
-			public void onSuccess(GetCategoryTree.Result result) {
-				categoryMasterDetail.setCategoriesTree(result.root, result.children, result.categories);
+		GwtCommandFacade.executeCached(c, 1000 * 60 * 60, new StatusCallback<GetItemTree.Result>() {
+			public void onSuccess(GetItemTree.Result result) {
+				categoryMasterDetail.setCategoriesTree(result.root, result.children, asDisplayNames(result.items));
 			}
 		});
+	}
+
+	private SMap<Long, SMap<String, String>> asDisplayNames(SMap<Long, ItemData> items) {
+		SMap<Long, SMap<String, String>> result = SMap.empty();
+		for (Entry<Long, ItemData> item : items) {
+			result.add(item.getKey(), item.getValue().displayNames);
+		}
+		return result;
 	}
 
 	private void createNewCategory(final Long parentId) {
@@ -167,7 +177,7 @@ public class TaxonomyPage extends Page {
 	}
 
 	private void invalidateCategoryTree(Long catalogId, Long outputChannelId) {
-		GetCategoryTree getTreeCmd = new GetCategoryTree();
+		GetItemTree getTreeCmd = new GetItemTree();
 		getTreeCmd.catalogId = catalogId;
 		getTreeCmd.outputChannelId = outputChannelId;
 		getTreeCmd.stagingAreaId = null;

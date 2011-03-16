@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import claro.catalog.data.ItemType;
 import claro.jpa.catalog.Label;
 import claro.jpa.catalog.Property;
+import claro.jpa.catalog.PropertyType;
 
 import com.google.common.base.Objects;
 
@@ -80,4 +82,15 @@ public class CatalogModelUtil {
 			return null;
 		}
 	}
+	
+
+	public static ItemType convert(PropertyType type) {
+		switch (type) {
+		case Item: return ItemType.item;
+		case Category: return ItemType.category;
+		case Product: return ItemType.product;
+		}
+		throw new IllegalArgumentException("Type " + type + " cannot be converted to ItemType");
+	}
+
 }
