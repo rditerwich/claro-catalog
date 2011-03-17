@@ -53,7 +53,6 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 			return shopModel;
 		}
 	};
-	private LayoutPanel mainPanel;
 	private MasterDetail productMasterDetail;
 
 	private PropertyInfo nameProperty;
@@ -78,7 +77,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 	
 	@Override
 	protected void initialize() {
-		initWidget(mainPanel = new LayoutPanel() {{
+		initWidget(new LayoutPanel() {{
 			add(productMasterDetail = new CatalogManagerMasterDetail(150) {{
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {
@@ -113,9 +112,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		productDetails.render();
 		if (model.getSelectedProductId() != null) {
 			int row = productData.indexOnPage(model.getSelectedProductId());
-			if (row != -1) {
-				productMasterDetail.openDetail(row);
-			}
+			productMasterDetail.setCurrentRow(row);
 		}
 //		}
 	}
@@ -157,7 +154,6 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				model.setRootCategory(result.rootCategory);
 				model.setRootProperties(result.rootProperties);
 				updateProductList();
-//				render();
 			}
 		});
 	}
@@ -185,7 +181,6 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				
 				model.setSelectedProductId(result.storedItemId);
 				model.setProductDataForCreate(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
-//				render();
 			}
 		});
 	}
@@ -206,7 +201,6 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 
 				model.setSelectedProductId(cmd.itemId);
 				model.setProductData(productId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
-//				render();
 			}
 		});
 		
@@ -234,7 +228,6 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 				} else {
 					model.setProductData(result.storedItemId, result.masterValues, result.parentExtentWithSelf, result.parents, result.propertyData, result.promotions);
 				}
-//				render();
 			}
 		});
 	}
