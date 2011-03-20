@@ -79,6 +79,7 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "properties-by-group" -> product.propertiesByGroup -> "group",
       "property" -> product.property(locale, @@("name")) -> "property",
       "value" -> value(product.property(locale, @@("property"))),
+      "value" -> value(product.property(locale, @@("property"))),
       "categories" -> product.categories -> "category",
       "is-on-trail" -> Trail.isOnTrail(product),
       "is-selected" -> Trail.isSelected(product),
@@ -214,6 +215,8 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "id" -> property.id.toString,
       "name" -> property.name,
       "label" -> property.name,
+      "mimeType" -> property.mimeType,
+      "media-content-id" -> property.mediaContentId,
       "value" -> value(property))
     
     case money : Money => Map(
@@ -254,7 +257,10 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       WebshopModel.currentCategoryVar(Some(urlName))
       WebshopModel.currentSearchStringVar(Some(s))
       "category" :: Nil
+    case "search" :: Nil => WebshopModel.currentSearchStringVar(Some("")); "search" :: Nil
     case "search" :: s :: Nil => WebshopModel.currentSearchStringVar(Some(s)); "search" :: Nil
+    case "xml" :: "search" :: Nil => S.skipDocType = true; WebshopModel.currentSearchStringVar(Some("")); "xml" :: "search" :: Nil
+    case "xml" :: "search" :: s :: Nil => S.skipDocType = true; WebshopModel.currentSearchStringVar(Some(s)); "xml" :: "search" :: Nil
     case "cart" :: Nil => "cart" :: Nil
     case "flushcache" :: Nil => 
 //      WebshopModel.flush 

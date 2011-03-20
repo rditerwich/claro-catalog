@@ -35,7 +35,7 @@ object ViewDispatch extends LiftRules.ViewDispatchPF {
       val template = Template(path)
       Website.instance.templateCache(template, locale) match {
         case Some(template) => 
-          Left(() => render(Website.instance, path0, template))
+          Left(() => render(Website.instance, path0, template)) 
         case None => 
           Log.info("No template found for path: " + path0.mkString("/", "/", ""))
           Left(() => Empty)

@@ -246,7 +246,14 @@ private class CollectionBinding(f : => Collection[Any], eltBinding : Node => Any
     val listPrefix = attr(node, "list-prefix", "list")
     
     // paging
-    val pageSize = attr(node, "page-size", "0").toInt
+    val pageSize = attrOption(node, "page-size") match {
+    	case Some(size) => net.liftweb.http.S.param("page-size") match {
+    		case net.liftweb.common.Full(size) => size.toInt
+    		case _ => size.toInt
+    	}
+    	case None => 0
+    }
+//    val pageSize = attr(node, "page-size", "0").toInt
     if (pageSize > 0 && pageSize < size) {
     	Paging.sizeEstimate = size
     	Paging.pageSize = pageSize

@@ -1,6 +1,6 @@
 package claro.cms
 
-import xml.{ Elem, Node }
+import xml.{ Elem, Node, Text }
 import claro.cms.util.Formatting
 
 object BindingHelpers extends BindingHelpers
@@ -57,5 +57,5 @@ trait BindingHelpers extends BindingCtor {
     case None => None
   }
   
-  def formatMoney(amount : Double, currency : String) = Formatting.formatMoney(amount, currency)
+  def formatMoney(amount : Double, currency : String) = ifAttr("plain", Text(amount.toString), Formatting.formatMoney(amount, currency))
 }

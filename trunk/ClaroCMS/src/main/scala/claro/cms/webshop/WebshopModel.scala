@@ -42,6 +42,7 @@ object WebshopModel {
   }
 
   def currentSearchProducts: Set[Product] = currentSearchStringVar.is match {
+    case Some("") => shop.products
     case Some(searchString) =>
       val products : Set[Product] = shop.keywordMap.find(searchString)
       currentCategory match {
@@ -51,7 +52,7 @@ object WebshopModel {
 
     case _ => Set.empty
   }
-
+  
   def currentProducts: Seq[Product] = {
     val products = currentSearchStringVar.is match {
       case Some(searchString) =>
