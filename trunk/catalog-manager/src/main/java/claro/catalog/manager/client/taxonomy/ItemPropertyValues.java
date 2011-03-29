@@ -274,12 +274,16 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		
 		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
 		Object value;
+		boolean isInherited = false;
 		if (property.isMany) {
 			value = values.tryGetAll(model.getSelectedLanguage(), null);
 		} else {
-			value = values.tryGet(model.getSelectedLanguage(), null);
+			value = values.get(model.getSelectedLanguage());
+			if (value == null) {
+				isInherited = true;
+				value = values.get();
+			}
 		}
-		boolean isInherited = false;
 
 		SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
 		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
