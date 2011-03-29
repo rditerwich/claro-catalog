@@ -57,5 +57,5 @@ trait BindingHelpers extends BindingCtor {
     case None => None
   }
   
-  def formatMoney(amount : Double, currency : String) = ifAttr("plain", Text(amount.toString), Formatting.formatMoney(amount, currency))
+  def formatMoney(amount : Double, currency : String) = ifAttr("plain", Text(Formatting.formatMoneyText(amount, currency)), Formatting.formatMoneyHtml(amount, currency))
 }

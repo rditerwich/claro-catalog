@@ -28,7 +28,7 @@ trait WebshopBindingHelpers extends BindingHelpers {
     SHtml.a(() => {
       WebshopModel.currentUserVar.set(None)
       ReloadPage()
-    }, xml) % currentAttributes()
+    }, xml) % currentAttributes()				
   }
 
   implicit def format(money : Money) = new XmlBinding(_ => formatMoney(money.value.doubleValue, money.currency))
