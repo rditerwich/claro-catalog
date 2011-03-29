@@ -103,7 +103,9 @@ class Shop(val cacheData: WebshopData) extends Delegate(cacheData.catalog) {
   val id = shop.getId.getOrElse(-1)
   val serverName: String = (shop.getUrlPrefix getOrElse ("") split ("/"))(0)
   val prefixPath: List[String] = (shop.getUrlPrefix getOrElse ("") split ("/") toList) drop (0)
+  val languages : List[String] = shop.getLanguages.split(",").toList
   val defaultLanguage = shop.getDefaultLanguage getOrElse "en"
+  val locales = languages.map(new Locale(_))
 
   val topLevelCategories: Seq[Seq[Category]] = 
   	cacheData.topLevelNavigation.map(_.map(n => mapping.categories(cacheData.item(n.getCategory))))

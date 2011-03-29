@@ -13,6 +13,8 @@ object Dispatch extends LiftRules.DispatchPF {
   
   val emptyResponse : () => Box[LiftResponse] = () => Empty
   
+  val locales = Locale.getAvailableLocales.map(_.getLanguage).toSet
+  
   def isDefinedAt(req : Req): Boolean = {
     dispatch(req) match {
       case Some(response) =>
@@ -39,10 +41,13 @@ object Dispatch extends LiftRules.DispatchPF {
   
   private def dispatch(req : Req) : Option[() => Box[LiftResponse]] = {
     
-    val (path, suffix) = fixSuffix(req.path.partPath, req.path.suffix)
+    val (path0, suffix) = fixSuffix(req.path.partPath, req.path.suffix)
     
     // too bad, locales are not available, since urlDecorate does not append locale string to images, css etc
-    val locale = Cms.locale.is
+    val (path, locale) = path0 match {
+    	case head :: tail if locales.contains(head) => (tail, new Locale(head))
+    	case _ => (path0, Cms.locale.is)
+    }
 
     // component dispatch
     for (dispatch <- Website.instance.dispatch) {

@@ -52,6 +52,8 @@ class WebshopComponent extends Component with WebshopBindingHelpers {
       "search-form" -> new SearchForm,
       "current-user" -> WebshopModel.currentUserVar.get -> "user",
       "login-form" -> LoginForm.is,
+      "languages" -> WebshopModel.shop.get.languages,
+      "locales" -> WebshopModel.shop.get.locales -> "locale",
       "logout-link" -> logoutLink,
       "user-info-form" -> UserInfoForm,
       "reset-password-form" -> ResetPasswordForm.is,

@@ -22,7 +22,7 @@ object ViewDispatch extends LiftRules.ViewDispatchPF {
       path = "index" :: Nil 
     
     // extract locale
-    if (website.config.locales.contains(path.head)) {
+    if (Dispatch.locales.contains(path.head)) {
       locale = Locales(path.head)
       path = path.tail
       Cms.locale.set(locale);
