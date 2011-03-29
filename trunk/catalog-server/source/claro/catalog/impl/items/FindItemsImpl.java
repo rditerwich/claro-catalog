@@ -79,14 +79,15 @@ public class FindItemsImpl extends FindItems implements CommandImpl<FindItems.Re
 		}
 
 		if (orderByIds != null) {
-			orderBy = new ArrayList<Property>();
-			for (Long propertyId : orderByIds) {
-				Property property = entityManager.find(Property.class, propertyId);
-				if (property != null) {
-					orderBy.add(property);
-				} else {
-					throw new CommandException("Property with id " + propertyId + " not found");
-				}
+			orderByIds = Collections.singletonList(catalogModel.nameProperty.getPropertyId());
+		}
+		orderBy = new ArrayList<Property>();
+		for (Long propertyId : orderByIds) {
+			Property property = entityManager.find(Property.class, propertyId);
+			if (property != null) {
+				orderBy.add(property);
+			} else {
+				throw new CommandException("Property with id " + propertyId + " not found");
 			}
 		}
 		
