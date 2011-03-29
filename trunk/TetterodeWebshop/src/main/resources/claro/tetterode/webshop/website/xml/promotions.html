@@ -1,0 +1,20 @@
+<promotions>
+<webshop:promotions page-size="8">
+		<cms:paging>
+  <promotion>
+<promotion:product>
+    <promotion-volume><promotion:volume-discount/></promotion-volume>
+    <promotion-end><promotion:end-date/></promotion-end>
+    <promotion-price><promotion:price  plain="true"/></promotion-price>
+	<product>
+		<Name><product:value property="Name"/></Name>
+		<Description><product:value property="Description"/></Description>
+		<ArticleNumber><product:value property="ArticleNumber"/></ArticleNumber>
+		<Price><product:value plain="true" property="Price"/></Price>
+		<Image><product:property name="Image"><property:media-content-id/></product:property></Image>
+	</product>
+</promotion:product>
+  </promotion>
+		</cms:paging>
+</webshop:promotions>
+</promotions>
