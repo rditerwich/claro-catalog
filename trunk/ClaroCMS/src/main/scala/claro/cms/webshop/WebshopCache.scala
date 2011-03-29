@@ -32,6 +32,8 @@ object WebshopCache {
   	val language = key._2
   	println("SHOPS:" + findAllShops.map(_.getName).mkString(","))
   	println("FINDING SHOP:" + shopName)
+  	println("STAGING AREA:" + stagingAreaName)
+  	println("LANGUAGE:" + language)
   	val shop = findAllShops.find(_.getName == shopName).get
   	println("SHOP FOUND:" + shop)
   	val shopModel = new Shop(new WebshopData(catalogModel, shop, stagingArea, language))

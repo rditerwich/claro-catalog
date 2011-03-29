@@ -26,7 +26,7 @@ object Cms {
   object locale extends RequestVar[Locale](Website.instance.defaultLocale)
   
   def previewMode = S.request match {
-  	case Full(request) => request.hostName.startsWith("preview-") || request.hostName.startsWith("preview.")
+  	case Full(request) => request.hostName.startsWith("preview-") || request.hostName.startsWith("preview.") || request.hostName.startsWith("localhost")
   	case _ => false
   }
   

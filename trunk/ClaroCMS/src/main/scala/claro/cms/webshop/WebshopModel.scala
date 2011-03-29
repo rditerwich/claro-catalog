@@ -23,7 +23,7 @@ object WebshopModel {
 	
 	lazy val mediaContentCache = new MediaContentCache(dao)
 	
-  object shop extends RequestVar[Shop](WebshopCache(Cms.previewMode, Cms.locale.getISO3Language))
+  object shop extends RequestVar[Shop](WebshopCache(Cms.previewMode, Cms.locale.getLanguage))
 
   object currentProductVar extends RequestVar[Option[String]](None)
   object currentCategoryVar extends RequestVar[Option[String]](None)
