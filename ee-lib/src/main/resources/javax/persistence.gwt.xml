@@ -1,0 +1,6 @@
+<module>
+    <inherits name='com.google.gwt.user.User'/>
+    <source path="persistence">
+      <exclude name="Persistence.*"/>
+    </source>
+</module>
