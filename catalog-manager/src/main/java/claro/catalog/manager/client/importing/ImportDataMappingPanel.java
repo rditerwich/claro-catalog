@@ -16,6 +16,7 @@ import claro.catalog.manager.client.widgets.ActionImage;
 import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.FormTable;
 import claro.jpa.catalog.Property;
+import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
 import claro.jpa.importing.ImportRules;
@@ -86,12 +87,31 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 						}
 						@Override
 						protected void addItem(Long categoryId, SMap<String, String> labels) {
-							super.addItem(categoryId, labels);
-//							categoryAdded(itemId, categoryId);
+						  super.addItem(categoryId, labels);
+//						  // Find category in model
+//						  for (ImportCategory category : model.getImportProducts().getCategories()) {
+//						    if (category.getId().equals(categoryId)) {
+//						      return;
+//						    }
+//						  }
+//              super.addItem(categoryId, labels);
+//						  ImportCategory newCat = new ImportCategory();
+//						  newCat.setId(categoryId);
+//						  newCat.setImportProducts(model.getImportProducts());
+//						  model.getImportProducts().getCategories().add(newCat);
+//						  doStore();
 						}
 						protected void removeItem(Long categoryId) {
-							super.removeItem(categoryId);
-//							categoryRemoved(itemId, categoryId);
+						  super.removeItem(categoryId);
+//              // Find category in model
+//              for (ImportCategory category : model.getImportProducts().getCategories()) {
+//                if (category.getId().equals(categoryId)) {
+//                  super.removeItem(categoryId);
+//                  model.getImportProducts().getCategories().remove(category);
+//                  doStore();
+//                  return;
+//                }
+//              }
 						}
 					}, messages.selectCategoryHelp());
 			}});
@@ -125,7 +145,11 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 			r++;
 		}
 		
-		categoryPanel.setData(SMap.<Long, SMap<String, String>>empty(), null);
+		SMap<Long, SMap<String, String>> catMap = SMap.<Long, SMap<String, String>>empty();
+		for (ImportCategory category : model.getImportProducts().getCategories()) {
+		  catMap = catMap.add(category.getId(), SMap.<String, String>empty());
+		}
+		categoryPanel.setData(catMap, null);
 
 		int i = propertyGrid.getRowCount();
 		propertyGrid.resizeRows(model.getImportProducts().getProperties().size());
@@ -162,7 +186,6 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 			public void onSuccess(FindProperties.Result result) {
 				if (model.getImportSource() == null) return;
 				ImportProducts importProducts = model.getImportProducts();
-				fillPropertyListbox(matchPropertyListBox, importProducts.getMatchProperty());
 				
 				int row = 0;
 				properties.clear();
@@ -170,6 +193,10 @@ public class ImportDataMappingPanel extends Composite implements Globals {
 					properties.add(Tuple.create(info.labels.tryGet(CatalogManager.getUiLanguage(), null), info.propertyId));
 				}
 				sort(properties);
+				
+				// do this after properties have been set
+        fillPropertyListbox(matchPropertyListBox, importProducts.getMatchProperty());
+        
 				for (ImportProperty importProperty : importProducts.getProperties()) {
 					ListBox listBox = (ListBox) propertyGrid.getWidget(row, 0);
 					fillPropertyListbox(listBox, importProperty.getProperty());
