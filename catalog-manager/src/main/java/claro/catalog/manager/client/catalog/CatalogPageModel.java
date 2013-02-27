@@ -2,6 +2,7 @@ package claro.catalog.manager.client.catalog;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.data.PropertyData;
@@ -82,6 +83,22 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 		}
 		getProductData().set(productId, masterValues);
 	}
+//	public void productDataChanged(SMap<PropertyInfo, SMap<String, Object>> propertyValues) {
+//	  for (Entry<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> group : selectedProductPropertyValues) {
+//	    SMap<PropertyInfo, PropertyData> newGroup = group.getValue();
+//	    for (Entry<PropertyInfo, PropertyData> value : group.getValue()) {
+//	      for (Entry<PropertyInfo, SMap<String, Object>> newValue : propertyValues) {
+//	        if (Objects.equal(value.getKey().propertyId, newValue.getKey().propertyId)) {
+//	          PropertyData propertyData = value.getValue();
+//	          propertyData.
+//	          newGroup = newGroup.set(value.getKey(), newValue.getValue());
+//	          break;
+//	        }
+//	      }
+//	    }
+//      selectedProductPropertyValues = selectedProductPropertyValues.set(group.getKey(), newGroup);
+//	  }
+//	}
 	
 	public void removeProduct(Long productId) {
 		getProductData().remove(productId);

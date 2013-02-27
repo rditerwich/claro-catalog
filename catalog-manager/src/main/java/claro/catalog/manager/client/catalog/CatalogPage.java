@@ -40,6 +40,11 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 
 	private PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> productData = new PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>>(20, this, new Listener() {
 		public void dataChanged() {
+//		  int index = productData.indexOnPage(model.getSelectedProductId());
+//		  if (index >= 0) {
+//		    SMap<PropertyInfo, SMap<String, Object>> data = productData.get(index);
+//		    model.productDataChanged(data);
+//		  }
 			render();
 		}
 	});

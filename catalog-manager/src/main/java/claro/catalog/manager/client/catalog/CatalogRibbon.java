@@ -40,6 +40,10 @@ public class CatalogRibbon extends EERibbon implements Globals {
 				protected void selectionChanged() {
 					model.setSelectedLanguage(getSelectedLanguage());
 					model.setSelectedShop(getSelectedShop());
+			     if (model.getSelectedProductId() != null) {
+			        page.updateProductSelection(model.getSelectedProductId());
+			      }
+
 					page.updateProductList();
 				}
 			});
