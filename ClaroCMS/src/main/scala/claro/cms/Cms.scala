@@ -1,6 +1,6 @@
 package claro.cms
 
-import net.liftweb.http.{Req,LiftRules,LiftSession,LiftResponse,RulesSeq,RequestVar,S,InMemoryResponse,OkResponse,XhtmlResponse,CSSResponse}
+import net.liftweb.http.{Req,LiftRules,LiftSession,LiftResponse,RequestVar,S,InMemoryResponse,OkResponse,XhtmlResponse,CSSResponse}
 import net.liftweb.common.{Box,Full,Empty,Logger}
 import xml.Node
 import java.util.Locale
@@ -11,7 +11,7 @@ import claro.common.util.Conversions._
 
 object Cms {
 
-  val components = RulesSeq[() => Component]
+  val components = LiftRules.realInstance.RulesSeq[() => Component]
   val logger = Logger("CMS")
 
   val debugMode : Boolean = System.getProperties().isSet("claro.cms.debug")

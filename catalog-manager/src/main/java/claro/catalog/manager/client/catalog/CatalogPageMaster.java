@@ -46,7 +46,7 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		this.page = page;
 		this.model = model;
 		add(label = new HTML(DEBUG_ID_PREFIX));
-		
+
 		add(new EEHoverCorners() {{
 			setLeft(new EEPagingButton.PreviousNext(model.getProductData(), new Image(images.prevPage()), new Image(images.nextPage())));
 			setRight(new EEPagingButton.PreviousNext(model.getProductData(), new Image(images.prevPage()), new Image(images.nextPage())));
@@ -158,10 +158,7 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		RowWidgets rowWidgets = table.getObject(row);
 		
 		// image
-		Object image = properties.getOrEmpty(model.getSmallImageProperty()).tryGet(model.getSelectedLanguage(), null);
-		if (MediaValue.isEmpty(image)) {
-			image = properties.getOrEmpty(model.getImageProperty()).tryGet(model.getSelectedLanguage(), null);
-		}
+		Object image = properties.getOrEmpty(model.getImageProperty()).tryGet(model.getSelectedLanguage(), null);
 		if (image instanceof MediaValue) {
 			final MediaValue value = (MediaValue)image;
 			rowWidgets.imageWidget.setData(value.mediaContentId, value.mimeType, value.name);
@@ -173,24 +170,6 @@ public class CatalogPageMaster extends VerticalPanel implements Globals, IsHTMLT
 		Object productName = properties.getOrEmpty(model.getNameProperty()).tryGet(model.getSelectedLanguage(), null);
 		rowWidgets.productNameLabel.setText(productName instanceof String ? productName.toString() : "<" + messages.noProductNameSet() + ">");
 		
-		final Object productVariant = properties.getOrEmpty(model.getVariantProperty()).tryGet(model.getSelectedLanguage(), null);
-		rowWidgets.productVariantLabel.setText(productVariant instanceof String ? productVariant.toString() : "");
-		
-		final Object productNr = properties.getOrEmpty(model.getArtNoProperty()).tryGet(model.getSelectedLanguage(), null);
-		rowWidgets.productNrLabel.setText(productNr instanceof String ?  "Art. nr. " + productNr.toString() : "");
-		
-		final Object productDescription = properties.getOrEmpty(model.getDescriptionProperty()).tryGet(model.getSelectedLanguage(), null);
-		rowWidgets.productDescriptionLabel.setText(productDescription instanceof String ? productDescription.toString() : "");
-		
-		// price
-		final Object price = properties.getOrEmpty(model.getPriceProperty()).tryGet(model.getSelectedLanguage(), null);
-		if (price != null) {
-			// TODO Use locale in the following format??
-			rowWidgets.priceLabel.setText(MoneyFormatUtil.full((Money) price));
-		} else {
-			rowWidgets.priceLabel.setText("");
-		}
-
 		if (model.isChanged(productId)) {
 			StyleUtil.add(table.getRowFormatter(), row, CatalogManager.Styles.itemRowChanged);
 		} else {

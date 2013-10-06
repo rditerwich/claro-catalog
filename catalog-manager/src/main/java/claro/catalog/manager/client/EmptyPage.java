@@ -2,10 +2,7 @@ package claro.catalog.manager.client;
 
 import org.cobogw.gwt.user.client.ui.RoundedPanel;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;

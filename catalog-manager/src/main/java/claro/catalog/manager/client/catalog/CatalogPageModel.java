@@ -2,7 +2,6 @@ package claro.catalog.manager.client.catalog;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import claro.catalog.data.PropertyData;
@@ -11,7 +10,7 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.items.ItemPageModel;
-import claro.catalog.manager.client.webshop.ShopModel;
+import claro.catalog.manager.client.outputchannels.OutputChannelModel;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
@@ -23,12 +22,14 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 
 	private Long rootCategory;
 	private PropertyInfo nameProperty;
-	private PropertyInfo variantProperty;
-	private PropertyInfo descriptionProperty;
-	private PropertyInfo priceProperty;
-	private PropertyInfo artNoProperty;
 	private PropertyInfo imageProperty;
-	private PropertyInfo smallImageProperty;
+	private PropertyInfo visibleProperty;
+//	private PropertyInfo variantProperty;
+//	private PropertyInfo descriptionProperty;
+//	private PropertyInfo priceProperty;
+//	private PropertyInfo artNoProperty;
+//	private PropertyInfo imageProperty;
+//	private PropertyInfo smallImageProperty;
 	
 	private String filterString;
 	private SMap<Long, SMap<String, String>> filterCategories = SMap.<Long, SMap<String, String>>empty();
@@ -119,41 +120,51 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
 		this.rootProperties = rootProperties;
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
-		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
-		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
-		this.priceProperty = rootProperties.get(RootProperties.PRICE);
-		this.artNoProperty = rootProperties.get(RootProperties.ARTICLENUMBER);
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
-		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
+		this.visibleProperty = rootProperties.get(RootProperties.VISIBLE);
+//		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
+//		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
+//		this.priceProperty = rootProperties.get(RootProperties.PRICE);
+//		this.artNoProperty = rootProperties.get(RootProperties.ARTICLENUMBER);
+//		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
+//		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
 	}
 	
 	public PropertyInfo getNameProperty() {
 		return nameProperty;
 	}
 	
-	public PropertyInfo getVariantProperty() {
-		return variantProperty;
-	}
-	
-	public PropertyInfo getArtNoProperty() {
-		return artNoProperty;	
-	}
-	
-	public PropertyInfo getPriceProperty() {
-		return priceProperty;
-	}
+	public PropertyInfo getVisibleProperty() {
+    return visibleProperty;
+  }
 	
 	public PropertyInfo getImageProperty() {
-		return imageProperty;
-	}
+    return imageProperty;
+  }
 	
-	public PropertyInfo getSmallImageProperty() {
-		return smallImageProperty;
-	}
-	
-	public PropertyInfo getDescriptionProperty() {
-		return descriptionProperty;
-	}
+//	public PropertyInfo getVariantProperty() {
+//		return variantProperty;
+//	}
+//	
+//	public PropertyInfo getArtNoProperty() {
+//		return artNoProperty;	
+//	}
+//	
+//	public PropertyInfo getPriceProperty() {
+//		return priceProperty;
+//	}
+//	
+//	public PropertyInfo getImageProperty() {
+//		return imageProperty;
+//	}
+//	
+//	public PropertyInfo getSmallImageProperty() {
+//		return smallImageProperty;
+//	}
+//	
+//	public PropertyInfo getDescriptionProperty() {
+//		return descriptionProperty;
+//	}
 	
 	public String getFilterString() {
 		return filterString;
@@ -185,5 +196,5 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 	
 	public abstract PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData();
 	
-	public abstract ShopModel getShopModel();
+	public abstract OutputChannelModel getShopModel();
 }

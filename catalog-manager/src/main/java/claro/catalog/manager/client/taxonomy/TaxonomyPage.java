@@ -83,7 +83,7 @@ public class TaxonomyPage extends Page {
 	private void updateCategories() {
 		GetItemTree c = new GetItemTree();
 		c.catalogId = CatalogManager.getCurrentCatalogId();
-		c.outputChannelId = model.getSelectedShopId();
+		c.outputChannelId = model.getSelectedOutputChannelId();
 
 		invalidateCategoryTree(c.catalogId, c.outputChannelId);
 		
@@ -110,7 +110,7 @@ public class TaxonomyPage extends Page {
 		cmd.parentsToSet = Collections.singletonList(parentId);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
@@ -139,7 +139,7 @@ public class TaxonomyPage extends Page {
 		ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.itemId = categoryId;
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		cmd.language = model.getSelectedLanguage();
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
@@ -155,7 +155,7 @@ public class TaxonomyPage extends Page {
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingCategoryDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {

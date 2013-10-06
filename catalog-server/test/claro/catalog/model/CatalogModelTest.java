@@ -64,8 +64,8 @@ public class CatalogModelTest extends CatalogTestBase {
 
 		// Check properties
 		hpColorPlottersModel.getPropertyExtent();
-		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel visibleProperty = hpColorPlottersModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 		
 	}
 	
@@ -103,8 +103,8 @@ public class CatalogModelTest extends CatalogTestBase {
 
 		// Check properties
 		hpColorPlottersModel.getPropertyExtent();
-		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel visibleProperty = hpColorPlottersModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 	}
 	
 	@Test
@@ -143,8 +143,8 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		// Check properties
 		hpColorPlottersModel.getPropertyExtent();
-		PropertyModel supplierProperty = hpColorPlottersModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel visibleProperty = hpColorPlottersModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 	}
 	
 	
@@ -277,26 +277,26 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
 		
-		PropertyModel supplierProperty = hpPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel visibleProperty = hpPrinterModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 
-		supplierProperty.setValue(null, null, shop, null, "HP");
+		visibleProperty.setValue(null, null, shop, null, "HP");
 		
 		model.flush();
 
 		// Look on hpColorPrinter model
 		ItemModel hpColorPrinterModel = model.getItem(hpColorPrinters.getId());
 		
-		supplierProperty = hpColorPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		visibleProperty = hpColorPrinterModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 		
 		// It should only be visible for this shop:
-		SMap<String,Object> effectiveValues = supplierProperty.getEffectiveValues(null, null);
+		SMap<String,Object> effectiveValues = visibleProperty.getEffectiveValues(null, null);
 		Object defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertNull(defaultLanguageValue);
 
 		// Do we have it?
-		effectiveValues = supplierProperty.getEffectiveValues(null, shop);
+		effectiveValues = visibleProperty.getEffectiveValues(null, shop);
 		defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertEquals("HP", defaultLanguageValue);
 	}
@@ -320,42 +320,42 @@ public class CatalogModelTest extends CatalogTestBase {
 		
 		// Make sure the values are not set (AND: test the case where the data has already been accessed in the model
 		ItemModel hpColorPrinterModelBefore = model.getItem(hpColorPrinters.getId());
-		PropertyModel supplierPropertyBefore = hpColorPrinterModelBefore.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierPropertyBefore);
+		PropertyModel visiblePropertyBefore = hpColorPrinterModelBefore.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visiblePropertyBefore);
 		
 		// Check for null shop
-		SMap<String,Object> effectiveValues = supplierPropertyBefore.getEffectiveValues(null, null);
+		SMap<String,Object> effectiveValues = visiblePropertyBefore.getEffectiveValues(null, null);
 		Object defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertNotSame(nonShopValueToSet, defaultLanguageValue);
 		
 		// Check for the shop
-		effectiveValues = supplierPropertyBefore.getEffectiveValues(null, shop);
+		effectiveValues = visiblePropertyBefore.getEffectiveValues(null, shop);
 		defaultLanguageValue = effectiveValues.get(null);
 		Assert.assertNotSame(shopValueToSet, defaultLanguageValue);
 
 		// Make the changes.
 		ItemModel hpPrinterModel = model.getItem(hpPrinters.getId());
-		PropertyModel supplierProperty = hpPrinterModel.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierProperty);
+		PropertyModel visibleProperty = hpPrinterModel.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visibleProperty);
 		
-		supplierProperty.setValue(null, null, null, null, nonShopValueToSet);
-		supplierProperty.setValue(null, null, shop, null, shopValueToSet);
+		visibleProperty.setValue(null, null, null, null, nonShopValueToSet);
+		visibleProperty.setValue(null, null, shop, null, shopValueToSet);
 		
 		model.flush();
 		
 		// Look on hpColorPrinter model
 		ItemModel hpColorPrinterModelAfter = model.getItem(hpColorPrinters.getId());
 		
-		PropertyModel supplierPropertyAfter = hpColorPrinterModelAfter.findProperty(model.supplierProperty.getEntity(), true);
-		Assert.assertNotNull(supplierPropertyAfter);
+		PropertyModel visiblePropertyAfter = hpColorPrinterModelAfter.findProperty(model.visibleProperty.getEntity(), true);
+		Assert.assertNotNull(visiblePropertyAfter);
 		
 		// It should only be visible for this shop:
-		SMap<String,Object> effectiveValuesAfter = supplierPropertyAfter.getEffectiveValues(null, null);
+		SMap<String,Object> effectiveValuesAfter = visiblePropertyAfter.getEffectiveValues(null, null);
 		Object defaultLanguageValueAfter = effectiveValuesAfter.get(null);
 		Assert.assertEquals(nonShopValueToSet, defaultLanguageValueAfter);
 		
 		// Do we have it?
-		effectiveValuesAfter = supplierPropertyAfter.getEffectiveValues(null, shop);
+		effectiveValuesAfter = visiblePropertyAfter.getEffectiveValues(null, shop);
 		defaultLanguageValueAfter = effectiveValuesAfter.get(null);
 		Assert.assertEquals(shopValueToSet, defaultLanguageValueAfter);
 	}

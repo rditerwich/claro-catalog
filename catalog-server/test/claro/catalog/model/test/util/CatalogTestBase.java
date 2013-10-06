@@ -32,7 +32,7 @@ public class CatalogTestBase {
 	private static boolean databaseCreated;
 
 	private CatalogDao catalogDao;
-	private CatalogModel catalogModel;
+	private TestCatalogModel catalogModel;
 
 	protected static Map<String, String> getProperties() {
 		Map<String, String> properties = new HashMap<String, String>();
@@ -112,9 +112,9 @@ public class CatalogTestBase {
 		return catalogDao;
 	}
 	
-	protected CatalogModel getCatalogModel() throws SQLException {
+	protected TestCatalogModel getCatalogModel() throws SQLException {
 		if (catalogModel == null) {
-			catalogModel = new CatalogModel(TEST_CATALOG_ID, getCatalogDao());
+			catalogModel = new TestCatalogModel(TEST_CATALOG_ID, getCatalogDao());
 		}
 		return catalogModel;
 	}

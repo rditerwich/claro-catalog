@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.NodeList;
+
 import easyenterprise.lib.util.CollectionUtil;
 
 public class TableWithObjects<T> extends Table {
@@ -35,11 +39,40 @@ public class TableWithObjects<T> extends Table {
 	}
 
 	@Override
-	public void resizeRows(int rows) {
-		super.resizeRows(rows);
-		while (objects.size() > rows) objects.remove(objects.size() - 1);
+	public void setHeaderHTML(int row, int column, String text) {
+	  super.setHeaderHTML(row, column, text);
+	  setHeaderClass(row, column);
+	}
+	
+	@Override
+	public void setHeaderText(int row, int column, String text) {
+	  super.setHeaderText(row, column, text);
+    setHeaderClass(row, column);
 	}
 
+  private void setHeaderClass(int row, int col) {
+    Element thead = getTHeadElement();
+    if (row < thead.getChildCount()) {
+      Node tr = thead.getChild(row);
+      if (col < tr.getChildCount()) {
+        Element th = (Element) tr.getChild(col);
+        th.setClassName("col" + col);
+      }
+    }
+  }
+	
+	@Override
+	public void resizeRows(int rows) {
+	  int oldRows = numRows;
+	  super.resizeRows(rows);
+	  for (int row = oldRows; row < rows; row++) {
+	    for (int col = 0; col < getColumnCount(); col++) {
+	      getCellFormatter().setStylePrimaryName(row, col, "col" + col);
+	    }
+	  }
+	  while (objects.size() > rows) objects.remove(objects.size() - 1);
+	}
+	
 	public T getObject(int row) {
 		if (row < objects.size()) {
 			return objects.get(row);

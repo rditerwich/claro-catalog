@@ -18,11 +18,14 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -39,11 +42,6 @@ import gwtupload.client.SingleUploader;
 public class ImportMainPanel extends Composite implements Globals {
 
 	private final ImportSoureModel model;
-	private TextBox nameTextBox;
-	private TextBox importUrlTextBox;
-	private CheckBox incrementalCheckBox;
-	private CheckBox sequentialCheckBox;
-	private CheckBox orderedCheckBox;
 	private HTML lastRunTimeHTML;
 	private HTML lastRunUrlHTML;
 	private Anchor lastRunLog;
@@ -67,7 +65,7 @@ public class ImportMainPanel extends Composite implements Globals {
 			add(new Grid(1, 2) {{
 				setWidget(0, 0, header = new Header(1, "") {{
 				}});
-				setWidget(0, 1, new Anchor(messages.removeImportSourceLink()) {{
+				setWidget(0, 1, new Button(messages.removeImportSourceLink()) {{
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
 							removeWithConfirmation.show();
@@ -75,19 +73,18 @@ public class ImportMainPanel extends Composite implements Globals {
 					});
 				}});
 			}});
-			add(new Grid(1, 3) {{
-				setStylePrimaryName(ImportingStyles.instance.statusTable());
+			add(new Grid(1, 2) {{
+				setStylePrimaryName("statusTable");
 				setWidget(0, 0, lastRunStatusImage = new Image(""));
 				setWidget(0, 1, new VerticalPanel() {{
 					add(lastRunTimeHTML = new HTML());
 					add(lastRunUrlHTML = new HTML());
+					add(lastRunLog = new Anchor(messages.showLogLink()));
 				}});
-				getColumnFormatter().setStylePrimaryName(1, "col2");
-				setWidget(0, 2, lastRunLog = new Anchor(messages.showLogLink()));
 			}});
 			add(new EEButtonBar() {{
-				add(new EEButton(messages.importNowButton()));
-				add(new SingleUploader(FileInputType.CUSTOM.with(new EEButton(messages.importFileButton()), false), new ModalUploadStatus()) {{
+				add(new Button(messages.importNowButton()));
+				add(new SingleUploader(FileInputType.CUSTOM.with(new Button(messages.importFileButton()), false), new ModalUploadStatus()) {{
 					setAutoSubmit(true);
 					addOnFinishUploadHandler(new OnFinishUploaderHandler() {
 						public void onFinish(IUploader uploader) {
@@ -95,7 +92,7 @@ public class ImportMainPanel extends Composite implements Globals {
 						}
 					});
 				}});
-				add(new EEButton(messages.removeImportedDataButton()) {{
+				add(new Button(messages.removeImportedDataButton()) {{
 					getElement().getStyle().setMarginLeft(-28, Unit.PX); // correct for whitespace right of SingleUpLoader
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
@@ -109,40 +106,12 @@ public class ImportMainPanel extends Composite implements Globals {
 					});
 				}});
 			}}); 
-			add(new FormTable() {{
-				add(messages.nameLabel(), nameTextBox = new TextBox(), messages.importSourceNameHelp());
-				add(messages.importUrlLabel(), importUrlTextBox = new TextBox(), messages.importUrlHelp());
-				add(messages.incrementalImportLabel(), incrementalCheckBox = new CheckBox(), messages.incrementalImportHelp());
-				add(messages.sequentialImportNamesLabel(), sequentialCheckBox = new CheckBox(), messages.sequentialImportNamesHelp());
-				add(messages.orderedImportNamesLabel(), orderedCheckBox = new CheckBox(), messages.orderedImportNamesHelp());
-			}});		
 		}});
-		
-		ValueChangeHandler<?> changeHandler = new ValueChangeHandler<Object>() {
-			public void onValueChange(ValueChangeEvent<Object> event) {
-				model.getImportSource().setName(nameTextBox.getText());
-				model.getImportSource().setImportUrl(importUrlTextBox.getText());
-				model.getImportSource().setIncremental(incrementalCheckBox.getValue());
-				model.getImportSource().setSequentialUrl(sequentialCheckBox.getValue());
-				model.getImportSource().setOrderedUrl(orderedCheckBox.getValue());
-				model.store(new StoreImportSource(model.getImportSource()));
-			}
-		};
-		nameTextBox.addValueChangeHandler((ValueChangeHandler<String>) changeHandler);
-		importUrlTextBox.addValueChangeHandler((ValueChangeHandler<String>) changeHandler);
-		incrementalCheckBox.addValueChangeHandler((ValueChangeHandler<Boolean>) changeHandler);
-		sequentialCheckBox.addValueChangeHandler((ValueChangeHandler<Boolean>) changeHandler);
-		orderedCheckBox.addValueChangeHandler((ValueChangeHandler<Boolean>) changeHandler);
 	}
 	
 	public void render() {
 		removeWithConfirmation.hide();
 		header.setText(model.getImportSource().getName());
-		nameTextBox.setText(model.getImportSource().getName());
-		importUrlTextBox.setText(model.getImportSource().getImportUrl());
-		incrementalCheckBox.setValue(model.getImportSource().getIncremental());
-		sequentialCheckBox.setValue(model.getImportSource().getSequentialUrl());
-		orderedCheckBox.setValue(model.getImportSource().getOrderedUrl());
 		
 		Boolean lastSuccess = model.getImportSource().getJob().getLastSuccess();
 		Timestamp lastTime = model.getImportSource().getJob().getLastTime();

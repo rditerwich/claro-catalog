@@ -7,16 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/gwt-2.1.1/gwt-user.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/gwt-2.1.1/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/gwt-2.1.1/gwt-dev.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/gwt-2.1.1/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/catalog-server"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ee-lib"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">

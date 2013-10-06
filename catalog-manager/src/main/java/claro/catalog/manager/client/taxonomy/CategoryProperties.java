@@ -13,20 +13,20 @@ import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
+import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.jpa.catalog.PropertyType;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -70,16 +70,19 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	public CategoryProperties(TaxonomyModel model) {
 		
 		this.model = model;
-		initWidget(new VerticalPanel() {{
-			StyleUtil.addStyle(this, Styles.categoryProperties);
-			add(new Anchor("Define new property...") {{
-				addClickHandler(new ClickHandler() {
-					public void onClick(ClickEvent event) {
-						createNewProperty();
-					}
-				});
-			}}); // TODO i18n.
-			add(propertyPanel = new Grid(0, NR_COLS));
+		initWidget(new ScrollPanel() {{
+		  add(new FlowPanel() {{add(new VerticalPanel() {{
+  			StyleUtil.addStyle(this, Styles.categoryProperties);
+  			add(new Anchor("Define new property...") {{
+  				addClickHandler(new ClickHandler() {
+  					public void onClick(ClickEvent event) {
+  						createNewProperty();
+  					}
+  				});
+  			}}); // TODO i18n.
+  			add(propertyPanel = new Grid(0, NR_COLS));
+		  }});
+		}});
 		}});
 	}
 	
@@ -122,10 +125,10 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		
 		// Create new rows
 		for (int j = oldRowCount; j < requiredNrRows; j++) {
-			final PropertyValueWidgets propertyValueWidgets = new PropertyValueWidgets();
+			final PropertyValueWidgets pvwidgets = new PropertyValueWidgets();
 			final int row = j;
 			// name
-			propertyPanel.setWidget(j, NAME_COLUMN, propertyValueWidgets.nameWidget = new TextBox() {{
+			propertyPanel.setWidget(j, NAME_COLUMN, pvwidgets.nameWidget = new TextBox() {{
 				addChangeHandler(new ChangeHandler() {
 					public void onChange(ChangeEvent event) {
 						propetyNameChanged(row, getText());
@@ -134,19 +137,23 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			}});
 			
 			// type
-			propertyPanel.setWidget(j, TYPE_COLUMN, propertyValueWidgets.typeWidget = new ListBox() {{
-				for (PropertyType type : propertyTypes) {
-					addItem(type.name(), type.name());// TODO How about i18n??
-				}
-				addChangeHandler(new ChangeHandler() {
-					public void onChange(ChangeEvent event) {
-						propertyTypeChanged(row, PropertyType.valueOf(getValue(getSelectedIndex())));
-					}
-				});
+			propertyPanel.setWidget(j, TYPE_COLUMN, new VerticalPanel() {{
+			  add(pvwidgets.typeWidget = new ListBox() {{
+  				for (PropertyType type : propertyTypes) {
+  					addItem(type.name(), type.name());// TODO How about i18n??
+  				}
+  				addChangeHandler(new ChangeHandler() {
+  					public void onChange(ChangeEvent event) {
+  						propertyTypeChanged(row, PropertyType.valueOf(getValue(getSelectedIndex())));
+  					}
+  				});
+  			}}); 
+			  add(pvwidgets.typeExtraWidget = new FlowPanel());
+			  pvwidgets.typeExtraWidget.add(new FlowPanel()); // dummy, there should always be 1 child
 			}}); 
-			
+
 			// ismany
-			propertyPanel.setWidget(j, ISMANY_COLUMN, propertyValueWidgets.propertyIsManyWidget = new ListBox() {{
+			propertyPanel.setWidget(j, ISMANY_COLUMN, pvwidgets.propertyIsManyWidget = new ListBox() {{
 				addItem(messages.propertyIsSingle());
 				addItem(messages.propertyIsMany());
 				addChangeHandler(new ChangeHandler() {
@@ -157,7 +164,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			}});
 			
 			// groups
-			propertyPanel.setWidget(j, GROUP_COLUMN, propertyValueWidgets.propertyGroupsWidget = new ListBox() {{
+			propertyPanel.setWidget(j, GROUP_COLUMN, pvwidgets.propertyGroupsWidget = new ListBox() {{
 				addChangeHandler(new ChangeHandler() {
 					public void onChange(ChangeEvent event) {
 						propertyGroupChanged(row, getValue(getSelectedIndex()));
@@ -166,17 +173,24 @@ abstract public class CategoryProperties extends Composite implements Globals {
 			}});
 			
 			// Clear button
-			propertyPanel.setWidget(j, CLEAR_COLUMN, propertyValueWidgets.clearValueWidget = new Image() {{
+			propertyPanel.setWidget(j, CLEAR_COLUMN, pvwidgets.clearValueWidget = new Image() {{
 				StyleUtil.addStyle(this, Styles.clear);
 					addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							propertyErased(row);
+						  new ConfirmationDialog(images.removeIcon()) {
+						    protected String getMessage() {
+						      return "Delete property?";
+						    };
+						    protected void yesPressed() {
+						      propertyErased(row);
+						    }
+						  }.show();
 						}
 					});
 				}
 			}); 
 
-			valueWidgets.add(propertyValueWidgets);
+			valueWidgets.add(pvwidgets);
 		}
 
 		// (re)bind widgets
@@ -184,34 +198,49 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		propertyByValueWidget.clear();
 		for (PropertyGroupInfo propertyGroup : propertyGroups) {
 			
-			
 			SMap<PropertyInfo, PropertyData> properties = values.get(propertyGroup);
 			List<PropertyInfo> propertyKeys = properties.getKeys();
 			
 			for (PropertyInfo property : propertyKeys) {
-				PropertyValueWidgets propertyValueWidgets = valueWidgets.get(i);
+			  final int row = i;
+				final PropertyValueWidgets pvwidgets = valueWidgets.get(i);
 				
 				// Set name
-				String propertyName = property.labels.tryGet(CatalogManager.getUiLanguage(), null);
-				propertyValueWidgets.nameWidget.setText(propertyName);
+				String propertyName = property.labels.tryGet(model.getSelectedLanguage(), null);
+				pvwidgets.nameWidget.setText(propertyName);
 				
 				// set type
-				propertyValueWidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.getType(), typeComparator)); 
+				pvwidgets.typeWidget.setSelectedIndex(Arrays.binarySearch(propertyTypes, property.getType(), typeComparator));
+				pvwidgets.typeExtraWidget.setVisible(false);
+				
+				// enum editor
+				if (property.getType() == PropertyType.Enum) {
+				  if (!(pvwidgets.typeExtraWidget.getWidget(0) instanceof EnumEditor)) {
+  				  pvwidgets.typeExtraWidget.clear();
+  				  pvwidgets.typeExtraWidget.add(new EnumEditor() {
+  				    void changed(PropertyInfo property) {
+  				      propertyToSet(itemId, property);
+  				    }
+  				  });
+				  }
+          ((EnumEditor) pvwidgets.typeExtraWidget.getWidget(0)).render(model, getRowProperty(row));
+				  pvwidgets.typeExtraWidget.setVisible(true);
+				}
 				
 				// set ismany
-				propertyValueWidgets.propertyIsManyWidget.setSelectedIndex(property.isMany?1:0); 
+				pvwidgets.propertyIsManyWidget.setSelectedIndex(property.isMany?1:0); 
 				
 				// Groups
-				propertyValueWidgets.propertyGroupsWidget.clear();
+				pvwidgets.propertyGroupsWidget.clear();
 				int j = 0;
 				for (Entry<Long, SMap<String, String>> group : groups) {
 					// add item
 					String groupName = group.getValue().tryGet(model.getSelectedLanguage(), null);
-					propertyValueWidgets.propertyGroupsWidget.addItem(groupName);
+					pvwidgets.propertyGroupsWidget.addItem(groupName);
 					
 					// check selection
 					if (group.getKey().equals(propertyGroup.propertyGroupId)) {
-						propertyValueWidgets.propertyGroupsWidget.setSelectedIndex(j);
+						pvwidgets.propertyGroupsWidget.setSelectedIndex(j);
 					}
 					j++;
 				}
@@ -245,6 +274,7 @@ abstract public class CategoryProperties extends Composite implements Globals {
 		rowProperty.setType(type);
 		propertyToSet(itemId, rowProperty);
 	}
+	
 	private void propertyIsManyChanged(int row, Boolean value) {
 		PropertyInfo rowProperty = getRowProperty(row);
 		rowProperty.isMany = value;
@@ -287,11 +317,11 @@ abstract public class CategoryProperties extends Composite implements Globals {
 	}
 	
 	private class PropertyValueWidgets {
-		public ListBox propertyIsManyWidget;
+    public ListBox propertyIsManyWidget;
 		protected Widget clearValueWidget;
 		public TextBox nameWidget;
 		public ListBox typeWidget;
-		public Grid valueParentWidget;
+		public FlowPanel typeExtraWidget;
 		public ListBox propertyGroupsWidget;
 	}
 }

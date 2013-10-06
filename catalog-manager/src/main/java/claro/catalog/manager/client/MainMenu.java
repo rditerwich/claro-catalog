@@ -3,12 +3,9 @@ package claro.catalog.manager.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import claro.catalog.manager.client.CatalogManager.Styles;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;

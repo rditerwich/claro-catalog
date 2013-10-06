@@ -67,9 +67,11 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 	private Long itemId;
 	private String language;
 	private OutputChannel outputChannel;
+  private CatalogPageModel model;
 	
-	public ProductPropertyValues(String language, OutputChannel outputChannel) {
-		this.language = language;
+	public ProductPropertyValues(CatalogPageModel model, String language, OutputChannel outputChannel) {
+		this.model = model;
+    this.language = language;
 		this.outputChannel = outputChannel;
 		
 		propertyGroupPanel = new TabPanel();
@@ -193,7 +195,7 @@ abstract public class ProductPropertyValues extends Composite implements Globals
 				PropertyData propertyData = properties.get(property);
 				
 				// Set name
-				propertyValueWidgets.nameWidget.setText(property.labels.tryGet(CatalogManager.getUiLanguage(), null));
+				propertyValueWidgets.nameWidget.setText(property.labels.tryGet(model.getSelectedLanguage(), null));
 				
 				// set type
 				propertyValueWidgets.typeWidget.setText(property.getType().name()); // TODO How about i18n??

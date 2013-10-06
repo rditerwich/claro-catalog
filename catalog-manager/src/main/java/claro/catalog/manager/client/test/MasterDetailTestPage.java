@@ -51,7 +51,7 @@ public class MasterDetailTestPage extends Page {
 		for (int i = 0; i < 10; i++) {
 			masterData.add("bladibladibladibla" + i);
 		}
-		mainPanel.add(m = new CatalogManagerMasterDetail(100) {{
+		mainPanel.add(m = new CatalogManagerMasterDetail() {{
 			final Table masterTable = new Table();
 			masterTable.resizeColumns(5);
 			masterTable.resizeHeaderRows(1);

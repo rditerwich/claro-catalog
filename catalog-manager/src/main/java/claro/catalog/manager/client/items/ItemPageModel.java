@@ -1,29 +1,29 @@
 package claro.catalog.manager.client.items;
 
-import claro.jpa.shop.Shop;
+import claro.jpa.catalog.OutputChannel;
 
 public class ItemPageModel {
 	private String selectedLanguage;
-	private Shop selectedShop;
+	private OutputChannel selectedOutputChannel;
 
 	public void setSelectedLanguage(String selectedLanguage) {
 		this.selectedLanguage = selectedLanguage;
 	}
 
-	public void setSelectedShop(Shop selectedShop) {
-		this.selectedShop = selectedShop;
+	public void setSelectedOutputChannel(OutputChannel selectedShop) {
+		this.selectedOutputChannel = selectedShop;
 	}
 	
 	public String getSelectedLanguage() {
 		return selectedLanguage;
 	}
-	public Shop getSelectedShop() {
-		return selectedShop;
+	public OutputChannel getSelectedShop() {
+		return selectedOutputChannel;
 	}
 	
-	public Long getSelectedShopId() {
-		if (selectedShop != null) {
-			return selectedShop.getId();
+	public Long getSelectedOutputChannelId() {
+		if (selectedOutputChannel != null) {
+			return selectedOutputChannel.getId();
 		}
 		return null;
 	}

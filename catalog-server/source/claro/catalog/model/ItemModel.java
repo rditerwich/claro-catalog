@@ -323,8 +323,13 @@ public class ItemModel {
 				properties = SMap.empty();
 				for (Property property : getEntity().getProperties()) {
 					PropertyGroupAssignment groupAssignment = findGroupAssignment(property);
-					PropertyModel propertyRoot = PropertyModel.createRoot(property.getId(), false, this, groupAssignment != null? groupAssignment.getCategory().getId() : null);
-					properties = properties.add(findGroupInfo(groupAssignment), propertyRoot);
+					try {
+  					PropertyModel propertyRoot = PropertyModel.createRoot(property.getId(), false, this, groupAssignment != null? groupAssignment.getCategory().getId() : null);
+  					properties = properties.add(findGroupInfo(groupAssignment), propertyRoot);
+					} 
+					catch (Throwable t) {
+					  t.printStackTrace();
+					}
 				}
 			}
 			return properties;
@@ -378,7 +383,7 @@ public class ItemModel {
 		PropertyModel property = findProperty(propertyLabel, language, false);
 		if (property == null) {
 			property = createProperty(SMap.create(language, propertyLabel), type, group);
-			property.setValue(null, null, null, language, initialValue);
+		  property.setValue(null, null, null, language, initialValue);
 		}
 		return property;
 	}
@@ -414,8 +419,26 @@ public class ItemModel {
 			}
 			
 			// Enums
-			if (newEnumValues != null) {
-				// TODO.
+			if (newEnumValues != null && !property.getPropertyInfo().enumValues.equals(newEnumValues)) {
+			  List<EnumValue> enumValues = new ArrayList<EnumValue>();
+			  for (Entry<Integer, SMap<String, String>> entry : newEnumValues) {
+			    EnumValue enumValue = new EnumValue();
+			    enumValue.setProperty(new Property());
+			    enumValue.getProperty().setId(property.getPropertyId());
+			    enumValue.setValue(entry.getKey());
+			    ArrayList<Label> labels = new ArrayList<Label>();
+			    for (Entry<String, String> perLang : entry.getValue()) {
+  			    Label label = new Label();
+  			    label.setEnumValue(enumValue);
+  			    label.setLanguage(perLang.getKey());
+  			    label.setLabel(perLang.getValue());
+  			    labels.add(label);
+			    }
+			    enumValue.setLabels(labels);
+			    enumValues.add(enumValue);
+			  }
+        property.getEntity().setEnumValues(enumValues);
+        changed = true;
 			}
 			
 			return changed;

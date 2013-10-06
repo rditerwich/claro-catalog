@@ -24,7 +24,7 @@ import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.util.CollectionUtil;
 
 public abstract class SelectionWidget<T> extends Composite implements Globals {
-	enum Styles implements Style { mouseOverStyle, selectionStyle, selectionDisplayName, selectionAddNoSelection, selectionAdd }
+	enum Styles implements Style { mouseOverStyle, selectionStyle, selectionItem, selectionDisplayName, selectionAddNoSelection, selectionAdd, selectionRemove }
 	
 	// State
 	private List<T> selection = new ArrayList<T>();
@@ -151,31 +151,37 @@ public abstract class SelectionWidget<T> extends Composite implements Globals {
 						final boolean lastSelectedObject = i == selection.size() - 1;
 						final T finalSelectedObject = selectedObject;
 						final String displayName = displayNames.get(i);
-						mainPanel.add(new Grid(1, lastSelectedObject ? 3 : 2) {{
-							setWidget(0, 0, new Anchor(displayName) {{
-								StyleUtil.addStyle(this, Styles.selectionDisplayName);
-								setTitle(getSelectedObjectTooltip(displayName));
-								if (canSelect) {
-									addHoverStyles(this);
-									addClickHandler(new ClickHandler() {
-										public void onClick(ClickEvent event) {
-											selectObject(finalSelectedObject);
-										}
-									});
-								}
-							}});
-							setWidget(0, 1, new Anchor("X") {{
-								addHoverStyles(this);
-								setTitle(getRemoveSelectedObjectTooltip(displayName));
-								addClickHandler(new ClickHandler() {
-									public void onClick(ClickEvent event) {
-										removeSelectedObject(finalSelectedObject);
-									}
-								});
-							}});
-							if (lastSelectedObject && multiSelect) {
-								setWidget(0, 2, createAddAnchor("+", false));
-							}
+						mainPanel.add(new Grid(1, 2) {{
+						  setWidget(0, 0, new FlowPanel() {{
+						    StyleUtil.setStyle(this, Styles.selectionItem);
+    					  add(new Grid(1, 2) {{
+    							setWidget(0, 0, new Anchor(displayName) {{
+    								StyleUtil.addStyle(this, Styles.selectionDisplayName);
+    								setTitle(getSelectedObjectTooltip(displayName));
+    								if (canSelect) {
+    									addHoverStyles(this);
+    									addClickHandler(new ClickHandler() {
+    										public void onClick(ClickEvent event) {
+    											selectObject(finalSelectedObject);
+    										}
+    									});
+    								}
+    							}});
+    							setWidget(0, 1, new Anchor("x") {{
+    								addHoverStyles(this);
+                    StyleUtil.addStyle(this, Styles.selectionRemove);
+    								setTitle(getRemoveSelectedObjectTooltip(displayName));
+    								addClickHandler(new ClickHandler() {
+    									public void onClick(ClickEvent event) {
+    										removeSelectedObject(finalSelectedObject);
+    									}
+    								});
+    							}});
+    					  }});
+						  }});
+						  if (lastSelectedObject && multiSelect) {
+						    setWidget(0, 1, createAddAnchor("+", false));
+						  }
 						}});
 						i++;
 					}

@@ -67,7 +67,7 @@ public class OrderPage extends Page {
 	@Override
 	protected void initialize() {
 		initWidget(new LayoutPanel() {{
-			add(masterDetail = new CatalogManagerMasterDetail(100) {{
+			add(masterDetail = new CatalogManagerMasterDetail() {{
 				setHeader(ribbon = new OrderRibbon(model));
 				setMaster(master = new OrderMaster(model));
 				setDetail(tabs = new PullUpTabs(26, 5) {{

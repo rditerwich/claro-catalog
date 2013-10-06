@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
@@ -30,6 +31,15 @@ public class CatalogManagerMasterDetail extends MasterDetail implements Globals 
 		super(headerSize, 0, 24);
 	}
 
+	public CatalogManagerMasterDetail() {
+	  this(150);
+	}
+	
+	@Override
+	public int getAnimationSpeed() {
+	  return 0;
+	}
+	
 	@Override
 	protected HasWidgets createHeaderWrapper(LayoutPanel parent) {
 		Panel result = new RoundedPanel(RoundedPanel.ALL, 4) {{
@@ -58,7 +68,7 @@ public class CatalogManagerMasterDetail extends MasterDetail implements Globals 
 			}
 		};
 		
-		Panel panel;
+		final Panel panel;
 		parent.add(panel = new DockLayoutPanel(Unit.PX) {{
 			addNorth(new DockLayoutPanel(Unit.PX) {{
 				addWest(createCloseButton(closeHandler), 22);

@@ -48,6 +48,6 @@ class Trail {
 
 	def isOnTrail(item : Item) = trail.contains(item)
 	def isSelected(item : Item) = !trail.isEmpty && trail.last == item
-	def firstOnTrail : Option[Item] = trail.firstOption
+	def firstOnTrail : Option[Item] = trail.headOption
 	def parentOnTrail(item : Item) : Option[Item] = trail.takeWhile(_ != item).lastOption
 }

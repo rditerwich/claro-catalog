@@ -19,6 +19,7 @@ import claro.catalog.manager.client.widgets.MediaWidget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -93,7 +94,7 @@ public class ProductDetails extends Composite implements Globals {
 							categoryRemoved(model.getSelectedProductId(), categoryId);
 						}
 					});
-					setWidget(0, 2, new Anchor(messages.removeProductLink()) {{
+					setWidget(0, 2, new Button(messages.removeProductLink()) {{
 						addClickHandler(new ClickHandler() {
 							public void onClick(ClickEvent event) {
 								removeWithConfirmation.show();
@@ -244,15 +245,6 @@ public class ProductDetails extends Composite implements Globals {
 			
 		}
 		
-		// price
-		final Object price = getValue(model.getPriceProperty(), properties);
-		if (price != null) {
-			// TODO Use locale in the following format??
-			productPrice.setText(MoneyFormatUtil.full((Money)price));
-		} else {
-			productPrice.setText("");
-		}
-
 		// Update categories.
 		categoryPanel.setData(model.getSelectedProductCategories(), model.getSelectedLanguage());
 		

@@ -21,7 +21,7 @@
             <many-to-one name="catalog" target-entity="claro.jpa.catalog.Catalog" optional="false">
                 <join-column name="catalog_id" referenced-column-name="id" table="media" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="tags" target-entity="claro.jpa.media.MediaTag" mapped-by="media">
+            <one-to-many name="tags" orphan-removal="true" target-entity="claro.jpa.media.MediaTag" mapped-by="media">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -314,12 +314,12 @@
             <many-to-one name="user" target-entity="claro.jpa.party.User" optional="false">
                 <join-column name="user_id" referenced-column-name="id" table="order" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="productOrders" target-entity="claro.jpa.order.ProductOrder" mapped-by="order">
+            <one-to-many name="productOrders" orphan-removal="true" target-entity="claro.jpa.order.ProductOrder" mapped-by="order">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="history" target-entity="claro.jpa.order.OrderHistory" mapped-by="order">
+            <one-to-many name="history" orphan-removal="true" target-entity="claro.jpa.order.OrderHistory" mapped-by="order">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -427,12 +427,12 @@
             <basic name="expressDeliveryCharge">
                 <column name="expressdeliverycharge" table="outputchannel" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <one-to-many name="navigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentShop">
+            <one-to-many name="navigation" orphan-removal="true" target-entity="claro.jpa.shop.Navigation" mapped-by="parentShop">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="promotions" target-entity="claro.jpa.shop.Promotion" mapped-by="shop">
+            <one-to-many name="promotions" orphan-removal="true" target-entity="claro.jpa.shop.Promotion" mapped-by="shop">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -463,7 +463,7 @@
             <many-to-one name="parentNavigation" target-entity="claro.jpa.shop.Navigation">
                 <join-column name="parentnavigation_id" referenced-column-name="id" table="navigation" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="subNavigation" target-entity="claro.jpa.shop.Navigation" mapped-by="parentNavigation">
+            <one-to-many name="subNavigation" orphan-removal="true" target-entity="claro.jpa.shop.Navigation" mapped-by="parentNavigation">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -555,7 +555,7 @@
             <basic name="lastTime">
                 <column name="lasttime" table="job" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <one-to-many name="results" target-entity="claro.jpa.jobs.JobResult" mapped-by="job">
+            <one-to-many name="results" orphan-removal="true" target-entity="claro.jpa.jobs.JobResult" mapped-by="job">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -748,19 +748,19 @@
             <many-to-one name="root" target-entity="claro.jpa.catalog.Category">
                 <join-column name="root_id" referenced-column-name="id" table="catalog" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="items" target-entity="claro.jpa.catalog.Item" mapped-by="catalog">
+            <one-to-many name="items" orphan-removal="true" target-entity="claro.jpa.catalog.Item" mapped-by="catalog">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
             <one-to-many name="outputChannels" target-entity="claro.jpa.catalog.OutputChannel" mapped-by="catalog">
             </one-to-many>
-            <one-to-many name="propertyGroups" target-entity="claro.jpa.catalog.PropertyGroup" mapped-by="catalog">
+            <one-to-many name="propertyGroups" orphan-removal="true" target-entity="claro.jpa.catalog.PropertyGroup" mapped-by="catalog">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="media" target-entity="claro.jpa.media.Media" mapped-by="catalog">
+            <one-to-many name="media" orphan-removal="true" target-entity="claro.jpa.media.Media" mapped-by="catalog">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -795,17 +795,17 @@
             </one-to-many>
             <one-to-many name="children" target-entity="claro.jpa.catalog.ParentChild" mapped-by="parent">
             </one-to-many>
-            <one-to-many name="properties" target-entity="claro.jpa.catalog.Property" mapped-by="item">
+            <one-to-many name="properties" orphan-removal="true" target-entity="claro.jpa.catalog.Property" mapped-by="item">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="propertyValues" target-entity="claro.jpa.catalog.PropertyValue" mapped-by="item">
+            <one-to-many name="propertyValues" orphan-removal="true" target-entity="claro.jpa.catalog.PropertyValue" mapped-by="item">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="templates" target-entity="claro.jpa.catalog.Template" mapped-by="item">
+            <one-to-many name="templates" orphan-removal="true" target-entity="claro.jpa.catalog.Template" mapped-by="item">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -841,7 +841,7 @@
             <basic name="containsProducts" optional="false">
                 <column name="containsproducts" table="item" nullable="true" unique="false" insertable="true" updatable="true"/>
             </basic>
-            <one-to-many name="propertyGroupAssignments" target-entity="claro.jpa.catalog.PropertyGroupAssignment" mapped-by="category">
+            <one-to-many name="propertyGroupAssignments" orphan-removal="true" target-entity="claro.jpa.catalog.PropertyGroupAssignment" mapped-by="category">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -863,7 +863,7 @@
             <many-to-one name="catalog" target-entity="claro.jpa.catalog.Catalog" optional="false">
                 <join-column name="catalog_id" referenced-column-name="id" table="propertygroup" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="labels" target-entity="claro.jpa.catalog.Label" mapped-by="propertyGroup">
+            <one-to-many name="labels" orphan-removal="true" target-entity="claro.jpa.catalog.Label" mapped-by="propertyGroup">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -929,12 +929,12 @@
             <many-to-one name="item" target-entity="claro.jpa.catalog.Item">
                 <join-column name="item_id" referenced-column-name="id" table="property" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="labels" target-entity="claro.jpa.catalog.Label" mapped-by="property">
+            <one-to-many name="labels" orphan-removal="true" target-entity="claro.jpa.catalog.Label" mapped-by="property">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="enumValues" target-entity="claro.jpa.catalog.EnumValue" mapped-by="property">
+            <one-to-many name="enumValues" orphan-removal="true" target-entity="claro.jpa.catalog.EnumValue" mapped-by="property">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -999,7 +999,7 @@
             <many-to-one name="property" target-entity="claro.jpa.catalog.Property" optional="false">
                 <join-column name="property_id" referenced-column-name="id" table="enumvalue" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="labels" target-entity="claro.jpa.catalog.Label" mapped-by="enumValue">
+            <one-to-many name="labels" orphan-removal="true" target-entity="claro.jpa.catalog.Label" mapped-by="enumValue">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -1208,7 +1208,7 @@
                     <cascade-all />
                 </cascade>
             </many-to-one>
-            <one-to-many name="rules" target-entity="claro.jpa.importing.ImportRules" mapped-by="importSource">
+            <one-to-many name="rules" orphan-removal="true" target-entity="claro.jpa.importing.ImportRules" mapped-by="importSource">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -1254,7 +1254,7 @@
             <many-to-one name="importSource" target-entity="claro.jpa.importing.ImportSource" optional="false">
                 <join-column name="importsource_id" referenced-column-name="id" table="importrules" nullable="false" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-one name="importProducts" target-entity="claro.jpa.importing.ImportProducts" mapped-by="rules">
+            <one-to-one name="importProducts" orphan-removal="true" target-entity="claro.jpa.importing.ImportProducts" mapped-by="rules">
                 <cascade>
                     <cascade-all />
                 </cascade>
@@ -1279,12 +1279,12 @@
             <many-to-one name="matchProperty" target-entity="claro.jpa.catalog.Property">
                 <join-column name="matchproperty_id" referenced-column-name="id" table="importproducts" nullable="true" unique="false" insertable="true" updatable="true"/>
             </many-to-one>
-            <one-to-many name="categories" target-entity="claro.jpa.importing.ImportCategory" mapped-by="importProducts">
+            <one-to-many name="categories" orphan-removal="true" target-entity="claro.jpa.importing.ImportCategory" mapped-by="importProducts">
                 <cascade>
                     <cascade-all />
                 </cascade>
             </one-to-many>
-            <one-to-many name="properties" target-entity="claro.jpa.importing.ImportProperty" mapped-by="importProducts">
+            <one-to-many name="properties" orphan-removal="true" target-entity="claro.jpa.importing.ImportProperty" mapped-by="importProducts">
                 <cascade>
                     <cascade-all />
                 </cascade>

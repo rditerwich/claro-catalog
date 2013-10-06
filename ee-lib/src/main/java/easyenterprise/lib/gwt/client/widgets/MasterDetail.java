@@ -354,7 +354,7 @@ public abstract class MasterDetail extends Composite implements RequiresResize, 
 			mainPanel.setWidgetLeftWidth(detailContainer, 20, Unit.PCT, 80, Unit.PCT);
 			
 	
-			mainPanel.animate(150, new AnimationCallback() {
+			mainPanel.animate(getAnimationSpeed(), new AnimationCallback() {
 				public void onLayout(Layer layer, double progress) {
 				}
 				public void onAnimationComplete() {
@@ -409,7 +409,7 @@ public abstract class MasterDetail extends Composite implements RequiresResize, 
 			
 
 		final int row = currentRow;
-		mainPanel.animate(animated ? 150 : 0, new AnimationCallback() {
+		mainPanel.animate(animated ? getAnimationSpeed() : 0, new AnimationCallback() {
 			public void onLayout(Layer layer, double progress) {
 			}
 			public void onAnimationComplete() {
@@ -425,6 +425,10 @@ public abstract class MasterDetail extends Composite implements RequiresResize, 
 		});
 		currentRow = -1;
 	}
+
+  public int getAnimationSpeed() {
+    return 150;
+  }
 
 	private int rowHeight(final int row) {
 		int offsetHeight;

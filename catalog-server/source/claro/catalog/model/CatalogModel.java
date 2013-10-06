@@ -44,21 +44,21 @@ public class CatalogModel {
 	public final ItemModel root;
 	public final PropertyGroup generalPropertyGroup;
 	public final PropertyModel nameProperty;
-	public final PropertyModel variantProperty;
-	public final PropertyModel articleNumberProperty;
-	public final PropertyModel descriptionProperty;
+//	public final PropertyModel variantProperty;
+//	public final PropertyModel articleNumberProperty;
+//	public final PropertyModel descriptionProperty;
 	public final PropertyModel imageProperty;
-	public final PropertyModel smallImageProperty;
-	public final PropertyModel priceProperty;
-	public final PropertyModel supplierProperty;
-	public final PropertyModel supplierArticleNumberProperty;
+//	public final PropertyModel smallImageProperty;
+//	public final PropertyModel priceProperty;
+//	public final PropertyModel supplierProperty;
+//	public final PropertyModel supplierArticleNumberProperty;
 	public final PropertyModel visibleProperty;
 	final Map<Long, ItemModel> items = new HashMap<Long, ItemModel>();
 	final Map<Long, PropertyGroupInfo> propertyGroupInfos = new HashMap<Long, PropertyGroupInfo>();
 	final ConcurrentLinkedQueue<ItemModel> itemsToInvalidate = new ConcurrentLinkedQueue<ItemModel>();
-	private PropertyGroup imagesPropertyGroup;
-	private PropertyGroup documentsPropertyGroup;
-	private PropertyModel manualProperty;
+	protected  PropertyGroup imagesPropertyGroup;
+	protected PropertyGroup documentsPropertyGroup;
+	protected PropertyModel manualProperty;
 	private LinkedHashSet<String> allLanguages;
 
 	public CatalogModel(Long id, CatalogDao dao) {
@@ -69,15 +69,15 @@ public class CatalogModel {
 		this.imagesPropertyGroup = findOrCreatePropertyGroup(RootProperties.IMAGES, null);
 		this.documentsPropertyGroup = findOrCreatePropertyGroup(RootProperties.DOCUMENTS, null);
 		this.nameProperty = root.findOrCreateProperty(RootProperties.NAME, null, PropertyType.String, generalPropertyGroup, RootProperties.ROOTCATEGORY_NAME);
-		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
-		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
-		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String, generalPropertyGroup);
+//		this.variantProperty = root.findOrCreateProperty(RootProperties.VARIANT, null, PropertyType.String, generalPropertyGroup);
+//		this.articleNumberProperty = root.findOrCreateProperty(RootProperties.ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
+//		this.descriptionProperty = root.findOrCreateProperty(RootProperties.DESCRIPTION, null, PropertyType.String, generalPropertyGroup);
 		this.imageProperty = root.findOrCreateProperty(RootProperties.IMAGE, null, PropertyType.Media, imagesPropertyGroup);
-		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media, imagesPropertyGroup);
-		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
-		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
-		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
-		this.manualProperty = root.findOrCreateProperty(RootProperties.MANUAL, null, PropertyType.Media, documentsPropertyGroup);
+//		this.smallImageProperty = root.findOrCreateProperty(RootProperties.SMALLIMAGE, null, PropertyType.Media, imagesPropertyGroup);
+//		this.priceProperty = root.findOrCreateProperty(RootProperties.PRICE, null, PropertyType.Money, generalPropertyGroup);
+//		this.supplierProperty = root.findOrCreateProperty(RootProperties.SUPPLIER, null, PropertyType.String, generalPropertyGroup);
+//		this.supplierArticleNumberProperty = root.findOrCreateProperty(RootProperties.SUPPLIER_ARTICLENUMBER, null, PropertyType.String, generalPropertyGroup);
+//		this.manualProperty = root.findOrCreateProperty(RootProperties.MANUAL, null, PropertyType.Media, documentsPropertyGroup);
 		this.visibleProperty = root.findOrCreateProperty(RootProperties.VISIBLE, null, PropertyType.Boolean, generalPropertyGroup, true);
   }
 	

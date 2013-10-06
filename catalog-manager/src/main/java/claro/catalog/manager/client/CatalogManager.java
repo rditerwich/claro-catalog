@@ -4,8 +4,8 @@ package claro.catalog.manager.client;
 import claro.catalog.manager.client.catalog.CatalogPage;
 import claro.catalog.manager.client.importing.ImportPage;
 import claro.catalog.manager.client.orders.OrderPage;
+import claro.catalog.manager.client.outputchannels.WebshopPage;
 import claro.catalog.manager.client.taxonomy.TaxonomyPage;
-import claro.catalog.manager.client.webshop.WebshopPage;
 import claro.catalog.util.PropertyStringConverter;
 import claro.jpa.party.User;
 
@@ -137,13 +137,13 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 					setStylePrimaryName(GlobalStylesEnum.menu.toString());
 					addPage(catalogPage = new CatalogPage(placeController), messages.catalogMenu());
 					addPage(new TaxonomyPage(placeController), messages.taxonomyMenu());
+					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
 					addPage(webshopPage = new WebshopPage(placeController, messages.webshopMenu()), messages.webshopMenu());
-					addPage(new OrderPage(placeController, messages.ordersMenu()), messages.ordersMenu());
+//					addPage(new OrderPage(placeController, messages.ordersMenu()), messages.ordersMenu());
 //					addPage(new EmptyPage(placeController, messages.campaignsMenu()), messages.campaignsMenu());
 //					addPage(new EmptyPage(placeController, messages.contentLibraryMenu()), messages.contentLibraryMenu());
 //					addPage(new EmptyPage(placeController, "Orders"), "Orders");
-					addPage(new ImportPage(placeController), messages.dataExchangeMenu());
-					addPage(new SettingsPage(placeController, "Technical Settings"), "Settings");
+					addPage(new SettingsPage(placeController, "Settings"), "Settings");
 //					addPage(new EmptyPage(placeController, messages.reportAndAnalysisMenu()), messages.reportAndAnalysisMenu());
 //					addPage(new MasterDetailTestPage(placeController), "MasterDetail");
 //					addPage(new TearupTabsTestPage(placeController), "TabTest");
@@ -158,7 +158,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 				StyleUtil.addStyle(this, Styles.footer);
 				add(new HorizontalPanel() {{
 					StyleUtil.addStyle(this, Styles.links);
-					add(new Label("Powered By AgileXS"));
+					add(new Label("Powered By Kentivo"));
 					add(new Label("|"));
 					add(new Anchor("Privacy Policy"));
 					add(new Label("|"));
@@ -167,7 +167,7 @@ public class CatalogManager implements com.google.gwt.core.client.EntryPoint, Gl
 					add(new Anchor("Terms of Use"));
 				}}); 
 				
-			}}, 40);
+			}}, 50);
 			add(pageContainer);
 			
 //			if (false)

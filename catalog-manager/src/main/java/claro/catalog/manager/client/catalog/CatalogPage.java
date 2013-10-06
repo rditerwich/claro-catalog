@@ -15,7 +15,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
-import claro.catalog.manager.client.webshop.ShopModel;
+import claro.catalog.manager.client.outputchannels.OutputChannelModel;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.StatusMessage;
 
@@ -54,14 +54,14 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		public PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData() {
 			return productData;
 		}
-		public ShopModel getShopModel() {
+		public OutputChannelModel getShopModel() {
 			return shopModel;
 		}
 	};
 	private MasterDetail productMasterDetail;
 
 	private PropertyInfo nameProperty;
-	private ShopModel shopModel;
+	private OutputChannelModel shopModel;
 	CatalogRibbon ribbon;
 	private CatalogPageMaster productsMaster;
 	private ProductDetails productDetails;
@@ -71,7 +71,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 	}
 	
 
-	public void setShopModel(ShopModel shopModel) {
+	public void setShopModel(OutputChannelModel shopModel) {
 		this.shopModel = shopModel;
 	}
 
@@ -83,7 +83,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 	@Override
 	protected void initialize() {
 		initWidget(new LayoutPanel() {{
-			add(productMasterDetail = new CatalogManagerMasterDetail(150) {{
+			add(productMasterDetail = new CatalogManagerMasterDetail() {{
 				setRowChangedHandler(new ValueChangeHandler<Integer>() {
 					public void onValueChange(ValueChangeEvent<Integer> event) {
 						updateProductSelection(model.getProductData().getKey(getCurrentRow()));
@@ -131,7 +131,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.resultType = ItemType.product;
 		
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		cmd.language = model.getSelectedLanguage();
 		
 		cmd.filter = model.getFilterString();
@@ -171,7 +171,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		cmd.parentsToSet = Collections.singletonList(parentId);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {
@@ -196,7 +196,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		final ItemDetailsCommand cmd = new ItemDetailsCommand();
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
 		cmd.itemId = productId;
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		cmd.language = model.getSelectedLanguage();
 		
 		GwtCommandFacade.execute(cmd, new StatusCallback<ItemDetailsCommand.Result>() {
@@ -215,7 +215,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		final StatusMessage savingMessage = StatusMessage.show(messages.savingProductDetailsStatus(), 2, 1000);
 		
 		cmd.catalogId = CatalogManager.getCurrentCatalogId();
-		cmd.outputChannelId = model.getSelectedShopId();
+		cmd.outputChannelId = model.getSelectedOutputChannelId();
 		
 		GwtCommandFacade.execute(cmd, new AsyncCallback<StoreItemDetails.Result>() {
 			public void onFailure(Throwable caught) {

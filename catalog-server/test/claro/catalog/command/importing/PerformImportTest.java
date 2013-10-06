@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import claro.catalog.command.importing.StoreImportSource.Result;
-import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.model.test.util.CatalogTestBase;
+import claro.catalog.model.test.util.TestCatalogModel;
 import claro.jpa.importing.ImportCategory;
 import claro.jpa.importing.ImportProducts;
 import claro.jpa.importing.ImportProperty;
@@ -28,7 +28,7 @@ public class PerformImportTest extends CatalogTestBase {
 	public void test() throws SQLException, CommandException {
 
 		ensureDatabaseCreated();
-		CatalogModel model = getCatalogModel();
+		TestCatalogModel model = getCatalogModel();
 		
 		// create an import definition
 		ImportSource importSource = new ImportSource();

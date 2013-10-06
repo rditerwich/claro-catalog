@@ -69,7 +69,7 @@ public abstract class PropertyModel {
 	}
 
 	static PropertyModel createRoot(final Long propertyId, final boolean isDangling, final ItemModel item, final Long groupAssignmentItemId) {
-		return new PropertyModel(item) {
+		PropertyModel propertyModel = new PropertyModel(item) {
 			private PropertyInfo propertyInfo = createPropertyInfo(item, getEntity(), isDangling);
 			PropertyModel getRoot() {
 				return this;
@@ -86,7 +86,8 @@ public abstract class PropertyModel {
 			public Long getGroupAssignmentItemId() {
 				return groupAssignmentItemId;
 			}
-		};			
+		};
+    return propertyModel;			
 	}
 	
 	public PropertyModel(ItemModel item) {

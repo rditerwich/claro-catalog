@@ -38,24 +38,24 @@ object BindingCtor {
 	class ComplexCollection
 	class ComplexGrouped
 	class ComplexGroup
-	case class Grouped(collection : Collection[Collection[Any]])
+	case class Grouped(collection : Seq[Seq[Any]])
 
 	private class LabeledCtor(label : String) {
 		def -> (bindings : Bindings) = (label, bindings)
 		def -> (ctor : Ctor) = (label, ctor()) 
 		def -> (f : => Binding) = new BindingSingle(label, new BindingBinding(f))
 		def -> (f : => Option[Binding]) = new BindingOption(label, new BindingOptionBinding(f))
-		def -> (f : => Collection[Binding]) = new BindingCollection(label, new BindingCollectionBinding(f))
-		def -> (f : => Collection[Collection[Binding]]) = new BindingGroup(label, new BindingGroupBinding(f))
+		def -> (f : => Seq[Binding]) = new BindingCollection(label, new BindingCollectionBinding(f))
+		def -> (f : => Seq[Seq[Binding]]) = new BindingGroup(label, new BindingGroupBinding(f))
 		def -> (f : => String) = new StringSingle(label, new AnyBinding(f, toText))
 		def -> (f : => Option[String]) = new StringOption(label, new AnyOptionBinding(f, toText))
-		def -> (f : => Collection[String]) = new StringCollection(label, new AnyCollectionBinding(f, toText)) 
+		def -> (f : => Seq[String]) = new StringCollection(label, new AnyCollectionBinding(f, toText)) 
 		def -> (f : => Long) = new LongSingle(label, new AnyBinding(f, toText))
 		def -> (f : => Option[Long]) = new LongOption(label, new AnyOptionBinding(f, toText))
-		def -> (f : => Collection[Long]) = new LongCollection(label, new AnyCollectionBinding(f, toText)) 
+		def -> (f : => Seq[Long]) = new LongCollection(label, new AnyCollectionBinding(f, toText)) 
 		def -> (f : => Date) = new DateSingle(label, new AnyBinding(f, toText))
 		def -> (f : => Option[Date]) = new DateOption(label, new AnyOptionBinding(f, toText))
-		def -> (f : => Collection[Date]) = new DateCollection(label, new AnyCollectionBinding(f, toText)) 
+		def -> (f : => Seq[Date]) = new DateCollection(label, new AnyCollectionBinding(f, toText)) 
 		def -> (f : => Boolean) = new BooleanSingle(label, new BooleanBinding(f))
 		def -> (f : => NodeSeq) = new StaticXml(label, new XmlBinding(_ => f)) {}
 		def -> (f : => NodeSeq => NodeSeq) = new DynamicXml(label, new XmlBinding(f))
@@ -64,10 +64,10 @@ object BindingCtor {
 		def -> (f : => Grouped) = new ComplexGrouped {
 			def -> (defaultPrefix : String) = (label, new ComplexGroupBinding(f.collection, defaultPrefix))
 		}
-		def -> (f : => Collection[Collection[Any]]) = new ComplexGroup {
+		def -> (f : => Seq[Seq[Any]]) = new ComplexGroup {
 			def -> (defaultPrefix : String) = (label, new ComplexGroupBinding(f, defaultPrefix))
 		}
-		def -> (f : => Collection[Any]) = new ComplexCollection {
+		def -> (f : => Seq[Any]) = new ComplexCollection {
 			def -> (defaultPrefix : String) = (label, new ComplexCollectionBinding(f, defaultPrefix))
 		}
 		def -> (f : => Option[Any]) = new ComplexOption {
@@ -87,7 +87,7 @@ object BindingCtor {
 trait BindingCtor {
 	import BindingCtor._
 	implicit def labeledCtor(label : String) = new LabeledCtor(label)
-	def grouped(collection : Collection[Collection[Any]]) = Grouped(collection)
+	def grouped(collection : Seq[Seq[Any]]) = Grouped(collection)
 }
 
 case class Person(name : String)

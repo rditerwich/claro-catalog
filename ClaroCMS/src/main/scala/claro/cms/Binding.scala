@@ -166,7 +166,7 @@ class AnyBinding[A](f : => A, xml : A => Node => NodeSeq) extends OptionBinding(
 	}
 }
 private class AnyOptionBinding[A](f : => Option[A], xml : A => Node => NodeSeq) extends AnyBinding[A](f.getOrNull, xml)
-private class AnyCollectionBinding(f : => Collection[Any], xml : Any => Node => NodeSeq) extends CollectionBinding(f, _ => obj => new AnyBinding[Any](obj, xml))
+private class AnyCollectionBinding(f : => Seq[Any], xml : Any => Node => NodeSeq) extends CollectionBinding(f, _ => obj => new AnyBinding[Any](obj, xml))
 private class BooleanBinding(f : => Boolean) extends AnyBinding[String](if (BindingHelpers.ifAttr("not", !f, f)) "true" else null.asInstanceOf[String], _ => _ => NodeSeq.Empty)
 
 class ComplexBinding[A](f : => A, defaultPrefix : String) extends OptionBinding(f) {
@@ -177,8 +177,8 @@ class ComplexBinding[A](f : => A, defaultPrefix : String) extends OptionBinding(
 	}
 }
 private class ComplexOptionBinding[A](f : => Option[A], defaultPrefix : String) extends ComplexBinding[A](f.getOrNull, defaultPrefix)
-private class ComplexCollectionBinding(f : => Collection[Any], defaultPrefix : String) extends CollectionBinding(f, _ => obj => new ComplexBinding(obj, defaultPrefix))
-private class ComplexGroupBinding(f : => Collection[Collection[Any]], defaultPrefix : String) extends GroupedCollectionBinding(f, _ => obj => new ComplexBinding(obj, defaultPrefix))
+private class ComplexCollectionBinding(f : => Seq[Any], defaultPrefix : String) extends CollectionBinding(f, _ => obj => new ComplexBinding(obj, defaultPrefix))
+private class ComplexGroupBinding(f : => Seq[Seq[Any]], defaultPrefix : String) extends GroupedCollectionBinding(f, _ => obj => new ComplexBinding(obj, defaultPrefix))
 
 private class BindingBinding(f : => Binding) extends OptionBinding[Binding](f) {
 	def bind(binding : Binding, node : Node, context : BindingContext) = {
@@ -186,17 +186,17 @@ private class BindingBinding(f : => Binding) extends OptionBinding[Binding](f) {
 	}
 }
 private class BindingOptionBinding(f : => Option[Binding]) extends BindingBinding(f.getOrNull)
-private class BindingCollectionBinding(f : => Collection[Binding]) extends CollectionBinding(f, _ => obj => obj.asInstanceOf[Binding]) 
-private class BindingGroupBinding(f : => Collection[Collection[Binding]]) extends GroupedCollectionBinding(f, _ => obj => obj.asInstanceOf[Binding])
+private class BindingCollectionBinding(f : => Seq[Binding]) extends CollectionBinding(f, _ => obj => obj.asInstanceOf[Binding]) 
+private class BindingGroupBinding(f : => Seq[Seq[Binding]]) extends GroupedCollectionBinding(f, _ => obj => obj.asInstanceOf[Binding])
 
 object CollectionBinding {
   
-  def bind(collection : Collection[Any], eltBinding : Node => Any => Binding, groupBinding : Node => Any => Binding, listPrefix : String, node : Node, context: BindingContext) : NodeSeq = {
+  def bind(collection : Seq[Any], eltBinding : Node => Any => Binding, groupBinding : Node => Any => Binding, listPrefix : String, node : Node, context: BindingContext) : NodeSeq = {
     val size = collection.size
     val context2 = context.initRepeatSeen
     if (!collection.isEmpty) {
       var index = 1
-      var iterator = collection.elements
+      var iterator = collection.iterator
       val result = new mutable.ArrayBuffer[Node]
       while (iterator.hasNext && !context2.repeatSeen) {
         val elt = iterator.next
@@ -236,7 +236,7 @@ object CollectionBinding {
   } 
 }
 
-private class CollectionBinding(f : => Collection[Any], eltBinding : Node => Any => Binding) extends Binding {
+private class CollectionBinding(f : => Seq[Any], eltBinding : Node => Any => Binding) extends Binding {
 
   override def bind(node : Node, context: BindingContext) : NodeSeq = {
 
@@ -299,19 +299,19 @@ private class CollectionBinding(f : => Collection[Any], eltBinding : Node => Any
             yield(array(j))
       }
       
-      val groupBinding = (_ : Node) => (elt : Any) => new CollectionGroupBinding(elt.asInstanceOf[Collection[Any]], eltBinding)
+      val groupBinding = (_ : Node) => (elt : Any) => new CollectionGroupBinding(elt.asInstanceOf[Seq[Any]], eltBinding)
       CollectionBinding.bind(groups, eltBinding, groupBinding, listPrefix, node, context)
     }
     
   }  
 }
 
-class GroupedCollectionBinding(f : => Collection[Collection[Any]], eltBinding : Node => Any => Binding) extends Binding {
+class GroupedCollectionBinding(f : => Seq[Seq[Any]], eltBinding : Node => Any => Binding) extends Binding {
 
   override def bind(node : Node, context: BindingContext) : NodeSeq = {
 
     // get the collection
-    var collection = f
+    var collection : Seq[Seq[Any]] = f
     var size = collection.size
     val listPrefix = attr(node, "list-prefix", "list")
     
@@ -322,13 +322,13 @@ class GroupedCollectionBinding(f : => Collection[Collection[Any]], eltBinding : 
       val groupCount = collection.foldLeft(0)((x,y) => Math.max(x, y.size))
       val totalSize = groupCount * size
       val padding = totalSize - collection.size
-      val array = if (padding > 0) collection.toSeq ++ Array.make(padding, null) else collection.toSeq
+      val array = if (padding > 0) collection.toSeq ++ Array.ofDim[Seq[Any]](padding) else collection.toSeq
       collection =  for (i <- 0 until groupCount) 
           yield for (j <- i until(totalSize, groupCount)) 
             yield(array(j))
     }
     
-    val groupBinding = (node : Node) => (elt : Any) => new CollectionGroupBinding(elt.asInstanceOf[Collection[Any]], eltBinding)
+    val groupBinding = (node : Node) => (elt : Any) => new CollectionGroupBinding(elt.asInstanceOf[Seq[Any]], eltBinding)
     CollectionBinding.bind(collection, _ => _ => Binding.ident, groupBinding, listPrefix, node, context)
   }  
 }
@@ -356,14 +356,14 @@ object EmptyEltBinding extends Function1[Node, Function[Any, Binding]] {
   def apply(node : Node) = (_ : Any) => Binding.empty
 }
 
-class CollectionRepeatBinding(collectionNode : Node, collection : Collection[Any], eltBinding : Node => Any => Binding, groupBinding : Node => Any => Binding, listPrefix : String) extends Binding {
+class CollectionRepeatBinding(collectionNode : Node, collection : Seq[Any], eltBinding : Node => Any => Binding, groupBinding : Node => Any => Binding, listPrefix : String) extends Binding {
   override def bind(node : Node, context: BindingContext) : NodeSeq = {
     context.repeatSeen.set(true)
     CollectionBinding.bind(collection, _ => obj => eltBinding(collectionNode)(obj), groupBinding, listPrefix, node, context)
   }  
 }
 
-class CollectionGroupBinding(collection : Collection[Any], eltBinding : Node => Any => Binding) extends Binding {
+class CollectionGroupBinding(collection : Seq[Any], eltBinding : Node => Any => Binding) extends Binding {
   override def bind(node : Node, context: BindingContext) : NodeSeq = {
     val groupPrefix = attr(node, "list-prefix", "group")
     CollectionBinding.bind(collection, eltBinding, EmptyEltBinding, groupPrefix, node, context)

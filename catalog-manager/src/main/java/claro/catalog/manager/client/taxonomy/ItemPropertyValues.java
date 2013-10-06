@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import claro.catalog.data.MediaValue;
 import claro.catalog.data.PropertyData;
@@ -31,6 +32,8 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,7 +49,7 @@ import gwtupload.client.IUploader;
 import gwtupload.client.SingleUploader;
 
 abstract public class ItemPropertyValues extends Composite implements Globals {
-	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden, source, itemPropertyValueRow, groupInherited, itemPropertyValueName, valueParentTD }
+	public enum Styles implements Style { clear, valueParent, valueWidget, itemPropertyValues, overridden, source, itemPropertyValueRow, groupInherited, itemPropertyValueName, valueParentTD, mediaValue }
 	private static int NAME_COLUMN = 0;
 	private static int VALUE_COLUMN = 1;
 	private static int GROUP_COLUMN = 2;
@@ -76,7 +79,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		
 		propertyGroupPanel = new TabPanel();
 		StyleUtil.addStyle(propertyGroupPanel, Styles.itemPropertyValues);
-		initWidget(propertyGroupPanel);
+		initWidget(new ScrollPanel() {{ add(propertyGroupPanel); }});
 	}
 	
 	/**
@@ -205,7 +208,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				PropertyData propertyData = properties.get(property);
 				
 				// Set name
-				String propertyName = property.labels.tryGet(CatalogManager.getUiLanguage(), null);
+				String propertyName = property.labels.tryGet(model.getSelectedLanguage(), null);
 				propertyValueWidgets.nameWidget.setText(propertyName);
 				
 				// ensure value widget
@@ -319,7 +322,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 	}
 
 	// TODO: Enums, Formatted Text.
-	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, PropertyInfo property) {
+	private Widget ensureWidget(PropertyValueWidgets propertyValueWidgets, final PropertyInfo property) {
 		Widget oldWidget = propertyValueWidgets.valueParentWidget.getWidget(0, 0);
 		Widget result = null;
 		
@@ -395,16 +398,29 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 				};
 			}
 			break;
+		case Enum:
+		  if (oldWidget instanceof ListBox) {
+		    result = oldWidget;
+		  } else {
+		    result = new ListBox() {{
+		      final ListBox thisWidget = this;
+		      addChangeHandler(new ChangeHandler() {
+            public void onChange(ChangeEvent event) {
+              valueChanged(thisWidget, Integer.parseInt(getValue(getSelectedIndex())));
+            }
+          });
+		    }};
+		  }
+		  break;
 		default:
 			if (oldWidget instanceof TextBox) {
 				result = oldWidget;
 			} else {
-				result = new TextBox() {
-					final TextBox me = this; 
-					{
+				result = new TextBox() {{
+          final TextBox thisWidget = this;
 					addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
-							valueChanged(me, getText());
+							valueChanged(thisWidget, getText());
 						}
 					});
 				}};
@@ -437,6 +453,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			}
 			break;
 		case Media:
+		  StyleUtil.setStyle(widget, Styles.mediaValue);
 			MediaWidget mediaWidget = (MediaWidget) ((HorizontalPanel)widget).getWidget(0);
 			if (value instanceof MediaValue) {
 				MediaValue mediaValue = (MediaValue) value;
@@ -451,6 +468,22 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 			MoneyWidget moneyWidget = (MoneyWidget) widget;
 			moneyWidget.setValue((Money) value);
 			break;
+		case Enum:
+		  ListBox listbox = (ListBox) widget;
+		  try {
+        listbox.clear();
+        for (Entry<Integer, SMap<String, String>> entry : property.enumValues) {
+          System.out.println("EnumValues  " + entry.getKey() + ": " + entry.getValue());
+          listbox.addItem(entry.getValue().tryGet(model.getSelectedLanguage(), null));
+          if (entry.getKey().equals(value)) {
+            listbox.setSelectedIndex(listbox.getItemCount() - 1);
+          }
+        }
+		  }
+		  catch (Throwable t) {
+		    listbox.setSelectedIndex(-1);
+		  }
+		  break;
 		default:
 			TextBox textBox = (TextBox) widget;
 			textBox.setText(value != null? propertyStringConverter.toString(property.getType(), value) : null);

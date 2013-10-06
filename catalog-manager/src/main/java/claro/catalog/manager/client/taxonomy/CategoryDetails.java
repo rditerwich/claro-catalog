@@ -12,26 +12,31 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
+import claro.catalog.manager.client.widgets.FormTable;
 import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RequiresResize;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
-import easyenterprise.lib.gwt.client.widgets.EEButton;
-import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
+import easyenterprise.lib.gwt.client.widgets.Header;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
@@ -39,6 +44,7 @@ import easyenterprise.lib.util.SMap;
 abstract public class CategoryDetails extends Composite implements Globals, RequiresResize {
 	private enum Styles implements Style { categoryDetails, imagePrice, categoryname }
 	
+	private Header header;
 	private HasText categoryNameBox;
 	private ItemSelectionWidget categoryPanel;
 	private Anchor removeLink;
@@ -51,15 +57,14 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private SMap<Long, SMap<String, String>> parents;
 	private Long itemId;
 	private PropertyInfo nameProperty;
-	private PropertyInfo variantProperty;
-	private PropertyInfo priceProperty;
 	private PropertyInfo imageProperty;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> inheritedPropertyValues;
 	protected CategoryProperties propertiesComponent;
 	private SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> propertyValues;
 	private SMap<Long, SMap<String, String>> groups;
-	private PullUpTabs pullups;
+	private TabLayoutPanel tabs;
 	private TaxonomyModel model;
+  private Widget tab;
 	
 	private ConfirmationDialog removeWithConfirmation = new ConfirmationDialog(images.removeIcon()) {
 		protected String getMessage() {
@@ -75,105 +80,88 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	
 
 	
-	public CategoryDetails(final TaxonomyModel model, PropertyInfo nameProperty, PropertyInfo variantProperty, PropertyInfo priceProperty, PropertyInfo imageProperty) {
+	public CategoryDetails(final TaxonomyModel model, PropertyInfo nameProperty, PropertyInfo imageProperty) {
 		this.model = model;
 		this.nameProperty = nameProperty;
-		this.variantProperty = variantProperty;
-		this.priceProperty = priceProperty;
 		this.imageProperty = imageProperty;
-		
-		initWidget(pullups = new PullUpTabs(26, 5) {{
-			StyleUtil.addStyle(this, Styles.categoryDetails);
-			setMainWidget(new ScrollPanel(new FlowPanel() {{
-				
-//			add(new Trail());
-				
-				// Title
-				add(new Grid(1, 3) {{
-					StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
-					setWidget(0, 0, (Widget)(categoryNameBox = new TextBox() {{
-						StyleUtil.addStyle(this, Styles.categoryname);
-						addChangeHandler(new ChangeHandler() {
-							public void onChange(ChangeEvent event) {
-								CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, categoryNameBox.getText());
-							}
-						});
-					}}));
-					setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
-						protected String getAddToSelectionLabel() {
-							return messages.addParentCategoriesLink();
-						};
-						protected String getAddSelectionTooltip() {
-							return messages.addCategoryProductDetailsTooltip(categoryNameBox.getText());  // TODO This is a little dirty??
-						}
-						protected String getRemoveSelectedObjectTooltip(String categoryName) {
-							return messages.removeCategoryProductDetailsTooltip(categoryName);
-						}
-						@Override
-						protected void addItem(Long categoryId, SMap<String, String> labels) {
-							super.addItem(categoryId, labels);
-							categoryAdded(itemId, categoryId);
-						}
-						protected void removeItem(Long categoryId) {
-							super.removeItem(categoryId);
-							categoryRemoved(itemId, categoryId);
-						}
-					});
-					setWidget(0, 2, removeLink = new Anchor(messages.removeCategoryLink()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								removeWithConfirmation.show();
-							}
-						});
-					}});
-
-				}});
-				
-//				// Image, Price
-//				add(new HorizontalPanel(){{
-//					StyleUtil.add(this, Styles.imagePrice);
-//					setVerticalAlignment(ALIGN_MIDDLE);
-//					add(productImage = new MediaWidget(false, true));
-//					add(productPrice = new Label() {{
-//						StyleUtil.add(this, CategoryMasterDetail.Styles.productprice);
-//						setCellVerticalAlignment(this, HorizontalPanel.ALIGN_MIDDLE);
-//					}});
-//					productImage.setImageSize("125px", "125px");
-//				}});
-				
-				add(propertiesComponent = new CategoryProperties(model) {
-					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo) {
-						CategoryDetails.this.propertySet(itemId, propertyInfo);
-					}
-					protected void propertyGroupToSet(Long itemId, PropertyInfo propertyInfo, PropertyGroupInfo group) {
-						CategoryDetails.this.propertyGroupSet(itemId, propertyInfo, group);
-					}
-					protected void propertyToRemove(Long itemId, PropertyInfo propertyInfo) {
-						CategoryDetails.this.propertyRemoved(itemId, propertyInfo);
-					}
-				});	
-
-			}}));
-			addTab(new EEButton(messages.defaultValuesTab()), 150, inheritedPropertyValuesComponent = new ItemPropertyValues(model, true, true) {
-				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
-					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, value);
-				}
-				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo) {
-					CategoryDetails.this.propertyValueRemoved(itemId, propertyInfo);
-				}
-			});
-			showTab(0);
-			hideTab();
-			
-		}});
+		initWidget(new DockLayoutPanel(Unit.PX) {{
+      addNorth(new VerticalPanel() {{
+        StyleUtil.addStyle(this, CatalogManager.Styles.productDetailsTitle);
+        add(new Grid(1, 3) {{
+          setWidget(0, 0, header = new Header(1, "") {{
+            setStyleName("categoryLabel");
+          }});
+          setWidget(0, 1, categoryPanel = new ItemSelectionWidget() {
+            protected String getAddToSelectionLabel() {
+              return messages.addParentCategoriesLink();
+            };
+            protected String getAddSelectionTooltip() {
+              return messages.addCategoryProductDetailsTooltip(categoryNameBox.getText());  // TODO This is a little dirty??
+            }
+            protected String getRemoveSelectedObjectTooltip(String categoryName) {
+              return messages.removeCategoryProductDetailsTooltip(categoryName);
+            }
+            @Override
+            protected void addItem(Long categoryId, SMap<String, String> labels) {
+              super.addItem(categoryId, labels);
+              categoryAdded(itemId, categoryId);
+            }
+            protected void removeItem(Long categoryId) {
+              super.removeItem(categoryId);
+              categoryRemoved(itemId, categoryId);
+            }
+          });
+          setWidget(0, 2, removeLink = new Anchor(messages.removeCategoryLink()) {{
+            addClickHandler(new ClickHandler() {
+              public void onClick(ClickEvent event) {
+                removeWithConfirmation.show();
+              }
+            });
+          }});
+        }});
+        add(new FormTable() {{
+          add("Name:", (Widget)(categoryNameBox = new TextBox() {{
+            StyleUtil.addStyle(this, CategoryDetails.Styles.categoryname);
+            addChangeHandler(new ChangeHandler() {
+              public void onChange(ChangeEvent event) {
+                CategoryDetails.this.propertyValueSet(itemId, CategoryDetails.this.nameProperty, categoryNameBox.getText());
+              }
+            });
+          }}), "");
+        }});
+      }}, 96);
+      add(tabs = new TabLayoutPanel(42, Unit.PX) {{
+  			StyleUtil.addStyle(this, Styles.categoryDetails);
+  			add(new FlowPanel() {{
+  				add(propertiesComponent = new CategoryProperties(model) {
+  					protected void propertyToSet(Long itemId, PropertyInfo propertyInfo) {
+  						CategoryDetails.this.propertySet(itemId, propertyInfo);
+  					}
+  					protected void propertyGroupToSet(Long itemId, PropertyInfo propertyInfo, PropertyGroupInfo group) {
+  						CategoryDetails.this.propertyGroupSet(itemId, propertyInfo, group);
+  					}
+  					protected void propertyToRemove(Long itemId, PropertyInfo propertyInfo) {
+  						CategoryDetails.this.propertyRemoved(itemId, propertyInfo);
+  					}
+  				});	
+  
+  			}}, "Properties");
+  			add(inheritedPropertyValuesComponent = new ItemPropertyValues(model, true, true) {
+  				protected void propertyValueSet(Long itemId, PropertyInfo propertyInfo, Object value) {
+  					CategoryDetails.this.propertyValueSet(itemId, propertyInfo, value);
+  				}
+  				protected void propertyValueErased(Long itemId, PropertyInfo propertyInfo) {
+  					CategoryDetails.this.propertyValueRemoved(itemId, propertyInfo);
+  				}
+  			}, "Default Values");
+  		}});
+    }});
 			
 			// TODO add a popup panel with dangling properties.
 	}
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties) {
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
-		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
-		this.priceProperty = rootProperties.get(RootProperties.PRICE);
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
 		
 		render();
@@ -202,7 +190,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	}
 
 	public void onResize() {
-		pullups.onResize();
+		tabs.onResize();
 	}
 	
 	private static SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> splitValues(SMap<PropertyGroupInfo, SMap<PropertyInfo, PropertyData>> values, Long itemId, boolean inheritedProperty) {
@@ -348,6 +336,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 
 		final Object productName = getValue(nameProperty, properties);
 		categoryNameBox.setText(productName instanceof String ? productName.toString() : "");
+		header.setText(categoryNameBox.getText());
 		
 		// Disable removed link for the root category.
 		removeLink.setVisible(itemId != model.getRootCategoryId());

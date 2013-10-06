@@ -28,5 +28,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.DevMode"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-remoteUI &quot;${gwt_remote_ui_server_port}:${unique_id}&quot; -startupUrl CatalogManager.html -logLevel INFO -codeServerPort 9997 -port 8888 -war C:\Users\Ruud\Projects\claro-catalog\catalog-manager\war claro.catalog.manager.CatalogManager"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="catalog-manager"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx512m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx2512m -server -XX:MaxPermSize=584m"/>
 </launchConfiguration>

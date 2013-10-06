@@ -16,12 +16,13 @@ import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.ItemSelectionWidget;
-import claro.catalog.manager.client.widgets.LanguageAndShopSelector;
+import claro.catalog.manager.client.widgets.LanguageAndOutputChannelSelector;
 
 import com.google.common.base.Objects;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -35,6 +36,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import easyenterprise.lib.gwt.client.Style;
 import easyenterprise.lib.gwt.client.StyleUtil;
 import easyenterprise.lib.gwt.client.widgets.EEButton;
+import easyenterprise.lib.gwt.client.widgets.EERibbon;
+import easyenterprise.lib.gwt.client.widgets.EERibbonPanel;
+import easyenterprise.lib.gwt.client.widgets.Header;
 import easyenterprise.lib.gwt.client.widgets.Table;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
@@ -47,17 +51,18 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 
 	private PropertyInfo nameProperty;
-	private PropertyInfo variantProperty;
-	private PropertyInfo descriptionProperty;
-	private PropertyInfo priceProperty;
-	private PropertyInfo artNoProperty;
 	private PropertyInfo imageProperty;
-	private PropertyInfo smallImageProperty;
+//	private PropertyInfo variantProperty;
+//	private PropertyInfo descriptionProperty;
+//	private PropertyInfo priceProperty;
+//	private PropertyInfo artNoProperty;
+//	private PropertyInfo imageProperty;
+//	private PropertyInfo smallImageProperty;
 	
 	
 	// Widgets
 	private ItemSelectionWidget filterCategories;
-	private LanguageAndShopSelector languageSelection;
+	private LanguageAndOutputChannelSelector languageSelection;
 	private List<RowWidgets> tableWidgets = new ArrayList<CategoryMasterDetail.RowWidgets>();
 
 	protected HTML filterLabel;
@@ -69,7 +74,6 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 
 
 	public CategoryMasterDetail(TaxonomyModel model) {
-		super(126);
 		this.model = model;
 		StyleUtil.addStyle(this, Styles.categoryMasterDetail);
 		createMasterPanel();
@@ -78,12 +82,13 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	
 	public void setRootProperties(SMap<String, PropertyInfo> rootProperties, PropertyGroupInfo generalGroup, Long rootCategory, SMap<String, String> rootCategoryLabels) {
 		this.nameProperty = rootProperties.get(RootProperties.NAME);
-		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
-		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
-		this.priceProperty = rootProperties.get(RootProperties.PRICE);
-		this.artNoProperty = rootProperties.get(RootProperties.ARTICLENUMBER);
 		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
-		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
+//		this.variantProperty = rootProperties.get(RootProperties.VARIANT);
+//		this.descriptionProperty = rootProperties.get(RootProperties.DESCRIPTION);
+//		this.priceProperty = rootProperties.get(RootProperties.PRICE);
+//		this.artNoProperty = rootProperties.get(RootProperties.ARTICLENUMBER);
+//		this.imageProperty = rootProperties.get(RootProperties.IMAGE);
+//		this.smallImageProperty = rootProperties.get(RootProperties.SMALLIMAGE);
 		if (details != null) {
 			details.setRootProperties(rootProperties);
 		}
@@ -146,46 +151,87 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 		productTable.resizeColumns(1);
 		
 		// search panel
-		setHeader(new VerticalPanel() {{
-				add(new Grid(2, 3) {{
-					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
-					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
-						protected void selectionChanged() {
-							model.setSelectedLanguage(getSelectedLanguage());
-							model.setSelectedShop(getSelectedShop());
-							updateCategories();
-						}
-					});
-					setWidget(1, 0, new EEButton(messages.newCategory()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								createNewCategory(model.getRootCategoryId());
-							}
-						});
-					}});
-					setWidget(1, 1, new Anchor(messages.refresh()) {{
-						addClickHandler(new ClickHandler() {
-							public void onClick(ClickEvent event) {
-								updateCategories();
-							}
-						});
-					}});
-				}});
-				add(new FlowPanel() {{
-					add(filterLabel = new HTML() {{
-						setVisible(false); 
-					}});
-				}});
-				add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
-					setVisible(true);
-				}});
-				
+		setHeader(new EERibbon() {{
+      add(new EERibbonPanel() {{
+        add(new VerticalPanel() {{
+          add(new Header(1, "View"));
+          add(new LanguageAndOutputChannelSelector() {
+            protected void selectionChanged() {
+              model.setSelectedLanguage(getSelectedLanguage());
+              model.setSelectedOutputChannel(getSelectedOutputChannel());
+              updateCategories();
+            }
+          });
+          add(new Anchor(messages.refresh()) {{
+            addClickHandler(new ClickHandler() {
+              public void onClick(ClickEvent event) {
+                updateCategories();
+              }
+            });
+          }});
+        }});
+      }});
+      add(new EERibbonPanel() {{
+        add(new VerticalPanel() {{
+          add(new Header(1, "Actions"));
+          add(new Button(messages.newCategory()) {{
+            addClickHandler(new ClickHandler() {
+              public void onClick(ClickEvent event) {
+                createNewCategory(model.getRootCategoryId());
+              }
+            });
+          }});
+          add(filterLabel = new HTML() {{
+            setVisible(false); 
+          }});
+        }});
+        add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
+          setVisible(true);
+        }});
+      }});
 		}});
+		    
+//		    
+//		    new VerticalPanel() {{
+//				add(new Grid(2, 3) {{
+//					StyleUtil.addStyle(this, CatalogManager.Styles.filterpanel);
+//					setWidget(0, 0, languageSelection = new LanguageAndShopSelector() {
+//						protected void selectionChanged() {
+//							model.setSelectedLanguage(getSelectedLanguage());
+//							model.setSelectedShop(getSelectedShop());
+//							updateCategories();
+//						}
+//					});
+//					setWidget(1, 0, new EEButton(messages.newCategory()) {{
+//						addClickHandler(new ClickHandler() {
+//							public void onClick(ClickEvent event) {
+//								createNewCategory(model.getRootCategoryId());
+//							}
+//						});
+//					}});
+//					setWidget(1, 1, new Anchor(messages.refresh()) {{
+//						addClickHandler(new ClickHandler() {
+//							public void onClick(ClickEvent event) {
+//								updateCategories();
+//							}
+//						});
+//					}});
+//				}});
+//				add(new FlowPanel() {{
+//					add(filterLabel = new HTML() {{
+//						setVisible(false); 
+//					}});
+//				}});
+//				add(pleaseWaitLabel = new Label(messages.pleaseWait()) {{
+//					setVisible(true);
+//				}});
+//				
+//		}});
 	}
 	
 	private void createDetailPanel() {
 		setDetail(new LayoutPanel() {{
-			add(details = new CategoryDetails(model, nameProperty, variantProperty, priceProperty, imageProperty) {
+			add(details = new CategoryDetails(model, nameProperty, imageProperty) {
 				protected void storeItem(StoreItemDetails cmd) {
 					CategoryMasterDetail.this.storeItem(cmd);
 				}
@@ -230,7 +276,7 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 				categoryRows.add(itemRow, new CategoryRow(categoryId, isLeaf, categoryRows.get(parentIndex).indentation + 1, true));
 			} else {
 				itemRow = categoryRows.size();
-				categoryRows.add(new CategoryRow(categoryId, isLeaf, 1, true));
+				categoryRows.add(new CategoryRow(categoryId, isLeaf, 0, true));
 			}
 			
 			// Rerender master to add row.
@@ -419,24 +465,26 @@ abstract public class CategoryMasterDetail extends CatalogManagerMasterDetail im
 	private List<CategoryRow> createRows() {
 		List<CategoryRow> result = new ArrayList<CategoryRow>();
 		
-		convertToRows(model.getRootCategoryId(), result, 0);
+		convertToRows(model.getRootCategoryId(), result, 0, true);
 		
 		return result;
 	}
 	
-	private void convertToRows(Long currentCategory, List<CategoryRow> result, int indentation) {
+	private void convertToRows(Long currentCategory, List<CategoryRow> result, int indentation, boolean skipRoot) {
 		List<Long> children = model.getChildrenByCategory().get(currentCategory);
 		boolean isLeaf = children == null || children.size() == 0;
 
 		// Add current:
-		result.add(new CategoryRow(currentCategory, isLeaf, indentation, false));
+		if (!skipRoot) {
+		  result.add(new CategoryRow(currentCategory, isLeaf, indentation, false));
+		}
 		
 		// Sort children:
 		List<Long> sortedChildren = sortChildren(CollectionUtil.notNull(children));
 		
 		// iterate over children
 		for (Long child : sortedChildren) {
-			convertToRows(child, result, indentation + 1);
+			convertToRows(child, result, indentation + (skipRoot ? 0 : 1), false);
 		}
 	}
 

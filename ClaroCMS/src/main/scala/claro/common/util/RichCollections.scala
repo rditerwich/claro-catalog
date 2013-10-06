@@ -49,7 +49,7 @@ class RichTraversable[A](it : Traversable[A]) {
       (m => it foreach { a => m getOrElseUpdate (f(a), new mutable.ArrayBuffer) += a })).toSeq:_*)
 }
 
-class RichCollection[A](col : Collection[A]) extends RichTraversable[A](col) {
+class RichCollection[A](col : Seq[A]) extends RichTraversable[A](col) {
   
 }
 
@@ -65,7 +65,7 @@ class RichSeq[A](seq : Seq[A]) extends RichCollection[A](seq) {
 class RichList[A](list : List[A]) extends RichSeq[A](list) {
 }
 
-class RichSet[A](set : Set[A]) extends RichCollection[A](set) {
+class RichSet[A](set : Set[A])  {
   /**
    * Filters element that are not of specified type.
    */
@@ -81,7 +81,7 @@ class RichMap[A,B](map : Map[A,B]) {
 }
 
 class RichArray[A](array : Array[A]) {
-  def toSet = immutable.Set(array toSeq:_*)
+  def toSet = immutable.Set(array.toSeq:_*)
 }
 
 class RichPartialFunctionIterable[A,B](it : Iterable[PartialFunction[A,B]]) {

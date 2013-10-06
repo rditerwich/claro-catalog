@@ -5,7 +5,7 @@ import java.util.Set;
 
 import claro.catalog.CatalogDao;
 import claro.catalog.CatalogDaoService;
-import claro.catalog.command.GetLanguagesByShop;
+import claro.catalog.command.GetLanguagesByOutputChannel;
 import claro.catalog.util.CatalogModelUtil;
 import claro.jpa.catalog.Catalog;
 import claro.jpa.catalog.OutputChannel;
@@ -18,7 +18,7 @@ import easyenterprise.lib.command.CommandImpl;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
-public class GetLanguagesByShopImpl extends GetLanguagesByShop implements CommandImpl<GetLanguagesByShop.Result>{
+public class GetLanguagesByShopImpl extends GetLanguagesByOutputChannel implements CommandImpl<GetLanguagesByOutputChannel.Result>{
 
 	private static final long serialVersionUID = 1L;
 	static View view = new BasicView();

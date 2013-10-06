@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class CollectionUtil {
 
@@ -64,6 +66,14 @@ public class CollectionUtil {
 		return result;
 	}
 	
+	public static <K, V> TreeMap<K, V> toTreeMap(Iterable<Entry<K, V>> entries) {
+	  TreeMap<K, V> treeMap = new TreeMap<K, V>();
+	  for (Entry<K, V> entry : entries) {
+	    treeMap.put(entry.getKey(), entry.getValue());
+    }
+	  return treeMap;
+	}
+	
 	public static <T> List<T> subList(List<T> list, int from, int to) {
 		if (from == 0 && to == list.size()) return list;
 		ArrayList<T> result = new ArrayList<T>();
@@ -104,8 +114,11 @@ public class CollectionUtil {
 		else return null;
 	}
 	
-	public static <T> List<T> sort(Collection<T> collection, Comparator<T> comparator) {
-		List<T> list = new ArrayList<T>(collection);
+	public static <T> List<T> sort(Iterable<T> collection, Comparator<T> comparator) {
+		List<T> list = new ArrayList<T>();
+		for (T value : collection) {
+		  list.add(value);
+		}
 		Collections.sort(list, comparator);
 		return list;
 	}

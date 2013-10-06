@@ -20,10 +20,10 @@ import claro.catalog.data.PropertyData;
 import claro.catalog.data.PropertyGroupInfo;
 import claro.catalog.data.PropertyInfo;
 import claro.catalog.impl.items.ItemUtil;
-import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.PropertyModel;
 import claro.catalog.model.test.util.CatalogTestBase;
+import claro.catalog.model.test.util.TestCatalogModel;
 import claro.jpa.catalog.Category;
 import claro.jpa.catalog.Product;
 import claro.jpa.catalog.PropertyGroup;
@@ -378,7 +378,7 @@ public class StoreItemDetailsTest extends CatalogTestBase {
 		getCatalogDao().startTransaction();
 			
 		try {
-			CatalogModel model = getCatalogModel();
+			TestCatalogModel model = getCatalogModel();
 			EntityManager entityManager = getCatalogDao().getEntityManager();
 			
 			// First create some categories and items

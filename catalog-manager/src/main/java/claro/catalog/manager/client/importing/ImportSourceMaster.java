@@ -24,11 +24,13 @@ public class ImportSourceMaster extends TableWithObjects<ImportSource> implement
 
 	public ImportSourceMaster(ImportSoureModel model) {
 		this.model = model;
+		addStyleName("ImportSourceMaster");
 		resizeColumns(NR_COLS);
 		setHeaderText(0, NAME_COL, messages.importSourceLabel());
 		setHeaderText(0, LASTRUN_COL, messages.lastRunLabel());
 		setHeaderText(0, STATUS_COL, messages.statusHeader());
-		setHeaderText(0, WEATHER_COL, messages.healthHeader());	}
+		setHeaderText(0, WEATHER_COL, messages.healthHeader());	
+	}
 	
 	public void render() {
 		int fromRows = getRowCount();

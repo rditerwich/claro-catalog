@@ -30,9 +30,9 @@ class RichNodeSeq(xml : NodeSeq) {
 
   def format : NodeSeq = {
     val (xml2,replace) = xml.toList.head match {
-      case text : Text if text._data.contains('\n') =>
-        val ws = "\\s*".r findPrefixOf text._data
-        "\n\\s*".r findPrefixOf text._data match {
+      case text : Text if text.data.contains('\n') =>
+        val ws = "\\s*".r findPrefixOf text.data
+        "\n\\s*".r findPrefixOf text.data match {
           case Some(prefix) => (xml.drop(1), (s : String) => s.replaceFirst(prefix, "\n"))
           case None => (xml, (s : String) => s)
         }

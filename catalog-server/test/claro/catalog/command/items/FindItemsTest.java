@@ -14,6 +14,7 @@ import claro.catalog.data.ItemType;
 import claro.catalog.model.CatalogModel;
 import claro.catalog.model.ItemModel;
 import claro.catalog.model.test.util.CatalogTestBase;
+import claro.catalog.model.test.util.TestCatalogModel;
 import claro.jpa.catalog.Category;
 import easyenterprise.lib.util.Money;
 import easyenterprise.lib.util.Tuple;
@@ -61,7 +62,7 @@ public class FindItemsTest extends CatalogTestBase {
 		ensureDatabaseCreated();
 		getCatalogDao().startTransaction();
 		try {
-			CatalogModel model = getCatalogModel();
+			TestCatalogModel model = getCatalogModel();
 			EntityManager entityManager = getEntityManager();
 			
 			// First create some categories and items

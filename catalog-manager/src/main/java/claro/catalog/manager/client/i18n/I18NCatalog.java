@@ -314,7 +314,7 @@ public interface I18NCatalog extends Messages {
 	String removeImportedDataMessage();
 	String removeImportedDataButton();
 	
-	String loadingWebShopsMessage();
+	String loadingOutputChannelsMessage();
 	String addLanguageLink();
 	String setLanguageLink();
 	String noLanguagesAvailable();
@@ -327,7 +327,7 @@ public interface I18NCatalog extends Messages {
 	String shopLanguagesHelp();
 	String removeShopConfirmationMessage(String name);
 	String removeShopLink();
-	String loadingWebShopsAction();
+	String loadingloadingWebShopsAction();
 	String defaultLanguageName();
 	String savingWebShopsAction();
 	String topLevelCategoriesLabel();
