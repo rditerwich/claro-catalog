@@ -18,9 +18,9 @@ public class WebshopMaster extends TableWithObjects<Shop> implements Globals {
 	private static final int URL_COL = 1;
 	private static final int NR_COLS = 2;
 
-	private final ShopModel model;
+	private final OutputChannelModel model;
 
-	public WebshopMaster(ShopModel model) {
+	public WebshopMaster(OutputChannelModel model) {
 		this.model = model;
 		resizeColumns(NR_COLS);
 		setHeaderText(0, NAME_COL, messages.shopNameLabel());

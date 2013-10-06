@@ -10,7 +10,7 @@ import claro.catalog.data.PropertyInfo;
 import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.Globals;
 import claro.catalog.manager.client.items.ItemPageModel;
-import claro.catalog.manager.client.outputchannels.OutputChannelModel;
+import claro.catalog.manager.client.webshop.OutputChannelModel;
 import claro.jpa.catalog.OutputChannel;
 
 import com.google.common.base.Objects;
@@ -196,5 +196,5 @@ public abstract class CatalogPageModel extends ItemPageModel implements Globals 
 	
 	public abstract PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData();
 	
-	public abstract OutputChannelModel getShopModel();
+	public abstract OutputChannelModel getOutputChannelModel();
 }

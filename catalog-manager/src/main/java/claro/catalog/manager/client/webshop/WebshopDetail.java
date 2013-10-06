@@ -32,7 +32,7 @@ import easyenterprise.lib.gwt.client.widgets.Header;
 
 public class WebshopDetail extends Composite implements Globals {
 	
-	private final ShopModel model;
+	private final OutputChannelModel model;
 	
 	private Header header;
 	private TextBox nameTextBox;
@@ -60,7 +60,7 @@ public class WebshopDetail extends Composite implements Globals {
 
 
 	@SuppressWarnings("unchecked")
-	public WebshopDetail(ShopModel model_) {
+	public WebshopDetail(OutputChannelModel model_) {
 		this.model = model_;
 		initWidget(new VerticalPanel() {{
 			setStylePrimaryName("WebshopDetail");

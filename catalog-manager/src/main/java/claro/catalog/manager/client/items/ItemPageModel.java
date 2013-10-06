@@ -17,7 +17,7 @@ public class ItemPageModel {
 	public String getSelectedLanguage() {
 		return selectedLanguage;
 	}
-	public OutputChannel getSelectedShop() {
+	public OutputChannel getSelectedOutputChannel() {
 		return selectedOutputChannel;
 	}
 	

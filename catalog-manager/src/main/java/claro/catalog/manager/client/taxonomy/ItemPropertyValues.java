@@ -275,7 +275,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		// TODO what about overriding values to null?  Use undefined in the code below?
 		// TODO many multiplicity properties.
 		
-		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedShop()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
+		SMap<String, Object> values =  CollectionUtil.notNull(propertyData.values).getOrEmpty(model.getSelectedOutputChannel()); // TODO why is there no staging area here?. and: No fallback to null outputchannel?
 		Object value;
 		boolean isInherited = false;
 		if (property.isMany) {
@@ -289,7 +289,7 @@ abstract public class ItemPropertyValues extends Composite implements Globals {
 		}
 
 		SMap<OutputChannel, SMap<String, Object>> effectiveValues = CollectionUtil.notNull(propertyData.effectiveValues).getOrEmpty(null); // Use the default staging area.
-		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedShop(), null));
+		SMap<String, Object> effectiveLanguageValues = CollectionUtil.notNull(effectiveValues.tryGet(model.getSelectedOutputChannel(), null));
 		Object inheritedValue;
 		if (property.isMany) {
 			inheritedValue = effectiveLanguageValues.tryGetAll(model.getSelectedLanguage(), null);

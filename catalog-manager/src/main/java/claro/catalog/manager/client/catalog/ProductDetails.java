@@ -15,6 +15,7 @@ import claro.catalog.manager.client.taxonomy.ItemPropertyValues;
 import claro.catalog.manager.client.widgets.ConfirmationDialog;
 import claro.catalog.manager.client.widgets.ItemSelectionWidget;
 import claro.catalog.manager.client.widgets.MediaWidget;
+import claro.jpa.shop.Shop;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -252,7 +253,7 @@ public class ProductDetails extends Composite implements Globals {
 		
 		
 		// Update promotions
-		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedShop()) : null;
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedOutputChannel()) : null;
 		if (promotionsForShop != null) {
 			String promotionText = promotionsForShop.get(0).tryGet(model.getSelectedLanguage(), null);
 			promotionAnchor.setText(messages.promotionsLink(promotionText));
@@ -260,13 +261,13 @@ public class ProductDetails extends Composite implements Globals {
 			promotionAnchor.setText(messages.addPromotionLink());
 		}
 		
-		promotionAnchor.setVisible(model.getSelectedShop() != null);
+		promotionAnchor.setVisible(model.getSelectedOutputChannel() != null);
 	}
 	
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
 		PropertyData data = properties.get(property);
 		if (data != null) {
-			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedShop(), null);
+			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedOutputChannel(), null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
@@ -275,7 +276,7 @@ public class ProductDetails extends Composite implements Globals {
 			}
 			
 			// Fall back on effective values
-			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedShop(), null);
+			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedOutputChannel(), null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
@@ -290,11 +291,14 @@ public class ProductDetails extends Composite implements Globals {
 	private void doPromotion() {
 		// Goto webshop model and lookup/add promotion
 		
-		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedShop()) : null;
+		SMap<Long, SMap<String, String>> promotionsForShop = model.getSelectedProductPromotions() != null ? model.getSelectedProductPromotions().get(model.getSelectedOutputChannel()) : null;
 		if (promotionsForShop != null) {
-			model.getShopModel().showPromotion(model.getSelectedProductId());
+			model.getOutputChannelModel().showPromotion(model.getSelectedProductId());
 		} else {
-			model.getShopModel().addNewPromotion(model.getSelectedShop(),model.getSelectedProductId());
+		  if (model.getSelectedOutputChannel() instanceof Shop) {
+        Shop shop = (Shop) model.getSelectedOutputChannel();
+        model.getOutputChannelModel().addNewPromotion(shop, model.getSelectedProductId());
+		  }
 		}
 	}
 	

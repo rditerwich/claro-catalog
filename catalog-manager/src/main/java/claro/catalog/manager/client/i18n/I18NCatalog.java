@@ -327,7 +327,6 @@ public interface I18NCatalog extends Messages {
 	String shopLanguagesHelp();
 	String removeShopConfirmationMessage(String name);
 	String removeShopLink();
-	String loadingloadingWebShopsAction();
 	String defaultLanguageName();
 	String savingWebShopsAction();
 	String topLevelCategoriesLabel();

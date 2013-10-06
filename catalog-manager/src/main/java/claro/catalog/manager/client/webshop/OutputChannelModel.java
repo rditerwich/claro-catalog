@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
-import claro.catalog.command.GetLanguagesByShop;
+import claro.catalog.command.GetLanguagesByOutputChannel;
 import claro.catalog.command.shop.FindPromotions;
 import claro.catalog.command.shop.FindPromotions.Result;
 import claro.catalog.command.shop.GetShops;
@@ -27,7 +27,7 @@ import easyenterprise.lib.command.gwt.GwtCommandFacade;
 import easyenterprise.lib.util.CollectionUtil;
 import easyenterprise.lib.util.SMap;
 
-public abstract class ShopModel implements Globals {
+public abstract class OutputChannelModel implements Globals {
 	public static int REQUESTED_PAGESIZE;
 
 	private int startIndex;
@@ -112,7 +112,7 @@ public abstract class ShopModel implements Globals {
 		// TODO For now, ignore wait.  Use PagedView in future.
 		GetShops command = new GetShops();
 		command.catalogId = CatalogManager.getCurrentCatalogId();
-		GwtCommandFacade.execute(command, new StatusCallback<GetShops.Result>(messages.loadingWebShopsMessage()) {
+		GwtCommandFacade.execute(command, new StatusCallback<GetShops.Result>(messages.loadingOutputChannelsMessage()) {
 			public void onSuccess(GetShops.Result result) {
 				super.onSuccess(result);
 				setShops(result.shops);
@@ -151,7 +151,7 @@ public abstract class ShopModel implements Globals {
 					shops.remove(command.shop);
 				}
 				setShop(result.shop);
-				GwtCommandFacade.invalidateCache(new GetLanguagesByShop(CatalogManager.getCurrentCatalogId()));
+				GwtCommandFacade.invalidateCache(new GetLanguagesByOutputChannel(CatalogManager.getCurrentCatalogId()));
 			}
 		});
 	}

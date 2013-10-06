@@ -13,11 +13,11 @@ import easyenterprise.lib.util.ObjectUtil;
 
 public class WebshopShippingOptionsPanel extends Composite {
 
-	private final ShopModel model;
+	private final OutputChannelModel model;
 	private TextBox shippingCostsTextBox;
 	private TextBox expressDeliveryChargeTextBox;
 
-	public WebshopShippingOptionsPanel(ShopModel model_) {
+	public WebshopShippingOptionsPanel(OutputChannelModel model_) {
 		this.model = model_;
 		initWidget(new FormTable() {{
 			add(messages.shippingCostsLabel(), shippingCostsTextBox = new TextBox() {{

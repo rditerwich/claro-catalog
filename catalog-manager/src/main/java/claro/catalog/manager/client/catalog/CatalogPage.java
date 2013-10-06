@@ -15,7 +15,7 @@ import claro.catalog.data.RootProperties;
 import claro.catalog.manager.client.CatalogManager;
 import claro.catalog.manager.client.Page;
 import claro.catalog.manager.client.command.StatusCallback;
-import claro.catalog.manager.client.outputchannels.OutputChannelModel;
+import claro.catalog.manager.client.webshop.OutputChannelModel;
 import claro.catalog.manager.client.widgets.CatalogManagerMasterDetail;
 import claro.catalog.manager.client.widgets.StatusMessage;
 
@@ -54,7 +54,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 		public PagedData<Long, SMap<PropertyInfo, SMap<String, Object>>> getProductData() {
 			return productData;
 		}
-		public OutputChannelModel getShopModel() {
+		public OutputChannelModel getOutputChannelModel() {
 			return shopModel;
 		}
 	};
@@ -71,7 +71,7 @@ public class CatalogPage extends Page implements PagedData.DataSource<Long, SMap
 	}
 	
 
-	public void setShopModel(OutputChannelModel shopModel) {
+	public void setOutputChannelModel(OutputChannelModel shopModel) {
 		this.shopModel = shopModel;
 	}
 

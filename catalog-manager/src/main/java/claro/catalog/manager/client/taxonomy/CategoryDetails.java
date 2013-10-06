@@ -375,7 +375,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 	private Object getValue(PropertyInfo property, SMap<PropertyInfo, PropertyData> properties) {
 		PropertyData data = properties.get(property);
 		if (data != null) {
-			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedShop(), null);
+			SMap<String, Object> channelValues = CollectionUtil.notNull(data.values).tryGet(model.getSelectedOutputChannel(), null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {
@@ -384,7 +384,7 @@ abstract public class CategoryDetails extends Composite implements Globals, Requ
 			}
 			
 			// Fall back on effective values
-			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedShop(), null);
+			channelValues = CollectionUtil.notNull(data.effectiveValues).getOrEmpty(null).tryGet(model.getSelectedOutputChannel(), null);
 			if (channelValues != null) {
 				Object candidate = channelValues.tryGet(model.getSelectedLanguage(), null);
 				if (candidate != null) {

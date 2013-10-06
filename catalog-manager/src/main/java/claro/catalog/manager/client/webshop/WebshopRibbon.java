@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Grid;
 
 public class WebshopRibbon extends Composite implements Globals {
 
-	public WebshopRibbon(final ShopModel model) {
+	public WebshopRibbon(final OutputChannelModel model) {
 		initWidget(new Grid(1, 2) {{
 			setWidget(0, 0, new Anchor(messages.newWebshopLink()) {{
 				addClickHandler(new ClickHandler() {

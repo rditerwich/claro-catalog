@@ -36,9 +36,9 @@ public class WebshopPromotionsPanel extends TableWithObjects<Promotion> {
 	private static final int NR_COL = 7;
 	
 
-	private final ShopModel model;
+	private final OutputChannelModel model;
 
-	public WebshopPromotionsPanel(ShopModel model_) {
+	public WebshopPromotionsPanel(OutputChannelModel model_) {
 		this.model = model_;
 		resizeColumns(NR_COL);
 		setHeaderText(0, PRODUCT_COL, "product");

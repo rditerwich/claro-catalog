@@ -12,7 +12,7 @@ import easyenterprise.lib.gwt.client.widgets.EEButton;
 import easyenterprise.lib.gwt.client.widgets.MasterDetail;
 import easyenterprise.lib.gwt.client.widgets.PullUpTabs;
 
-public class WebshopPage extends Page {
+public class OutputChannelPage extends Page {
 
 	private MasterDetail masterDetail;
 	private WebshopRibbon ribbon;
@@ -21,7 +21,7 @@ public class WebshopPage extends Page {
 	private WebshopDetail detail;
 	private WebshopShippingOptionsPanel shippingOptionsPanel;
 	private WebshopPromotionsPanel promotionsPanel;
-	private ShopModel model = new ShopModel() {
+	private OutputChannelModel model = new OutputChannelModel() {
 
 		public void setShop(claro.jpa.shop.Shop shop) {
 			super.setShop(shop);
@@ -30,7 +30,7 @@ public class WebshopPage extends Page {
 		@Override
 		protected void renderAll() {
 			if (!initialized) { // TODO Is this a hack?
-				showPage(WebshopPage.this);
+				showPage(OutputChannelPage.this);
 			}
 			if (getShop() != null) {
 				master.render();
@@ -58,12 +58,12 @@ public class WebshopPage extends Page {
 
 		@Override
 		protected void showWebshopPage() {
-			showPage(WebshopPage.this);
+			showPage(OutputChannelPage.this);
 		}
 	};
 	private boolean initialized;
 	
-	public WebshopPage(PlaceController placeController, String string) {
+	public OutputChannelPage(PlaceController placeController, String string) {
 		super(placeController);
 //		mainPanel = new LayoutPanel();
 //		mainPanel.setStylePrimaryName("ImportPage");
@@ -71,7 +71,7 @@ public class WebshopPage extends Page {
 	}
 	
 	
-	public ShopModel getModel() {
+	public OutputChannelModel getModel() {
 		return model;
 	}
 
